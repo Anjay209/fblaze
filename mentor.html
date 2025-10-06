@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CertQuest Dashboard</title>
+  <link rel="stylesheet" href="mentor.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/feather-icons"></script>
+  
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+</head>
+<body>
+
+  <!-- Top Nav -->
+  <div class="top-header">
+    <div class="nav-left">🌐</div>
+    <div class="nav-title">Dashboard <span class="new-badge">(New!)</span></div>
+    <div class="nav-right">
+  <input type="text" id="navbarSearch" placeholder="Search CertQuest..." />
+  <span class="search-icon" id="navbarSearchIcon">🔍</span>
+  <div id="searchDropdown"></div>
+</div>
+  </div>
+
+  <!-- Section Header -->
+  <div class="section-header-background">
+    <div class="section-header-inline">
+      <h1 class="unit-title"><span class="name">Mentor Dashboard</span></h1>
+    </div><div class="question-tabs">
+        <div class="tab active" onclick="selectTab(this)">Dashboard</div>
+        <div class="tab" onclick="selectTab(this)">Assignments</div> 
+        <div class="tab" onclick="selectTab(this)">Meetings</div> 
+      </div>
+      <div class="tab-underline"></div>
+  </div>
+  <div class="main-layout">
+    <!-- Sidebar -->
+      <aside class="sidebar">
+      <div class="logo">CQ</div>
+      <ul class="nav-icons">
+  <li>
+     <a href="/Public/home.html">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M12 3L20 9V21H15V15H9V21H4V9L12 3Z" fill="#3b82f6" fill-opacity="0.3"/>
+      <path d="M12 3L4 9V21H9V15H15V21H20V9L12 3Z" stroke="#3b82f6" stroke-width="2" fill="none" stroke-linejoin="round"/>
+      <rect x="10" y="17" width="4" height="4" fill="#3b82f6"/>
+      <rect x="6" y="11" width="2" height="2" fill="#3b82f6"/>
+      <rect x="16" y="11" width="2" height="2" fill="#3b82f6"/>
+    </svg>
+    
+    <span class="nav-label">Home</span>
+     </a>
+  </li>
+  <li>
+  <a href="#" onclick="openNotificationsOnHome(); return false;">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- Bell body main fill -->
+    <path d="M18 8C18 6.4087 17.3679 4.88258 16.2426 3.75736C15.1174 2.63214 13.5913 2 12 2C10.4087 2 8.88258 2.63214 7.75736 3.75736C6.63214 4.88258 6 6.4087 6 8C6 15 3 17 3 17H21C21 17 18 15 18 8Z" fill="#3b82f6" fill-opacity="0.3"/>
+    <!-- Bell body lighter overlay -->
+    <path d="M18 8C18 6.4087 17.3679 4.88258 16.2426 3.75736C15.1174 2.63214 13.5913 2 12 2C10.4087 2 8.88258 2.63214 7.75736 3.75736C6.63214 4.88258 6 6.4087 6 8C6 12 6 15 6 15H18C18 15 18 12 18 8Z" fill="#3b82f6" fill-opacity="0.2"/>
+    <!-- Bell outline -->
+    <path d="M18 8C18 6.4087 17.3679 4.88258 16.2426 3.75736C15.1174 2.63214 13.5913 2 12 2C10.4087 2 8.88258 2.63214 7.75736 3.75736C6.63214 4.88258 6 6.4087 6 8C6 15 3 17 3 17H21C21 17 18 15 18 8Z" stroke="#3b82f6" stroke-width="2" fill="none"/>
+    <!-- Bell clapper -->
+    <circle cx="12" cy="8" r="1" fill="#3b82f6"/>
+    <!-- Sound waves -->
+    <path d="M19 4L20 3" stroke="#3b82f6" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/>
+    <path d="M20.5 6.5L22 6" stroke="#3b82f6" stroke-width="1.5" stroke-linecap="round" opacity="0.3"/>
+    <path d="M5 4L4 3" stroke="#3b82f6" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/>
+    <path d="M3.5 6.5L2 6" stroke="#3b82f6" stroke-width="1.5" stroke-linecap="round" opacity="0.3"/>
+    <!-- Bottom notification indicator -->
+    <path d="M13.73 21C13.5542 21.3031 13.3019 21.5547 12.9982 21.7295C12.6946 21.9044 12.3504 21.9965 12 21.9965C11.6496 21.9965 11.3054 21.9044 11.0018 21.7295C10.6982 21.5547 10.4458 21.3031 10.27 21" stroke="#3b82f6" stroke-width="2" stroke-linecap="round"/>
+  </svg>
+  <span class="nav-label">Notifications</span>
+</a>
+</li>
+  <li>
+    <a href="/practice.html">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="12" cy="12" r="9" fill="#3b82f6" fill-opacity="0.3"/>
+      <circle cx="12" cy="12" r="6" fill="#3b82f6" fill-opacity="0.2"/>
+      <circle cx="12" cy="12" r="9" stroke="#3b82f6" stroke-width="2" fill="none"/>
+      <circle cx="12" cy="12" r="6" stroke="#3b82f6" stroke-width="1.5" fill="none"/>
+      <circle cx="12" cy="12" r="3" stroke="#3b82f6" stroke-width="1.5" fill="none"/>
+      <circle cx="12" cy="12" r="1.5" fill="#3b82f6"/>
+      <path d="M16 8L12 12L16 8Z" fill="#3b82f6"/>
+      <line x1="16" y1="8" x2="19" y2="5" stroke="#3b82f6" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+    <span class="nav-label">Practice</span>
+    </a>
+  </li>
+  <li>
+    <a href="/Public/Forum/forum.html">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M8 6C8 4.89543 8.89543 4 10 4H18C19.1046 4 20 4.89543 20 6V12C20 13.1046 19.1046 14 18 14H12L8 18V6Z" fill="#3b82f6" fill-opacity="0.3"/>
+      <path d="M4 10C4 8.89543 4.89543 8 6 8H8V16L4 20V12C4 11.4477 4.44772 11 5 11C4.44772 11 4 10.5523 4 10Z" fill="#3b82f6" fill-opacity="0.2"/>
+      <path d="M8 6C8 4.89543 8.89543 4 10 4H18C19.1046 4 20 4.89543 20 6V12C20 13.1046 19.1046 14 18 14H12L8 18V6Z" stroke="#3b82f6" stroke-width="2" fill="none"/>
+      <path d="M4 10C4 8.89543 4.89543 8 6 8H8V16L4 20V12C4 11.4477 4.44772 11 5 11C4.44772 11 4 10.5523 4 10Z" stroke="#3b82f6" stroke-width="1.5" fill="none"/>
+      <line x1="11" y1="8" x2="17" y2="8" stroke="#3b82f6" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="11" y1="10" x2="15" y2="10" stroke="#3b82f6" stroke-width="1.5" stroke-linecap="round"/>
+    </svg>
+    <span class="nav-label">Forum</span>
+    </a>
+  </li>
+  <li>
+     <a href="/Public/Calendar/calendar.html">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="3" y="6" width="18" height="15" rx="2" fill="#3b82f6" fill-opacity="0.3"/>
+      <rect x="3" y="6" width="18" height="4" rx="2" fill="#3b82f6" fill-opacity="0.2"/>
+      <rect x="3" y="6" width="18" height="15" rx="2" stroke="#3b82f6" stroke-width="2" fill="none"/>
+      <line x1="7" y1="3" x2="7" y2="7" stroke="#3b82f6" stroke-width="2" stroke-linecap="round"/>
+      <line x1="17" y1="3" x2="17" y2="7" stroke="#3b82f6" stroke-width="2" stroke-linecap="round"/>
+      <line x1="3" y1="10" x2="21" y2="10" stroke="#3b82f6" stroke-width="1" opacity="0.5"/>
+      <line x1="7.5" y1="10" x2="7.5" y2="21" stroke="#3b82f6" stroke-width="1" opacity="0.3"/>
+      <line x1="12" y1="10" x2="12" y2="21" stroke="#3b82f6" stroke-width="1" opacity="0.3"/>
+      <line x1="16.5" y1="10" x2="16.5" y2="21" stroke="#3b82f6" stroke-width="1" opacity="0.3"/>
+      <circle cx="9" cy="13" r="1" fill="#3b82f6"/>
+      <circle cx="15" cy="16" r="1" fill="#3b82f6"/>
+      <circle cx="12" cy="18" r="1" fill="#3b82f6"/>
+    </svg>
+    <span class="nav-label">Calendar</span>
+     </a>
+  </li>
+</ul>
+    </aside>
+
+  <main class="content">
+    <h2><span class="title" style="color: #007cf0; margin-bottom: 20px; margin-left: -80px;">Your Mentees</span></h2><br>
+    <div class="cards" id="menteesCards">
+        
+      </div>
+
+<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; margin-left: -5vw; width: 72vw;">
+  <h3 class="accuracy-title" style="margin:0; font-size:1.45rem; color:#177cf6; font-weight:700;">MCQ Accuracy Over Time</h3>
+  <div style="display: flex; align-items: center; gap: 0.5rem;">
+    <label for="compFilter" style="font-size:1.05rem; color:#1459b7; font-weight:500;">Competition:</label>
+    <select id="compFilter" style="font-size:1.04rem; padding: 0.17rem 0.9rem; border-radius: 8px; border: 1px solid #b3cef6; background: #f8fbff;">
+      <option value="all">All</option>
+      <!-- options inserted by JS -->
+    </select>
+  </div>
+</div>
+
+<div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; margin-left: -5vw;">
+  <button id="prevRange" style="padding: 8px 16px; border: 1px solid #ccc; border-radius: 6px; background: white;">← Previous 50</button>
+<button id="nextRange" style="padding: 8px 16px; border: 1px solid #ccc; border-radius: 6px; background: white;">Next 50 →</button>
+<span id="rangeDisplay" style="font-weight: 600; color: #666;">Questions 1-100</span>
+  <input type="number" id="jumpTo" placeholder="Jump to..." style="width: 100px; padding: 6px; border: 1px solid #ccc; border-radius: 4px;">
+  <button id="jumpButton" style="padding: 6px 12px; border: 1px solid #ccc; border-radius: 4px; background: white;">Jump</button>
+</div>
+
+<div class="chart-container">
+  <canvas id="mcqChart"></canvas>
+</div>
+<br>
+<h3 class="accuracy-title">Recent Activity</h3> 
+<div class="chart-container" id="recentActivityContainer">
+  <!-- JS will populate here -->
+</div>
+
+
+</div>
+<div id="summaryModal" class="modal">
+  <div class="modal-content" style="max-width:420px; padding: 2.1rem 2.2rem 2rem;">
+    <span class="close" onclick="closeSummaryModal()" style="top:20px; right: 24px;">&times;</span>
+    <h2 style="margin-bottom: 1.3rem; font-size: 1.5rem;">Summary for Anjay Parthsarathy</h2>
+
+    <div style="margin-bottom: 2.2rem; display: flex; gap: 2.4rem; align-items: flex-end;">
+  <div>
+    <div class="num-answered" style="font-size: 2.2rem; font-weight: 700; color: #007cf0; letter-spacing:-1px;">38</div>
+    <div style="font-size: 1.03rem; color: #888; margin-top:0.2rem;">Questions answered<br>this week</div>
+  </div>
+  <div>
+    <div class="mcq-accuracy" style="font-size: 2.2rem; font-weight: 700; color: #0a50b8; letter-spacing:-1px;">81%</div>
+    <div style="font-size: 1.03rem; color: #888; margin-top:0.2rem;">MCQ<br>Accuracy</div>
+  </div>
+</div>
+
+
+   <div style="margin-bottom: 1.25rem;">
+ <!-- Competency section: clean two-column alignment -->
+<div class="competency-grid" style="display: grid; grid-template-columns: max-content 1fr; column-gap: 1.3rem; row-gap: 0.6rem; margin-bottom: 1.35rem;">
+  <!-- This will be filled by JS -->
+</div>
+
+
+  </div>
+</div>
+
+
+
+
+
+  </main>
+  <script src="https://cdn.jsdelivr.net/npm/meilisearch@latest/dist/bundles/meilisearch.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+window.addEventListener('load', async function () {
+  const db = firebase.firestore();
+  const auth = firebase.auth();
+
+ window.mentorComps = [];
+window.mentees = [];
+window.allData = {};
+window.currentStartQuestion = 1;
+window.questionsPerView = 100;
+window.fillPalette = [
+  'rgba(44,98,255,0.08)', 'rgba(41,188,255,0.07)', 'rgba(151,196,255,0.07)',
+  'rgba(94,235,189,0.07)', 'rgba(255,144,85,0.07)', 'rgba(236,86,173,0.07)'
+];
+window.palette = [
+  'rgba(44,98,255,1)',  'rgba(41,188,255,1)', 'rgba(151,196,255,1)',
+  'rgba(94,235,189,1)', 'rgba(255,144,85,1)', 'rgba(236,86,173,1)'
+];
+
+
+  // 1. Get mentor info and competitions
+  const user = auth.currentUser || await new Promise(resolve => firebase.auth().onAuthStateChanged(resolve));
+  if (!user) return;
+  const userDoc = await db.collection('users').doc(user.uid).get();
+  const userData = userDoc.data();
+mentorComps = Array.isArray(userData.mentorCompetition)
+    ? userData.mentorCompetition
+    : [userData.mentorCompetition].filter(Boolean);
+
+  // 2. Find all mentees matching any of the mentor's competitions
+  const usersSnap = await db.collection('users').get();
+  mentees = [];
+  usersSnap.forEach(doc => {
+    if (doc.id === user.uid) return;
+    const d = doc.data();
+    let comps = Array.isArray(d.competitions) ? d.competitions : [d.competitions].filter(Boolean);
+    if (comps.some(c => mentorComps.includes(c))) {
+      mentees.push({
+        id: doc.id,
+        name: d.name || d.fullName || d.email || '(unnamed)',
+        grade: d.grade || '',
+        comps: comps.filter(Boolean)
+      });
+    }
+  });
+
+  // Populate mentee cards
+  const menteesCards = document.getElementById('menteesCards');
+  menteesCards.innerHTML = '';
+
+  mentees.forEach(mentee => {
+    const card = document.createElement('div');
+    card.className = 'schoolhouse-card';
+    const compsString = mentee.comps && mentee.comps.length ? mentee.comps.join(', ') : '';
+
+    card.innerHTML = `
+      <div class="card-icon"><img src="assets/forum.png" class="feature-box-icon"></div>
+      <div class="card-content">
+        <h3>${mentee.name}</h3>
+        <p class="desc">
+          ${mentee.grade ? mentee.grade + ' Grade' : ''}${(mentee.grade && compsString) ? ' • ' : ''}
+          ${compsString}
+        </p>
+        <button class="view-summary-link" onclick="openSummaryModal('${mentee.id}', '${mentee.name}')">View Summary →</button>
+      </div>
+    `;
+    menteesCards.appendChild(card);
+  });
+
+    // ========== COMPETITION DROPDOWN POPULATE ==========
+
+  const compFilter = document.getElementById('compFilter');
+  if (compFilter) {
+    // Remove old options except "All"
+    compFilter.innerHTML = '<option value="all">All</option>';
+    mentorComps.forEach(c => {
+      if (!c) return;
+      const opt = document.createElement('option');
+      opt.value = c;
+      opt.textContent = c;
+      compFilter.appendChild(opt);
+    });
+
+    compFilter.addEventListener('change', function() {
+  updateMcqChart(this.value);
+});
+  }
+
+function shiftChart(amount) {
+  currentStartQuestion += amount;
+  if (currentStartQuestion < 1) currentStartQuestion = 1;
+  
+  updateChartRange();
+}
+
+// Add this function to jump to a specific range
+function jumpToRange() {
+  const input = document.getElementById('jumpTo');
+  const value = parseInt(input.value);
+  if (value && value > 0) {
+    currentStartQuestion = value;
+    updateChartRange();
+    input.value = '';
+  }
+}
+
+// Add this function to update the chart with new range
+window.updateChartRange = function() {
+  // Calculate which buckets to show (each bucket represents 10 questions)
+  const bucketStart = Math.floor((window.currentStartQuestion - 1) / 10);
+  const bucketEnd = bucketStart + 10;
+  
+  // Generate labels based on current bucket position
+  const newLabels = [];
+  for (let i = 0; i < 10; i++) {
+    const bucketIndex = bucketStart + i;
+    const questionNum = (bucketIndex + 1) * 10; // Convert bucket to question range end
+    newLabels.push(questionNum);
+  }
+  
+  // Update data
+  if (window.mcqChartObj && window.allData) {
+    const datasets = window.mcqChartObj.data.datasets.map(dataset => ({
+      ...dataset,
+      data: window.allData[dataset.label] ? 
+        window.allData[dataset.label].slice(bucketStart, bucketEnd).map(v => v !== null ? v/100 : null) : 
+        new Array(10).fill(null)
+    }));
+    
+    window.mcqChartObj.data.labels = newLabels;
+    window.mcqChartObj.data.datasets = datasets;
+    window.mcqChartObj.update();
+  }
+  
+  // Update range display
+  const endQuestion = window.currentStartQuestion + window.questionsPerView - 1;
+  document.getElementById('rangeDisplay').textContent = 
+    `Questions ${window.currentStartQuestion}-${endQuestion}`;
+}
+// === Add this right after mentees are built ===
+window.menteeIdNameMap = {};
+mentees.forEach(m => window.menteeIdNameMap[m.id] = m.name);
+
+
+  // 3. Store global data for modal AND prepare chart data
+  window.globalMenteeData = {};
+  let maxBuckets = 10;
+  allData = {};
+
+  // Set up live listener for recent activity as soon as mentees are known
+const menteeIds = mentees.map(m => m.id);
+if (menteeIds.length > 0) {
+  setupRecentActivityListener(menteeIds);
+}
+
+
+  for (let mentee of mentees) {
+    let qs = await db.collection('assignments')
+      .where('to', '==', mentee.id)
+      .where('type', 'in', ['written','quiz'])
+      .where('status', '==', 'complete')
+      .orderBy('createdAt')
+      .get();
+    
+    let accuracyArr = [];
+    let rawAssignments = [];
+    
+    qs.forEach(doc => {
+      let d = doc.data();
+      
+      // Store raw assignment data for modal
+      rawAssignments.push({
+        ...d,
+        id: doc.id,
+        createdAt: d.createdAt
+      });
+      
+      // Process for chart - only include assignments with valid numeric scores
+      if (typeof d.score === "number" && typeof d.maxScore === "number" && d.maxScore > 0) {
+        accuracyArr.push(Math.round((d.score/d.maxScore)*100));
+        console.log(`Chart data for ${mentee.name}: ${d.score}/${d.maxScore} = ${Math.round((d.score/d.maxScore)*100)}%`);
+      } else {
+        console.log(`Skipping assignment for chart (${mentee.name}):`, { score: d.score, maxScore: d.maxScore });
+      }
+    });
+    
+    // Store for modal use
+    window.globalMenteeData[mentee.id] = {
+      name: mentee.name,
+      assignments: rawAssignments
+    };
+    
+    // Prepare chart data
+    allData[mentee.name] = accuracyArr;
+  }
+
+  // 4. Draw the Chart.js chart
+ 
+// 4. Create buckets and draw chart
+// FIXED: Create buckets of 10 questions each
+const menteeNames = Object.keys(allData);
+
+// Store raw data globally (no bucketing)
+window.allData = allData;
+const datasets = menteeNames.map((name, i) => ({
+  label: name,
+  data: allData[name].map(v => v !== null ? v/100 : null),
+  fill: 'origin',
+  backgroundColor: window.fillPalette[i % window.fillPalette.length], // Use window.fillPalette
+  borderColor: window.palette[i % window.palette.length], // Use window.palette
+  borderWidth: 3.5,
+  tension: 0.48,
+  pointRadius: 7,
+  pointBorderWidth: 2.8,
+  pointBackgroundColor: '#fff',
+  pointBorderColor: window.palette[i % window.palette.length], // Use window.palette
+  showLine: true
+}));
+
+
+
+
+const canvas = document.getElementById('mcqChart');
+if (window.mcqChartObj) window.mcqChartObj.destroy();
+
+// Generate labels: 10, 20, 30, 40, 50, 60, 70, 80, 90, 100
+const maxQuestions = Math.max(...Object.values(allData).map(arr => arr.length), 10);
+const questionBuckets = Array.from({length: maxQuestions}, (_, i) => i + 1);
+
+window.mcqChartObj = new Chart(canvas, {
+  type: 'line',
+  data: { labels: questionBuckets, datasets },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        display: true,
+        labels: {
+          color: '#226',
+          font: { size: 24, weight: 'bold', family: 'Inter, sans-serif' },
+          padding: 20,
+          usePointStyle: true,
+          pointStyle: 'circle'
+        }
+      }
+    },
+    scales: {
+      x: {
+        title: {
+          display: true,
+          text: 'Question Numbers',
+          font: { size: 19, weight: 'bold' }
+        },
+        grid: { color: '#e7ecfa', lineWidth: 1.4 },
+        ticks: { 
+          color: '#444', 
+          font: { size: 17, family: 'Inter, sans-serif' }
+        }
+      },
+      y: {
+        min: 0, max: 1, beginAtZero: true,
+        title: {
+          display: true,
+          text: 'Accuracy (%)',
+          font: { size: 19, weight: 'bold' }
+        },
+        ticks: {
+          callback: v => Math.round(v*100) + '%',
+          color: '#444', font: { size: 17, family: 'Inter, sans-serif' }
+        },
+        grid: { color: '#e7ecfa', lineWidth: 1.4 }
+      }
+    },
+    elements: { line: { cubicInterpolationMode: 'monotone' } }
+  }
+});
+  
+  updateMcqChart("all");
+
+  document.getElementById('prevRange').onclick = function() { shiftChart(-50); };
+document.getElementById('nextRange').onclick = function() { shiftChart(50); };
+document.getElementById('jumpButton').onclick = jumpToRange;
+
+console.log('Dashboard loaded successfully', {
+  mentees: mentees.length,
+  globalData: Object.keys(window.globalMenteeData).length
+});
+
+
+
+
+
+  console.log('Dashboard loaded successfully', {
+    mentees: mentees.length,
+    globalData: Object.keys(window.globalMenteeData).length
+  });
+});
+
+function openNotificationsOnHome() {
+    // Set a flag in sessionStorage (gets cleared when browser is closed)
+    sessionStorage.setItem('openNotifications', 'true');
+    // Navigate to home page - CHANGE THIS PATH to match your structure
+    window.location.href = 'public/home.html';
+}
+
+function updateMcqChart(selectedComp = "all") {
+  if (!mentees || !allData) return; 
+  
+  let filteredMentees = mentees;
+  if (selectedComp !== "all") {
+    filteredMentees = mentees.filter(m => m.comps.includes(selectedComp));
+  }
+  let menteeNames = filteredMentees.map(m => m.name);
+
+  // Calculate the current data slice based on the view range
+  const startIndex = Math.floor((window.currentStartQuestion - 1) / 10);
+  const endIndex = startIndex + 10;
+
+  const datasets = menteeNames.map((name, i) => ({
+    label: name,
+    data: allData[name] ? 
+      allData[name].slice(startIndex, endIndex).map(v => v !== null ? v/100 : null) : 
+      new Array(10).fill(null),
+    fill: 'origin',
+    backgroundColor: window.fillPalette[i % window.fillPalette.length], // Use window.fillPalette
+    borderColor: window.palette[i % window.palette.length], // Use window.palette
+    borderWidth: 3.5,
+    tension: 0.48,
+    pointRadius: 7,
+    pointBorderWidth: 2.8,
+    pointBackgroundColor: '#fff',
+    pointBorderColor: window.palette[i % window.palette.length], // Use window.palette
+    showLine: true
+  }));
+
+  // Update labels for current range
+  const newLabels = [];
+  for (let i = 0; i < 10; i++) {
+    newLabels.push(window.currentStartQuestion + (i * 10));
+  }
+
+  window.mcqChartObj.data.labels = newLabels;
+  window.mcqChartObj.data.datasets = datasets;
+  window.mcqChartObj.update();
+}
+// ==================== COMPETITION DROPDOWN POPULATE AND HANDLER ====================
+
+// Put this AFTER your Chart.js chart drawing code (after window.mcqChartObj)
+window.addEventListener('load', function () {
+  // Make sure mentorComps is defined from your user data
+  const compFilter = document.getElementById('compFilter');
+  if (!compFilter) return;
+
+  // Remove old options except "All"
+  compFilter.innerHTML = '<option value="all">All</option>';
+
+  // Add options for each competition you mentor
+  mentorComps.forEach(c => {
+    if (!c) return;
+    const opt = document.createElement('option');
+    opt.value = c;
+    opt.textContent = c;
+    compFilter.appendChild(opt);
+  });
+
+  compFilter.addEventListener('change', function() {
+  updateMcqChart(this.value);
+});
+
+});
+
+
+// Fixed openSummaryModal function
+// Replace your openSummaryModal function with this corrected version
+async function openSummaryModal(menteeId, menteeName) {
+  const modal = document.getElementById("summaryModal");
+  modal.classList.add("show");
+  modal.querySelector('h2').textContent = `Summary for ${menteeName}`;
+  try {
+    const menteeData = window.globalMenteeData && window.globalMenteeData[menteeId];
+    if (!menteeData) {
+      modal.querySelector('.num-answered').textContent = "0";
+      modal.querySelector('.mcq-accuracy').textContent = "0%";
+      const grid = modal.querySelector('.competency-grid');
+      if (grid) grid.innerHTML = '';
+      return;
+    }
+    const now = new Date();
+    const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+    let questionsThisWeek = 0, totalCorrect = 0, totalQuestions = 0;
+    let competencyStats = {};
+    menteeData.assignments.forEach(assignment => {
+      const score = assignment.score, maxScore = assignment.maxScore;
+      const correctCompetencies = assignment.correctCompetencies || [];
+      const allCompetencies = assignment.competencies || [];
+      if (typeof score === 'number' && typeof maxScore === 'number' && maxScore > 0) {
+        totalCorrect += score;
+        totalQuestions += maxScore;
+        let createdAt;
+        if (assignment.createdAt && assignment.createdAt.toDate) {
+          createdAt = assignment.createdAt.toDate();
+        } else if (assignment.createdAt) {
+          createdAt = new Date(assignment.createdAt);
+        }
+        if (createdAt && createdAt >= weekAgo) questionsThisWeek += maxScore;
+      }
+      correctCompetencies.forEach(c => {
+        if (!competencyStats[c]) competencyStats[c] = { total: 0, correct: 0 };
+        competencyStats[c].correct += 1;
+      });
+      allCompetencies.forEach(c => {
+        if (!competencyStats[c]) competencyStats[c] = { total: 0, correct: 0 };
+        competencyStats[c].total += 1;
+      });
+    });
+    let bestComp = null, worstComp = null, bestAcc = -1, worstAcc = 101;
+    Object.keys(competencyStats).forEach(c => {
+      const stat = competencyStats[c];
+      if (stat.total > 0) {
+        const acc = Math.round((stat.correct / stat.total) * 100);
+        if (acc > bestAcc) { bestAcc = acc; bestComp = c; }
+        if (acc < worstAcc) { worstAcc = acc; worstComp = c; }
+      }
+    });
+    bestComp = bestComp || 'n/a';
+    worstComp = worstComp || 'n/a';
+    bestAcc = bestAcc === -1 ? 0 : bestAcc;
+    worstAcc = worstAcc === 101 ? 0 : worstAcc;
+    const overallAccuracy = totalQuestions > 0 ? Math.round((totalCorrect / totalQuestions) * 100) : 0;
+    modal.querySelector('.num-answered').textContent = questionsThisWeek;
+    modal.querySelector('.mcq-accuracy').textContent = overallAccuracy + "%";
+    const grid = modal.querySelector('.competency-grid');
+    if (grid) {
+      grid.innerHTML = `
+        <div style="font-weight: 600; text-align: left;">Best Competency:</div>
+        <div style="display: flex; align-items: center; gap: 0.6rem;">
+          <span style="color: #059669; font-weight: 500;">${bestComp}</span>
+          <span style="background: #e6f5ef; color: #059669; font-size: 0.98rem; border-radius: 8px; padding: 3px 13px; font-weight: 600;">${bestAcc}%</span>
+        </div>
+        <div style="font-weight: 600; text-align: left;">Weakest Competency:</div>
+        <div style="display: flex; align-items: center; gap: 0.6rem;">
+          <span style="color: #f59e42; font-weight: 500;">${worstComp}</span>
+          <span style="background: #fff5e6; color: #d97706; font-size: 0.98rem; border-radius: 8px; padding: 3px 13px; font-weight: 600;">${worstAcc}%</span>
+        </div>
+      `;
+    }
+  } catch (error) {
+    console.error('❌ Error in openSummaryModal:', error);
+    modal.querySelector('.num-answered').textContent = "0";
+    modal.querySelector('.mcq-accuracy').textContent = "0%";
+    const grid = modal.querySelector('.competency-grid');
+    if (grid) grid.innerHTML = '';
+  }
+}
+
+window.shiftChart = function(amount) {
+  window.currentStartQuestion += amount;
+  if (window.currentStartQuestion < 1) window.currentStartQuestion = 1;
+  updateChartRange();
+}
+
+window.jumpToRange = function() {
+  const input = document.getElementById('jumpTo');
+  const value = parseInt(input.value);
+  if (value && value > 0) {
+    window.currentStartQuestion = value;
+    updateChartRange();
+    input.value = '';
+  }
+}
+
+window.updateChartRange = function() {
+  const startIndex = Math.floor((window.currentStartQuestion - 1) / 10);
+  const endIndex = startIndex + 10;
+  
+  // Generate dynamic labels: 10, 20, 30, etc.
+  const newLabels = [];
+  for (let i = 0; i < 10; i++) {
+    newLabels.push(window.currentStartQuestion + (i * 10));
+  }
+  
+  // Update data
+  if (window.mcqChartObj && window.allData) {
+    const datasets = window.mcqChartObj.data.datasets.map(dataset => ({
+      ...dataset,
+      data: window.allData[dataset.label] ? 
+        window.allData[dataset.label].slice(startIndex, endIndex).map(v => v !== null ? v/100 : null) : 
+        new Array(10).fill(null)
+    }));
+    
+    window.mcqChartObj.data.labels = newLabels;
+    window.mcqChartObj.data.datasets = datasets;
+    window.mcqChartObj.update();
+  }
+  
+  // Update range display
+  const endQuestion = window.currentStartQuestion + window.questionsPerView - 1;
+  document.getElementById('rangeDisplay').textContent = 
+    `Questions ${window.currentStartQuestion}-${endQuestion}`;
+}
+
+
+</script>
+
+
+
+ <script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyDGYp9sBwOWBdu9W46Q6XFp9zfLCrEsaO4",
+    authDomain: "certquest-94959.firebaseapp.com",
+    projectId: "certquest-94959",
+    storageBucket: "certquest-94959.appspot.com",
+    messagingSenderId: "323956529033",
+    appId: "1:323956529033:web:e9c9c6a3c7668b8a72f358",
+    measurementId: "G-F5JHTGGN6K"
+  };
+
+  if (!firebase.apps.length) {
+  firebase.initializeApp(firebaseConfig);
+}
+
+  // Tab selection + underline animation
+    function selectTab(selectedTab) {
+      const tabText = selectedTab.textContent.trim();
+  
+      // Redirect if "Create" is clicked
+      if (tabText === "Dashboard") {
+        window.location.href = "mentor.html"; // replace with your correct path
+        return;
+      }
+
+      if (tabText === "Assignments") {
+        window.location.href = "assigned.html"; // replace with your correct path
+        return;
+      }
+
+      if (tabText === "Meetings") {
+        window.location.href = "meeting.html"; // replace with your correct path
+        return;
+      }
+  
+      // Handle in-page tab selection
+      const tabs = document.querySelectorAll('.tab');
+      tabs.forEach(tab => tab.classList.remove('active'));
+      selectedTab.classList.add('active');
+  
+      const underline = document.querySelector('.tab-underline');
+      underline.style.transform = `translateX(${selectedTab.offsetLeft}px)`;
+      underline.style.width = `${selectedTab.offsetWidth}px`;
+    }
+  
+    // On page load: position underline
+    window.addEventListener('load', () => {
+      const activeTab = document.querySelector('.tab.active');
+      const underline = document.querySelector('.tab-underline');
+      if (activeTab && underline) {
+        underline.style.transform = `translateX(${activeTab.offsetLeft}px)`;
+        underline.style.width = `${activeTab.offsetWidth}px`;
+      }
+  
+      feather.replace(); // renders all feather icons
+    });
+
+    
+  
+    // Accordion toggle logic
+    function toggleAccordion(button) {
+      const content = button.nextElementSibling;
+      const icon = button.querySelector('.chevron-icon');
+  
+      const isActive = button.classList.contains('active');
+  
+      if (isActive) {
+        button.classList.remove('active');
+        content.style.maxHeight = null;
+        if (icon) icon.classList.remove('rotate');
+      } else {
+        button.classList.add('active');
+        content.style.maxHeight = content.scrollHeight + "px";
+        if (icon) icon.classList.add('rotate');
+      }
+    }
+
+    function renderRecentActivity(assignments, containerId = 'recentActivityContainer') {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  container.innerHTML = '';
+
+  // Sort by date, descending
+  assignments = assignments
+    .filter(a => a.completedAt || a.createdAt) // Only ones with a date
+    .sort((a, b) => {
+      const adate = a.completedAt?.toDate?.() || a.createdAt?.toDate?.() || new Date(0);
+      const bdate = b.completedAt?.toDate?.() || b.createdAt?.toDate?.() || new Date(0);
+      return bdate - adate;
+    })
+    .slice(0, 10); // Limit to last 10 activities
+
+  assignments.forEach(a => {
+    const dateObj = a.completedAt?.toDate?.() || a.createdAt?.toDate?.() || new Date();
+    const dateStr = dateObj.toLocaleDateString(undefined, {
+      month: 'short', day: 'numeric', year: 'numeric'
+    });
+    // Dot color: green for perfect, yellow for completed, gray otherwise
+    let dotColor = 'gray';
+    if (a.status === 'complete' && a.score === a.maxScore) dotColor = 'green';
+    else if (a.status === 'complete') dotColor = 'yellow';
+
+    const name = window.menteeIdNameMap?.[a.to] || 'Student';
+
+    const title = a.title || (a.type ? a.type.charAt(0).toUpperCase() + a.type.slice(1) + " Assignment" : "Assignment");
+    const scoreStr = (typeof a.score === 'number' && typeof a.maxScore === 'number')
+      ? `<b>${a.score}/${a.maxScore}</b>`
+      : `<b>—</b>`;
+
+    container.innerHTML += `
+      <div class="result-row">
+        <span class="dot ${dotColor}"></span>
+        <span class="result-title">${name} • ${title}</span>
+        <span class="result-date">${dateStr}</span>
+        <span class="result-score">${scoreStr}</span>
+      </div>
+    `;
+  });
+
+  if (assignments.length === 0) {
+    container.innerHTML = '<div style="color:#999; padding:1rem;">No recent activity.</div>';
+  }
+}
+
+
+
+// Helper to fetch mentees by competition overlap (CertQuest logic)
+async function getMenteesByCompetition(user) {
+  const userDoc = await firebase.firestore().collection('users').doc(user.uid).get();
+  const userData = userDoc.data();
+
+  // Get mentor's competitions
+  let mentorComps = [];
+  if (Array.isArray(userData.mentorCompetition)) mentorComps = userData.mentorCompetition;
+  else if (typeof userData.mentorCompetition === 'string' && userData.mentorCompetition.trim() !== '')
+    mentorComps = [userData.mentorCompetition.trim()];
+
+  if (mentorComps.length === 0) return [];
+
+  // Pull all users, filter by competition overlap
+  const usersSnapshot = await firebase.firestore().collection('users').get();
+  let mentees = [];
+  usersSnapshot.forEach(doc => {
+    const other = doc.data();
+    if (doc.id === user.uid) return; // skip self
+    let otherComps = [];
+    if (Array.isArray(other.competitions)) otherComps = other.competitions;
+    else if (typeof other.competitions === 'string' && other.competitions.trim() !== '')
+      otherComps = [other.competitions.trim()];
+    const overlap = otherComps.some(comp => mentorComps.includes(comp));
+    if (comps.some(c => mentorComps.includes(c))) {
+  mentees.push({
+    id: doc.id,
+    name: d.name || d.fullName || d.email || '(unnamed)',
+    grade: d.grade || '',
+    comps: comps.filter(Boolean) // competitions as array
+  });
+}
+
+  });
+  return mentees;
+}
+
+
+
+
+
+  function closeSummaryModal() {
+    document.getElementById("summaryModal").classList.remove("show");
+  }
+
+  // ============ MEILISEARCH INTEGRATION ============
+    // Meilisearch client setup (adjust if you use a different host)
+    const client = new MeiliSearch({ host: 'http://127.0.0.1:7700' });
+    const index = client.index('content');
+    const searchBox = document.getElementById('navbarSearch');
+    const searchDropdown = document.getElementById('searchDropdown');
+    const searchIcon = document.getElementById('navbarSearchIcon');
+
+    if (searchBox && searchDropdown) {
+      searchBox.addEventListener('input', async function(e) {
+        const query = e.target.value.trim();
+        if (!query) {
+          searchDropdown.style.display = 'none';
+          searchDropdown.innerHTML = '';
+          return;
+        }
+        try {
+          const result = await index.search(query, { limit: 5 });
+          if (!result.hits.length) {
+            searchDropdown.style.display = 'none';
+            searchDropdown.innerHTML = '';
+            return;
+          }
+          searchDropdown.style.display = 'block';
+          searchDropdown.innerHTML = result.hits.map(doc => `
+            <div class="dropdown-result" tabindex="0" data-url="${doc.url}">
+              <b>${doc.title}</b><br>
+              <span style="font-size:12px;color:#888;">${doc.category || ''}${doc.tags ? ' | ' + doc.tags.join(', ') : ''}</span>
+            </div>
+          `).join('');
+        } catch (err) {
+          searchDropdown.style.display = 'none';
+          searchDropdown.innerHTML = '';
+        }
+      });
+
+      // Handle result click
+      searchDropdown.addEventListener('click', function(e) {
+        const target = e.target.closest('.dropdown-result');
+        if (target && target.dataset.url) {
+          window.location = target.dataset.url;
+        }
+      });
+
+      // Optional: Allow Enter key to open first result
+      searchBox.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' && searchDropdown.innerHTML) {
+          const first = searchDropdown.querySelector('.dropdown-result');
+          if (first && first.dataset.url) {
+            window.location = first.dataset.url;
+          }
+        }
+      });
+
+      // Hide dropdown on outside click
+      document.addEventListener('click', function(e) {
+        if (!searchBox.contains(e.target) && !searchDropdown.contains(e.target)) {
+          searchDropdown.style.display = 'none';
+        }
+      });
+
+      // Click magnifier icon triggers search
+      if (searchIcon) {
+        searchIcon.addEventListener('click', () => {
+          searchBox.dispatchEvent(new Event('input'));
+        });
+      }
+    }
+    // =========== END MEILISEARCH ============
+
+    function setupRecentActivityListener(menteeIdsArray) {
+  // Remove previous listener if set
+  if (window.recentActivityUnsub) window.recentActivityUnsub();
+
+  // Firestore 'in' queries max out at 10 elements, so batch if needed
+  const db = firebase.firestore();
+  const batchSize = 10;
+  const allActivities = [];
+  let batchesDone = 0;
+  let batches = [];
+  for (let i = 0; i < menteeIdsArray.length; i += batchSize) {
+    batches.push(menteeIdsArray.slice(i, i + batchSize));
+  }
+
+  function renderAllActivities() {
+    // Merge and sort all, show latest 10
+    const merged = allActivities
+      .sort((a, b) => {
+        const adate = a.completedAt?.toDate?.() || a.createdAt?.toDate?.() || new Date(0);
+        const bdate = b.completedAt?.toDate?.() || b.createdAt?.toDate?.() || new Date(0);
+        return bdate - adate;
+      })
+      .slice(0, 10);
+    renderRecentActivity(merged); // <-- Calls your existing function!
+  }
+
+  window.recentActivityUnsub = () => {}; // No-op, to chain unsubs
+
+  batches.forEach((idBatch, idx) => {
+    const unsub = db.collection('assignments')
+      .where('to', 'in', idBatch)
+      .where('status', '==', 'complete')
+      .orderBy('completedAt', 'desc')
+      .limit(10)
+      .onSnapshot(snapshot => {
+        // For this batch, replace its segment in the array
+        allActivities.splice(
+          idx * batchSize,
+          batchSize,
+          ...snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }))
+        );
+        batchesDone++;
+        if (batchesDone === batches.length) {
+          renderAllActivities();
+        }
+      });
+    // Unsub logic
+    window.recentActivityUnsub = (function(oldUnsub) {
+      return function() {
+        unsub();
+        if (oldUnsub) oldUnsub();
+      }
+    })(window.recentActivityUnsub);
+  });
+}
+
+
+
+</script>
+
+
+  
+</body>
+</html>

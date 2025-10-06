@@ -1,0 +1,1244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CertQuest Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/feather-icons"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f8fafc;
+      color: #1a202c;
+    }
+
+    /* Top Header */
+    .top-header {
+      background: white;
+      padding: 1rem 2rem;
+      border-bottom: 1px solid #e2e8f0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .nav-left {
+      font-size: 1.5rem;
+    }
+
+    .nav-title {
+      font-weight: 600;
+      font-size: 1.25rem;
+    }
+
+    .new-badge {
+      background: #10b981;
+      color: white;
+      padding: 0.25rem 0.5rem;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      margin-left: 0.5rem;
+    }
+
+    .nav-right {
+      position: relative;
+    }
+
+    #navbarSearch {
+      padding: 0.5rem 1rem;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      width: 250px;
+    }
+
+    /* Main Layout */
+    .main-layout {
+      display: flex;
+      min-height: calc(100vh - 80px);
+    }
+
+    .sidebar {
+      width: 80px;
+      background: white;
+      border-right: 1px solid #e2e8f0;
+      padding: 2rem 0;
+    }
+
+    .logo {
+      text-align: center;
+      font-weight: 700;
+      font-size: 1.5rem;
+      color: #667eea;
+      margin-bottom: 2rem;
+    }
+
+    .nav-icons {
+      list-style: none;
+    }
+
+    .nav-icons li {
+      padding: 1rem;
+      text-align: center;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    
+
+    .content {
+      flex: 1;
+      padding: 3rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .unit-title {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      color: #1a202c;
+    }
+
+    .content > p {
+      color: #6b7280;
+      font-size: 1.125rem;
+      margin-bottom: 3rem;
+    }
+
+    /* Flashcard Deck Grid */
+    .deck-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+
+    /* Deck Cover Cards */
+    .deck-cover {
+      background: white;
+      border-radius: 16px;
+      padding: 2rem;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      border: 1px solid #e5e7eb;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .deck-cover:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.1);
+    }
+
+    .deck-cover::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 10px;
+      background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .deck-icon {
+      width: 60px;
+      height: 60px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .deck-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: #1f2937;
+      margin-bottom: 0.5rem;
+    }
+
+    .deck-description {
+      color: #6b7280;
+      margin-bottom: 1.5rem;
+      line-height: 1.5;
+    }
+
+    .deck-stats {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .deck-meta {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .meta-item {
+      background: #f3f4f6;
+      color: #374151;
+      padding: 0.25rem 0.75rem;
+      border-radius: 12px;
+      font-size: 0.6rem;
+      font-weight: 500;
+      gap: 0.75rem;
+    }
+
+    .deck-action {
+      background: #667eea;
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 0.6rem;
+    margin-left: 0.75rem;
+      transition: background 0.2s;
+    }
+
+    .deck-action:hover {
+      background: #5a67d8;
+      text-decoration: none;
+      color: white;
+    }
+
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      padding: 4rem 2rem;
+      color: #6b7280;
+    }
+
+    .empty-state h3 {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      color: #374151;
+    }
+
+    /* Loading State */
+    .loading {
+      text-align: center;
+      padding: 4rem;
+      color: #6b7280;
+      font-size: 1.125rem;
+    }
+
+    /* Modal Styles */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(4px);
+    }
+
+    .modal-content {
+      background-color: white;
+      margin: 2% auto;
+      padding: 0;
+      border-radius: 16px;
+      width: 90%;
+      max-width: 800px;
+      max-height: 90vh;
+      overflow: hidden;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    }
+
+    .modal-header {
+      padding: 2rem 2rem 1rem;
+      border-bottom: 1px solid #e5e7eb;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-header h2 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: #1f2937;
+    }
+
+    .close-modal {
+      color: #6b7280;
+      font-size: 2rem;
+      font-weight: bold;
+      cursor: pointer;
+      padding: 0.5rem;
+      line-height: 1;
+      transition: color 0.2s;
+    }
+
+    .close-modal:hover {
+      color: #374151;
+    }
+
+    /* Flashcard Styles */
+    .flashcard-container {
+      padding: 2rem;
+      min-height: 400px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .flashcard {
+      background: #f8fafc;
+      border: 2px solid #e5e7eb;
+      border-radius: 12px;
+      min-height: 300px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-bottom: 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .flashcard:hover {
+      border-color: #667eea;
+      box-shadow: 0 4px 20px rgba(102, 126, 234, 0.15);
+    }
+
+    .flashcard-content {
+      padding: 2rem;
+      text-align: center;
+      width: 100%;
+    }
+
+    .flashcard-front h3 {
+      font-size: 1.25rem;
+      color: #1f2937;
+      margin-bottom: 1rem;
+      line-height: 1.6;
+    }
+
+    .flashcard-back {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+
+    .flashcard-back p {
+      font-size: 1.125rem;
+      margin-bottom: 1rem;
+      line-height: 1.6;
+    }
+
+    .flashcard-back small {
+      opacity: 0.8;
+      font-size: 0.875rem;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    /* Navigation */
+    .flashcard-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .nav-btn {
+      background: #667eea;
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+
+    .nav-btn:hover {
+      background: #5a67d8;
+      transform: translateY(-1px);
+    }
+
+    .nav-btn:disabled {
+      background: #d1d5db;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .card-counter {
+      color: #6b7280;
+      font-weight: 500;
+    }
+
+    /* Difficulty Actions */
+    .flashcard-actions {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+    }
+
+    .difficulty-btn {
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+
+    .difficulty-btn.easy {
+      background: #d1fae5;
+      color: #065f46;
+    }
+
+    .difficulty-btn.easy:hover {
+      background: #a7f3d0;
+    }
+
+    .difficulty-btn.medium {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .difficulty-btn.medium:hover {
+      background: #fde68a;
+    }
+
+    .difficulty-btn.hard {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .difficulty-btn.hard:hover {
+      background: #fecaca;
+    }
+
+    /* Flip Animation */
+    .flashcard.flipping {
+      transform: rotateY(180deg);
+    }
+
+    .flashcard-front,
+    .flashcard-back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .flashcard-back {
+      transform: rotateY(180deg);
+    }
+
+     .nav-icons {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  
+  .nav-icons li {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    background-color: #f1f5ff;
+    width: 60%;
+    margin-left: 17px;
+    padding: 0.75rem;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+  }
+  
+  .nav-icons li:hover {
+    background-color: #d8e5ff;
+  }
+
+  .nav-label {
+    position: absolute;
+    left: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: #111827;
+    color: white;
+    font-size: 0.7rem;
+    padding: 0.3rem 0.5rem;
+    border-radius: 6px;
+    margin-left: 0.75rem;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s ease, transform 0.2s ease;
+    z-index: 10;
+  }
+
+  .nav-icons li:hover .nav-label {
+    opacity: 1;
+    transform: translateY(-50%) translateX(0px);
+  }
+  </style>
+</head>
+<body>
+
+  <!-- Top Nav -->
+  <div class="top-header">
+    <div class="nav-left">🌐</div>
+    <div class="nav-title">Dashboard <span class="new-badge">(New!)</span></div>
+    <div class="nav-right">
+      <input type="text" id="navbarSearch" placeholder="Search CertQuest..." />
+      <span class="search-icon" id="navbarSearchIcon">🔍</span>
+      <div id="searchDropdown"></div>
+    </div>
+  </div>
+
+  <div class="main-layout">
+    <!-- Sidebar -->
+      <aside class="sidebar">
+      <div class="logo">CQ</div>
+      <ul class="nav-icons">
+  <li>
+     <a href="/Public/home.html">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M12 3L20 9V21H15V15H9V21H4V9L12 3Z" fill="#3b82f6" fill-opacity="0.3"/>
+      <path d="M12 3L4 9V21H9V15H15V21H20V9L12 3Z" stroke="#3b82f6" stroke-width="2" fill="none" stroke-linejoin="round"/>
+      <rect x="10" y="17" width="4" height="4" fill="#3b82f6"/>
+      <rect x="6" y="11" width="2" height="2" fill="#3b82f6"/>
+      <rect x="16" y="11" width="2" height="2" fill="#3b82f6"/>
+    </svg>
+    
+    <span class="nav-label">Home</span>
+     </a>
+  </li>
+  <li>
+  <a href="#" onclick="openNotificationsOnHome(); return false;">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- Bell body main fill -->
+    <path d="M18 8C18 6.4087 17.3679 4.88258 16.2426 3.75736C15.1174 2.63214 13.5913 2 12 2C10.4087 2 8.88258 2.63214 7.75736 3.75736C6.63214 4.88258 6 6.4087 6 8C6 15 3 17 3 17H21C21 17 18 15 18 8Z" fill="#3b82f6" fill-opacity="0.3"/>
+    <!-- Bell body lighter overlay -->
+    <path d="M18 8C18 6.4087 17.3679 4.88258 16.2426 3.75736C15.1174 2.63214 13.5913 2 12 2C10.4087 2 8.88258 2.63214 7.75736 3.75736C6.63214 4.88258 6 6.4087 6 8C6 12 6 15 6 15H18C18 15 18 12 18 8Z" fill="#3b82f6" fill-opacity="0.2"/>
+    <!-- Bell outline -->
+    <path d="M18 8C18 6.4087 17.3679 4.88258 16.2426 3.75736C15.1174 2.63214 13.5913 2 12 2C10.4087 2 8.88258 2.63214 7.75736 3.75736C6.63214 4.88258 6 6.4087 6 8C6 15 3 17 3 17H21C21 17 18 15 18 8Z" stroke="#3b82f6" stroke-width="2" fill="none"/>
+    <!-- Bell clapper -->
+    <circle cx="12" cy="8" r="1" fill="#3b82f6"/>
+    <!-- Sound waves -->
+    <path d="M19 4L20 3" stroke="#3b82f6" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/>
+    <path d="M20.5 6.5L22 6" stroke="#3b82f6" stroke-width="1.5" stroke-linecap="round" opacity="0.3"/>
+    <path d="M5 4L4 3" stroke="#3b82f6" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/>
+    <path d="M3.5 6.5L2 6" stroke="#3b82f6" stroke-width="1.5" stroke-linecap="round" opacity="0.3"/>
+    <!-- Bottom notification indicator -->
+    <path d="M13.73 21C13.5542 21.3031 13.3019 21.5547 12.9982 21.7295C12.6946 21.9044 12.3504 21.9965 12 21.9965C11.6496 21.9965 11.3054 21.9044 11.0018 21.7295C10.6982 21.5547 10.4458 21.3031 10.27 21" stroke="#3b82f6" stroke-width="2" stroke-linecap="round"/>
+  </svg>
+  <span class="nav-label">Notifications</span>
+</a>
+</li>
+  <li>
+    <a href="/practice.html">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="12" cy="12" r="9" fill="#3b82f6" fill-opacity="0.3"/>
+      <circle cx="12" cy="12" r="6" fill="#3b82f6" fill-opacity="0.2"/>
+      <circle cx="12" cy="12" r="9" stroke="#3b82f6" stroke-width="2" fill="none"/>
+      <circle cx="12" cy="12" r="6" stroke="#3b82f6" stroke-width="1.5" fill="none"/>
+      <circle cx="12" cy="12" r="3" stroke="#3b82f6" stroke-width="1.5" fill="none"/>
+      <circle cx="12" cy="12" r="1.5" fill="#3b82f6"/>
+      <path d="M16 8L12 12L16 8Z" fill="#3b82f6"/>
+      <line x1="16" y1="8" x2="19" y2="5" stroke="#3b82f6" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+    <span class="nav-label">Practice</span>
+    </a>
+  </li>
+  <li>
+    <a href="/Public/Forum/forum.html">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M8 6C8 4.89543 8.89543 4 10 4H18C19.1046 4 20 4.89543 20 6V12C20 13.1046 19.1046 14 18 14H12L8 18V6Z" fill="#3b82f6" fill-opacity="0.3"/>
+      <path d="M4 10C4 8.89543 4.89543 8 6 8H8V16L4 20V12C4 11.4477 4.44772 11 5 11C4.44772 11 4 10.5523 4 10Z" fill="#3b82f6" fill-opacity="0.2"/>
+      <path d="M8 6C8 4.89543 8.89543 4 10 4H18C19.1046 4 20 4.89543 20 6V12C20 13.1046 19.1046 14 18 14H12L8 18V6Z" stroke="#3b82f6" stroke-width="2" fill="none"/>
+      <path d="M4 10C4 8.89543 4.89543 8 6 8H8V16L4 20V12C4 11.4477 4.44772 11 5 11C4.44772 11 4 10.5523 4 10Z" stroke="#3b82f6" stroke-width="1.5" fill="none"/>
+      <line x1="11" y1="8" x2="17" y2="8" stroke="#3b82f6" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="11" y1="10" x2="15" y2="10" stroke="#3b82f6" stroke-width="1.5" stroke-linecap="round"/>
+    </svg>
+    <span class="nav-label">Forum</span>
+    </a>
+  </li>
+  <li>
+     <a href="/Public/Calendar/calendar.html">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="3" y="6" width="18" height="15" rx="2" fill="#3b82f6" fill-opacity="0.3"/>
+      <rect x="3" y="6" width="18" height="4" rx="2" fill="#3b82f6" fill-opacity="0.2"/>
+      <rect x="3" y="6" width="18" height="15" rx="2" stroke="#3b82f6" stroke-width="2" fill="none"/>
+      <line x1="7" y1="3" x2="7" y2="7" stroke="#3b82f6" stroke-width="2" stroke-linecap="round"/>
+      <line x1="17" y1="3" x2="17" y2="7" stroke="#3b82f6" stroke-width="2" stroke-linecap="round"/>
+      <line x1="3" y1="10" x2="21" y2="10" stroke="#3b82f6" stroke-width="1" opacity="0.5"/>
+      <line x1="7.5" y1="10" x2="7.5" y2="21" stroke="#3b82f6" stroke-width="1" opacity="0.3"/>
+      <line x1="12" y1="10" x2="12" y2="21" stroke="#3b82f6" stroke-width="1" opacity="0.3"/>
+      <line x1="16.5" y1="10" x2="16.5" y2="21" stroke="#3b82f6" stroke-width="1" opacity="0.3"/>
+      <circle cx="9" cy="13" r="1" fill="#3b82f6"/>
+      <circle cx="15" cy="16" r="1" fill="#3b82f6"/>
+      <circle cx="12" cy="18" r="1" fill="#3b82f6"/>
+    </svg>
+    <span class="nav-label">Calendar</span>
+     </a>
+  </li>
+</ul>
+    </aside>
+    
+    <div class="content">
+      <h1 class="unit-title"><span class="name">Flashcards</span></h1>
+      <p>Organized by competency based on your missed questions</p>
+      
+      <div class="deck-grid" id="deckGrid">
+        <div class="loading">Loading your flashcard decks...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Flashcard Modal -->
+  <div id="deckModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="modalDeckTitle">Flashcards</h2>
+        <span class="close-modal" onclick="closeDeckModal()">&times;</span>
+      </div>
+      <div class="flashcard-container">
+        <div class="flashcard" id="currentFlashcard" onclick="flipCard()">
+          <div class="flashcard-front">
+            <div class="flashcard-content">
+              <h3>Loading flashcard...</h3>
+            </div>
+          </div>
+          <div class="flashcard-back hidden">
+            <div class="flashcard-content">
+              <p>Answer will appear here</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="flashcard-nav">
+          <button class="nav-btn" onclick="prevCard()" id="prevBtn">← Previous</button>
+          <span class="card-counter" id="cardCounter">1/1</span>
+          <button class="nav-btn" onclick="nextCard()" id="nextBtn">Next →</button>
+        </div>
+        
+        <div class="flashcard-actions">
+          <button class="difficulty-btn easy" onclick="rateDifficulty('easy')">✓ Easy</button>
+          <button class="difficulty-btn medium" onclick="rateDifficulty('medium')">~ Medium</button>
+          <button class="difficulty-btn hard" onclick="rateDifficulty('hard')">✗ Hard</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Initialize Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyDGYp9sBwOWBdu9W46Q6XFp9zfLCrEsaO4",
+      authDomain: "certquest-94959.firebaseapp.com",
+      projectId: "certquest-94959",
+      storageBucket: "certquest-94959.appspot.com",
+      messagingSenderId: "323956529033",
+      appId: "1:323956529033:web:e9c9c6a3c7668b8a72f358"
+    };
+    
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    
+    let currentDeck = null;
+    let currentCardIndex = 0;
+    let isFlipped = false;
+
+    const competencyIcons = {
+  'ACCOUNTING': '💰',
+  'FINANCE': '💳', 
+  'BUSINESS LAW': '⚖️',
+  'MARKETING': '📈',
+  'ECONOMICS': '📊',
+  'MANAGEMENT': '👥',
+  'ENTREPRENEURSHIP': '🚀',
+  'BUSINESS ETHICS': '🤝',
+  'OPERATIONS': '⚙️',
+  'HUMAN RESOURCES': '👤',
+  'Public Speaking': '🎤',
+  'Communication': '💬',
+  'Presentation': '📊',
+  'Leadership': '👑',
+  'Parliamentary Procedure': '📋',
+  'General': '📚'
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+  // Initialize Firebase Auth first
+  const auth = firebase.auth();
+  
+  // Check URL parameters immediately
+  const urlParams = new URLSearchParams(window.location.search);
+  const competency = urlParams.get('competency');
+  
+  // Handle both auth state and deck loading in one flow
+  auth.onAuthStateChanged(user => {
+    if (!user) {
+      showEmptyState('Please sign in to view flashcards');
+      return;
+    }
+    
+    // If specific deck requested, try to open it
+    if (competency) {
+      const deckData = localStorage.getItem(`flashcardDeck_${competency}`);
+      if (deckData) {
+        try {
+          const deck = JSON.parse(deckData);
+          openDeckModal(deck.name, deck.cards);
+          return; // Exit after opening specific deck
+        } catch (e) {
+          console.error('Error parsing deck data:', e);
+          // Fall through to normal load if error occurs
+        }
+      }
+    }
+    
+    // Normal load flow
+    loadFlashcards();
+  });
+});
+
+
+async function loadFlashcards() {
+  try {
+    const user = firebase.auth().currentUser;
+    if (!user) {
+      showEmptyState('Please sign in to view flashcards');
+      return;
+    }
+
+    console.log('Loading flashcards for user:', user.uid);
+
+    // Get completed written assignments
+    const assignmentsSnapshot = await db.collection('assignments')
+      .where('to', '==', user.uid)
+      .where('status', '==', 'complete')
+      .where('type', '==', 'written')
+      .get();
+
+    if (assignmentsSnapshot.empty) {
+      showEmptyState('No flashcards yet!', 'Complete some quizzes to generate flashcards from missed questions.');
+      return;
+    }
+
+    // Process missed questions by competency with deduplication
+    const competencyDecks = {};
+    const seenQuestions = new Map(); // Track seen questions across all competencies
+    
+    assignmentsSnapshot.forEach(doc => {
+      const assignment = doc.data();
+      
+      if (!Array.isArray(assignment.detailedAnswers)) return;
+      
+      assignment.detailedAnswers.forEach(answer => {
+        if (answer.isCorrect === false && answer.question) {
+          const competency = answer.competency || 'General';
+          const questionKey = answer.question.trim().toLowerCase();
+          
+          // Only add if we haven't seen this exact question before
+          if (!seenQuestions.has(questionKey)) {
+            if (!competencyDecks[competency]) {
+              competencyDecks[competency] = [];
+            }
+            
+            competencyDecks[competency].push({
+              id: `${doc.id}_${answer.questionIndex || competencyDecks[competency].length}`,
+              question: answer.question,
+              answer: answer.correctAnswer,
+              userAnswer: answer.userAnswer,
+              competency: competency
+            });
+            
+            seenQuestions.set(questionKey, true); // Mark as seen
+          }
+        }
+      });
+    });
+
+    console.log('Unique decks after deduplication:', 
+      Object.keys(competencyDecks).map(k => `${k}: ${competencyDecks[k].length} cards`));
+    
+    renderDeckCovers(competencyDecks);
+
+  } catch (error) {
+    console.error("Error loading flashcards:", error);
+    showEmptyState('Error loading flashcards', 'Please try again later.');
+  }
+}
+
+function renderDeckCovers(decks) {
+  const container = document.getElementById('deckGrid');
+  container.innerHTML = '';
+  
+  Object.entries(decks).forEach(([competency, cards]) => {
+    const icon = competencyIcons[competency] || '📚';
+    const cardCount = cards.length;
+    const difficultyLevel = getDifficultyLevel(cards);
+    
+    const deckElement = document.createElement('div');
+    deckElement.className = 'deck-cover';
+    deckElement.innerHTML = `
+      <div class="deck-icon">${icon}</div>
+      <div class="deck-title">${competency}</div>
+      <div class="deck-description">
+        Review missed questions and strengthen your understanding of ${competency.toLowerCase()} concepts.
+      </div>
+      <div class="deck-stats">
+       
+        <span class="meta-item">${difficultyLevel}</span>
+        <button class="deck-action primary"  style="border:none; width: 300px; border-radius: 50px;" onclick="openDeckModal('${competency}', ${JSON.stringify(cards).replace(/"/g, '&quot;')})">
+
+          Start Practice
+        </button>
+        <button class="deck-action export" style="border:none; width: 300px; border-radius: 50px;" onclick="exportToQuizlet('${competency}', ${JSON.stringify(cards).replace(/"/g, '&quot;')})">
+          Export
+        </button>
+      </div>
+    `;
+    
+    container.appendChild(deckElement);
+  });
+}
+
+function getDifficultyLevel(cards) {
+      if (cards.length <= 3) return 'Easy';
+      if (cards.length <= 7) return 'Medium';
+      return 'Challenging';
+    }
+
+function openDeckModal(competency, cards) {
+  console.log('Opening deck modal for:', competency);
+  
+  // Ensure cards is always an array
+  if (!Array.isArray(cards)) {
+    console.error('Invalid cards data:', cards);
+    return;
+  }
+  
+  currentDeck = {
+    name: competency,
+    cards: cards
+  };
+  currentCardIndex = 0;
+  isFlipped = false;
+  
+  document.getElementById('modalDeckTitle').textContent = `${competency} Flashcards`;
+  
+  // Make sure modal is visible
+  const modal = document.getElementById('deckModal');
+  modal.style.display = 'block';
+  document.body.style.overflow = 'hidden'; // Prevent scrolling behind modal
+  
+  showCurrentCard();
+}
+
+function showCurrentCard() {
+  if (!currentDeck || !currentDeck.cards || currentDeck.cards.length === 0) {
+    console.error('No cards to show');
+    return;
+  }
+  
+  const card = currentDeck.cards[currentCardIndex];
+  const flashcard = document.getElementById('currentFlashcard');
+  
+  console.log('Showing card:', currentCardIndex, 'Question:', card.question.substring(0, 50));
+  
+  // Reset flip state
+  isFlipped = false;
+  
+  // Make sure we have the proper structure first
+  if (!flashcard.querySelector('#question-side')) {
+    flashcard.innerHTML = `
+      <div class="flashcard-content">
+        <div id="question-side">
+          <h3></h3>
+          <small style="opacity: 0.7; margin-top: 1rem; display: block;">Click to reveal answer</small>
+        </div>
+        <div id="answer-side" style="display: none;">
+          <p></p>
+        </div>
+      </div>
+    `;
+  }
+  
+  // Update the content of existing elements (like your original function)
+  flashcard.querySelector('#question-side h3').textContent = card.question;
+  flashcard.querySelector('#answer-side p').innerHTML = `
+    <strong>Correct Answer:</strong><br>${card.answer}
+    ${card.userAnswer ? `<br><small style="margin-top: 1rem; display: block; opacity: 0.8;">You answered: "${card.userAnswer}"</small>` : ''}
+    <small style="margin-top: 0.5rem; display: block; opacity: 0.7;">Click to flip back</small>
+  `;
+  
+  // Reset display states
+  document.getElementById('question-side').style.display = 'block';
+  document.getElementById('answer-side').style.display = 'none';
+  
+  // Update counter
+  document.getElementById('cardCounter').textContent = 
+    `${currentCardIndex + 1}/${currentDeck.cards.length}`;
+  
+  // Update navigation buttons
+  document.getElementById('prevBtn').disabled = currentCardIndex === 0;
+  document.getElementById('nextBtn').disabled = currentCardIndex === currentDeck.cards.length - 1;
+}
+
+function updateNavigationButtons() {
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  
+  if (prevBtn) {
+    prevBtn.disabled = currentCardIndex === 0;
+    prevBtn.onclick = prevCard; // Re-attach event
+    
+    // Update button text/appearance based on state
+    if (currentCardIndex === 0) {
+      prevBtn.style.opacity = '0.5';
+      prevBtn.style.cursor = 'not-allowed';
+    } else {
+      prevBtn.style.opacity = '1';
+      prevBtn.style.cursor = 'pointer';
+    }
+  }
+  
+  if (nextBtn) {
+    nextBtn.disabled = currentCardIndex === currentDeck.cards.length - 1;
+    nextBtn.onclick = nextCard; // Re-attach event
+    
+    // Update button text/appearance based on state
+    if (currentCardIndex === currentDeck.cards.length - 1) {
+      nextBtn.style.opacity = '0.5';
+      nextBtn.style.cursor = 'not-allowed';
+    } else {
+      nextBtn.style.opacity = '1';
+      nextBtn.style.cursor = 'pointer';
+    }
+  }
+  
+  console.log('Navigation buttons updated:', {
+    currentIndex: currentCardIndex,
+    totalCards: currentDeck.cards.length,
+    prevDisabled: currentCardIndex === 0,
+    nextDisabled: currentCardIndex === currentDeck.cards.length - 1
+  });
+}
+
+
+function flipCard() {
+  const questionSide = document.getElementById('question-side');
+  const answerSide = document.getElementById('answer-side');
+  
+  console.log('flipCard called, isFlipped:', isFlipped);
+  
+  if (!questionSide || !answerSide) {
+    console.error('Question or answer side not found');
+    return;
+  }
+  
+  if (!isFlipped) {
+    // Show answer
+    questionSide.style.display = 'none';
+    answerSide.style.display = 'block';
+    isFlipped = true;
+    console.log('Now showing answer');
+  } else {
+    // Show question
+    questionSide.style.display = 'block';
+    answerSide.style.display = 'none';
+    isFlipped = false;
+    console.log('Now showing question');
+  }
+}
+   function prevCard() {
+  if (!currentDeck || currentCardIndex <= 0) return;
+  currentCardIndex--;
+  showCurrentCard();
+}
+
+function nextCard() {
+  if (!currentDeck || currentCardIndex >= currentDeck.cards.length - 1) return;
+  currentCardIndex++;
+  showCurrentCard();
+}
+
+// Fixed closeDeckModal function
+function closeDeckModal() {
+  document.getElementById('deckModal').style.display = 'none';
+  currentDeck = null;
+  currentCardIndex = 0;
+  isFlipped = false;
+}
+
+function exportToQuizlet(competency, cards) {
+  // Create CSV format that Quizlet can import
+  let csvContent = "Question,Answer\n";
+  
+  cards.forEach(card => {
+    // Escape quotes and commas for CSV
+    const question = `"${card.question.replace(/"/g, '""')}"`;
+    const answer = `"${card.answer.replace(/"/g, '""')}"`;
+    csvContent += `${question},${answer}\n`;
+  });
+  
+  // Create downloadable file
+  const blob = new Blob([csvContent], { type: 'text/csv' });
+  const url = window.URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `CertQuest-${competency}-Flashcards.csv`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  window.URL.revokeObjectURL(url);
+  
+  // Show instructions
+  alert(`📥 CSV downloaded! 
+
+To import to Quizlet:
+1. Go to quizlet.com and create a new study set
+2. Click "Import from Word, Excel, Google Docs, etc."
+3. Upload the downloaded CSV file
+4. Make sure delimiter is set to "Comma"
+5. Click "Import"`);
+}
+
+// Add this function to create a shareable text format
+function exportToText(competency, cards) {
+  let textContent = `CertQuest ${competency} Flashcards\n`;
+  textContent += `Generated on ${new Date().toLocaleDateString()}\n`;
+  textContent += `Total Cards: ${cards.length}\n\n`;
+  
+  cards.forEach((card, index) => {
+    textContent += `Card ${index + 1}:\n`;
+    textContent += `Q: ${card.question}\n`;
+    textContent += `A: ${card.answer}\n\n`;
+  });
+  
+  // Copy to clipboard
+  navigator.clipboard.writeText(textContent).then(() => {
+    alert(`📋 Copied to clipboard! 
+
+You can now:
+1. Paste into a Quizlet study set
+2. Share with classmates
+3. Save as a text file for studying offline`);
+  });
+}
+   
+// Add this function to handle XP awards
+async function awardXP(userId, amount, reason) {
+  try {
+    const userRef = db.collection('users').doc(userId);
+    const userDoc = await userRef.get();
+    
+    if (userDoc.exists) {
+      await userRef.update({
+        XP: firebase.firestore.FieldValue.increment(amount)
+      });
+    } else {
+      await userRef.set({
+        XP: amount
+      });
+    }
+    
+    console.log(`Awarded ${amount} XP to user ${userId} for ${reason}`);
+    showXPNotification(amount, reason);
+    
+  } catch (error) {
+    console.error("Failed to award XP:", error);
+  }
+}
+
+// Add this function to show XP notification
+function showXPNotification(amount, reason) {
+  // Create notification element if it doesn't exist
+  let notification = document.getElementById('xpNotification');
+  if (!notification) {
+    notification = document.createElement('div');
+    notification.id = 'xpNotification';
+    notification.style.cssText = `
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 15px 25px;
+      border-radius: 10px;
+      font-weight: bold;
+      z-index: 10000;
+      transform: translateX(400px);
+      transition: transform 0.3s ease;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    `;
+    document.body.appendChild(notification);
+  }
+  
+  notification.textContent = `🎉 +${amount} XP for completing flashcards!`;
+  notification.style.transform = 'translateX(0)';
+  
+  setTimeout(() => {
+    notification.style.transform = 'translateX(400px)';
+  }, 3000);
+}
+
+function rateDifficulty(difficulty) {
+  if (!currentDeck || !currentDeck.cards[currentCardIndex]) return;
+  
+  // Update local difficulty
+  currentDeck.cards[currentCardIndex].difficulty = difficulty;
+  
+  // Visual feedback
+  const buttons = document.querySelectorAll('.difficulty-btn');
+  buttons.forEach(btn => btn.style.transform = 'scale(1)');
+  
+  const activeBtn = document.querySelector(`.difficulty-btn.${difficulty}`);
+  if (activeBtn) {
+    activeBtn.style.transform = 'scale(0.95)';
+    setTimeout(() => {
+      activeBtn.style.transform = 'scale(1)';
+    }, 150);
+  }
+  
+  // Auto advance to next card after a brief delay
+  setTimeout(async () => {
+    if (currentCardIndex < currentDeck.cards.length - 1) {
+      nextCard();
+    } else {
+      // Completed all cards - award XP
+      const user = firebase.auth().currentUser;
+      if (user) {
+        await awardXP(user.uid, 5, 'completing flashcards');
+      }
+      
+      alert(`🎉 Great job! You've completed all ${currentDeck.cards.length} flashcards for ${currentDeck.name}.`);
+    }
+  }, 500);
+}
+
+// Add this function to get difficulty level
+function getDifficultyLevel(cards) {
+  if (cards.length <= 3) return 'Easy';
+  if (cards.length <= 7) return 'Medium';
+  return 'Challenging';
+}
+
+// Add this function to show empty state
+function showEmptyState(title, description = '') {
+  document.getElementById('deckGrid').innerHTML = `
+    <div class="empty-state">
+      <h3>${title}</h3>
+      ${description ? `<p>${description}</p>` : ''}
+    </div>
+  `;
+}
+    // Close modal when clicking outside
+   window.onclick = function(event) {
+  const modal = document.getElementById('deckModal');
+  if (event.target === modal) {
+    closeDeckModal();
+  }
+}
+
+function checkForSpecificDeck() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const deckName = urlParams.get('deck');
+  const source = urlParams.get('source');
+  
+  if (deckName && source === 'missed') {
+    // Try to get deck data from localStorage
+    const storedDeck = localStorage.getItem('currentFlashcardDeck');
+    
+    if (storedDeck) {
+      try {
+        const deckData = JSON.parse(storedDeck);
+        
+        // Verify this is the correct deck and data is recent (within 1 hour)
+        if (deckData.name === decodeURIComponent(deckName) && 
+            deckData.source === 'missed_questions' &&
+            (Date.now() - deckData.timestamp) < 3600000) {
+          
+          console.log('Opening specific deck from URL:', deckData.name);
+          
+          // Open the deck modal directly
+          setTimeout(() => {
+            openDeckModal(deckData.name, deckData.cards);
+          }, 500); // Small delay to ensure page is ready
+          
+          // Clean up localStorage after use
+          localStorage.removeItem('currentFlashcardDeck');
+          
+          return true; // Indicates we handled a specific deck
+        }
+      } catch (error) {
+        console.error('Error parsing stored deck data:', error);
+      }
+    }
+  }
+  
+  return false; // No specific deck to open
+}
+
+    // Keyboard navigation
+    document.addEventListener('keydown', function(event) {
+      if (document.getElementById('deckModal').style.display === 'block') {
+        switch(event.key) {
+          case 'ArrowLeft':
+            prevCard();
+            break;
+          case 'ArrowRight':
+            nextCard();
+            break;
+          case ' ':
+          case 'Enter':
+            event.preventDefault();
+            flipCard();
+            break;
+          case 'Escape':
+            closeDeckModal();
+            break;
+          case '1':
+            rateDifficulty('easy');
+            break;
+          case '2':
+            rateDifficulty('medium');
+            break;
+          case '3':
+            rateDifficulty('hard');
+            break;
+        }
+      }
+    });
+
+    function openNotificationsOnHome() {
+    // Set a flag in sessionStorage (gets cleared when browser is closed)
+    sessionStorage.setItem('openNotifications', 'true');
+    // Navigate to home page - CHANGE THIS PATH to match your structure
+    window.location.href = 'public/home.html';
+}
+
+
+  </script>
+</body>
+</html>

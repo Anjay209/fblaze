@@ -546,3 +546,26 @@
   background: #f2f8fd;
   color: #0072ff;
 }
+
+.nav-label {
+    position: absolute;
+    left: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: #111827;
+    color: white;
+    font-size: 0.7rem;
+    padding: 0.3rem 0.5rem;
+    border-radius: 6px;
+    margin-left: 0.75rem;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s ease, transform 0.2s ease;
+    z-index: 10;
+  }
+
+  .nav-icons li:hover .nav-label {
+    opacity: 1;
+    transform: translateY(-50%) translateX(0px);
+  }
