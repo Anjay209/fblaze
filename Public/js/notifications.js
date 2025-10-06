@@ -1,459 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>CertQuest Dashboard</title>
-  <link rel="stylesheet" href="home.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-  <script src="https://unpkg.com/feather-icons"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/meilisearch@latest/dist/bundles/meilisearch.umd.min.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script>
-  
 
-
-</head>
-<body>
-
-  <!-- Top Nav -->
-  <div class="top-header">
-    <div class="nav-left">🌐</div>
-    <div class="nav-title">Dashboard <span class="new-badge">(New!)</span></div>
-    <div class="nav-right">
-      <input type="text" id="navbarSearch" placeholder="Search CertQuest..." />
-      <span class="search-icon" id="navbarSearchIcon">🔍</span>
-      <div id="searchDropdown"></div>
-    </div>
-  </div>
-
-  <div class="main-layout">
-    <!-- Sidebar -->
-      <aside class="sidebar">
-      <div class="logo">CQ</div>
-      <ul class="nav-icons">
-  <li>
-     <a href="/Public/home.html">
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M12 3L20 9V21H15V15H9V21H4V9L12 3Z" fill="#3b82f6" fill-opacity="0.3"/>
-      <path d="M12 3L4 9V21H9V15H15V21H20V9L12 3Z" stroke="#3b82f6" stroke-width="2" fill="none" stroke-linejoin="round"/>
-      <rect x="10" y="17" width="4" height="4" fill="#3b82f6"/>
-      <rect x="6" y="11" width="2" height="2" fill="#3b82f6"/>
-      <rect x="16" y="11" width="2" height="2" fill="#3b82f6"/>
-    </svg>
-    
-    <span class="nav-label">Home</span>
-     </a>
-  </li>
-  <li>
-  <a href="javascript:void(0)" onclick="toggleCommentPanel()">  
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <!-- Bell body main fill -->
-      <path d="M18 8C18 6.4087 17.3679 4.88258 16.2426 3.75736C15.1174 2.63214 13.5913 2 12 2C10.4087 2 8.88258 2.63214 7.75736 3.75736C6.63214 4.88258 6 6.4087 6 8C6 15 3 17 3 17H21C21 17 18 15 18 8Z" fill="#3b82f6" fill-opacity="0.3"/>
-      
-      <!-- Bell body lighter overlay -->
-      <path d="M18 8C18 6.4087 17.3679 4.88258 16.2426 3.75736C15.1174 2.63214 13.5913 2 12 2C10.4087 2 8.88258 2.63214 7.75736 3.75736C6.63214 4.88258 6 6.4087 6 8C6 12 6 15 6 15H18C18 15 18 12 18 8Z" fill="#3b82f6" fill-opacity="0.2"/>
-      
-      <!-- Bell outline -->
-      <path d="M18 8C18 6.4087 17.3679 4.88258 16.2426 3.75736C15.1174 2.63214 13.5913 2 12 2C10.4087 2 8.88258 2.63214 7.75736 3.75736C6.63214 4.88258 6 6.4087 6 8C6 15 3 17 3 17H21C21 17 18 15 18 8Z" stroke="#3b82f6" stroke-width="2" fill="none"/>
-      
-      <!-- Bell clapper -->
-      <circle cx="12" cy="8" r="1" fill="#3b82f6"/>
-      
-      <!-- Sound waves -->
-      <path d="M19 4L20 3" stroke="#3b82f6" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/>
-      <path d="M20.5 6.5L22 6" stroke="#3b82f6" stroke-width="1.5" stroke-linecap="round" opacity="0.3"/>
-      <path d="M5 4L4 3" stroke="#3b82f6" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/>
-      <path d="M3.5 6.5L2 6" stroke="#3b82f6" stroke-width="1.5" stroke-linecap="round" opacity="0.3"/>
-      
-      <!-- Bottom notification indicator -->
-      <path d="M13.73 21C13.5542 21.3031 13.3019 21.5547 12.9982 21.7295C12.6946 21.9044 12.3504 21.9965 12 21.9965C11.6496 21.9965 11.3054 21.9044 11.0018 21.7295C10.6982 21.5547 10.4458 21.3031 10.27 21" stroke="#3b82f6" stroke-width="2" stroke-linecap="round"/>
-    </svg>
-    <span class="nav-label">Notifications</span>
-  </a>
-</li>
-  <li>
-    <a href="/practice.html">
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="12" cy="12" r="9" fill="#3b82f6" fill-opacity="0.3"/>
-      <circle cx="12" cy="12" r="6" fill="#3b82f6" fill-opacity="0.2"/>
-      <circle cx="12" cy="12" r="9" stroke="#3b82f6" stroke-width="2" fill="none"/>
-      <circle cx="12" cy="12" r="6" stroke="#3b82f6" stroke-width="1.5" fill="none"/>
-      <circle cx="12" cy="12" r="3" stroke="#3b82f6" stroke-width="1.5" fill="none"/>
-      <circle cx="12" cy="12" r="1.5" fill="#3b82f6"/>
-      <path d="M16 8L12 12L16 8Z" fill="#3b82f6"/>
-      <line x1="16" y1="8" x2="19" y2="5" stroke="#3b82f6" stroke-width="2" stroke-linecap="round"/>
-    </svg>
-    <span class="nav-label">Practice</span>
-    </a>
-  </li>
-  <li>
-    <a href="/Public/Forum/forum.html">
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M8 6C8 4.89543 8.89543 4 10 4H18C19.1046 4 20 4.89543 20 6V12C20 13.1046 19.1046 14 18 14H12L8 18V6Z" fill="#3b82f6" fill-opacity="0.3"/>
-      <path d="M4 10C4 8.89543 4.89543 8 6 8H8V16L4 20V12C4 11.4477 4.44772 11 5 11C4.44772 11 4 10.5523 4 10Z" fill="#3b82f6" fill-opacity="0.2"/>
-      <path d="M8 6C8 4.89543 8.89543 4 10 4H18C19.1046 4 20 4.89543 20 6V12C20 13.1046 19.1046 14 18 14H12L8 18V6Z" stroke="#3b82f6" stroke-width="2" fill="none"/>
-      <path d="M4 10C4 8.89543 4.89543 8 6 8H8V16L4 20V12C4 11.4477 4.44772 11 5 11C4.44772 11 4 10.5523 4 10Z" stroke="#3b82f6" stroke-width="1.5" fill="none"/>
-      <line x1="11" y1="8" x2="17" y2="8" stroke="#3b82f6" stroke-width="1.5" stroke-linecap="round"/>
-      <line x1="11" y1="10" x2="15" y2="10" stroke="#3b82f6" stroke-width="1.5" stroke-linecap="round"/>
-    </svg>
-    <span class="nav-label">Forum</span>
-    </a>
-  </li>
-  <li>
-     <a href="/Public/Calendar/calendar.html">
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <rect x="3" y="6" width="18" height="15" rx="2" fill="#3b82f6" fill-opacity="0.3"/>
-      <rect x="3" y="6" width="18" height="4" rx="2" fill="#3b82f6" fill-opacity="0.2"/>
-      <rect x="3" y="6" width="18" height="15" rx="2" stroke="#3b82f6" stroke-width="2" fill="none"/>
-      <line x1="7" y1="3" x2="7" y2="7" stroke="#3b82f6" stroke-width="2" stroke-linecap="round"/>
-      <line x1="17" y1="3" x2="17" y2="7" stroke="#3b82f6" stroke-width="2" stroke-linecap="round"/>
-      <line x1="3" y1="10" x2="21" y2="10" stroke="#3b82f6" stroke-width="1" opacity="0.5"/>
-      <line x1="7.5" y1="10" x2="7.5" y2="21" stroke="#3b82f6" stroke-width="1" opacity="0.3"/>
-      <line x1="12" y1="10" x2="12" y2="21" stroke="#3b82f6" stroke-width="1" opacity="0.3"/>
-      <line x1="16.5" y1="10" x2="16.5" y2="21" stroke="#3b82f6" stroke-width="1" opacity="0.3"/>
-      <circle cx="9" cy="13" r="1" fill="#3b82f6"/>
-      <circle cx="15" cy="16" r="1" fill="#3b82f6"/>
-      <circle cx="12" cy="18" r="1" fill="#3b82f6"/>
-    </svg>
-    <span class="nav-label">Calendar</span>
-     </a>
-  </li>
-   <li>
-     <a href="/Public/tools.html">
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <!-- Base building blocks with layered opacity -->
-  <rect x="2" y="16" width="6" height="6" rx="1" fill="#3b82f6" fill-opacity="0.3"/>
-  <rect x="9" y="12" width="6" height="10" rx="1" fill="#3b82f6" fill-opacity="0.3"/>
-  <rect x="16" y="8" width="6" height="14" rx="1" fill="#3b82f6" fill-opacity="0.3"/>
-  
-  <!-- Lighter overlay sections -->
-  <rect x="2" y="16" width="6" height="3" rx="1" fill="#3b82f6" fill-opacity="0.2"/>
-  <rect x="9" y="12" width="6" height="4" rx="1" fill="#3b82f6" fill-opacity="0.2"/>
-  <rect x="16" y="8" width="6" height="5" rx="1" fill="#3b82f6" fill-opacity="0.2"/>
-  
-  <!-- Block outlines -->
-  <rect x="2" y="16" width="6" height="6" rx="1" stroke="#3b82f6" stroke-width="2" fill="none"/>
-  <rect x="9" y="12" width="6" height="10" rx="1" stroke="#3b82f6" stroke-width="2" fill="none"/>
-  <rect x="16" y="8" width="6" height="14" rx="1" stroke="#3b82f6" stroke-width="2" fill="none"/>
-  
-  <!-- Building block connection dots -->
-  <circle cx="5" cy="19" r="1" fill="#3b82f6"/>
-  <circle cx="12" cy="17" r="1" fill="#3b82f6"/>
-  <circle cx="19" cy="15" r="1" fill="#3b82f6"/>
-  
-  <!-- Subtle grid lines for construction feel -->
-  <line x1="2" y1="19" x2="8" y2="19" stroke="#3b82f6" stroke-width="1" opacity="0.3"/>
-  <line x1="9" y1="17" x2="15" y2="17" stroke="#3b82f6" stroke-width="1" opacity="0.3"/>
-  <line x1="16" y1="15" x2="22" y2="15" stroke="#3b82f6" stroke-width="1" opacity="0.3"/>
-  
-  <!-- Additional detail lines -->
-  <line x1="5" y1="16" x2="5" y2="22" stroke="#3b82f6" stroke-width="1" opacity="0.3"/>
-  <line x1="12" y1="12" x2="12" y2="22" stroke="#3b82f6" stroke-width="1" opacity="0.3"/>
-  <line x1="19" y1="8" x2="19" y2="22" stroke="#3b82f6" stroke-width="1" opacity="0.3"/>
-</svg>
-    <span class="nav-label">Study Tools</span>
-     </a>
-  </li>
- 
-</ul>
-    </aside>
-
-
-     
-
-
-
-    <!-- Main Content -->
-    <main class="content">
-      <div class="welcome-section">
-        <h2 class="course-title">certquest dashboard</h2>
-        <h1 class="unit-title">Welcome back, <span class="name" id="userName">MASTER >.< !</span></h1>
-        <div class="meta-info">
-          <span class="verified"> Personalized for your goals</span>
-          <span class="dot">•</span>
-          <span class="citation-label" id="userComps">Parliamentary Procedures, Partnership with Business Project</span>
-        </div>
-      </div>
-
-      <div id="ai-summary-container">
-        <h3>Here's how you're doing:</h3>
-        <p>You've completed 3/5 of your modules this week. Your strongest area is Public Speaking. Let's work on Business Ethics next!</p>
-      </div>
-
-      <div class="cards">
-        <div class="schoolhouse-card">
-          <div class="card-icon"><img src="assets/forum.png" class="feature-box-icon"></div>
-          <div class="card-content">
-            <h3>Forum</h3>
-            <p class="desc">Connect, ask questions, and share insights with fellow members.</p>
-            <a href="forum/forum.html">Go to Forum →</a>
-          </div>
-        </div>
-        <div class="schoolhouse-card">
-          <div class="card-icon"><img src="assets/calendar.png" class="feature-box-icon"></div>
-          <div class="card-content">
-            <h3>Upcoming</h3>
-            <p class="desc">See your next mentor meeting, study group, or bracket match.</p>
-            <a href="Calendar/calendar.html">Go to Schedule →</a>
-          </div>
-        </div>
-        <div class="schoolhouse-card">
-          <div class="card-icon"><img src="assets/leadership.png" class="feature-box-icon"></div>
-          <div class="card-content">
-            <h3>Leaderboard</h3>
-            <p class="desc"> Check your XP earned, time trained, and leaderboard rank. </p>
-            <a href="Leaderboard/leaderboard.html">Go to Leaderboard →</a>
-          </div>
-        </div>
-        <div class="schoolhouse-card">
-          <div class="card-icon"><img src="assets/mentorship.png" class="feature-box-icon"></div>
-          <div class="card-content">
-            <h3>Mentorship</h3>
-            <p class="desc">Complete mentor modules, join teams, and earn certifications.</p>
-            <a href="Training/training.html">Start Training →</a>
-          </div>
-        </div>
-      </div>
-
-      <section class="faq-wrapper">
-        <div class="faq-category"><strong>Frequently Asked Questions</strong></div>
-        <div class="accordion">
-          <div class="accordion-item">
-            <button class="accordion-toggle" onclick="toggleAccordion(this)">
-              <span class="accordion-label">How will CertQuest help me?</span>
-              <i data-feather="chevron-down" class="chevron-icon"></i>
-            </button>
-            <div class="accordion-content hidden">
-              CertQuest provides AI-generated insights, upcoming deadlines, and performance tracking to support your growth.
-            </div>
-          </div>
-          
-          <div class="accordion-item">
-            <button class="accordion-toggle" onclick="toggleAccordion(this)">
-              <span class="accordion-label">What tools do I get?</span>
-              <i data-feather="chevron-down" class="chevron-icon"></i>
-            </button>
-            <div class="accordion-content hidden">
-              You get access to a dashboard, analytics, goal setting, and smart quiz tracking all in one place.
-            </div>
-          </div>
-        </div>
-      </section>
-    </main>
-  </div>
-
-
-  <!-- Goal Modal -->
-<div id="goalModal" class="goal-modal" style="overflow-y:auto;">
-  <div class="modal-content">
-    <h2>Set a Study Goal</h2>
-    
-    <!-- Role Selection -->
-    <div style="margin-bottom: 1.5rem;">
-      <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">I am a:</label>
-      <div class="role-choices" style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-        <button class="role-btn" data-role="member">Member</button>
-        <button class="role-btn" data-role="officer">Officer</button>
-        <button class="role-btn" data-role="advisor">Advisor</button>
-        <button class="role-btn" data-role="chapter">Chapter Account</button>
-        <button class="role-btn" data-role="individual">Individual Account</button>
-      </div>
-    </div>
-
-    <div class="question-section">
-    <div class="question-title">What chapter are you a part of?</div><br>
-    <div class="chapter-input-group">
-        <input type="text" class="chapter-input" id="school" placeholder="Ex. Lincoln High School FBLA">
-    </div>
-</div>
-
-    <div class="goal-choices">
-      <div class="goal-card" data-goal="passive">Passive<br><span>20 min/week</span></div>
-      <div class="goal-card" data-goal="active">Active<br><span>1 hr/week</span></div>
-      <div class="goal-card" data-goal="committed">Committed<br><span>2 hrs/week</span></div>
-      <div class="goal-card" data-goal="running">Running the Show<br><span>4+ hrs/week</span></div>
-    </div>
-    
-    <!-- Competition Entries -->
-   <!-- Competition Entries -->
-<!-- Add this missing element in your goal modal section -->
-<div style="margin-bottom: 1rem;">
-  <label style="display: block; margin-bottom: 0.5rem;">What competitions are you in?</label>
-  <div id="competitionInputs">
-    <div class="comp-input-group">
-      <input type="text" id="comps" class="comp-input" placeholder="Ex. Introduction to FBLA">
-      <button type="button" id="addCompBtn" class="add-comp-btn" title="Add another competition">+</button>
-    </div>
-  </div>
-</div>
-    
-    <div style="margin: 1.2rem 0 0.5rem 0; display: flex; align-items: center; gap: 0.5rem; margin-top: -30px;">
-  <input type="checkbox" id="isMentor" style="width: 18px; height: 18px; accent-color: #2563eb;">
-  <label for="isMentor" style="margin: 0; font-size: 1rem;">I am a mentor for a competition</label>
-</div>
-
-<div id="mentorCompDiv" style="margin-bottom: 1rem; display: none;">
-  <label style="display: block; margin-bottom: 0.5rem;">What competitions can you mentor in?</label>
-  <div class="mentor-comp-input-group" style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
-    <input type="text" id="mentorComp" class="mentor-comp-input" placeholder="e.g., Partnership with Business" style="flex: 1; padding: 0.75rem; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 1rem; transition: border-color 0.2s; outline: none;">
-    <button type="button" id="addMentorCompBtn" class="add-mentor-comp-btn" title="Add another mentoring competition" style="width: 48px; height: 48px; margin-bottom: 5px; border: none; background-color: #f3f4f6; color: #1f2937; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s;">+</button>
-  </div>
-  <div id="mentorCompetitionInputs">
-    <!-- Dynamic inputs with × buttons will be added here -->
-  </div>
-</div>
-
-    
-    <button id="goalSubmitBtn" disabled>Save</button>
-  </div>
-</div>
-
-  <div class="modal-backdrop"></div>
-
-
-
-  <!-- Assignment Modal -->
-  <div id="cq-assignment-modal" class="cq-modal">
-    <div class="cq-modal-content">
-      <span class="cq-close" onclick="closeAssignmentModal()">&times;</span>
-      <div id="cq-assignment-title" class="cq-modal-title">New Assignment</div>
-      
-      <!-- Assignment Info (shown first) -->
-      <div id="cq-assignment-info">
-        <div id="cq-assignment-fields" class="cq-modal-fields"></div>
-        <div class="cq-modal-footer" style="margin-top:1.5rem; text-align:right;">
-          <button class="cq-modal-btn" onclick="acceptAssignmentNow()">I'll do it now</button>
-          <button class="cq-modal-btn" onclick="snoozeAssignment()">I'll do it later</button>
-        </div>
-      </div>
-      
-      <!-- Quiz Section (hidden initially) -->
-      <div id="cq-assignment-quiz" style="display:none;">
-        <div class="quiz-meta">
-          <span id="quizDifficulty">Difficulty: Medium</span>
-          <span id="quizTime">Time: 10 mins</span>
-          <span id="quizScore" style="margin-left: auto; font-weight: 600;">Score: 0/5</span>
-        </div>
-        <div id="quizQuestions" class="cq-modal-fields"></div>
-        <div class="cq-modal-footer">
-          <button class="cq-modal-btn" id="submitQuizBtn" disabled>Submit Answers</button>
-        </div>
-      </div>
-    </div>
-  </div>
-  
-
-
-
-  <!-- Speaking Assignment Modal -->
-  <div id="cq-speaking-modal" class="cq-speaking-modal" style="display:none;">
-    <div class="cq-speaking-modal-content">
-      <span class="cq-speaking-close">&times;</span>
-      <h2 class="cq-speaking-title">Assignment</h2>
-      
-      <!-- Display two questions at the top -->
-      <div class="cq-speaking-section">
-        <label class="cq-speaking-label"><strong>Question 1:</strong></label>
-        <div id="cq-speaking-q1" class="cq-speaking-qtext">What is your strategy for this scenario?</div>
-      </div>
-      <div class="cq-speaking-section">
-        <label class="cq-speaking-label"><strong>Question 2:</strong></label>
-        <div id="cq-speaking-q2" class="cq-speaking-qtext">How would you handle unexpected challenges?</div>
-      </div>
-      
-      <!-- Recording area -->
-      <div class="cq-speaking-section">
-    <button id="recordMyAnswer" class="record-my-answer-btn" onclick="openCameraModal()">
-        🎥 Record My Answer
-    </button>
-</div>
-      <button id="cq-speaking-downloadBtn" style="
-  background: linear-gradient(90deg, #aee7f5, #e0c3fc);
-  color: #222;
-  border: none;
-  border-radius: 1.25rem;
-  padding: 0.7rem 1.8rem;
-  font-size: 1.06rem;
-  font-weight: 600;
-  box-shadow: 0 2px 8px rgba(60,60,120,0.09);
-  cursor: pointer;
-  margin: 1rem 0 0 0;
-  transition: background 0.18s, transform 0.12s, box-shadow 0.15s;
-  outline: none;
-">Download Your Response</button>
-
-<button id="cq-speaking-submitBtn" class="primary-btn">Submit Response</button>
-
-</div>
-
-      
-    </div>
-  </div>
-
-  <!-- Congratulations Modal -->
-  <div id="congratsModal" class="cq-modal" style="display:none; height: 100vh;">
-    <div class="cq-modal-content">
-      <span class="cq-close" onclick="closeCongratsModal('${a.id}')">&times;</span>
-      <div class="cq-modal-title" style="text-align: center;">Congratulations!</div>
-      <div class="cq-modal-fields">
-        <!-- Content will be inserted here -->
-         <div class="cq-modal-footer">
-        <button class="cq-modal-btn" onclick="closeCongratsModal('${a.id}')">Got it!</button>
-      </div>
-      </div>
-      
-    </div>
-  </div>
-
-<div id="mentorCommentModal">
-  <div class="modal-content">
-    <span class="close" onclick="closeMentorCommentModal()">&times;</span>
-    <h2 id="mentorCommentAssignment"></h2>
-    <div id="mentorCommentText"></div>
-    <button class="btn" onclick="closeMentorCommentModal()">Close</button>
-  </div>
-</div>
-
-<div class="comment-panel" id="commentPanel">
-  <div class="comment-header">
-    <span class="comment-title">Notifications</span>
-    <div>
-      <button class="close-btn" onclick="toggleCommentPanel()">✕</button>
-    </div>
-  </div>
-  <div class="comment-content" id="notificationList">
-    <!-- Notifications will appear here -->
-  </div>
-</div>
-
-<div id="cq-written-loading" class="cq-written-loading" style="display:none;">
-    <!-- Gradient balls background -->
-    <div class="gradient-balls">
-        <div class="ball ball-1"></div>
-        <div class="ball ball-2"></div>
-        <div class="ball ball-3"></div>
-        <div class="ball ball-4"></div>
-    </div>
-    
-    <!-- Loading content -->
-    <div class="cq-loading-container">
-        <div class="cq-loading-spinner"></div>
-        <div class="cq-loading-text">Loading Assignment!</div>
-        <div class="cq-loading-subtext">Analyzing your competencies and creating personalized content...</div>
-        <div class="cq-loading-progress">
-            <div class="cq-loading-progress-bar" id="cq-loading-progress-bar"></div>
-        </div>
-    </div>
-</div>
-
-
-
-
-<script>
   // Firebase configuration
   const firebaseConfig = {
     apiKey: "AIzaSyDGYp9sBwOWBdu9W46Q6XFp9zfLCrEsaO4",
@@ -469,8 +14,6 @@
   firebase.initializeApp(firebaseConfig);
   const db = firebase.firestore();
   const auth = firebase.auth();
-
-
 
   // Global variables
   let modal, backdrop, goalSubmitBtn, compsInput, goalCards, isMentorCheckbox, mentorCompDiv, mentorCompInput, selectedGoal;
@@ -488,9 +31,6 @@ let recordingSeconds = 0;
 let cameraEnabled = true;
 let micEnabled = true;
 let selectedUploadFile = null;
-let writtenModal = null;
-let loadingProgressInterval = null;
-let loadingProgress = 0;
 
 function fileToBase64(file) {
   return new Promise((resolve, reject) => {
@@ -499,104 +39,6 @@ function fileToBase64(file) {
     reader.onload = () => resolve(reader.result.split(',')[1]);
     reader.onerror = error => reject(error);
   });
-}
-
-// Global variable to track the modal
-
-
-// Function to create the written modal dynamically
-function createWrittenModal() {
-    // Create the modal container
-    const modal = document.createElement('div');
-    modal.id = 'cq-written-modal';
-    modal.className = 'cq-written-modal';
-    modal.style.display = 'none';
-    
-    // Create the modal content but keep it hidden initially
-    modal.innerHTML = `
-        <div class="cq-written-modal-content" style="display: none;">
-            <div class="cq-written-header">
-                <div class="cq-written-title-section">
-                    <h2 class="cq-written-title" id="cq-written-title">Written Practice</h2>
-                    <div class="cq-written-meta">
-                        <span id="cq-written-question-count">Question 1 of 10</span>
-                        <span id="cq-written-timer"></span>
-                    </div>
-                </div>
-                <button class="cq-written-close" onclick="closeWrittenModal()">&times;</button>
-            </div>
-            
-            <div class="cq-written-body">
-                <div class="cq-written-competency" id="cq-written-competency"></div>
-                <h3 class="cq-written-question" id="cq-written-question"></h3>
-                
-                <div class="cq-written-options" id="cq-written-options"></div>
-            </div>
-            
-            <div class="cq-written-footer">
-                <div class="cq-written-progress">
-                    <div class="cq-written-progress-bar">
-                        <div class="cq-written-progress-fill" id="cq-written-progress-fill"></div>
-                    </div>
-                </div>
-                <div class="cq-written-nav">
-                    <button class="cq-written-btn cq-written-btn-secondary" id="cq-written-prev" onclick="previousQuestion()" disabled>Previous</button>
-                    <button class="cq-written-btn cq-written-btn-primary" id="cq-written-next" onclick="nextQuestion()">Next</button>
-                </div>
-            </div>
-        </div>
-    `;
-    
-    // Add the modal to the body
-    document.body.appendChild(modal);
-    
-    return modal;
-}
-// Initialize the modal when the page loads
-document.addEventListener('DOMContentLoaded', function() {
-    writtenModal = createWrittenModal();
-});
-
-
-// Add these functions to your existing code
-function startLoadingAnimation() {
-    const progressBar = document.getElementById('cq-loading-progress-bar');
-    if (!progressBar) return;
-    
-    loadingProgress = 0;
-    progressBar.style.width = '0%';
-    
-    // Clear any existing interval
-    if (loadingProgressInterval) {
-        clearInterval(loadingProgressInterval);
-    }
-    
-    // Start new progress animation
-    loadingProgressInterval = setInterval(() => {
-        loadingProgress += Math.random() * 10;
-        if (loadingProgress > 90) loadingProgress = 90; // Cap at 90% until complete
-        progressBar.style.width = loadingProgress + '%';
-    }, 300);
-}
-
-function completeLoadingAnimation() {
-    const progressBar = document.getElementById('cq-loading-progress-bar');
-    if (!progressBar) return;
-    
-    // Complete the progress bar
-    progressBar.style.width = '100%';
-    
-    // Clear the interval
-    if (loadingProgressInterval) {
-        clearInterval(loadingProgressInterval);
-        loadingProgressInterval = null;
-    }
-    
-    // Reset after a short delay
-    setTimeout(() => {
-        progressBar.style.width = '0%';
-        loadingProgress = 0;
-    }, 500);
 }
 
 function showMentorCommentModal(assignmentName, comment, notificationId) {
@@ -904,7 +346,6 @@ function renderQuiz(questionsArr) {
     </div>
   `).join('');
 }
-  feather.replace(); // renders all feather icons
 
   function toggleAccordion(button) {
     const content = button.nextElementSibling;
@@ -1253,26 +694,6 @@ function renderQuiz(questionsArr) {
     });
   }
 
-
-
-function removeCompInput(button) {
-  const inputGroup = button.closest('.comp-input-group');
-  const container = document.getElementById('competitionInputs');
-  
-  // Don't remove if it's the last input
-  if (container && container.children.length > 1) {
-    inputGroup.remove();
-  }
-}
-
-// Get all competition values
-function getCompetitionValues() {
-  const inputs = document.querySelectorAll('.comp-input');
-  return Array.from(inputs)
-    .map(input => input.value.trim())
-    .filter(value => value !== '');
-}
-
   
   function cqSpeakingStopAllMedia() {
     console.log("Stopping all media...");
@@ -1315,43 +736,6 @@ function getCompetitionValues() {
     isRecording = false;
     console.log("All media stopped and cleaned up");
   }
-
-  // Add this to your home page JavaScript
-// STEP 2: Add this to your home.html file
-window.addEventListener('DOMContentLoaded', function() {
-
-
-
-  goalSubmitBtn = document.getElementById('goalSubmitBtn');
-  compsInput = document.getElementById('comps'); // This was missing
-  goalCards = document.querySelectorAll('.goal-card');
-  isMentorCheckbox = document.getElementById('isMentor');
-  mentorCompDiv = document.getElementById('mentorCompDiv');
-  mentorCompInput = document.getElementById('mentorComp');
-  selectedGoal = null;
-
-  // Only add event listeners if elements exist
-  if (compsInput) {
-    compsInput.addEventListener('input', updateSaveState);
-  } else {
-    console.error("compsInput element not found");
-  }
-
- 
-    // Check if we should open notifications
-    if (sessionStorage.getItem('openNotifications') === 'true') {
-        // Clear the flag so it doesn't happen again
-        sessionStorage.removeItem('openNotifications');
-        
-        // Open your notifications panel - replace with your actual function name
-        if (typeof toggleCommentPanel === 'function') {
-            toggleCommentPanel();
-        }
-        // Or if you have a different function name, use that:
-        // openNotifications();
-        // showNotificationPanel();
-    }
-});
 
   document.addEventListener('DOMContentLoaded', function() {
     // Check recording support on page load
@@ -1553,8 +937,6 @@ submitBtn.addEventListener('click', async () => {
 });
 
 
-
-
   // --- Get mentee and assignment info ---
   const user = firebase.auth().currentUser;
   const menteeName = user?.displayName || user?.email || 'Anonymous';
@@ -1566,7 +948,13 @@ submitBtn.addEventListener('click', async () => {
     // Call setup function
     setupDragAndDrop();
 
-    
+    function updateSaveState() {
+      goalSubmitBtn.disabled = !(
+        selectedGoal &&
+        compsInput.value.trim() &&
+        (!isMentorCheckbox.checked || mentorCompInput.value.trim())
+      );
+    }
 
     goalCards.forEach(card => {
       card.addEventListener('click', function() {
@@ -1579,176 +967,41 @@ submitBtn.addEventListener('click', async () => {
     compsInput.addEventListener('input', updateSaveState);
 
     // Mentor logic
-    // Make mentor checkbox optional - no need to validate it
-if (isMentorCheckbox && mentorCompDiv && mentorCompInput) {
-  isMentorCheckbox.addEventListener('change', function() {
-    mentorCompDiv.style.display = isMentorCheckbox.checked ? 'block' : 'none';
-    // No need to call updateSaveState() here since mentor fields are optional
-  });
-}
-    // Replace your existing goalSubmitBtn event listener with this simpler version:
-goalSubmitBtn.addEventListener('click', function() {
-  const selectedRole = document.querySelector('.role-btn.selected')?.dataset?.role || 'member';
-  
-  if (selectedRole && selectedGoal) {
-    // Collect ALL competition inputs (main + dynamically added)
-    const competitionsArr = [];
-    
-    // Get all dynamically added competition inputs
-    const additionalCompInputs = document.querySelectorAll('.comp-input');
-    additionalCompInputs.forEach(input => {
-      if (input.value.trim()) {
-        competitionsArr.push(...input.value.split(',').map(x => x.trim()).filter(Boolean));
-      }
-    });
-    
-    // Collect ALL mentor competition inputs if user is a mentor
-    const mentorCompetitionsArr = [];
-    if (isMentorCheckbox && isMentorCheckbox.checked) {
-      // Get main mentor competition input
-      const mainMentorCompInput = document.getElementById('mentorComp');
-      if (mainMentorCompInput && mainMentorCompInput.value.trim()) {
-        mentorCompetitionsArr.push(...mainMentorCompInput.value.split(',').map(x => x.trim()).filter(Boolean));
-      }
-      
-      // Get all dynamically added mentor competition inputs
-      const additionalMentorCompInputs = document.querySelectorAll('.mentor-comp-input');
-      additionalMentorCompInputs.forEach(input => {
-        if (input.value.trim()) {
-          mentorCompetitionsArr.push(...input.value.split(',').map(x => x.trim()).filter(Boolean));
-        }
+    if (isMentorCheckbox && mentorCompDiv && mentorCompInput) {
+      isMentorCheckbox.addEventListener('change', function() {
+        mentorCompDiv.style.display = isMentorCheckbox.checked ? 'block' : 'none';
+        updateSaveState();
       });
+      mentorCompInput.addEventListener('input', updateSaveState);
     }
-    
-    // Require at least one competition
-    if (competitionsArr.length === 0) {
-      alert('Please enter at least one competition');
-      return;
-    }
-    
-    // Update UI
-    document.getElementById('userComps').textContent = competitionsArr.join(', ');
-    
-    // Save to Firebase (SINGLE operation with all data)
-    const user = auth.currentUser;
-    if (user) {
-      const userData = {
-        role: selectedRole,
-        competitions: competitionsArr,
-        isMentor: isMentorCheckbox ? isMentorCheckbox.checked : false,
-        studyGoalSet: true,
-        needsApproval: selectedRole === 'member' || selectedRole === 'officer', // Add approval status
-        school: document.getElementById('school')?.value || '' // Add school field
-      };
-      
-      // Add mentor competitions if user is a mentor
-      if (isMentorCheckbox && isMentorCheckbox.checked) {
-        userData.mentorCompetition = mentorCompetitionsArr;
-      }
-      
-      db.collection('users').doc(user.uid).set(userData, { merge: true }).then(() => {
-        // Close goal modal
+
+    goalSubmitBtn.addEventListener('click', function() {
+      if (
+        selectedGoal &&
+        compsInput.value.trim() &&
+        (!isMentorCheckbox.checked || mentorCompInput.value.trim())
+      ) {
+        document.getElementById('userComps').textContent = compsInput.value.trim();
+        const user = auth.currentUser;
+        if (user) {
+          // Parse competitions input as array, trim each, and remove blanks
+          const competitionsArr = compsInput.value
+            .split(',')
+            .map(x => x.trim())
+            .filter(Boolean);
+          db.collection('users').doc(user.uid).set({
+            competitions: competitionsArr,
+            isMentor: isMentorCheckbox.checked,
+            mentorCompetition: isMentorCheckbox.checked ? mentorCompInput.value.trim() : "",
+            studyGoalSet: true
+          }, { merge: true });
+        }
         modal.style.display = 'none';
         backdrop.style.display = 'none';
-        
-        // Show approval overlay if user needs approval OR redirect to dashboard
-        if (selectedRole === 'member' || selectedRole === 'officer') {
-          document.getElementById('approvalOverlay').style.display = 'flex';
-        } else if (selectedRole === 'advisor' || selectedRole === 'chapter account') {
-          window.location.href = 'dashboard.html';
-        }
-        else if (selectedRole === 'individual') {
-          window.location.href = 'home.html';
-        }
-      }).catch((error) => {
-        console.error("Error saving user data:", error);
-        alert("Failed to save your information. Please try again.");
-      });
-    }
-  }
-});
+      }
+    });
 
-function updateSaveState() {
-  const roleSelected = document.querySelector('.role-btn.selected');
-  const goalSelected = document.querySelector('.goal-card.selected');
-  
-  // Check if any competition input has value
-  let hasCompetitions = false;
-  
-  // Check main competition input
-  const compsInput = document.getElementById('comps');
-  if (compsInput && compsInput.value.trim()) {
-    hasCompetitions = true;
-  }
-  
-  // Check dynamically added competition inputs
-  if (!hasCompetitions) {
-    const additionalCompInputs = document.querySelectorAll('.comp-input');
-    hasCompetitions = Array.from(additionalCompInputs).some(input => input.value.trim());
-  }
-  
-  // Enable button only if all required elements exist and have values
-  goalSubmitBtn.disabled = !(roleSelected && goalSelected && hasCompetitions);
-}
-
-// Updated addCompBtn event listener to include input validation
-const addCompBtn = document.getElementById('addCompBtn');
-if (addCompBtn) {
-  addCompBtn.addEventListener('click', function() {
-    const container = document.getElementById('competitionInputs');
-    if (container) {
-      const inputGroup = document.createElement('div');
-      inputGroup.className = 'comp-input-group';
-      
-      inputGroup.innerHTML = `
-        <input type="text" class="comp-input" placeholder="Ex. Business Law">
-        <button type="button" class="remove-comp-btn" onclick="removeCompInput(this)">×</button>
-      `;
-      
-      container.appendChild(inputGroup);
-      
-      // Add input validation listener to new field
-      const newInput = inputGroup.querySelector('.comp-input');
-      newInput.addEventListener('input', updateSaveState);
-    }
-  });
-}
-
-// Updated addMentorCompBtn event listener to include input validation
-const addMentorCompBtn = document.getElementById('addMentorCompBtn');
-if (addMentorCompBtn) {
-  addMentorCompBtn.addEventListener('click', function() {
-    const container = document.getElementById('mentorCompetitionInputs');
-    if (container) {
-      const inputGroup = document.createElement('div');
-      inputGroup.className = 'mentor-comp-input-group';
-      
-      inputGroup.innerHTML = `
-        <input type="text" class="mentor-comp-input" placeholder="e.g., Partnership with Business">
-        <button type="button" class="remove-mentor-comp-btn" onclick="removeMentorCompInput(this)" style="width: 48px; height: 48px; margin-bottom: 5px; border: none; background-color: #fee2e2; color: #dc2626; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s;">×</button>
-      `;
-      
-      container.appendChild(inputGroup);
-      
-      // Add input validation listener to new mentor field
-      const newInput = inputGroup.querySelector('.mentor-comp-input');
-      newInput.addEventListener('input', updateSaveState);
-    }
-  });
-}
-
-// Updated remove functions with validation
-function removeCompInput(button) {
-  button.parentElement.remove();
-  updateSaveState(); // Recheck validation after removing input
-}
-
-function removeMentorCompInput(button) {
-  button.parentElement.remove();
-  updateSaveState(); // Recheck validation after removing input
-}
-
-if (backdrop) {
+    if (backdrop) {
       backdrop.addEventListener('click', function() {
         modal.style.display = 'none';
         backdrop.style.display = 'none';
@@ -1757,73 +1010,63 @@ if (backdrop) {
 
     // ---- Show full name from Firestore and modal logic ----
     auth.onAuthStateChanged(function(user) {
-  if (user) {
-    db.collection('users').doc(user.uid).get()
-      .then(function(doc) {
-        let fullName = user.displayName || (user.email ? user.email.split('@')[0] : 'User');
-        if (doc.exists && doc.data().name) {
-          fullName = doc.data().name;
-        }
-           checkApprovalStatus();
-        document.getElementById('userName').textContent = fullName;
+      if (user) {
+        db.collection('users').doc(user.uid).get()
+          .then(function(doc) {
+            let fullName = user.displayName || (user.email ? user.email.split('@')[0] : 'User');
+            if (doc.exists && doc.data().name) {
+              fullName = doc.data().name;
+            }
+            document.getElementById('userName').textContent = fullName;
 
-        if (doc.exists && doc.data().competitions) {
-          document.getElementById('userComps').textContent = doc.data().competitions;
-        }
-        
-        // Check for approval status and show overlay if needed
-        if (doc.exists && doc.data().needsApproval === true) {
-          document.getElementById('approvalOverlay').style.display = 'flex';
-        }
+            if (doc.exists && doc.data().competitions) {
+              document.getElementById('userComps').textContent = doc.data().competitions;
+            }
 
-        // DEBUG: See exactly what Firestore returns!
-        console.log("User doc.exists:", doc.exists);
-        console.log("User doc.data:", doc.data());
-        
-        // Only show modal if not set (boolean false, undefined, or null)
-        if (!doc.exists || !doc.data().studyGoalSet) {
-          modal.style.display = 'block';
-          backdrop.style.display = 'block';
-        } else {
-          modal.style.display = 'none';
-          backdrop.style.display = 'none';
-        }
-      })
-      .catch(function(error) {
-        console.error("Error fetching user data:", error);
-        let fallbackName = user.displayName || (user.email ? user.email.split('@')[0] : 'User');
-        document.getElementById('userName').textContent = fallbackName;
-      });
+            // DEBUG: See exactly what Firestore returns!
+            console.log("User doc.exists:", doc.exists);
+            console.log("User doc.data:", doc.data());
+            // Only show modal if not set (boolean false, undefined, or null)
+            if (!doc.exists || !doc.data().studyGoalSet) {
+              modal.style.display = 'block';
+              backdrop.style.display = 'block';
+            } else {
+              modal.style.display = 'none';
+              backdrop.style.display = 'none';
+            }
+          })
+          .catch(function(error) {
+            let fallbackName = user.displayName || (user.email ? user.email.split('@')[0] : 'User');
+            document.getElementById('userName').textContent = fallbackName;
+          });
+          setupNotifications();
+          // --- Mentor Comment Modal Check ---
+(async function checkMentorComments() {
+  try {
+    const snapshot = await db.collection('notifications')
+      .where('menteeId', '==', user.uid)
+      .where('read', '==', false)
+      .where('type', '==', 'mentorComment')  // Add this filter
+      .get();
 
-    setupNotifications();
-    
-    // --- Mentor Comment Modal Check ---
-    (async function checkMentorComments() {
-      try {
-        const snapshot = await db.collection('notifications')
-          .where('menteeId', '==', user.uid)
-          .where('read', '==', false)
-          .where('type', '==', 'mentorComment')
-          .get();
-
-        snapshot.forEach(doc => {
-          const notif = doc.data();
-          console.log("Found mentor feedback notification:", notif);
-          showMentorCommentModal(
-            notif.assignmentName || "Assignment",
-            notif.comment || notif.message || "No feedback provided.",
-            doc.id
-          );
-        });
-      } catch (err) {
-        console.error("Failed to check mentor comments:", err);
-      }
-    })();
-
-  } else {
-    window.location.href = "/Public/index.html";
+    snapshot.forEach(doc => {
+      const notif = doc.data();
+      console.log("Found mentor feedback notification:", notif); // Debug log
+      showMentorCommentModal(
+        notif.assignmentName || "Assignment",
+        notif.comment || notif.message || "No feedback provided.", // Try both fields
+        doc.id
+      );
+    });
+  } catch (err) {
+    console.error("Failed to check mentor comments:", err);
   }
-});
+})();
+
+      } else {
+        window.location.href = "/Public/index.html";
+      }
+    });
 
     // ============ MEILISEARCH INTEGRATION ============
     const client = new MeiliSearch({ host: 'http://127.0.0.1:7700' });
@@ -1922,27 +1165,6 @@ if (backdrop) {
 
   });
 
-
-// Add this HTML to your page (insert anywhere in body)
-const approvalOverlayHTML = `
-<div id="approvalOverlay" class="approval-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.3); backdrop-filter: blur(8px); z-index: 9999; justify-content: center; align-items: center;">
-  <div class="approval-card" style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px); border-radius: 16px; padding: 2rem; text-align: center; max-width: 400px; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1); border: 1px solid rgba(255, 255, 255, 0.2);">
-    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" style="margin-bottom: 1rem;">
-      <path d="M6 10V8C6 5.79086 7.79086 4 10 4H14C16.2091 4 18 5.79086 18 8V10" stroke="#2563eb" stroke-width="2" stroke-linecap="round"/>
-      <rect x="4" y="10" width="16" height="10" rx="2" fill="#2563eb"/>
-      <circle cx="12" cy="15" r="2" fill="white"/>
-    </svg>
-    <h3 style="margin: 0 0 0.5rem 0; color: #1f2937;">Account Pending Approval</h3>
-    <p style="margin: 0; color: #6b7280; line-height: 1.5;">Please check with your advisor for account approval before you can access the platform.</p>
-  </div>
-</div>`;
-
-document.body.insertAdjacentHTML('beforeend', approvalOverlayHTML);
-
-  function removeMentorCompInput(button) {
-  button.parentElement.remove();
-  updateSaveState(); // Recheck validation after removing input
-}
   // === ASSIGNMENT MODAL FUNCTIONS ===
 function showAssignmentModal(assignment, docId) {
     console.log("showAssignmentModal called with:", assignment, docId);
@@ -2020,419 +1242,6 @@ function showAssignmentModal(assignment, docId) {
         console.error("Error updating assignment status:", error);
     });
 }
-
-async function checkApprovalStatus() {
-  const user = auth.currentUser;
-  if (!user) return;
-
-  try {
-    const userDoc = await db.collection('users').doc(user.uid).get();
-    if (userDoc.exists) {
-      const userData = userDoc.data();
-      
-      // Check if user has already seen the unlock animation
-      const hasSeenUnlock = localStorage.getItem(`hasSeenUnlock_${user.uid}`);
-      
-      // If user is approved and hasn't seen the animation yet
-      if (userData.approvalStatus === 'approved' && !userData.needsApproval && !hasSeenUnlock) {
-        unlockAndFadeAway();
-        // Mark that user has seen the animation
-        localStorage.setItem(`hasSeenUnlock_${user.uid}`, 'true');
-      } else if (userData.needsApproval) {
-        // Still needs approval, show the overlay
-        showApprovalOverlay();
-      } else {
-        // User is approved but has already seen animation, ensure overlay is hidden
-        const overlay = document.getElementById('approvalOverlay');
-        if (overlay) overlay.style.display = 'none';
-      }
-    }
-  } catch (error) {
-    console.error('Error checking approval status:', error);
-  }
-}
-
-
-// Function to handle unlock animation and fade away
-function unlockAndFadeAway() {
-  const overlay = document.getElementById('approvalOverlay');
-  const lockSvg = overlay.querySelector('svg');
-  const card = overlay.querySelector('.approval-card');
-  
-  if (overlay && lockSvg && card) {
-    // Show the overlay first
-    overlay.style.display = 'flex';
-    
-    // Add a class to trigger animations
-    card.classList.add('unlocking');
-    
-    // Create a more impressive unlock animation
-    setTimeout(() => {
-      // Animate the lock opening with more flair
-      lockSvg.innerHTML = `
-        <path d="M6 10V8C6 5.79086 7.79086 4 10 4H14C16.2091 4 18 5.79086 18 8V10" 
-              stroke="#22c55e" stroke-width="2" stroke-linecap="round" 
-              class="unlock-animation"/>
-        <rect x="4" y="10" width="16" height="10" rx="2" fill="#22c55e" class="unlock-fill"/>
-        <circle cx="12" cy="15" r="2" fill="white" class="unlock-dot"/>
-      `;
-      
-      // Add sparkle effects
-      const sparkles = document.createElement('div');
-      sparkles.className = 'unlock-sparkles';
-      sparkles.innerHTML = `
-        <div class="sparkle"></div>
-        <div class="sparkle"></div>
-        <div class="sparkle"></div>
-        <div class="sparkle"></div>
-        <div class="sparkle"></div>
-        <div class="sparkle"></div>
-        <div class="sparkle"></div>
-        <div class="sparkle"></div>
-      `;
-      card.appendChild(sparkles);
-      
-      // Change text to success message with animation
-      const heading = overlay.querySelector('h3');
-      const paragraph = overlay.querySelector('p');
-      if (heading) {
-        heading.textContent = 'Account Approved!';
-        heading.classList.add('success-text');
-      }
-      if (paragraph) {
-        paragraph.textContent = 'Welcome to CertQuest! Redirecting you now...';
-        paragraph.classList.add('success-subtext');
-      }
-      
-      // Add a checkmark animation
-      const checkmark = document.createElement('div');
-      checkmark.className = 'success-checkmark';
-      checkmark.innerHTML = `
-        <svg viewBox="0 0 52 52">
-          <circle class="checkmark-circle" cx="26" cy="26" r="25" fill="none"/>
-          <path class="checkmark-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
-        </svg>
-      `;
-      card.insertBefore(checkmark, card.firstChild);
-      
-      // Fade out after showing success
-      setTimeout(() => {
-        overlay.classList.add('fade-out');
-        
-        // Hide completely after fade
-        setTimeout(() => {
-          overlay.style.display = 'none';
-          overlay.classList.remove('fade-out');
-          
-          // Redirect to dashboard
-
-        }, 1000);
-      }, 2500);
-    }, 500);
-  }
-}
-
-// Enhanced CSS with smooth, professional animations
-const improvedAnimationCSS = `
-<style>
-  /* Base overlay improvements */
-  .approval-overlay {
-    backdrop-filter: blur(8px);
-    background: rgba(0, 0, 0, 0.7);
-    transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  /* Card animations */
-  .approval-card {
-    transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
-    position: relative;
-    overflow: hidden;
-    background: linear-gradient(145deg, #ffffff, #f8fafc);
-    border: 1px solid rgba(255, 255, 255, 0.8);
-    backdrop-filter: blur(20px);
-    box-shadow: 
-      0 20px 40px rgba(0, 0, 0, 0.1),
-      0 0 0 1px rgba(255, 255, 255, 0.1);
-  }
-  
-  .approval-card.unlocking {
-    transform: scale(1.02) translateY(-5px);
-    box-shadow: 
-      0 32px 64px rgba(34, 197, 94, 0.2),
-      0 0 0 1px rgba(34, 197, 94, 0.2),
-      inset 0 1px 0 rgba(255, 255, 255, 0.9);
-    background: linear-gradient(145deg, #ffffff, #f0fdf4);
-  }
-
-  /* Lock SVG animations */
-  .unlock-animation {
-    animation: unlock-smooth 1.2s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
-    transform-origin: 18px 8px;
-    filter: drop-shadow(0 2px 4px rgba(34, 197, 94, 0.3));
-  }
-  
-  .unlock-fill {
-    animation: fill-smooth 1s cubic-bezier(0.4, 0, 0.2, 1) 0.3s forwards;
-    filter: drop-shadow(0 2px 8px rgba(34, 197, 94, 0.4));
-  }
-  
-  .unlock-dot {
-    animation: pulse-smooth 0.8s cubic-bezier(0.4, 0, 0.6, 1) infinite alternate;
-  }
-
-  /* Enhanced sparkles */
-  .unlock-sparkles {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    z-index: 10;
-  }
-  
-  .sparkle {
-    position: absolute;
-    width: 6px;
-    height: 6px;
-    background: linear-gradient(45deg, #fbbf24, #f59e0b, #ffffff);
-    border-radius: 50%;
-    animation: sparkle-enhanced 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-    box-shadow: 0 0 8px rgba(251, 191, 36, 0.6);
-  }
-  
-  .sparkle::before {
-    content: '';
-    position: absolute;
-    top: -2px;
-    left: -2px;
-    right: -2px;
-    bottom: -2px;
-    background: radial-gradient(circle, rgba(255, 255, 255, 0.8) 0%, transparent 70%);
-    border-radius: 50%;
-    z-index: -1;
-  }
-  
-  .sparkle:nth-child(1) { top: 15%; left: 15%; animation-delay: 0s; }
-  .sparkle:nth-child(2) { top: 20%; right: 25%; animation-delay: 0.4s; }
-  .sparkle:nth-child(3) { top: 60%; left: 20%; animation-delay: 0.8s; }
-  .sparkle:nth-child(4) { bottom: 25%; right: 15%; animation-delay: 1.2s; }
-  .sparkle:nth-child(5) { top: 40%; left: 80%; animation-delay: 1.6s; }
-  .sparkle:nth-child(6) { top: 70%; left: 60%; animation-delay: 0.2s; }
-  .sparkle:nth-child(7) { top: 30%; left: 50%; animation-delay: 1.0s; }
-  .sparkle:nth-child(8) { bottom: 40%; left: 40%; animation-delay: 1.4s; }
-
-  /* Checkmark improvements */
-  .success-checkmark {
-    width: 64px;
-    height: 64px;
-    margin: 0 auto 1.5rem;
-    filter: drop-shadow(0 4px 8px rgba(34, 197, 94, 0.2));
-    animation: checkmark-appear 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
-  }
-  
-  .checkmark-circle {
-    stroke: #22c55e;
-    stroke-width: 3;
-    animation: stroke-smooth 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-    fill: rgba(34, 197, 94, 0.1);
-    filter: drop-shadow(0 0 4px rgba(34, 197, 94, 0.3));
-  }
-  
-  .checkmark-check {
-    stroke: #22c55e;
-    stroke-width: 4;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    animation: check-draw 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.8s forwards;
-    stroke-dasharray: 48;
-    stroke-dashoffset: 48;
-    filter: drop-shadow(0 2px 4px rgba(34, 197, 94, 0.3));
-  }
-
-  /* Text animations */
-  .success-text {
-    animation: text-smooth 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-    color: #22c55e !important;
-    text-shadow: 0 2px 4px rgba(34, 197, 94, 0.2);
-    font-weight: 600;
-  }
-  
-  .success-subtext {
-    animation: text-smooth 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s forwards;
-    opacity: 0;
-    color: #64748b;
-  }
-
-  /* Fade out enhancement */
-  .approval-overlay.fade-out {
-    opacity: 0;
-    backdrop-filter: blur(0px);
-    transition: all 1.2s cubic-bezier(0.4, 0, 1, 1);
-  }
-  
-  .approval-overlay.fade-out .approval-card {
-    transform: scale(0.95) translateY(20px);
-    opacity: 0;
-  }
-
-  /* Keyframe animations */
-  @keyframes unlock-smooth {
-    0% { 
-      transform: rotate(0deg) scale(1);
-      opacity: 0.8;
-    }
-    50% {
-      transform: rotate(-8deg) scale(1.1);
-      opacity: 1;
-    }
-    100% { 
-      transform: rotate(-25deg) scale(1);
-      opacity: 1;
-    }
-  }
-  
-  @keyframes fill-smooth {
-    0% { 
-      fill: #2563eb;
-      transform: scale(0.9);
-    }
-    50% {
-      fill: #059669;
-      transform: scale(1.05);
-    }
-    100% { 
-      fill: #22c55e;
-      transform: scale(1);
-    }
-  }
-  
-  @keyframes pulse-smooth {
-    0% { 
-      opacity: 0.9;
-      transform: scale(0.95);
-    }
-    100% { 
-      opacity: 1;
-      transform: scale(1.1);
-    }
-  }
-  
-  @keyframes sparkle-enhanced {
-    0% { 
-      opacity: 0;
-      transform: scale(0) rotate(0deg) translateY(0);
-    }
-    20% {
-      opacity: 1;
-      transform: scale(1.2) rotate(90deg) translateY(-5px);
-    }
-    50% { 
-      opacity: 1;
-      transform: scale(1) rotate(180deg) translateY(-8px);
-    }
-    80% {
-      opacity: 0.8;
-      transform: scale(0.8) rotate(270deg) translateY(-3px);
-    }
-    100% { 
-      opacity: 0;
-      transform: scale(0) rotate(360deg) translateY(0);
-    }
-  }
-  
-  @keyframes checkmark-appear {
-    0% {
-      opacity: 0;
-      transform: scale(0) rotate(-180deg);
-    }
-    60% {
-      opacity: 1;
-      transform: scale(1.15) rotate(10deg);
-    }
-    100% {
-      opacity: 1;
-      transform: scale(1) rotate(0deg);
-    }
-  }
-  
-  @keyframes stroke-smooth {
-    0% { 
-      stroke-dasharray: 0 100;
-      opacity: 0;
-    }
-    50% {
-      opacity: 1;
-    }
-    100% { 
-      stroke-dasharray: 100 0;
-      opacity: 1;
-    }
-  }
-  
-  @keyframes check-draw {
-    0% {
-      stroke-dashoffset: 48;
-      opacity: 0;
-    }
-    20% {
-      opacity: 1;
-    }
-    100% { 
-      stroke-dashoffset: 0;
-      opacity: 1;
-    }
-  }
-  
-  @keyframes text-smooth {
-    0% { 
-      transform: translateY(30px) scale(0.9);
-      opacity: 0;
-      filter: blur(4px);
-    }
-    60% {
-      transform: translateY(-5px) scale(1.02);
-      opacity: 0.8;
-      filter: blur(0px);
-    }
-    100% { 
-      transform: translateY(0) scale(1);
-      opacity: 1;
-      filter: blur(0px);
-    }
-  }
-
-  /* Additional polish */
-  @media (prefers-reduced-motion: reduce) {
-    .approval-card,
-    .unlock-animation,
-    .unlock-fill,
-    .unlock-dot,
-    .sparkle,
-    .success-checkmark,
-    .success-text,
-    .success-subtext {
-      animation-duration: 0.01ms !important;
-      animation-iteration-count: 1 !important;
-      transition-duration: 0.01ms !important;
-    }
-  }
-</style>
-`;
-
-// Add the CSS to the document head
-document.head.insertAdjacentHTML('beforeend', improvedAnimationCSS);
-
-// Function to show approval overlay
-function showApprovalOverlay() {
-  const overlay = document.getElementById('approvalOverlay');
-  if (overlay) {
-    overlay.style.display = 'flex';
-  }
-}
-
-
-
 function openFullAssignmentModal(assignment) {
     // Set the modal title
     document.getElementById('cq-assignment-title').innerText = assignment.title || "New Assignment";
@@ -2469,48 +1278,10 @@ function openFullAssignmentModal(assignment) {
                 <div><b>Simulate:</b> ${assignment.simulate ? "Yes" : "No"}</div>
             `;
         }
-
-        if (assignment.trainingPDFs && assignment.trainingPDFs.length > 0) {
-            assignment.trainingPDFs.forEach(pdf => {
-                const pdfBox = document.createElement('div');
-                pdfBox.style.cssText = 'background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 12px; margin: 8px 0; border-radius: 8px; cursor: pointer; font-weight: 500;';
-                pdfBox.textContent = pdf.name || 'Training Document';
-                pdfBox.onclick = () => downloadPDF(pdf);
-                fieldsElement.appendChild(pdfBox);
-            });
-        }
     }
     
     // Show the modal
     document.getElementById('cq-assignment-modal').style.display = 'block';
-}
-
-document.querySelectorAll('.role-btn').forEach(btn => {
-  btn.addEventListener('click', function() {
-    document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('selected'));
-    this.classList.add('selected');
-    checkFormCompletion();
-  });
-});
-
-function checkFormCompletion() {
-  const roleSelected = document.querySelector('.role-btn.selected');
-  const goalSelected = document.querySelector('.goal-card.selected');
-  const submitBtn = document.getElementById('goalSubmitBtn');
-  
-  submitBtn.disabled = !(roleSelected && goalSelected);
-}
-
-checkApprovalStatus()
-
-function downloadPDF(pdf) {
-    const blob = new Blob([pdf.content], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = pdf.name || 'training-document.txt';
-    a.click();
-    URL.revokeObjectURL(url);
 }
 
   function showSpeakingAssignmentInfo(assignment, docId) {
@@ -2551,15 +1322,31 @@ function acceptAssignmentNow() {
     }
     
     // ✅ IMMEDIATELY mark assignment as complete when user clicks "I'll do it now"
-    // Mark assignment as accepted (but not completed)
-if (window.latestAssignmentId) {
-    console.log("📝 Marking assignment as accepted");
-    
-    db.collection('assignments').doc(window.latestAssignmentId).update({
-        status: "in_progress",
-        acceptedAt: firebase.firestore.FieldValue.serverTimestamp()
-    });
-}
+    if (window.latestAssignmentId) {
+        console.log("✅ Marking assignment as complete immediately");
+        
+        // Build update data conditionally to avoid undefined values
+        const updateData = {
+            status: "seen",
+            completedAt: firebase.firestore.FieldValue.serverTimestamp(),
+            acceptedAt: firebase.firestore.FieldValue.serverTimestamp(),
+            autoCompleted: true
+        };
+        
+        // Only add score fields for written assignments
+        if (assignment.type === 'written') {
+            updateData.score = 0;
+            updateData.maxScore = assignment.writtenQuestions?.length || 10;
+        }
+        
+        db.collection('assignments').doc(window.latestAssignmentId).update(updateData)
+        .then(() => {
+            console.log("✅ Assignment marked as complete successfully");
+        }).catch(error => {
+            console.error("❌ Error marking assignment as complete:", error);
+        });
+    }
+
     // Handle different assignment types but they're already marked complete above
     if (assignment.type === 'speaking' || assignment.type === 'case') {
         console.log("🎤 Opening camera modal for speaking/case assignment");
@@ -2785,320 +1572,6 @@ async function initializeCamera() {
     }
 }
 
-// Dynamic AI Summary Generator for Firebase Assignment Data
-class DynamicAISummary {
-  constructor(firebaseDb, userId) {
-    this.db = firebaseDb;
-    this.userId = userId;
-    this.summaryContainer = null;
-  }
-
-  // Function to calculate competency percentages
-  calculateCompetencyPerformance(competencyStats) {
-    const competencyPerformance = {};
-    
-    Object.entries(competencyStats || {}).forEach(([competency, stats]) => {
-      if (stats.total > 0) {
-        competencyPerformance[competency] = Math.round((stats.correct / stats.total) * 100);
-      }
-    });
-    
-    return competencyPerformance;
-  }
-
-  // Function to find strongest and weakest areas
-  analyzePerformance(competencyPerformance) {
-    const entries = Object.entries(competencyPerformance);
-    if (entries.length === 0) return { strongest: 'N/A', weakest: 'N/A' };
-    
-    const strongest = entries.reduce((a, b) => a[1] > b[1] ? a : b)[0];
-    const weakest = entries.reduce((a, b) => a[1] < b[1] ? a : b)[0];
-    
-    return { strongest, weakest };
-  }
-
-  // Function to format competency names
-  formatCompetencyName(competency) {
-    if (!competency || competency === 'N/A') return competency;
-    return competency.split(/[\s_]+/)
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-      .join(' ');
-  }
-
-  // Function to generate encouraging messages
-  generateEncouragementMessage(percentage, strongestArea, weakestArea) {
-    const formattedStrongest = this.formatCompetencyName(strongestArea);
-    const formattedWeakest = this.formatCompetencyName(weakestArea);
-
-    if (percentage >= 80) {
-      return `Excellent work! You're mastering ${formattedStrongest}. Keep up the momentum!`;
-    } else if (percentage >= 60) {
-      return `Good progress! Your ${formattedStrongest} skills are solid. Let's boost your ${formattedWeakest} next!`;
-    } else if (percentage >= 40) {
-      return `You're building momentum! ${formattedStrongest} is your strength. Focus on ${formattedWeakest} for improvement!`;
-    } else {
-      return `Every expert was once a beginner! Let's strengthen your ${formattedWeakest} foundation step by step.`;
-    }
-  }
-
-  // Fetch recent assignments from Firebase
-  async fetchRecentAssignments(limit = 5) {
-    try {
-      const snapshot = await this.db.collection('assignments')
-        .where('to', '==', this.userId)
-        .where('status', '==', 'complete')
-        .orderBy('completedAt', 'desc')
-        .limit(limit)
-        .get();
-      
-      return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    } catch (error) {
-      console.error('Error fetching assignments:', error);
-      return [];
-    }
-  }
-
-  // Calculate average performance across multiple assignments
-  calculateOverallPerformance(assignments) {
-    if (assignments.length === 0) return { averageScore: 0, totalTests: 0 };
-
-    const totalScore = assignments.reduce((sum, assignment) => sum + (assignment.percentage || 0), 0);
-    const averageScore = Math.round(totalScore / assignments.length);
-
-    // Combine competency stats from all assignments
-    const combinedCompetencyStats = {};
-    assignments.forEach(assignment => {
-      if (assignment.competencyStats) {
-        Object.entries(assignment.competencyStats).forEach(([competency, stats]) => {
-          if (!combinedCompetencyStats[competency]) {
-            combinedCompetencyStats[competency] = { correct: 0, total: 0 };
-          }
-          combinedCompetencyStats[competency].correct += stats.correct || 0;
-          combinedCompetencyStats[competency].total += stats.total || 0;
-        });
-      }
-    });
-
-    return {
-      averageScore,
-      totalTests: assignments.length,
-      combinedCompetencyStats
-    };
-  }
-
-  // Generate HTML for the AI summary
-
-  
-  generateSummaryHTML(summaryData) {
-    const { averageScore, strongestArea, weakestArea, totalTests, competencyBreakdown } = summaryData;
-    
-    const encouragementMessage = this.generateEncouragementMessage(averageScore, strongestArea, weakestArea);
-    
-    // Generate competency breakdown HTML
-    let competencyHTML = '';
-    if (competencyBreakdown && Object.keys(competencyBreakdown).length > 0) {
-      const topCompetencies = Object.entries(competencyBreakdown)
-        .sort(([,a], [,b]) => b - a)
-        .slice(0, 5);
-      
-      competencyHTML = `
-        <div style="margin-top: 1rem;">
-          <h4 style="font-size: 0.9rem; margin: 0 0 0.5rem 0; opacity: 0.9;">
-            Quick Breakdown:
-          </h4>
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 0.5rem; font-size: 0.8rem;">
-            ${topCompetencies.map(([competency, score]) => `
-              <div style="background: rgba(255,255,255,0.1); padding: 0.25rem 0.5rem; border-radius: 4px; text-align: center;">
-                <div style="font-weight: bold;">${this.formatCompetencyName(competency)}</div>
-                <div style="color: ${score >= 50 ? '#90EE90' : '#FFB6C1'};">${score}%</div>
-              </div>
-            `).join('')}
-          </div>
-        </div>
-      `;
-    }
-
-    return `
-      <div class="ai-summary" style="
-        background: #d2e3f9;
-        color: black;
-        padding: 1.5rem;
-        border-radius: 12px;
-        margin: 1rem 0;
-        height: 155px;
-        border-left: 7px solid #0ea5e9;
-      ">
-        <h3 style="margin: 0 0 1rem 0; font-size: 1.2rem; display: flex; align-items: center; gap: 0.5rem; color: #000;">
-          AI Performance Insights
-        </h3>
-        
-        <div style="margin-bottom: 1rem;">
-          <p style="margin: 0 0 0.5rem 0; font-size: 1rem; color: #000;">
-            <strong>Recent Average:</strong> ${averageScore}% (${totalTests} test${totalTests !== 1 ? 's' : ''})
-          </p>
-          
-          ${strongestArea !== 'N/A' ? `
-            <p style="margin: 0 0 0.5rem 0; font-size: 0.95rem;">
-              <span style="color: #000;"><b> Strongest Area:</b></span> ${this.formatCompetencyName(strongestArea)}
-            </p>
-          ` : ''}
-          
-          ${weakestArea !== 'N/A' && weakestArea !== strongestArea ? `
-            <p style="margin: 0 0 0rem 0; font-size: 0.95rem;">
-              <span style="color: #000;"><b>Focus Area:</b></span> ${this.formatCompetencyName(weakestArea)}
-            </p>
-          ` : ''}
-        </div>
-      </div>
-    `;
-  }
-
-  // Main function to render the AI summary
-  async renderSummary(containerId) {
-    const container = document.getElementById(containerId);
-    if (!container) {
-      console.error(`Container with ID '${containerId}' not found`);
-      return;
-    }
-
-    // Show loading state
-    container.innerHTML = `
-       <div class="ai-summary" style="
-        background: #d2e3f9;
-        color: black;
-        padding: 1.5rem;
-        border-radius: 12px;
-        margin: 1rem 0;
-        height: 155px;
-        border-left: 7px solid #0ea5e9;
-      ">
-        <h3>🤖 Loading AI Insights...</h3>
-        <p>Analyzing your performance data...</p>
-      </div>
-    `;
-
-    try {
-      // Fetch recent assignments
-      const assignments = await this.fetchRecentAssignments();
-      
-      if (assignments.length === 0) {
-        container.innerHTML = `
-          <div class="ai-summary" style="
-        background: #d2e3f9;
-        color: black;
-        padding: 1.5rem;
-        border-radius: 12px;
-        margin: 1rem 0;
-        border-left: 7px solid #0ea5e9;
-      ">
-            <h3>AI Performance Insights</h3>
-            <p>Complete some assignments to see your personalized insights!</p>
-          </div>
-        `;
-        return;
-      }
-
-      // Calculate performance data
-      const { averageScore, totalTests, combinedCompetencyStats } = this.calculateOverallPerformance(assignments);
-      const competencyBreakdown = this.calculateCompetencyPerformance(combinedCompetencyStats);
-      const { strongest, weakest } = this.analyzePerformance(competencyBreakdown);
-
-      const summaryData = {
-        averageScore,
-        strongestArea: strongest,
-        weakestArea: weakest,
-        totalTests,
-        competencyBreakdown
-      };
-
-      // Render the summary
-      container.innerHTML = this.generateSummaryHTML(summaryData);
-
-    } catch (error) {
-      console.error('Error rendering AI summary:', error);
-      container.innerHTML = `
-        <div class="ai-summary" style="
-          background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
-          color: white;
-          padding: 1.5rem;
-          border-radius: 12px;
-          margin: 1rem 0;
-          text-align: center;
-        ">
-          <h3>🤖 AI Performance Insights</h3>
-          <p>Unable to load performance data. Please try again later.</p>
-        </div>
-      `;
-    }
-  }
-
-  // Method to render summary with single assignment data
-  renderSummaryFromData(assignmentData, containerId) {
-    const container = document.getElementById(containerId);
-    if (!container) {
-      console.error(`Container with ID '${containerId}' not found`);
-      return;
-    }
-
-    const competencyBreakdown = this.calculateCompetencyPerformance(assignmentData.competencyStats);
-    const { strongest, weakest } = this.analyzePerformance(competencyBreakdown);
-
-    const summaryData = {
-      averageScore: assignmentData.percentage || 0,
-      strongestArea: strongest,
-      weakestArea: weakest,
-      totalTests: 1,
-      competencyBreakdown
-    };
-
-    container.innerHTML = this.generateSummaryHTML(summaryData);
-  }
-}
-
-// Usage examples and initialization:
-
-// Wait for Firebase auth and DOM to be ready
-document.addEventListener('DOMContentLoaded', () => {
-  // Initialize AI Summary when user is authenticated
-  firebase.auth().onAuthStateChanged((user) => {
-    if (user) {
-      const userId = user.uid;
-      const aiSummary = new DynamicAISummary(firebase.firestore(), userId);
-      
-      // Render AI summary
-      aiSummary.renderSummary('ai-summary-container');
-      
-      // Optional: Set up real-time updates for assignments
-      const assignmentsRef = firebase.firestore()
-        .collection('assignments')
-        .where('to', '==', userId)
-        .where('status', '==', 'complete')
-        .orderBy('completedAt', 'desc')
-        .limit(1);
-      
-      assignmentsRef.onSnapshot((snapshot) => {
-        if (!snapshot.empty) {
-          // Re-render summary when new assignments are completed
-          aiSummary.renderSummary('ai-summary-container');
-        }
-      });
-    }
-  });
-});
-
-// Alternative: If you already have the user ID in a variable
-function initializeAISummary(userId) {
-  const aiSummary = new DynamicAISummary(firebase.firestore(), userId);
-  aiSummary.renderSummary('ai-summary-container');
-  return aiSummary;
-}
-
-// Alternative: Render from existing assignment data (no Firebase needed)
-function renderAISummaryFromData(assignmentData) {
-  const aiSummary = new DynamicAISummary();
-  aiSummary.renderSummaryFromData(assignmentData, 'ai-summary-container');
-}
-
 function toggleCamera() {
     cameraEnabled = !cameraEnabled;
     const toggleBtn = document.getElementById('cameraToggle');
@@ -3285,254 +1758,6 @@ function closeUploadModal() {
     }, 300);
 }
 
-// Add this to your script to inject the CSS
-function addLoadingStyles() {
-    const style = document.createElement('style');
-    style.textContent = `
-        /* Light theme loading container with fade animation */
-        #cq-written-loading {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
-            z-index: 10000;
-            opacity: 0;
-            transition: opacity 0.5s ease-in-out;
-        }
-        
-        #cq-written-loading.show {
-            opacity: 1;
-        }
-        
-        /* HUGE Gradient balls background */
-        .gradient-balls {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            z-index: 1;
-        }
-        
-        .ball {
-            position: absolute;
-            border-radius: 50%;
-            opacity: 0.4;
-            filter: blur(100px);
-            animation: float 25s infinite ease-in-out;
-        }
-        
-        .ball-1 {
-            width: 600px;
-            height: 600px;
-            background: linear-gradient(45deg, #93c5fd, #3b82f6);
-            top: 10%;
-            left: 5%;
-            animation-delay: 0s;
-            animation-duration: 30s;
-        }
-        
-        .ball-2 {
-            width: 550px;
-            height: 550px;
-            background: linear-gradient(45deg, #6ee7b7, #10b981);
-            top: 60%;
-            right: 5%;
-            animation-delay: -7s;
-            animation-duration: 25s;
-        }
-        
-        .ball-3 {
-            width: 650px;
-            height: 650px;
-            background: linear-gradient(45deg, #d8b4fe, #8b5cf6);
-            bottom: 10%;
-            left: 15%;
-            animation-delay: -12s;
-            animation-duration: 35s;
-        }
-        
-        .ball-4 {
-            width: 500px;
-            height: 500px;
-            background: linear-gradient(45deg, #fcd34d, #f59e0b);
-            top: 15%;
-            right: 15%;
-            animation-delay: -5s;
-            animation-duration: 28s;
-        }
-        
-        .ball-5 {
-            width: 700px;
-            height: 700px;
-            background: linear-gradient(45deg, #fda4af, #ec4899);
-            bottom: 5%;
-            right: 10%;
-            animation-delay: -15s;
-            animation-duration: 32s;
-        }
-        
-        @keyframes float {
-            0% {
-                transform: translate(0, 0) scale(1) rotate(0deg);
-            }
-            33% {
-                transform: translate(80px, -60px) scale(1.1) rotate(120deg);
-            }
-            66% {
-                transform: translate(-60px, 70px) scale(0.9) rotate(240deg);
-            }
-            100% {
-                transform: translate(0, 0) scale(1) rotate(360deg);
-            }
-        }
-        
-        .cq-loading-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 3rem 2.5rem;
-            text-align: center;
-            background: rgba(255, 255, 255, 0.85);
-            border-radius: 20px;
-            backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            position: relative;
-            z-index: 2;
-            max-width: 500px;
-            width: 90%;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
-        }
-        
-        .cq-loading-spinner {
-            width: 70px;
-            height: 70px;
-            border: 3px solid rgba(59, 130, 246, 0.1);
-            border-top: 3px solid #3b82f6;
-            border-radius: 50%;
-            animation: cq-spin 1.2s ease-in-out infinite;
-            margin-bottom: 1.5rem;
-            box-sizing: border-box;
-        }
-        
-        @keyframes cq-spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        .cq-loading-text {
-            font-size: 1.5rem;
-            color: #1e293b;
-            margin-bottom: 0.5rem;
-            font-weight: 600;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-        }
-        
-        .cq-loading-subtext {
-            font-size: 1.1rem;
-            color: #64748b;
-            margin-bottom: 1.5rem;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-        }
-        
-        .cq-loading-progress {
-            width: 300px;
-            height: 8px;
-            background-color: rgba(59, 130, 246, 0.1);
-            border-radius: 4px;
-            overflow: hidden;
-            margin-top: 1rem;
-        }
-        
-        .cq-loading-progress-bar {
-            height: 100%;
-            width: 0%;
-            background: linear-gradient(90deg, #3b82f6, #6366f1);
-            border-radius: 4px;
-            transition: width 0.4s ease;
-        }
-        
-        /* Responsive adjustments */
-        @media (max-width: 768px) {
-            .ball {
-                filter: blur(70px);
-            }
-            
-            .ball-1, .ball-2, .ball-3, .ball-4, .ball-5 {
-                width: 400px;
-                height: 400px;
-            }
-            
-            .cq-loading-container {
-                padding: 2rem 1.5rem;
-                width: 85%;
-            }
-            
-            .cq-loading-text {
-                font-size: 1.3rem;
-            }
-            
-            .cq-loading-subtext {
-                font-size: 1rem;
-            }
-            
-            .cq-loading-progress {
-                width: 250px;
-            }
-        }
-    `;
-    document.head.appendChild(style);
-}
-
-// REMOVE the ensureLoaderPosition and applyInlineLoaderStyles functions
-
-// ADD this function to show the loader properly
-function showLoading() {
-    const loadingElement = document.getElementById('cq-written-loading');
-    if (!loadingElement) return;
-    
-    // Create gradient balls if they don't exist
-    if (!loadingElement.querySelector('.gradient-balls')) {
-        const gradientBalls = document.createElement('div');
-        gradientBalls.className = 'gradient-balls';
-        gradientBalls.innerHTML = `
-            <div class="ball ball-1"></div>
-            <div class="ball ball-2"></div>
-            <div class="ball ball-3"></div>
-            <div class="ball ball-4"></div>
-        `;
-        loadingElement.insertBefore(gradientBalls, loadingElement.firstChild);
-    }
-    
-    // Show with fade animation
-    loadingElement.style.display = 'flex';
-    setTimeout(() => {
-        loadingElement.classList.add('show');
-    }, 10);
-    
-    // Start animation
-    startLoadingAnimation();
-}
-
-function hideLoading() {
-    const loadingElement = document.getElementById('cq-written-loading');
-    if (!loadingElement) return;
-    
-    // Fade out first, then hide
-    loadingElement.classList.remove('show');
-    setTimeout(() => {
-        loadingElement.style.display = 'none';
-        completeLoadingAnimation();
-    }, 500); // Match the CSS transition duration
-}
-// Call this function when your script loads
-addLoadingStyles();
-
 function setupUploadModal() {
     const dropZone = document.getElementById('uploadDropZone');
     const fileInput = document.getElementById('uploadFileInput');
@@ -3668,45 +1893,6 @@ function resetUploadModal() {
     if (submitBtn) {
         submitBtn.disabled = true;
     }
-}
-
-// ========== GPT QUESTION GENERATOR ==========
-
-function getQuestionCount(timeStr) {
-  if (!timeStr) return 5;
-  
-  const time = parseInt(timeStr);
-  if (time >= 15) return 10;
-  if (time >= 10) return 7;
-  return 5;
-}
-
-function getFallbackQuestions(count, competencies) {
-  // Simple fallback questions if GPT fails
-  return [
-    {
-      text: "What is the primary goal of business communication?",
-      competency: competencies[0] || "Business Communication",
-      correctAnswer: "Clear and effective information exchange",
-      options: [
-        "Clear and effective information exchange",
-        "Using complex terminology",
-        "Lengthy detailed explanations",
-        "Informal casual language"
-      ]
-    },
-    {
-      text: "Which financial statement shows profitability over time?",
-      competency: competencies[0] || "Accounting",
-      correctAnswer: "Income Statement",
-      options: [
-        "Income Statement",
-        "Balance Sheet",
-        "Cash Flow Statement",
-        "Trial Balance"
-      ]
-    }
-  ].slice(0, count);
 }
 
 async function submitUploadedFile() {
@@ -3946,83 +2132,52 @@ function testQuizSubmission() {
 window.testQuizSubmission = testQuizSubmission;
 
 
-async function openWrittenPracticeModal(assignment) {
+function openWrittenPracticeModal(assignment) {
     console.log("Opening written practice modal with assignment:", assignment);
     
-    // Create modal if it doesn't exist
-    if (!writtenModal) {
-        writtenModal = createWrittenModal();
-    }
-    
-    // FIRST hide the content
-    const contentSection = writtenModal.querySelector('.cq-written-modal-content');
-    if (contentSection) {
-        contentSection.style.display = 'none';
-    }
-    
-    // THEN show the modal and loading
-    writtenModal.style.display = 'flex';
-    showLoading(); // Use the new function to show loading
-    
+    // Use assignment questions or fallback to sample questions
+    writtenQuestions = assignment.writtenQuestions || sampleWrittenQuestions;
     currentQuestionIndex = 0;
     writtenAnswers = {};
     
-    // Calculate time and question count
+    // Set up timer (convert minutes to seconds)
     const timeInMinutes = parseInt(assignment.time) || 15;
     writtenTimeRemaining = timeInMinutes * 60;
-    const questionCount = getQuestionCount(assignment.time);
     
-    try {
-        // Generate questions based on assignment competencies and difficulty
-        writtenQuestions = await generateQuestionsFromCompetencies(
-            assignment.competencies || ["General Business"],
-            questionCount,
-            assignment.difficulty || "Medium",
-            assignment
-        );
-        
-        console.log("Generated questions:", writtenQuestions);
-        
-        // Hide loading and show content
-        hideLoading(); // Use the new function to hide loading
-        if (contentSection) {
-            contentSection.style.display = 'block';
-        }
-        
-        // Load first question
-        loadWrittenQuestion();
-        startWrittenTimer();
-        
-    } catch (error) {
-        console.error("Error generating questions:", error);
-        hideLoading(); // Hide loading on error too
-        alert("Failed to generate questions. Please try again.");
-        closeWrittenModal();
-    }
+    // Show modal
+    document.getElementById('cq-written-modal').style.display = 'flex';
+    
+    // Load first question
+    loadWrittenQuestion();
+    
+    // Start timer
+    startWrittenTimer();
+    
+    console.log("Written practice modal opened with", writtenQuestions.length, "questions");
 }
 
 function loadWrittenQuestion() {
-    if (!writtenQuestions || writtenQuestions.length === 0) {
-        console.error("No questions available");
+    const question = writtenQuestions[currentQuestionIndex];
+    if (!question) {
+        console.error("No question found at index", currentQuestionIndex);
         return;
     }
     
-    const question = writtenQuestions[currentQuestionIndex];
+    console.log("Loading question", currentQuestionIndex + 1, ":", question.question);
     
-    // Update UI
-    document.getElementById('cq-written-title').textContent = 
-        window.currentAssignment?.title || 'Written Practice';
+    // Update header
+    document.getElementById('cq-written-title').textContent = window.currentAssignment?.title || 'Written Practice';
     document.getElementById('cq-written-question-count').textContent = 
         `Question ${currentQuestionIndex + 1} of ${writtenQuestions.length}`;
     
-    // Set competency and question text
+    // Update question content
     document.getElementById('cq-written-competency').textContent = question.competency;
-    document.getElementById('cq-written-question').textContent = question.text;
+    document.getElementById('cq-written-question').textContent = question.question;
     
     // Create options
     const optionsContainer = document.getElementById('cq-written-options');
-    optionsContainer.innerHTML = question.options.map(option => `
-        <label class="cq-written-option">
+    optionsContainer.innerHTML = question.options.map((option, index) => `
+        <label class="cq-written-option" data-option="${option}">
             <input type="radio" name="written-q${currentQuestionIndex}" value="${option}">
             <span class="cq-written-option-text">${option}</span>
         </label>
@@ -4038,374 +2193,58 @@ function loadWrittenQuestion() {
         }
     }
     
-    // Add click handlers
+    // Add click handlers for options
     optionsContainer.querySelectorAll('.cq-written-option').forEach(option => {
-        option.addEventListener('click', function() {
+        option.addEventListener('click', function(e) {
+            // Prevent double-triggering if radio button itself was clicked
+            if (e.target.type === 'radio') return;
+            
+            // Remove previous selection
             optionsContainer.querySelectorAll('.cq-written-option').forEach(opt => 
                 opt.classList.remove('selected'));
+            
+            // Add selection to clicked option
             this.classList.add('selected');
             
+            // Check the radio button
             const radio = this.querySelector('input[type="radio"]');
             radio.checked = true;
+            
+            // Save answer
             writtenAnswers[currentQuestionIndex] = radio.value;
+            console.log("Answer saved:", currentQuestionIndex, "->", radio.value);
         });
     });
     
+    // Add change handlers for radio buttons (for keyboard navigation)
+    optionsContainer.querySelectorAll('input[type="radio"]').forEach(radio => {
+        radio.addEventListener('change', function() {
+            if (this.checked) {
+                // Remove previous selection
+                optionsContainer.querySelectorAll('.cq-written-option').forEach(opt => 
+                    opt.classList.remove('selected'));
+                
+                // Add selection to parent option
+                this.closest('.cq-written-option').classList.add('selected');
+                
+                // Save answer
+                writtenAnswers[currentQuestionIndex] = this.value;
+                console.log("Answer saved via radio:", currentQuestionIndex, "->", this.value);
+            }
+        });
+    });
+    
+    // Update progress bar
     updateWrittenProgress();
+    
+    // Update navigation buttons
     updateWrittenNavButtons();
 }
+
 function updateWrittenProgress() {
     const progress = ((currentQuestionIndex + 1) / writtenQuestions.length) * 100;
     document.getElementById('cq-written-progress-fill').style.width = `${progress}%`;
 }
-
-// Fix the training data usage issue
-// FIXED VERSION - Add this after your existing function
-function fixTrainingDataUsage() {
-    console.log("🔧 Fixing training data usage in question generation");
-    
-    // Override the existing function with complete debugging and PDF support
-    window.generateQuestionsFromCompetencies = async function(competencies, questionCount, difficulty, assignment) {
-        console.log("🚀 =========================== QUESTION GENERATION START ===========================");
-        console.log("🔍 Initial parameters:", { 
-            competencies, 
-            questionCount, 
-            difficulty, 
-            assignmentExists: !!assignment,
-            assignmentKeys: assignment ? Object.keys(assignment) : []
-        });
-
-        // Use your existing API key
-        const apiKey = window.openaiApiKey || "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";
-
-        const compText = competencies.join(', ');
-        let trainingContext = "";
-        let allTrainingContent = [];
-        let hasTrainingData = false;
-
-        // ================================ PDF PROCESSING SECTION ================================
-        console.log("📄 =========================== PDF PROCESSING START ===========================");
-        
-        if (!assignment) {
-            console.log("❌ NO ASSIGNMENT OBJECT PROVIDED");
-        } else if (!assignment.trainingPDFs) {
-            console.log("❌ NO trainingPDFs PROPERTY IN ASSIGNMENT");
-            console.log("📋 Available assignment properties:", Object.keys(assignment));
-        } else if (!Array.isArray(assignment.trainingPDFs)) {
-            console.log("❌ trainingPDFs IS NOT AN ARRAY:", typeof assignment.trainingPDFs);
-            console.log("📋 trainingPDFs value:", assignment.trainingPDFs);
-        } else if (assignment.trainingPDFs.length === 0) {
-            console.log("❌ trainingPDFs ARRAY IS EMPTY");
-        } else {
-            console.log("✅ trainingPDFs FOUND - Count:", assignment.trainingPDFs.length);
-            console.log("📄 Full trainingPDFs structure:", JSON.stringify(assignment.trainingPDFs, null, 2));
-            
-            assignment.trainingPDFs.forEach((pdf, index) => {
-                console.log(`\n📄 PROCESSING PDF ${index + 1}/${assignment.trainingPDFs.length}:`);
-                console.log(`   Name: ${pdf.name || 'UNNAMED'}`);
-                console.log(`   Type: ${pdf.type || 'NO TYPE'}`);
-                console.log(`   Processed: ${pdf.processed}`);
-                console.log(`   Has content: ${!!pdf.content}`);
-                console.log(`   Content type: ${typeof pdf.content}`);
-                console.log(`   Content length: ${pdf.content?.length || 0}`);
-                
-                if (!pdf.content) {
-                    console.log("   ❌ SKIP: No content property");
-                } else if (typeof pdf.content !== 'string') {
-                    console.log("   ❌ SKIP: Content is not a string");
-                } else if (pdf.content.trim().length === 0) {
-                    console.log("   ❌ SKIP: Content is empty after trim");
-                } else {
-                    const contentSnippet = pdf.content.trim().substring(0, 1500); // Increased from 1000
-                    allTrainingContent.push(contentSnippet);
-                    hasTrainingData = true;
-                    console.log("   ✅ ADDED PDF to training content");
-                    console.log(`   First 200 chars: "${contentSnippet.substring(0, 200)}..."`);
-                }
-            });
-        }
-
-        // ================================ USER TRAINING DATA SECTION ================================
-        console.log("\n👤 =========================== USER TRAINING DATA START ===========================");
-        
-        if (assignment?.usedMenteeTrainingData === true) {
-            console.log("✅ User training data REQUESTED");
-            try {
-                const currentUser = firebase.auth().currentUser;
-                if (!currentUser) {
-                    console.log("❌ No current user authenticated");
-                } else {
-                    console.log("✅ Current user found:", currentUser.uid);
-                    const userTrainingRef = firebase.firestore().collection('userTraining').doc(currentUser.uid);
-                    const userTrainingDoc = await userTrainingRef.get();
-                    
-                    if (!userTrainingDoc.exists) {
-                        console.log("❌ No user training document exists");
-                    } else {
-                        console.log("✅ User training document exists");
-                        const entriesRef = userTrainingRef.collection('entries').orderBy('timestamp', 'desc').limit(3);
-                        const entriesSnapshot = await entriesRef.get();
-                        
-                        console.log(`📊 Found ${entriesSnapshot.size} user training entries`);
-                        
-                        entriesSnapshot.forEach(doc => {
-                            const data = doc.data();
-                            console.log(`   Entry ID: ${doc.id}`);
-                            console.log(`   Has content: ${!!data.content}`);
-                            console.log(`   Content length: ${data.content?.trim().length || 0}`);
-                            
-                            if (data.content && data.content.trim().length > 0) {
-                                allTrainingContent.push(data.content.trim());
-                                hasTrainingData = true;
-                                console.log("   ✅ ADDED user training content");
-                            }
-                        });
-                    }
-                }
-            } catch (error) {
-                console.error("💥 Error fetching user training data:", error);
-            }
-        } else {
-            console.log("⏭️ User training data NOT requested");
-            console.log(`   usedMenteeTrainingData value: ${assignment?.usedMenteeTrainingData}`);
-        }
-
-        // ================================ TRAINING CONTEXT CREATION ================================
-        console.log("\n🔧 =========================== TRAINING CONTEXT CREATION ===========================");
-        console.log(`Total training content pieces: ${allTrainingContent.length}`);
-        console.log(`Has training data: ${hasTrainingData}`);
-
-        if (hasTrainingData && allTrainingContent.length > 0) {
-            const combinedContent = allTrainingContent.join(' ').substring(0, 2500); // Increased limit
-            trainingContext = combinedContent;
-            
-            console.log("✅ TRAINING CONTEXT CREATED");
-            console.log(`   Combined content length: ${combinedContent.length}`);
-            console.log(`   First 300 chars of context: "${trainingContext.substring(0, 300)}..."`);
-        } else {
-            console.log("❌ NO TRAINING CONTEXT CREATED - No valid training data");
-        }
-
-        // ================================ PROMPT CREATION ================================
-        console.log("\n📝 =========================== PROMPT CREATION ===========================");
-        
-        let prompt;
-        if (hasTrainingData && trainingContext) {
-            prompt = `You are creating FBLA business questions that MUST be directly based on this student's uploaded content:
-
-"${trainingContext}"
-
-Create ${questionCount} multiple choice questions that:
-1. Use concepts, topics, and themes from the student's content above
-2. Connect those concepts to these business competencies: ${compText}
-3. Are at ${difficulty} difficulty level
-4. Have exactly 4 answer choices each
-5. Make the connection between the student's content and business concepts clear
-
-CRITICAL: The questions MUST relate to the actual content the student uploaded. If the content is about prisons, create questions about workplace management, employee conditions, organizational structure, etc. that connect to that theme.
-
-Return JSON only in this exact format:
-[
-  {
-    "text": "Question text that references concepts from the student content?",
-    "competency": "One of the provided competency names",
-    "correctAnswer": "The correct option text",
-    "options": ["Option A", "Option B", "Option C", "Option D"]
-  }
-]`;
-        } else {
-            prompt = `Generate ${questionCount} FBLA multiple choice questions.
-- Difficulty: ${difficulty}
-- Competencies: ${compText}
-- Each must have exactly 4 options, 1 correct answer
-- Make questions realistic for business competitions
-
-Return JSON only in this format:
-[
-  {
-    "text": "Question text?",
-    "competency": "Competency Name",
-    "correctAnswer": "Correct option text",
-    "options": ["Option A", "Option B", "Option C", "Option D"]
-  }
-]`;
-        }
-
-        console.log("📝 FINAL PROMPT DETAILS:");
-        console.log(`   Prompt length: ${prompt.length}`);
-        console.log(`   Has training context: ${!!trainingContext}`);
-        console.log(`   Training context length: ${trainingContext.length}`);
-        
-        console.log("📝 ACTUAL PROMPT BEING SENT:");
-        console.log("=" .repeat(80));
-        console.log(prompt);
-        console.log("=" .repeat(80));
-
-        // ================================ API CALL ================================
-        console.log("\n🌐 =========================== API CALL START ===========================");
-        
-        try {
-            console.log("📤 Sending request to OpenAI...");
-            
-            const requestBody = {
-                model: "gpt-4o-mini",
-                messages: [
-                    { 
-                        role: "system", 
-                        content: hasTrainingData ? 
-                            "You are an expert at creating personalized FBLA questions based on student content. Always connect the student's actual uploaded content to business concepts. Be creative in making these connections." :
-                            "You are an expert FBLA exam writer who creates realistic business competition questions."
-                    },
-                    { role: "user", content: prompt }
-                ],
-                temperature: 0.8,
-                max_tokens: 2500
-            };
-            
-            console.log("📤 Request body summary:", {
-                model: requestBody.model,
-                systemMessage: requestBody.messages[0].content,
-                promptLength: requestBody.messages[1].content.length,
-                temperature: requestBody.temperature
-            });
-            
-            const res = await fetch("https://api.openai.com/v1/chat/completions", {
-                method: "POST",
-                headers: { 
-                    "Authorization": `Bearer ${apiKey}`, 
-                    "Content-Type": "application/json" 
-                },
-                body: JSON.stringify(requestBody)
-            });
-
-            console.log(`📥 Response status: ${res.status} ${res.statusText}`);
-
-            if (!res.ok) {
-                const errorText = await res.text();
-                console.error("💥 GPT API Error:", res.status, errorText);
-                throw new Error(`API Error ${res.status}: ${errorText}`);
-            }
-            
-            const responseData = await res.json();
-            console.log("📥 API response summary:", {
-                hasChoices: !!responseData.choices,
-                choicesLength: responseData.choices?.length || 0,
-                finishReason: responseData.choices?.[0]?.finish_reason
-            });
-            
-            let content = responseData.choices[0].message.content.trim();
-            console.log("📥 Raw content length:", content.length);
-            console.log("📥 Raw content preview:", content.substring(0, 500) + "...");
-            
-            // Clean up the response
-            content = content.replace(/```json|```/g, "");
-            console.log("📥 Content after cleanup preview:", content.substring(0, 500) + "...");
-            
-            const questions = JSON.parse(content);
-            console.log("✅ Successfully parsed JSON - Questions count:", questions.length);
-            
-            // ================================ SAVE QUESTIONS TO GLOBAL VARIABLES ================================
-            console.log("\n💾 =========================== SAVING QUESTIONS ===========================");
-            
-            if (questions && Array.isArray(questions) && questions.length > 0) {
-                // Transform questions to match your expected format
-                window.writtenQuestions = questions.map((q, index) => {
-                    console.log(`   Processing question ${index + 1}:`, {
-                        hasText: !!q.text,
-                        hasOptions: !!q.options,
-                        optionsLength: q.options?.length || 0,
-                        hasCorrectAnswer: !!q.correctAnswer
-                    });
-                    
-                    return {
-                        question: q.text || q.question,
-                        options: q.options || [],
-                        correctAnswer: q.correctAnswer,
-                        competency: q.competency
-                    };
-                });
-                
-                // Initialize answers object
-                window.writtenAnswers = {};
-                
-                console.log("✅ QUESTIONS SAVED TO GLOBAL VARIABLES");
-                console.log(`   window.writtenQuestions length: ${window.writtenQuestions.length}`);
-                console.log(`   window.writtenAnswers initialized: ${typeof window.writtenAnswers}`);
-                console.log("📊 Sample saved question:", window.writtenQuestions[0]);
-                
-                console.log("🎉 =========================== SUCCESS ===========================");
-                console.log(`✅ Generated ${questions.length} questions`);
-                console.log(`✅ Used training data: ${hasTrainingData}`);
-                console.log(`✅ Training content pieces: ${allTrainingContent.length}`);
-                console.log(`✅ PDF processing: ${assignment?.trainingPDFs?.length || 0} PDFs`);
-                console.log(`✅ User training: ${assignment?.usedMenteeTrainingData === true ? 'Requested' : 'Not requested'}`);
-                
-                return questions;
-            } else {
-                throw new Error("No valid questions in response");
-            }
-
-        } catch (err) {
-            console.error("💥 =========================== ERROR OCCURRED ===========================");
-            console.error("💥 Error type:", err.constructor.name);
-            console.error("💥 Error message:", err.message);
-            console.error("💥 Full error:", err);
-            
-            console.log("🔄 =========================== FALLBACK PROCESSING ===========================");
-            
-            let fallbackQuestions = [];
-            
-            // Try to get fallback questions
-            if (typeof getFallbackQuestions === 'function') {
-                console.log("🔄 Trying getFallbackQuestions...");
-                fallbackQuestions = getFallbackQuestions(questionCount, competencies);
-            } else if (typeof createBasicQuestions === 'function') {
-                console.log("🔄 Trying createBasicQuestions...");
-                fallbackQuestions = createBasicQuestions(questionCount, competencies);
-            } else {
-                console.log("🔄 Creating emergency fallback questions...");
-                fallbackQuestions = Array.from({length: questionCount}, (_, i) => ({
-                    question: `Sample FBLA question ${i + 1} for ${competencies[0]}?`,
-                    options: ["Option A", "Option B", "Option C", "Option D"],
-                    correctAnswer: "Option A",
-                    competency: competencies[0]
-                }));
-            }
-            
-            if (fallbackQuestions && fallbackQuestions.length > 0) {
-                window.writtenQuestions = fallbackQuestions;
-                window.writtenAnswers = {};
-                console.log("✅ Fallback questions saved:", window.writtenQuestions.length);
-                return fallbackQuestions;
-            } else {
-                console.error("💥 Even fallback failed!");
-                return [];
-            }
-        }
-    };
-    
-    console.log("✅ Training data usage fixed with complete debugging!");
-}
-
-// Auto-execute the fix
-
-// Helper function for basic questions if everything fails
-function createBasicQuestions(count, competencies) {
-    const basicQuestions = [];
-    for (let i = 0; i < count; i++) {
-        basicQuestions.push({
-            question: `Business Communication Question ${i + 1}?`,
-            options: ["Option A", "Option B", "Option C", "Option D"],
-            correctAnswer: "Option A",
-            competency: competencies[0] || "business-communication"
-        });
-    }
-    return basicQuestions;
-}
-
-// Run the fix
-fixTrainingDataUsage();
-
 
 
 function updateWrittenNavButtons() {
@@ -4485,70 +2324,136 @@ function updateTimerDisplay() {
 
 async function submitWrittenPractice() {
     try {
+        console.log("=== SUBMITTING WRITTEN PRACTICE ===");
+        console.log("Assignment ID:", window.latestAssignmentId);
+        console.log("Current Assignment:", window.currentAssignment);
+        console.log("Questions:", writtenQuestions.length);
+        console.log("Answers:", writtenAnswers);
+
         clearInterval(writtenTimer);
         
+        // CRITICAL: Check if we have an assignment ID
         if (!window.latestAssignmentId) {
-            alert("Error: No assignment ID found.");
+            console.error("❌ CRITICAL ERROR: No assignment ID found!");
+            alert("Error: No assignment ID found. Cannot submit written practice.");
+            closeWrittenModal();
             return;
         }
         
-        // Calculate score - CHECK ALL POSSIBLE CORRECT ANSWER FIELDS
+        // Calculate score and competency stats
         let score = 0;
         const competencyStats = {};
+        const detailedAnswers = [];
+        const totalQuestions = writtenQuestions.length;
         
         writtenQuestions.forEach((question, index) => {
             const userAnswer = writtenAnswers[index];
-            
-            // Try all possible correct answer field names
-            const correctAnswer = question.correctAnswer || question.correct || question.answer || question.correctOption;
-            const isCorrect = userAnswer === correctAnswer;
+            const isCorrect = userAnswer === question.correctAnswer;
             
             if (isCorrect) score++;
             
             // Track competency performance
-            const comp = question.competency || 'Unknown';
-            if (!competencyStats[comp]) {
-                competencyStats[comp] = { total: 0, correct: 0 };
+            if (!competencyStats[question.competency]) {
+                competencyStats[question.competency] = { 
+                    total: 0, 
+                    correct: 0,
+                    questions: []
+                };
             }
-            competencyStats[comp].total++;
-            if (isCorrect) competencyStats[comp].correct++;
+            competencyStats[question.competency].total++;
+            if (isCorrect) competencyStats[question.competency].correct++;
+            
+            // Store detailed answer info
+            detailedAnswers.push({
+                questionIndex: index,
+                question: question.question,
+                competency: question.competency,
+                userAnswer: userAnswer || "No answer",
+                correctAnswer: question.correctAnswer,
+                isCorrect: isCorrect
+            });
         });
         
-        const totalQuestions = writtenQuestions.length || 1; // Prevent divide by zero
+        // Calculate time spent and percentage
+        const originalTime = parseInt(window.currentAssignment?.time) * 60 || 900;
+        const timeSpent = originalTime - writtenTimeRemaining;
         const percentage = Math.round((score / totalQuestions) * 100);
         
-        // Save to Firebase
-        await db.collection('assignments').doc(window.latestAssignmentId).update({
-            status: "complete",
-            completedAt: firebase.firestore.FieldValue.serverTimestamp(),
+        console.log("Final score:", score, "/", totalQuestions);
+        console.log("Competency stats:", competencyStats);
+        console.log("Time spent:", timeSpent, "seconds");
+        
+        // CRITICAL: This is the key update that marks it as complete for mentors
+        const updateData = {
+            status: "complete",  // CRITICAL: This is what mentors filter by
+            completedAt: firebase.firestore.FieldValue.serverTimestamp(), // CRITICAL: This is what mentors sort by
             score: score,
             totalQuestions: totalQuestions,
-            maxScore: totalQuestions,
+            maxScore: totalQuestions,  // CRITICAL: Mentors expect this field
             competencyStats: competencyStats,
+            timeSpent: timeSpent,
+            detailedAnswers: detailedAnswers,
+            competencies: Object.keys(competencyStats),
+            correctCompetencies: Object.entries(competencyStats)
+                .filter(([_, stats]) => stats.correct === stats.total)
+                .map(([comp, _]) => comp),
             percentage: percentage,
             submittedAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
+        };
         
-        // Show results
-        closeWrittenModal(true);
-        showCongratsModal({
-            message: `Great job! You scored ${score}/${totalQuestions}`,
-            assignmentName: window.currentAssignment?.title || "Written Practice",
+        console.log("=== FIREBASE UPDATE DATA ===");
+        console.log("Document ID:", window.latestAssignmentId);
+        console.log("Update Data:", updateData);
+        
+        // Update assignment in Firestore
+        await db.collection('assignments').doc(window.latestAssignmentId).update(updateData);
+        
+        console.log("✅ Assignment updated successfully in Firestore");
+        console.log("✅ Status set to 'complete'");
+        console.log("✅ CompletedAt timestamp added");
+        console.log("✅ MaxScore field added");
+        
+        // Prepare data for modal
+        const resultsData = {
+            message: `Excellent work! You scored ${score}/${totalQuestions}`,
+            assignmentName: window.currentAssignment?.title || 'Written Practice',
             competencyStats: competencyStats,
             score: score,
             totalQuestions: totalQuestions,
-            percentage: percentage
+            percentage: percentage,
+            timeSpent: timeSpent
+        };
+        
+        console.log("Congrats modal data:", resultsData);
+        
+        // Close modal first
+        closeWrittenModal(true);
+        
+        // Show celebration
+        confetti({
+            particleCount: 150,
+            spread: 70,
+            origin: { y: 0.6 },
+            colors: ['#3b82f6', '#1d4ed8', '#1e40af']
         });
         
-        // Clear data
+        // Show results modal
+        showCongratsModal(resultsData);
+        
+        // Clear globals AFTER successful submission
         window.latestAssignmentId = null;
         window.currentAssignment = null;
         
+        console.log("=== WRITTEN PRACTICE SUBMISSION COMPLETE ===");
+        
     } catch (error) {
-        console.error("Submission error:", error);
-        alert("Failed to submit: " + error.message);
+        console.error("❌ Written practice submission error:", error);
+        console.error("❌ Assignment ID was:", window.latestAssignmentId);
+        console.error("❌ Current assignment was:", window.currentAssignment);
+        alert("Failed to submit practice: " + error.message);
     }
 }
+
 
 function calculateQuizResults() {
     console.log("🧮 Calculating quiz results...");
@@ -4674,9 +2579,7 @@ function closeWrittenModal(wasCompleted = false) {
     clearInterval(writtenTimer);
     
     // Hide modal
-    if (writtenModal) {
-        writtenModal.style.display = 'none';
-    }
+    document.getElementById('cq-written-modal').style.display = 'none';
     
     // Reset state
     writtenQuestions = [];
@@ -4704,6 +2607,7 @@ function closeWrittenModal(wasCompleted = false) {
         // Don't clear globals here either - let submitWrittenPractice handle it
     }
 }
+
 
 
 window.previousQuestion = previousQuestion;
@@ -5633,10 +3537,278 @@ function closeCongratsModal(docId) {
 window.toggleCommentPanel = toggleCommentPanel;
 
  
+// Add these functions to your existing comprehensive script
 
-</script>
+// ============ NOTIFICATION LOADING SYSTEM ============
 
+// Add this after your Firebase initialization
+let notificationSystem = {
+  notifications: [],
+  initialized: false
+};
 
+// Add this function to load notifications when user is authenticated
+async function loadUserNotifications(userId) {
+  if (!userId || !db) return;
+  
+  try {
+    // Load from Firestore
+    const notificationsRef = db.collection(`users/${userId}/notifications`);
+    const snapshot = await notificationsRef
+      .orderBy('timestamp', 'desc')
+      .limit(20)
+      .get();
+    
+    const list = document.getElementById("notificationList");
+    if (!list) {
+      console.log("Notification list element not found");
+      return;
+    }
+    
+    // Clear existing notifications
+    list.innerHTML = '';
+    notificationSystem.notifications = [];
+    
+    if (snapshot.empty) {
+      // Show a default message if no notifications
+      list.innerHTML = `
+        <div class="notification-item">
+          <div class="notification-body" style="text-align: center; color: #666;">
+            No notifications yet
+          </div>
+        </div>
+      `;
+      return;
+    }
+    
+    // Render notifications
+    snapshot.forEach(doc => {
+      const data = doc.data();
+      const notification = {
+        id: doc.id,
+        title: data.title || 'Notification',
+        description: data.description || data.message || '',
+        timestamp: data.timestamp?.toDate() || new Date(),
+        read: data.read || false,
+        onClick: data.clickAction || null
+      };
+      
+      notificationSystem.notifications.push(notification);
+      renderNotificationItem(notification);
+    });
+    
+    updateNotificationBadge();
+    console.log(`Loaded ${notificationSystem.notifications.length} notifications`);
+    
+  } catch (error) {
+    console.error("Error loading notifications:", error);
+    const list = document.getElementById("notificationList");
+    if (list) {
+      list.innerHTML = `
+        <div class="notification-item">
+          <div class="notification-body" style="text-align: center; color: #dc3545;">
+            Error loading notifications
+          </div>
+        </div>
+      `;
+    }
+  }
+}
 
-</body>
-</html>
+// Function to render a single notification item
+function renderNotificationItem(notification) {
+  const list = document.getElementById("notificationList");
+  if (!list) return;
+  
+  const item = document.createElement("div");
+  item.className = `notification-item ${notification.read ? 'read' : ''}`;
+  item.dataset.notificationId = notification.id;
+  
+  item.innerHTML = `
+    <div class="notification-header">
+      <strong>${notification.title}</strong>
+      <span class="notification-time">${formatNotificationTime(notification.timestamp)}</span>
+    </div>
+    <div class="notification-body">${notification.description}</div>
+  `;
+  
+  if (notification.onClick) {
+    item.addEventListener("click", () => {
+      eval(notification.onClick); // Be careful with this - better to use a function registry
+      markNotificationAsRead(notification.id);
+    });
+    item.style.cursor = 'pointer';
+  }
+  
+  list.appendChild(item);
+}
+
+// Function to format notification timestamp
+function formatNotificationTime(timestamp) {
+  const now = new Date();
+  const time = new Date(timestamp);
+  const diff = now - time;
+  
+  if (diff < 60000) return 'Just now';
+  if (diff < 3600000) return `${Math.floor(diff / 60000)}m ago`;
+  if (diff < 86400000) return `${Math.floor(diff / 3600000)}h ago`;
+  if (diff < 604800000) return `${Math.floor(diff / 86400000)}d ago`;
+  return time.toLocaleDateString();
+}
+
+// Function to update notification badge
+function updateNotificationBadge() {
+  const unreadCount = notificationSystem.notifications.filter(n => !n.read).length;
+  const badges = document.querySelectorAll('.notification-badge');
+  
+  badges.forEach(badge => {
+    if (unreadCount > 0) {
+      badge.textContent = unreadCount > 99 ? '99+' : unreadCount;
+      badge.style.display = 'inline-block';
+    } else {
+      badge.style.display = 'none';
+    }
+  });
+}
+
+// Function to mark notification as read
+async function markNotificationAsRead(notificationId) {
+  const userId = await getCurrentUserId();
+  if (!userId || !db) return;
+  
+  try {
+    await db.doc(`users/${userId}/notifications/${notificationId}`).update({
+      read: true
+    });
+    
+    // Update local state
+    const notification = notificationSystem.notifications.find(n => n.id === notificationId);
+    if (notification) {
+      notification.read = true;
+    }
+    
+    // Update UI
+    const item = document.querySelector(`[data-notification-id="${notificationId}"]`);
+    if (item) {
+      item.classList.add('read');
+    }
+    
+    updateNotificationBadge();
+  } catch (error) {
+    console.error("Error marking notification as read:", error);
+  }
+}
+
+// Enhanced showNotification function that saves to Firebase
+async function showNotification(title, description, onClick = null) {
+  const userId = await getCurrentUserId();
+  
+  // Show immediately in UI
+  const list = document.getElementById("notificationList");
+  if (list) {
+    const item = document.createElement("div");
+    item.className = "notification-item";
+    item.innerHTML = `
+      <div class="notification-header">
+        <strong>${title}</strong>
+        <span class="notification-time">Just now</span>
+      </div>
+      <div class="notification-body">${description}</div>
+    `;
+
+    if (onClick) {
+      item.addEventListener("click", () => {
+        onClick();
+        item.classList.add("read");
+      });
+      item.style.cursor = 'pointer';
+    }
+
+    list.prepend(item);
+  }
+  
+  // Save to Firebase if user is authenticated
+  if (userId && db) {
+    try {
+      await db.collection(`users/${userId}/notifications`).add({
+        title,
+        description,
+        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+        read: false,
+        clickAction: onClick ? onClick.toString() : null
+      });
+      console.log("Notification saved to Firebase");
+    } catch (error) {
+      console.error("Error saving notification:", error);
+    }
+  }
+  
+  updateNotificationBadge();
+}
+
+// Add this to your startAppWithUserId function
+async function startAppWithUserId(userId) {
+  mentorId = userId;
+  console.log("Starting app with Firebase Auth UID:", userId);
+
+  // Load notifications first
+  await loadUserNotifications(userId);
+
+  // Your existing code...
+  db.collection(`users/${userId}/trainingProgress`).onSnapshot((snap) => {
+    const progress = {};
+    snap.forEach(doc => progress[doc.id] = doc.data().status);
+    lastProgress = progress;
+    
+    const activeTab = document.querySelector(".tab.active");
+    if (activeTab && tabs.length >= 2 && activeTab === tabs[1]) {
+      renderTrainingGrid(progress, true);
+    } else {
+      renderTrainingGrid(progress, false);
+    }
+  });
+
+  // Set up real-time notification listener
+  db.collection(`users/${userId}/notifications`)
+    .orderBy('timestamp', 'desc')
+    .limit(20)
+    .onSnapshot((snapshot) => {
+      snapshot.docChanges().forEach((change) => {
+        if (change.type === "added") {
+          // Only add if it's a new notification (not from initial load)
+          if (notificationSystem.initialized) {
+            const data = change.doc.data();
+            const notification = {
+              id: change.doc.id,
+              title: data.title || 'Notification',
+              description: data.description || data.message || '',
+              timestamp: data.timestamp?.toDate() || new Date(),
+              read: data.read || false
+            };
+            
+            // Add to beginning of array and render
+            notificationSystem.notifications.unshift(notification);
+            const list = document.getElementById("notificationList");
+            if (list && list.children.length > 0 && list.children[0].textContent.includes("No notifications")) {
+              list.innerHTML = ''; // Clear the "no notifications" message
+            }
+            renderNotificationItem(notification);
+            updateNotificationBadge();
+          }
+        }
+      });
+      notificationSystem.initialized = true;
+    });
+
+  showGridView();
+}
+
+// Test function to create sample notifications (remove in production)
+async function createTestNotifications() {
+  const userId = await getCurrentUserId();
+  if (!userId) return;
+  
+  await showNotification("Welcome to CertQuest!", "Your dashboard is ready to use");
+  await showNotification("Training Available", "New business management modules are available");
+  await showNotification("XP Earned", "You earned 10 XP for completing a module!");
+}

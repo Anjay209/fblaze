@@ -122,42 +122,6 @@
     <span class="nav-label">Calendar</span>
      </a>
   </li>
-   <li>
-     <a href="/Public/tools.html">
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <!-- Base building blocks with layered opacity -->
-  <rect x="2" y="16" width="6" height="6" rx="1" fill="#3b82f6" fill-opacity="0.3"/>
-  <rect x="9" y="12" width="6" height="10" rx="1" fill="#3b82f6" fill-opacity="0.3"/>
-  <rect x="16" y="8" width="6" height="14" rx="1" fill="#3b82f6" fill-opacity="0.3"/>
-  
-  <!-- Lighter overlay sections -->
-  <rect x="2" y="16" width="6" height="3" rx="1" fill="#3b82f6" fill-opacity="0.2"/>
-  <rect x="9" y="12" width="6" height="4" rx="1" fill="#3b82f6" fill-opacity="0.2"/>
-  <rect x="16" y="8" width="6" height="5" rx="1" fill="#3b82f6" fill-opacity="0.2"/>
-  
-  <!-- Block outlines -->
-  <rect x="2" y="16" width="6" height="6" rx="1" stroke="#3b82f6" stroke-width="2" fill="none"/>
-  <rect x="9" y="12" width="6" height="10" rx="1" stroke="#3b82f6" stroke-width="2" fill="none"/>
-  <rect x="16" y="8" width="6" height="14" rx="1" stroke="#3b82f6" stroke-width="2" fill="none"/>
-  
-  <!-- Building block connection dots -->
-  <circle cx="5" cy="19" r="1" fill="#3b82f6"/>
-  <circle cx="12" cy="17" r="1" fill="#3b82f6"/>
-  <circle cx="19" cy="15" r="1" fill="#3b82f6"/>
-  
-  <!-- Subtle grid lines for construction feel -->
-  <line x1="2" y1="19" x2="8" y2="19" stroke="#3b82f6" stroke-width="1" opacity="0.3"/>
-  <line x1="9" y1="17" x2="15" y2="17" stroke="#3b82f6" stroke-width="1" opacity="0.3"/>
-  <line x1="16" y1="15" x2="22" y2="15" stroke="#3b82f6" stroke-width="1" opacity="0.3"/>
-  
-  <!-- Additional detail lines -->
-  <line x1="5" y1="16" x2="5" y2="22" stroke="#3b82f6" stroke-width="1" opacity="0.3"/>
-  <line x1="12" y1="12" x2="12" y2="22" stroke="#3b82f6" stroke-width="1" opacity="0.3"/>
-  <line x1="19" y1="8" x2="19" y2="22" stroke="#3b82f6" stroke-width="1" opacity="0.3"/>
-</svg>
-    <span class="nav-label">Study Tools</span>
-     </a>
-  </li>
  
 </ul>
     </aside>
@@ -248,70 +212,31 @@
 
 
   <!-- Goal Modal -->
-<div id="goalModal" class="goal-modal" style="overflow-y:auto;">
-  <div class="modal-content">
-    <h2>Set a Study Goal</h2>
-    
-    <!-- Role Selection -->
-    <div style="margin-bottom: 1.5rem;">
-      <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">I am a:</label>
-      <div class="role-choices" style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-        <button class="role-btn" data-role="member">Member</button>
-        <button class="role-btn" data-role="officer">Officer</button>
-        <button class="role-btn" data-role="advisor">Advisor</button>
-        <button class="role-btn" data-role="chapter">Chapter Account</button>
-        <button class="role-btn" data-role="individual">Individual Account</button>
+  <div id="goalModal" class="goal-modal">
+    <div class="modal-content">
+      <h2>Set a Study Goal</h2>
+      <div class="goal-choices">
+        <div class="goal-card" data-goal="passive">Passive<br><span>20 min/week</span></div>
+        <div class="goal-card" data-goal="active">Active<br><span>1 hr/week</span></div>
+        <div class="goal-card" data-goal="committed">Committed<br><span>2 hrs/week</span></div>
+        <div class="goal-card" data-goal="running">Running the Show<br><span>4+ hrs/week</span></div>
       </div>
-    </div>
+      <label for="comps">What competitions are you in?</label>
+      <input id="comps" type="text" placeholder="Ex. Introduction to FBLA">
 
-    <div class="question-section">
-    <div class="question-title">What chapter are you a part of?</div><br>
-    <div class="chapter-input-group">
-        <input type="text" class="chapter-input" id="school" placeholder="Ex. Lincoln High School FBLA">
-    </div>
-</div>
+      <div style="margin: 1.2rem 0 0.5rem 0;display:flex;align-items:center;gap:0.5rem;">
+        <input type="checkbox" id="isMentor" style="width:18px;height:18px;accent-color:#2563eb;">
+        <label for="isMentor" style="margin:0;font-size:1rem;">I am a mentor for a competition</label>
+      </div>
 
-    <div class="goal-choices">
-      <div class="goal-card" data-goal="passive">Passive<br><span>20 min/week</span></div>
-      <div class="goal-card" data-goal="active">Active<br><span>1 hr/week</span></div>
-      <div class="goal-card" data-goal="committed">Committed<br><span>2 hrs/week</span></div>
-      <div class="goal-card" data-goal="running">Running the Show<br><span>4+ hrs/week</span></div>
-    </div>
-    
-    <!-- Competition Entries -->
-   <!-- Competition Entries -->
-<!-- Add this missing element in your goal modal section -->
-<div style="margin-bottom: 1rem;">
-  <label style="display: block; margin-bottom: 0.5rem;">What competitions are you in?</label>
-  <div id="competitionInputs">
-    <div class="comp-input-group">
-      <input type="text" id="comps" class="comp-input" placeholder="Ex. Introduction to FBLA">
-      <button type="button" id="addCompBtn" class="add-comp-btn" title="Add another competition">+</button>
+      <div id="mentorCompDiv" style="display:none;">
+        <label for="mentorComp" style="margin: 1.2rem 0 0.5rem 0;">Which competition?</label><br><br>
+        <input id="mentorComp" type="text" placeholder="e.g., Partnership with Business">
+      </div>
+
+      <button id="goalSubmitBtn" disabled>Save</button>
     </div>
   </div>
-</div>
-    
-    <div style="margin: 1.2rem 0 0.5rem 0; display: flex; align-items: center; gap: 0.5rem; margin-top: -30px;">
-  <input type="checkbox" id="isMentor" style="width: 18px; height: 18px; accent-color: #2563eb;">
-  <label for="isMentor" style="margin: 0; font-size: 1rem;">I am a mentor for a competition</label>
-</div>
-
-<div id="mentorCompDiv" style="margin-bottom: 1rem; display: none;">
-  <label style="display: block; margin-bottom: 0.5rem;">What competitions can you mentor in?</label>
-  <div class="mentor-comp-input-group" style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
-    <input type="text" id="mentorComp" class="mentor-comp-input" placeholder="e.g., Partnership with Business" style="flex: 1; padding: 0.75rem; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 1rem; transition: border-color 0.2s; outline: none;">
-    <button type="button" id="addMentorCompBtn" class="add-mentor-comp-btn" title="Add another mentoring competition" style="width: 48px; height: 48px; margin-bottom: 5px; border: none; background-color: #f3f4f6; color: #1f2937; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s;">+</button>
-  </div>
-  <div id="mentorCompetitionInputs">
-    <!-- Dynamic inputs with × buttons will be added here -->
-  </div>
-</div>
-
-    
-    <button id="goalSubmitBtn" disabled>Save</button>
-  </div>
-</div>
-
   <div class="modal-backdrop"></div>
 
 
@@ -347,7 +272,43 @@
   </div>
   
 
-
+  <div id="cq-written-modal" class="cq-written-modal" style="display:none;">
+  <div class="cq-written-modal-content">
+    <div class="cq-written-header">
+      <div class="cq-written-title-section">
+        <h2 class="cq-written-title" id="cq-written-title">Easy written Practice</h2>
+        <div class="cq-written-meta">
+          <span id="cq-written-question-count">Question 1 of 10</span>
+          <span id="cq-written-timer">13:34</span>
+        </div>
+      </div>
+      <button class="cq-written-close" onclick="closeWrittenModal()">&times;</button>
+    </div>
+    
+    <div class="cq-written-body">
+      <div class="cq-written-competency" id="cq-written-competency">ACCOUNTING</div>
+      <h3 class="cq-written-question" id="cq-written-question">
+        In accounting, what is the equation to calculate net income?
+      </h3>
+      
+      <div class="cq-written-options" id="cq-written-options">
+        <!-- Options will be populated by JavaScript -->
+      </div>
+    </div>
+    
+    <div class="cq-written-footer">
+      <div class="cq-written-progress">
+        <div class="cq-written-progress-bar">
+          <div class="cq-written-progress-fill" id="cq-written-progress-fill"></div>
+        </div>
+      </div>
+      <div class="cq-written-nav">
+        <button class="cq-written-btn cq-written-btn-secondary" id="cq-written-prev" onclick="previousQuestion()" disabled>Previous</button>
+        <button class="cq-written-btn cq-written-btn-primary" id="cq-written-next" onclick="nextQuestion()">Next</button>
+      </div>
+    </div>
+  </div>
+</div>
 
   <!-- Speaking Assignment Modal -->
   <div id="cq-speaking-modal" class="cq-speaking-modal" style="display:none;">
@@ -430,25 +391,17 @@
   </div>
 </div>
 
-<div id="cq-written-loading" class="cq-written-loading" style="display:none;">
-    <!-- Gradient balls background -->
-    <div class="gradient-balls">
-        <div class="ball ball-1"></div>
-        <div class="ball ball-2"></div>
-        <div class="ball ball-3"></div>
-        <div class="ball ball-4"></div>
-    </div>
-    
-    <!-- Loading content -->
-    <div class="cq-loading-container">
-        <div class="cq-loading-spinner"></div>
-        <div class="cq-loading-text">Loading Assignment!</div>
-        <div class="cq-loading-subtext">Analyzing your competencies and creating personalized content...</div>
-        <div class="cq-loading-progress">
-            <div class="cq-loading-progress-bar" id="cq-loading-progress-bar"></div>
-        </div>
-    </div>
+<div id="assignmentLoader" class="racing-loader" style="display:none;">
+  <div class="orbit">
+    <div class="dot"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
+  </div>
 </div>
+
+
+
+
 
 
 
@@ -488,9 +441,6 @@ let recordingSeconds = 0;
 let cameraEnabled = true;
 let micEnabled = true;
 let selectedUploadFile = null;
-let writtenModal = null;
-let loadingProgressInterval = null;
-let loadingProgress = 0;
 
 function fileToBase64(file) {
   return new Promise((resolve, reject) => {
@@ -499,104 +449,6 @@ function fileToBase64(file) {
     reader.onload = () => resolve(reader.result.split(',')[1]);
     reader.onerror = error => reject(error);
   });
-}
-
-// Global variable to track the modal
-
-
-// Function to create the written modal dynamically
-function createWrittenModal() {
-    // Create the modal container
-    const modal = document.createElement('div');
-    modal.id = 'cq-written-modal';
-    modal.className = 'cq-written-modal';
-    modal.style.display = 'none';
-    
-    // Create the modal content but keep it hidden initially
-    modal.innerHTML = `
-        <div class="cq-written-modal-content" style="display: none;">
-            <div class="cq-written-header">
-                <div class="cq-written-title-section">
-                    <h2 class="cq-written-title" id="cq-written-title">Written Practice</h2>
-                    <div class="cq-written-meta">
-                        <span id="cq-written-question-count">Question 1 of 10</span>
-                        <span id="cq-written-timer"></span>
-                    </div>
-                </div>
-                <button class="cq-written-close" onclick="closeWrittenModal()">&times;</button>
-            </div>
-            
-            <div class="cq-written-body">
-                <div class="cq-written-competency" id="cq-written-competency"></div>
-                <h3 class="cq-written-question" id="cq-written-question"></h3>
-                
-                <div class="cq-written-options" id="cq-written-options"></div>
-            </div>
-            
-            <div class="cq-written-footer">
-                <div class="cq-written-progress">
-                    <div class="cq-written-progress-bar">
-                        <div class="cq-written-progress-fill" id="cq-written-progress-fill"></div>
-                    </div>
-                </div>
-                <div class="cq-written-nav">
-                    <button class="cq-written-btn cq-written-btn-secondary" id="cq-written-prev" onclick="previousQuestion()" disabled>Previous</button>
-                    <button class="cq-written-btn cq-written-btn-primary" id="cq-written-next" onclick="nextQuestion()">Next</button>
-                </div>
-            </div>
-        </div>
-    `;
-    
-    // Add the modal to the body
-    document.body.appendChild(modal);
-    
-    return modal;
-}
-// Initialize the modal when the page loads
-document.addEventListener('DOMContentLoaded', function() {
-    writtenModal = createWrittenModal();
-});
-
-
-// Add these functions to your existing code
-function startLoadingAnimation() {
-    const progressBar = document.getElementById('cq-loading-progress-bar');
-    if (!progressBar) return;
-    
-    loadingProgress = 0;
-    progressBar.style.width = '0%';
-    
-    // Clear any existing interval
-    if (loadingProgressInterval) {
-        clearInterval(loadingProgressInterval);
-    }
-    
-    // Start new progress animation
-    loadingProgressInterval = setInterval(() => {
-        loadingProgress += Math.random() * 10;
-        if (loadingProgress > 90) loadingProgress = 90; // Cap at 90% until complete
-        progressBar.style.width = loadingProgress + '%';
-    }, 300);
-}
-
-function completeLoadingAnimation() {
-    const progressBar = document.getElementById('cq-loading-progress-bar');
-    if (!progressBar) return;
-    
-    // Complete the progress bar
-    progressBar.style.width = '100%';
-    
-    // Clear the interval
-    if (loadingProgressInterval) {
-        clearInterval(loadingProgressInterval);
-        loadingProgressInterval = null;
-    }
-    
-    // Reset after a short delay
-    setTimeout(() => {
-        progressBar.style.width = '0%';
-        loadingProgress = 0;
-    }, 500);
 }
 
 function showMentorCommentModal(assignmentName, comment, notificationId) {
@@ -618,136 +470,287 @@ function showMentorCommentModal(assignmentName, comment, notificationId) {
 }
 
 
+// ========== STATE ==========
 let writtenQuestions = [];
 let currentQuestionIndex = 0;
 let writtenAnswers = {};
 let writtenTimer = null;
 let writtenTimeRemaining = 0;
 
-const sampleWrittenQuestions = [
+async function generateQuestionsFromCompetencies(competencies, questionCount, difficulty) {
+  const apiKey = "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";
+
+  let prompt = `Generate ${questionCount} FBLA-style multiple choice questions. 
+Each must have exactly 4 options and 1 correct answer. 
+Use the following competencies as the source of topics:\n\n${competencies.join("\n")}
+
+Rules:
+- Do not reference "the document" or "the content".
+- Make each question standalone and realistic for FBLA competitions.
+- Include competency field in each output.
+
+Return ONLY valid JSON array in this format:
+[
   {
-    competency: "ACCOUNTING",
-    question: "In accounting, what is the equation to calculate net income?",
-    options: [
-      "Assets = Liabilities + Equity",
-      "Revenues - Expenses", 
-      "Current Assets - Current Liabilities",
-      "Gross Profit - Operating Expenses"
-    ],
-    correctAnswer: "Revenues - Expenses"
-  },
-  {
-    competency: "FINANCE",
-    question: "What is the primary purpose of a cash flow statement?",
-    options: [
-      "To show profitability over time",
-      "To track cash receipts and payments",
-      "To list all company assets",
-      "To calculate tax obligations"
-    ],
-    correctAnswer: "To track cash receipts and payments"
-  },
-  {
-    competency: "BUSINESS LAW",
-    question: "Which type of business structure provides limited liability protection?",
-    options: [
-      "Sole Proprietorship",
-      "Partnership",
-      "Corporation",
-      "None of the above"
-    ],
-    correctAnswer: "Corporation"
-  },
-  {
-    competency: "MARKETING",
-    question: "What are the 4 P's of marketing?",
-    options: [
-      "Product, Price, Place, Promotion",
-      "People, Process, Physical, Promotion",
-      "Product, Profit, Place, People",
-      "Price, Profit, Promotion, People"
-    ],
-    correctAnswer: "Product, Price, Place, Promotion"
-  },
-  {
-    competency: "ECONOMICS",
-    question: "What happens to demand when the price of a good increases, all else being equal?",
-    options: [
-      "Demand increases",
-      "Demand decreases",
-      "Demand stays the same",
-      "Demand becomes unpredictable"
-    ],
-    correctAnswer: "Demand decreases"
-  },
-  {
-    competency: "MANAGEMENT",
-    question: "Which leadership style involves making decisions without consulting team members?",
-    options: [
-      "Democratic",
-      "Laissez-faire",
-      "Autocratic",
-      "Transformational"
-    ],
-    correctAnswer: "Autocratic"
-  },
-  {
-    competency: "ENTREPRENEURSHIP",
-    question: "What is a business plan primarily used for?",
-    options: [
-      "To impress investors only",
-      "To outline business goals and strategies",
-      "To calculate exact profits",
-      "To hire employees"
-    ],
-    correctAnswer: "To outline business goals and strategies"
-  },
-  {
-    competency: "BUSINESS ETHICS",
-    question: "What is the main purpose of corporate social responsibility (CSR)?",
-    options: [
-      "To increase profits only",
-      "To comply with legal requirements",
-      "To contribute positively to society and environment",
-      "To reduce employee wages"
-    ],
-    correctAnswer: "To contribute positively to society and environment"
-  },
-  {
-    competency: "OPERATIONS",
-    question: "What does 'Just-in-Time' inventory management aim to achieve?",
-    options: [
-      "Maximum inventory storage",
-      "Minimum inventory while meeting demand",
-      "Random inventory ordering",
-      "Buying inventory in bulk always"
-    ],
-    correctAnswer: "Minimum inventory while meeting demand"
-  },
-  {
-    competency: "HUMAN RESOURCES",
-    question: "What is the primary purpose of performance appraisals?",
-    options: [
-      "To fire employees",
-      "To evaluate and improve employee performance",
-      "To reduce salaries",
-      "To increase working hours"
-    ],
-    correctAnswer: "To evaluate and improve employee performance"
+    "text": "Question text?",
+    "competency": "Accounting",
+    "correctAnswer": "Correct option text",
+    "options": ["Option A","Option B","Option C","Option D"],
+    "difficulty": "${difficulty}",
+    "source": "competencies_only"
   }
-];
+]`;
+
+  try {
+    const res = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${apiKey}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        model: "gpt-4o-mini",
+        messages: [
+          { role: "system", content: "You are an expert FBLA test writer." },
+          { role: "user", content: prompt }
+        ],
+        temperature: 0.7,
+        max_tokens: 3000
+      })
+    });
+
+    if (!res.ok) throw new Error(await res.text());
+    let content = (await res.json()).choices[0].message.content.trim();
+    content = content.replace(/```json|```/g, "");
+    return JSON.parse(content);
+
+  } catch (err) {
+    console.error("GPT competency generation error:", err);
+    return []; // last resort
+  }
+}
+
+async function generateQuestionsFromCompetencies(competencies, count, difficulty) {
+  const apiKey = "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";
+  const compText = competencies.join(", ");
+
+  const prompt = `Generate ${count} FBLA multiple choice questions.
+- Difficulty: ${difficulty}
+- Competencies: ${compText}
+- Each must have 4 options, 1 correct
+- Never reference "the document" or "the text"
+Return JSON only.`;
+
+  const res = await fetch("https://api.openai.com/v1/chat/completions", {
+    method: "POST",
+    headers: { "Authorization": `Bearer ${apiKey}`, "Content-Type": "application/json" },
+    body: JSON.stringify({
+      model: "gpt-4o-mini",
+      messages: [
+        { role: "system", content: "You are an expert FBLA exam writer." },
+        { role: "user", content: prompt }
+      ],
+      temperature: 0.7,
+      max_tokens: 1500
+    })
+  });
+
+  const data = await res.json();
+  let content = data.choices[0].message.content.trim();
+  content = content.replace(/```json|```/g, "");
+  return JSON.parse(content);
+}
 
 
 
-  // Quiz answers
-  let quizAnswers = {
-    q1: "To make meetings more efficient",
-    q2: "Adjourn", 
-    q3: "Majority vote",
-    q4: "Amend",
-    q5: "\"I move to...\""
-  };
-  let userScore = 0;
+// ========== MAIN GPT GENERATOR ==========
+// ========== GPT QUESTION GENERATOR (NO COMPETITION / NO TRAINING DATA) ==========
+async function generatePersonalizedQuestionsWithGPT(formData) {
+  const apiKey = "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";  // ⚠️ never expose in production, proxy it server-side
+
+  const questionCount = getQuestionCount(formData.time);
+  const competenciesText = formData.competencies.join(', ');
+
+  // Build GPT prompt
+  let prompt = `Generate ${questionCount} FBLA-style multiple choice questions.
+- Difficulty: ${formData.difficulty}
+- Competencies to cover: ${competenciesText}
+- Each question must have exactly 4 options and 1 correct answer
+- Questions must be standalone, realistic for FBLA, and never reference "the document", "the text", "as stated", etc.
+- Use business, finance, marketing, management, economics, law, and related topics depending on the competencies.`
+
+  prompt += `\n\nReturn ONLY valid JSON array in format:
+[
+  {
+    "text": "Question text?",
+    "competency": "Marketing",
+    "correctAnswer": "Correct option text",
+    "options": ["A", "B", "C", "D"],
+    "difficulty": "${formData.difficulty}",
+    "source": "gpt_generated"
+  }
+]`;
+
+  try {
+    const res = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${apiKey}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        model: "gpt-4o-mini",
+        messages: [
+          { role: "system", content: "You are an expert FBLA exam writer. Generate valid multiple choice questions that are realistic and challenging. Never reference source documents." },
+          { role: "user", content: prompt }
+        ],
+        temperature: 0.7,
+        max_tokens: 2500
+      })
+    });
+
+    if (!res.ok) throw new Error(await res.text());
+    let content = (await res.json()).choices[0].message.content.trim();
+
+    // Clean and parse JSON
+    content = content.replace(/```json|```/g, "");
+    const generated = JSON.parse(content);
+
+    console.log(`✅ Generated ${generated.length} GPT questions`);
+    return generated;
+
+  } catch (err) {
+    console.error("❌ GPT error:", err);
+    return getFallbackQuestions(questionCount, formData.competencies);
+  }
+}
+
+async function getAllTrainingEntries(selectedCompetition) {
+  if (!selectedCompetition) {
+    console.warn("⚠️ No competition selected, skipping training fetch");
+    return { pdfContent: "", userQuestions: [] };
+  }
+
+  try {
+    const snapshot = await db.collection("competition-submissions")
+      .where("competition", "==", selectedCompetition)
+      .get();
+
+    if (snapshot.empty) {
+      console.log("No submissions found for competition:", selectedCompetition);
+      return { pdfContent: "", userQuestions: [] };
+    }
+
+    let combinedContent = "";
+    let userQuestions = [];
+
+    snapshot.forEach(doc => {
+      const data = doc.data();
+      const content = data.pdfContent || data.extractedCompetencies || "";
+      if (content) combinedContent += " " + content;
+      if (Array.isArray(data.userQuestions)) {
+        userQuestions = userQuestions.concat(data.userQuestions);
+      }
+    });
+
+    return { pdfContent: combinedContent.trim(), userQuestions };
+  } catch (err) {
+    console.error("Error in getAllTrainingEntries:", err);
+    return { pdfContent: "", userQuestions: [] };
+  }
+}
+
+
+
+
+async function getLatestKeyChanges(competitionName) {
+    if (!competitionName) return null;
+    
+    try {
+        const snapshot = await db.collection('competition-submissions')
+            .where('competition', '==', competitionName)
+            .orderBy('processedAt', 'desc')
+            .limit(1)
+            .get();
+        
+        if (!snapshot.empty) {
+            const latestDoc = snapshot.docs[0].data();
+            return latestDoc.keyChanges || null;
+        }
+        
+        return null;
+    } catch (error) {
+        console.error('Error fetching latest key changes:', error);
+        return null;
+    }
+}
+
+
+
+// ========== QUIZ CREATION ==========
+async function generateQuizQuestions() {
+  const selectedTime = document.querySelector('.time-btn.selected')?.textContent;
+  const selectedDifficulty = document.querySelector('.difficulty-btn.selected')?.textContent;
+  const selectedCompetencies = Array.from(document.querySelectorAll('.competency-option:checked')).map(cb => cb.value);
+
+  if (!selectedTime || !selectedDifficulty || selectedCompetencies.length === 0) {
+    alert("Please select time, difficulty, and at least one competency");
+    return;
+  }
+
+  const formData = { time: selectedTime, difficulty: selectedDifficulty, competencies: selectedCompetencies, type: "written" };
+
+  const btn = document.querySelector('.start-btn');
+  const originalText = btn.textContent;
+  btn.textContent = "Generating Questions...";
+  btn.disabled = true;
+
+  try {
+    writtenQuestions = await generatePersonalizedQuestionsWithGPT(formData);
+    closeWrittenModal();
+    startQuiz(writtenQuestions, formData);   // ✅ reuses your existing quiz runner
+    resetForm();
+  } catch (e) {
+    console.error(e);
+    alert("Failed to generate quiz");
+  } finally {
+    btn.textContent = originalText;
+    btn.disabled = false;
+  }
+}
+
+// ========== PERSONALIZED TEST ==========
+async function generatePersonalizedTest() {
+  const selectedTime = document.querySelector('.time-btn.selected')?.textContent;
+  const selectedDifficulty = document.querySelector('.difficulty-btn.selected')?.textContent;
+  const selectedCompetencies = Array.from(document.querySelectorAll('.competency-option:checked')).map(cb => cb.value);
+
+  if (!selectedTime || !selectedDifficulty || selectedCompetencies.length === 0) {
+    alert("Please select time, difficulty, and competencies");
+    return;
+  }
+
+  const formData = { time: selectedTime, difficulty: selectedDifficulty, competencies: selectedCompetencies, type: "written", personalized: true };
+
+  const btn = document.querySelector('.personalized-btn');
+  const originalText = btn.textContent;
+  btn.textContent = "Generating Personalized Test...";
+  btn.disabled = true;
+
+  try {
+    writtenQuestions = await generatePersonalizedQuestionsWithGPT(formData);
+    closeWrittenModal();
+    startQuiz(writtenQuestions, formData);
+    resetForm();
+  } catch (e) {
+    console.error(e);
+    alert("Failed to generate personalized test");
+  } finally {
+    btn.textContent = originalText;
+    btn.disabled = false;
+  }
+}
+
 
   // Quiz Questions Array
 // Replace your existing quizQuestions array with this
@@ -1253,26 +1256,6 @@ function renderQuiz(questionsArr) {
     });
   }
 
-
-
-function removeCompInput(button) {
-  const inputGroup = button.closest('.comp-input-group');
-  const container = document.getElementById('competitionInputs');
-  
-  // Don't remove if it's the last input
-  if (container && container.children.length > 1) {
-    inputGroup.remove();
-  }
-}
-
-// Get all competition values
-function getCompetitionValues() {
-  const inputs = document.querySelectorAll('.comp-input');
-  return Array.from(inputs)
-    .map(input => input.value.trim())
-    .filter(value => value !== '');
-}
-
   
   function cqSpeakingStopAllMedia() {
     console.log("Stopping all media...");
@@ -1319,25 +1302,6 @@ function getCompetitionValues() {
   // Add this to your home page JavaScript
 // STEP 2: Add this to your home.html file
 window.addEventListener('DOMContentLoaded', function() {
-
-
-
-  goalSubmitBtn = document.getElementById('goalSubmitBtn');
-  compsInput = document.getElementById('comps'); // This was missing
-  goalCards = document.querySelectorAll('.goal-card');
-  isMentorCheckbox = document.getElementById('isMentor');
-  mentorCompDiv = document.getElementById('mentorCompDiv');
-  mentorCompInput = document.getElementById('mentorComp');
-  selectedGoal = null;
-
-  // Only add event listeners if elements exist
-  if (compsInput) {
-    compsInput.addEventListener('input', updateSaveState);
-  } else {
-    console.error("compsInput element not found");
-  }
-
- 
     // Check if we should open notifications
     if (sessionStorage.getItem('openNotifications') === 'true') {
         // Clear the flag so it doesn't happen again
@@ -1553,8 +1517,6 @@ submitBtn.addEventListener('click', async () => {
 });
 
 
-
-
   // --- Get mentee and assignment info ---
   const user = firebase.auth().currentUser;
   const menteeName = user?.displayName || user?.email || 'Anonymous';
@@ -1566,7 +1528,13 @@ submitBtn.addEventListener('click', async () => {
     // Call setup function
     setupDragAndDrop();
 
-    
+    function updateSaveState() {
+      goalSubmitBtn.disabled = !(
+        selectedGoal &&
+        compsInput.value.trim() &&
+        (!isMentorCheckbox.checked || mentorCompInput.value.trim())
+      );
+    }
 
     goalCards.forEach(card => {
       card.addEventListener('click', function() {
@@ -1579,176 +1547,41 @@ submitBtn.addEventListener('click', async () => {
     compsInput.addEventListener('input', updateSaveState);
 
     // Mentor logic
-    // Make mentor checkbox optional - no need to validate it
-if (isMentorCheckbox && mentorCompDiv && mentorCompInput) {
-  isMentorCheckbox.addEventListener('change', function() {
-    mentorCompDiv.style.display = isMentorCheckbox.checked ? 'block' : 'none';
-    // No need to call updateSaveState() here since mentor fields are optional
-  });
-}
-    // Replace your existing goalSubmitBtn event listener with this simpler version:
-goalSubmitBtn.addEventListener('click', function() {
-  const selectedRole = document.querySelector('.role-btn.selected')?.dataset?.role || 'member';
-  
-  if (selectedRole && selectedGoal) {
-    // Collect ALL competition inputs (main + dynamically added)
-    const competitionsArr = [];
-    
-    // Get all dynamically added competition inputs
-    const additionalCompInputs = document.querySelectorAll('.comp-input');
-    additionalCompInputs.forEach(input => {
-      if (input.value.trim()) {
-        competitionsArr.push(...input.value.split(',').map(x => x.trim()).filter(Boolean));
-      }
-    });
-    
-    // Collect ALL mentor competition inputs if user is a mentor
-    const mentorCompetitionsArr = [];
-    if (isMentorCheckbox && isMentorCheckbox.checked) {
-      // Get main mentor competition input
-      const mainMentorCompInput = document.getElementById('mentorComp');
-      if (mainMentorCompInput && mainMentorCompInput.value.trim()) {
-        mentorCompetitionsArr.push(...mainMentorCompInput.value.split(',').map(x => x.trim()).filter(Boolean));
-      }
-      
-      // Get all dynamically added mentor competition inputs
-      const additionalMentorCompInputs = document.querySelectorAll('.mentor-comp-input');
-      additionalMentorCompInputs.forEach(input => {
-        if (input.value.trim()) {
-          mentorCompetitionsArr.push(...input.value.split(',').map(x => x.trim()).filter(Boolean));
-        }
+    if (isMentorCheckbox && mentorCompDiv && mentorCompInput) {
+      isMentorCheckbox.addEventListener('change', function() {
+        mentorCompDiv.style.display = isMentorCheckbox.checked ? 'block' : 'none';
+        updateSaveState();
       });
+      mentorCompInput.addEventListener('input', updateSaveState);
     }
-    
-    // Require at least one competition
-    if (competitionsArr.length === 0) {
-      alert('Please enter at least one competition');
-      return;
-    }
-    
-    // Update UI
-    document.getElementById('userComps').textContent = competitionsArr.join(', ');
-    
-    // Save to Firebase (SINGLE operation with all data)
-    const user = auth.currentUser;
-    if (user) {
-      const userData = {
-        role: selectedRole,
-        competitions: competitionsArr,
-        isMentor: isMentorCheckbox ? isMentorCheckbox.checked : false,
-        studyGoalSet: true,
-        needsApproval: selectedRole === 'member' || selectedRole === 'officer', // Add approval status
-        school: document.getElementById('school')?.value || '' // Add school field
-      };
-      
-      // Add mentor competitions if user is a mentor
-      if (isMentorCheckbox && isMentorCheckbox.checked) {
-        userData.mentorCompetition = mentorCompetitionsArr;
-      }
-      
-      db.collection('users').doc(user.uid).set(userData, { merge: true }).then(() => {
-        // Close goal modal
+
+    goalSubmitBtn.addEventListener('click', function() {
+      if (
+        selectedGoal &&
+        compsInput.value.trim() &&
+        (!isMentorCheckbox.checked || mentorCompInput.value.trim())
+      ) {
+        document.getElementById('userComps').textContent = compsInput.value.trim();
+        const user = auth.currentUser;
+        if (user) {
+          // Parse competitions input as array, trim each, and remove blanks
+          const competitionsArr = compsInput.value
+            .split(',')
+            .map(x => x.trim())
+            .filter(Boolean);
+          db.collection('users').doc(user.uid).set({
+            competitions: competitionsArr,
+            isMentor: isMentorCheckbox.checked,
+            mentorCompetition: isMentorCheckbox.checked ? mentorCompInput.value.trim() : "",
+            studyGoalSet: true
+          }, { merge: true });
+        }
         modal.style.display = 'none';
         backdrop.style.display = 'none';
-        
-        // Show approval overlay if user needs approval OR redirect to dashboard
-        if (selectedRole === 'member' || selectedRole === 'officer') {
-          document.getElementById('approvalOverlay').style.display = 'flex';
-        } else if (selectedRole === 'advisor' || selectedRole === 'chapter account') {
-          window.location.href = 'dashboard.html';
-        }
-        else if (selectedRole === 'individual') {
-          window.location.href = 'home.html';
-        }
-      }).catch((error) => {
-        console.error("Error saving user data:", error);
-        alert("Failed to save your information. Please try again.");
-      });
-    }
-  }
-});
+      }
+    });
 
-function updateSaveState() {
-  const roleSelected = document.querySelector('.role-btn.selected');
-  const goalSelected = document.querySelector('.goal-card.selected');
-  
-  // Check if any competition input has value
-  let hasCompetitions = false;
-  
-  // Check main competition input
-  const compsInput = document.getElementById('comps');
-  if (compsInput && compsInput.value.trim()) {
-    hasCompetitions = true;
-  }
-  
-  // Check dynamically added competition inputs
-  if (!hasCompetitions) {
-    const additionalCompInputs = document.querySelectorAll('.comp-input');
-    hasCompetitions = Array.from(additionalCompInputs).some(input => input.value.trim());
-  }
-  
-  // Enable button only if all required elements exist and have values
-  goalSubmitBtn.disabled = !(roleSelected && goalSelected && hasCompetitions);
-}
-
-// Updated addCompBtn event listener to include input validation
-const addCompBtn = document.getElementById('addCompBtn');
-if (addCompBtn) {
-  addCompBtn.addEventListener('click', function() {
-    const container = document.getElementById('competitionInputs');
-    if (container) {
-      const inputGroup = document.createElement('div');
-      inputGroup.className = 'comp-input-group';
-      
-      inputGroup.innerHTML = `
-        <input type="text" class="comp-input" placeholder="Ex. Business Law">
-        <button type="button" class="remove-comp-btn" onclick="removeCompInput(this)">×</button>
-      `;
-      
-      container.appendChild(inputGroup);
-      
-      // Add input validation listener to new field
-      const newInput = inputGroup.querySelector('.comp-input');
-      newInput.addEventListener('input', updateSaveState);
-    }
-  });
-}
-
-// Updated addMentorCompBtn event listener to include input validation
-const addMentorCompBtn = document.getElementById('addMentorCompBtn');
-if (addMentorCompBtn) {
-  addMentorCompBtn.addEventListener('click', function() {
-    const container = document.getElementById('mentorCompetitionInputs');
-    if (container) {
-      const inputGroup = document.createElement('div');
-      inputGroup.className = 'mentor-comp-input-group';
-      
-      inputGroup.innerHTML = `
-        <input type="text" class="mentor-comp-input" placeholder="e.g., Partnership with Business">
-        <button type="button" class="remove-mentor-comp-btn" onclick="removeMentorCompInput(this)" style="width: 48px; height: 48px; margin-bottom: 5px; border: none; background-color: #fee2e2; color: #dc2626; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s;">×</button>
-      `;
-      
-      container.appendChild(inputGroup);
-      
-      // Add input validation listener to new mentor field
-      const newInput = inputGroup.querySelector('.mentor-comp-input');
-      newInput.addEventListener('input', updateSaveState);
-    }
-  });
-}
-
-// Updated remove functions with validation
-function removeCompInput(button) {
-  button.parentElement.remove();
-  updateSaveState(); // Recheck validation after removing input
-}
-
-function removeMentorCompInput(button) {
-  button.parentElement.remove();
-  updateSaveState(); // Recheck validation after removing input
-}
-
-if (backdrop) {
+    if (backdrop) {
       backdrop.addEventListener('click', function() {
         modal.style.display = 'none';
         backdrop.style.display = 'none';
@@ -1757,73 +1590,63 @@ if (backdrop) {
 
     // ---- Show full name from Firestore and modal logic ----
     auth.onAuthStateChanged(function(user) {
-  if (user) {
-    db.collection('users').doc(user.uid).get()
-      .then(function(doc) {
-        let fullName = user.displayName || (user.email ? user.email.split('@')[0] : 'User');
-        if (doc.exists && doc.data().name) {
-          fullName = doc.data().name;
-        }
-           checkApprovalStatus();
-        document.getElementById('userName').textContent = fullName;
+      if (user) {
+        db.collection('users').doc(user.uid).get()
+          .then(function(doc) {
+            let fullName = user.displayName || (user.email ? user.email.split('@')[0] : 'User');
+            if (doc.exists && doc.data().name) {
+              fullName = doc.data().name;
+            }
+            document.getElementById('userName').textContent = fullName;
 
-        if (doc.exists && doc.data().competitions) {
-          document.getElementById('userComps').textContent = doc.data().competitions;
-        }
-        
-        // Check for approval status and show overlay if needed
-        if (doc.exists && doc.data().needsApproval === true) {
-          document.getElementById('approvalOverlay').style.display = 'flex';
-        }
+            if (doc.exists && doc.data().competitions) {
+              document.getElementById('userComps').textContent = doc.data().competitions;
+            }
 
-        // DEBUG: See exactly what Firestore returns!
-        console.log("User doc.exists:", doc.exists);
-        console.log("User doc.data:", doc.data());
-        
-        // Only show modal if not set (boolean false, undefined, or null)
-        if (!doc.exists || !doc.data().studyGoalSet) {
-          modal.style.display = 'block';
-          backdrop.style.display = 'block';
-        } else {
-          modal.style.display = 'none';
-          backdrop.style.display = 'none';
-        }
-      })
-      .catch(function(error) {
-        console.error("Error fetching user data:", error);
-        let fallbackName = user.displayName || (user.email ? user.email.split('@')[0] : 'User');
-        document.getElementById('userName').textContent = fallbackName;
-      });
+            // DEBUG: See exactly what Firestore returns!
+            console.log("User doc.exists:", doc.exists);
+            console.log("User doc.data:", doc.data());
+            // Only show modal if not set (boolean false, undefined, or null)
+            if (!doc.exists || !doc.data().studyGoalSet) {
+              modal.style.display = 'block';
+              backdrop.style.display = 'block';
+            } else {
+              modal.style.display = 'none';
+              backdrop.style.display = 'none';
+            }
+          })
+          .catch(function(error) {
+            let fallbackName = user.displayName || (user.email ? user.email.split('@')[0] : 'User');
+            document.getElementById('userName').textContent = fallbackName;
+          });
+          setupNotifications();
+          // --- Mentor Comment Modal Check ---
+(async function checkMentorComments() {
+  try {
+    const snapshot = await db.collection('notifications')
+      .where('menteeId', '==', user.uid)
+      .where('read', '==', false)
+      .where('type', '==', 'mentorComment')  // Add this filter
+      .get();
 
-    setupNotifications();
-    
-    // --- Mentor Comment Modal Check ---
-    (async function checkMentorComments() {
-      try {
-        const snapshot = await db.collection('notifications')
-          .where('menteeId', '==', user.uid)
-          .where('read', '==', false)
-          .where('type', '==', 'mentorComment')
-          .get();
-
-        snapshot.forEach(doc => {
-          const notif = doc.data();
-          console.log("Found mentor feedback notification:", notif);
-          showMentorCommentModal(
-            notif.assignmentName || "Assignment",
-            notif.comment || notif.message || "No feedback provided.",
-            doc.id
-          );
-        });
-      } catch (err) {
-        console.error("Failed to check mentor comments:", err);
-      }
-    })();
-
-  } else {
-    window.location.href = "/Public/index.html";
+    snapshot.forEach(doc => {
+      const notif = doc.data();
+      console.log("Found mentor feedback notification:", notif); // Debug log
+      showMentorCommentModal(
+        notif.assignmentName || "Assignment",
+        notif.comment || notif.message || "No feedback provided.", // Try both fields
+        doc.id
+      );
+    });
+  } catch (err) {
+    console.error("Failed to check mentor comments:", err);
   }
-});
+})();
+
+      } else {
+        window.location.href = "/Public/index.html";
+      }
+    });
 
     // ============ MEILISEARCH INTEGRATION ============
     const client = new MeiliSearch({ host: 'http://127.0.0.1:7700' });
@@ -1922,27 +1745,6 @@ if (backdrop) {
 
   });
 
-
-// Add this HTML to your page (insert anywhere in body)
-const approvalOverlayHTML = `
-<div id="approvalOverlay" class="approval-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.3); backdrop-filter: blur(8px); z-index: 9999; justify-content: center; align-items: center;">
-  <div class="approval-card" style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px); border-radius: 16px; padding: 2rem; text-align: center; max-width: 400px; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1); border: 1px solid rgba(255, 255, 255, 0.2);">
-    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" style="margin-bottom: 1rem;">
-      <path d="M6 10V8C6 5.79086 7.79086 4 10 4H14C16.2091 4 18 5.79086 18 8V10" stroke="#2563eb" stroke-width="2" stroke-linecap="round"/>
-      <rect x="4" y="10" width="16" height="10" rx="2" fill="#2563eb"/>
-      <circle cx="12" cy="15" r="2" fill="white"/>
-    </svg>
-    <h3 style="margin: 0 0 0.5rem 0; color: #1f2937;">Account Pending Approval</h3>
-    <p style="margin: 0; color: #6b7280; line-height: 1.5;">Please check with your advisor for account approval before you can access the platform.</p>
-  </div>
-</div>`;
-
-document.body.insertAdjacentHTML('beforeend', approvalOverlayHTML);
-
-  function removeMentorCompInput(button) {
-  button.parentElement.remove();
-  updateSaveState(); // Recheck validation after removing input
-}
   // === ASSIGNMENT MODAL FUNCTIONS ===
 function showAssignmentModal(assignment, docId) {
     console.log("showAssignmentModal called with:", assignment, docId);
@@ -2020,419 +1822,6 @@ function showAssignmentModal(assignment, docId) {
         console.error("Error updating assignment status:", error);
     });
 }
-
-async function checkApprovalStatus() {
-  const user = auth.currentUser;
-  if (!user) return;
-
-  try {
-    const userDoc = await db.collection('users').doc(user.uid).get();
-    if (userDoc.exists) {
-      const userData = userDoc.data();
-      
-      // Check if user has already seen the unlock animation
-      const hasSeenUnlock = localStorage.getItem(`hasSeenUnlock_${user.uid}`);
-      
-      // If user is approved and hasn't seen the animation yet
-      if (userData.approvalStatus === 'approved' && !userData.needsApproval && !hasSeenUnlock) {
-        unlockAndFadeAway();
-        // Mark that user has seen the animation
-        localStorage.setItem(`hasSeenUnlock_${user.uid}`, 'true');
-      } else if (userData.needsApproval) {
-        // Still needs approval, show the overlay
-        showApprovalOverlay();
-      } else {
-        // User is approved but has already seen animation, ensure overlay is hidden
-        const overlay = document.getElementById('approvalOverlay');
-        if (overlay) overlay.style.display = 'none';
-      }
-    }
-  } catch (error) {
-    console.error('Error checking approval status:', error);
-  }
-}
-
-
-// Function to handle unlock animation and fade away
-function unlockAndFadeAway() {
-  const overlay = document.getElementById('approvalOverlay');
-  const lockSvg = overlay.querySelector('svg');
-  const card = overlay.querySelector('.approval-card');
-  
-  if (overlay && lockSvg && card) {
-    // Show the overlay first
-    overlay.style.display = 'flex';
-    
-    // Add a class to trigger animations
-    card.classList.add('unlocking');
-    
-    // Create a more impressive unlock animation
-    setTimeout(() => {
-      // Animate the lock opening with more flair
-      lockSvg.innerHTML = `
-        <path d="M6 10V8C6 5.79086 7.79086 4 10 4H14C16.2091 4 18 5.79086 18 8V10" 
-              stroke="#22c55e" stroke-width="2" stroke-linecap="round" 
-              class="unlock-animation"/>
-        <rect x="4" y="10" width="16" height="10" rx="2" fill="#22c55e" class="unlock-fill"/>
-        <circle cx="12" cy="15" r="2" fill="white" class="unlock-dot"/>
-      `;
-      
-      // Add sparkle effects
-      const sparkles = document.createElement('div');
-      sparkles.className = 'unlock-sparkles';
-      sparkles.innerHTML = `
-        <div class="sparkle"></div>
-        <div class="sparkle"></div>
-        <div class="sparkle"></div>
-        <div class="sparkle"></div>
-        <div class="sparkle"></div>
-        <div class="sparkle"></div>
-        <div class="sparkle"></div>
-        <div class="sparkle"></div>
-      `;
-      card.appendChild(sparkles);
-      
-      // Change text to success message with animation
-      const heading = overlay.querySelector('h3');
-      const paragraph = overlay.querySelector('p');
-      if (heading) {
-        heading.textContent = 'Account Approved!';
-        heading.classList.add('success-text');
-      }
-      if (paragraph) {
-        paragraph.textContent = 'Welcome to CertQuest! Redirecting you now...';
-        paragraph.classList.add('success-subtext');
-      }
-      
-      // Add a checkmark animation
-      const checkmark = document.createElement('div');
-      checkmark.className = 'success-checkmark';
-      checkmark.innerHTML = `
-        <svg viewBox="0 0 52 52">
-          <circle class="checkmark-circle" cx="26" cy="26" r="25" fill="none"/>
-          <path class="checkmark-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
-        </svg>
-      `;
-      card.insertBefore(checkmark, card.firstChild);
-      
-      // Fade out after showing success
-      setTimeout(() => {
-        overlay.classList.add('fade-out');
-        
-        // Hide completely after fade
-        setTimeout(() => {
-          overlay.style.display = 'none';
-          overlay.classList.remove('fade-out');
-          
-          // Redirect to dashboard
-
-        }, 1000);
-      }, 2500);
-    }, 500);
-  }
-}
-
-// Enhanced CSS with smooth, professional animations
-const improvedAnimationCSS = `
-<style>
-  /* Base overlay improvements */
-  .approval-overlay {
-    backdrop-filter: blur(8px);
-    background: rgba(0, 0, 0, 0.7);
-    transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  /* Card animations */
-  .approval-card {
-    transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
-    position: relative;
-    overflow: hidden;
-    background: linear-gradient(145deg, #ffffff, #f8fafc);
-    border: 1px solid rgba(255, 255, 255, 0.8);
-    backdrop-filter: blur(20px);
-    box-shadow: 
-      0 20px 40px rgba(0, 0, 0, 0.1),
-      0 0 0 1px rgba(255, 255, 255, 0.1);
-  }
-  
-  .approval-card.unlocking {
-    transform: scale(1.02) translateY(-5px);
-    box-shadow: 
-      0 32px 64px rgba(34, 197, 94, 0.2),
-      0 0 0 1px rgba(34, 197, 94, 0.2),
-      inset 0 1px 0 rgba(255, 255, 255, 0.9);
-    background: linear-gradient(145deg, #ffffff, #f0fdf4);
-  }
-
-  /* Lock SVG animations */
-  .unlock-animation {
-    animation: unlock-smooth 1.2s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
-    transform-origin: 18px 8px;
-    filter: drop-shadow(0 2px 4px rgba(34, 197, 94, 0.3));
-  }
-  
-  .unlock-fill {
-    animation: fill-smooth 1s cubic-bezier(0.4, 0, 0.2, 1) 0.3s forwards;
-    filter: drop-shadow(0 2px 8px rgba(34, 197, 94, 0.4));
-  }
-  
-  .unlock-dot {
-    animation: pulse-smooth 0.8s cubic-bezier(0.4, 0, 0.6, 1) infinite alternate;
-  }
-
-  /* Enhanced sparkles */
-  .unlock-sparkles {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    z-index: 10;
-  }
-  
-  .sparkle {
-    position: absolute;
-    width: 6px;
-    height: 6px;
-    background: linear-gradient(45deg, #fbbf24, #f59e0b, #ffffff);
-    border-radius: 50%;
-    animation: sparkle-enhanced 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-    box-shadow: 0 0 8px rgba(251, 191, 36, 0.6);
-  }
-  
-  .sparkle::before {
-    content: '';
-    position: absolute;
-    top: -2px;
-    left: -2px;
-    right: -2px;
-    bottom: -2px;
-    background: radial-gradient(circle, rgba(255, 255, 255, 0.8) 0%, transparent 70%);
-    border-radius: 50%;
-    z-index: -1;
-  }
-  
-  .sparkle:nth-child(1) { top: 15%; left: 15%; animation-delay: 0s; }
-  .sparkle:nth-child(2) { top: 20%; right: 25%; animation-delay: 0.4s; }
-  .sparkle:nth-child(3) { top: 60%; left: 20%; animation-delay: 0.8s; }
-  .sparkle:nth-child(4) { bottom: 25%; right: 15%; animation-delay: 1.2s; }
-  .sparkle:nth-child(5) { top: 40%; left: 80%; animation-delay: 1.6s; }
-  .sparkle:nth-child(6) { top: 70%; left: 60%; animation-delay: 0.2s; }
-  .sparkle:nth-child(7) { top: 30%; left: 50%; animation-delay: 1.0s; }
-  .sparkle:nth-child(8) { bottom: 40%; left: 40%; animation-delay: 1.4s; }
-
-  /* Checkmark improvements */
-  .success-checkmark {
-    width: 64px;
-    height: 64px;
-    margin: 0 auto 1.5rem;
-    filter: drop-shadow(0 4px 8px rgba(34, 197, 94, 0.2));
-    animation: checkmark-appear 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
-  }
-  
-  .checkmark-circle {
-    stroke: #22c55e;
-    stroke-width: 3;
-    animation: stroke-smooth 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-    fill: rgba(34, 197, 94, 0.1);
-    filter: drop-shadow(0 0 4px rgba(34, 197, 94, 0.3));
-  }
-  
-  .checkmark-check {
-    stroke: #22c55e;
-    stroke-width: 4;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    animation: check-draw 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.8s forwards;
-    stroke-dasharray: 48;
-    stroke-dashoffset: 48;
-    filter: drop-shadow(0 2px 4px rgba(34, 197, 94, 0.3));
-  }
-
-  /* Text animations */
-  .success-text {
-    animation: text-smooth 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-    color: #22c55e !important;
-    text-shadow: 0 2px 4px rgba(34, 197, 94, 0.2);
-    font-weight: 600;
-  }
-  
-  .success-subtext {
-    animation: text-smooth 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s forwards;
-    opacity: 0;
-    color: #64748b;
-  }
-
-  /* Fade out enhancement */
-  .approval-overlay.fade-out {
-    opacity: 0;
-    backdrop-filter: blur(0px);
-    transition: all 1.2s cubic-bezier(0.4, 0, 1, 1);
-  }
-  
-  .approval-overlay.fade-out .approval-card {
-    transform: scale(0.95) translateY(20px);
-    opacity: 0;
-  }
-
-  /* Keyframe animations */
-  @keyframes unlock-smooth {
-    0% { 
-      transform: rotate(0deg) scale(1);
-      opacity: 0.8;
-    }
-    50% {
-      transform: rotate(-8deg) scale(1.1);
-      opacity: 1;
-    }
-    100% { 
-      transform: rotate(-25deg) scale(1);
-      opacity: 1;
-    }
-  }
-  
-  @keyframes fill-smooth {
-    0% { 
-      fill: #2563eb;
-      transform: scale(0.9);
-    }
-    50% {
-      fill: #059669;
-      transform: scale(1.05);
-    }
-    100% { 
-      fill: #22c55e;
-      transform: scale(1);
-    }
-  }
-  
-  @keyframes pulse-smooth {
-    0% { 
-      opacity: 0.9;
-      transform: scale(0.95);
-    }
-    100% { 
-      opacity: 1;
-      transform: scale(1.1);
-    }
-  }
-  
-  @keyframes sparkle-enhanced {
-    0% { 
-      opacity: 0;
-      transform: scale(0) rotate(0deg) translateY(0);
-    }
-    20% {
-      opacity: 1;
-      transform: scale(1.2) rotate(90deg) translateY(-5px);
-    }
-    50% { 
-      opacity: 1;
-      transform: scale(1) rotate(180deg) translateY(-8px);
-    }
-    80% {
-      opacity: 0.8;
-      transform: scale(0.8) rotate(270deg) translateY(-3px);
-    }
-    100% { 
-      opacity: 0;
-      transform: scale(0) rotate(360deg) translateY(0);
-    }
-  }
-  
-  @keyframes checkmark-appear {
-    0% {
-      opacity: 0;
-      transform: scale(0) rotate(-180deg);
-    }
-    60% {
-      opacity: 1;
-      transform: scale(1.15) rotate(10deg);
-    }
-    100% {
-      opacity: 1;
-      transform: scale(1) rotate(0deg);
-    }
-  }
-  
-  @keyframes stroke-smooth {
-    0% { 
-      stroke-dasharray: 0 100;
-      opacity: 0;
-    }
-    50% {
-      opacity: 1;
-    }
-    100% { 
-      stroke-dasharray: 100 0;
-      opacity: 1;
-    }
-  }
-  
-  @keyframes check-draw {
-    0% {
-      stroke-dashoffset: 48;
-      opacity: 0;
-    }
-    20% {
-      opacity: 1;
-    }
-    100% { 
-      stroke-dashoffset: 0;
-      opacity: 1;
-    }
-  }
-  
-  @keyframes text-smooth {
-    0% { 
-      transform: translateY(30px) scale(0.9);
-      opacity: 0;
-      filter: blur(4px);
-    }
-    60% {
-      transform: translateY(-5px) scale(1.02);
-      opacity: 0.8;
-      filter: blur(0px);
-    }
-    100% { 
-      transform: translateY(0) scale(1);
-      opacity: 1;
-      filter: blur(0px);
-    }
-  }
-
-  /* Additional polish */
-  @media (prefers-reduced-motion: reduce) {
-    .approval-card,
-    .unlock-animation,
-    .unlock-fill,
-    .unlock-dot,
-    .sparkle,
-    .success-checkmark,
-    .success-text,
-    .success-subtext {
-      animation-duration: 0.01ms !important;
-      animation-iteration-count: 1 !important;
-      transition-duration: 0.01ms !important;
-    }
-  }
-</style>
-`;
-
-// Add the CSS to the document head
-document.head.insertAdjacentHTML('beforeend', improvedAnimationCSS);
-
-// Function to show approval overlay
-function showApprovalOverlay() {
-  const overlay = document.getElementById('approvalOverlay');
-  if (overlay) {
-    overlay.style.display = 'flex';
-  }
-}
-
-
-
 function openFullAssignmentModal(assignment) {
     // Set the modal title
     document.getElementById('cq-assignment-title').innerText = assignment.title || "New Assignment";
@@ -2469,48 +1858,10 @@ function openFullAssignmentModal(assignment) {
                 <div><b>Simulate:</b> ${assignment.simulate ? "Yes" : "No"}</div>
             `;
         }
-
-        if (assignment.trainingPDFs && assignment.trainingPDFs.length > 0) {
-            assignment.trainingPDFs.forEach(pdf => {
-                const pdfBox = document.createElement('div');
-                pdfBox.style.cssText = 'background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 12px; margin: 8px 0; border-radius: 8px; cursor: pointer; font-weight: 500;';
-                pdfBox.textContent = pdf.name || 'Training Document';
-                pdfBox.onclick = () => downloadPDF(pdf);
-                fieldsElement.appendChild(pdfBox);
-            });
-        }
     }
     
     // Show the modal
     document.getElementById('cq-assignment-modal').style.display = 'block';
-}
-
-document.querySelectorAll('.role-btn').forEach(btn => {
-  btn.addEventListener('click', function() {
-    document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('selected'));
-    this.classList.add('selected');
-    checkFormCompletion();
-  });
-});
-
-function checkFormCompletion() {
-  const roleSelected = document.querySelector('.role-btn.selected');
-  const goalSelected = document.querySelector('.goal-card.selected');
-  const submitBtn = document.getElementById('goalSubmitBtn');
-  
-  submitBtn.disabled = !(roleSelected && goalSelected);
-}
-
-checkApprovalStatus()
-
-function downloadPDF(pdf) {
-    const blob = new Blob([pdf.content], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = pdf.name || 'training-document.txt';
-    a.click();
-    URL.revokeObjectURL(url);
 }
 
   function showSpeakingAssignmentInfo(assignment, docId) {
@@ -2539,109 +1890,66 @@ function downloadPDF(pdf) {
     document.getElementById('cq-assignment-modal').style.display = 'block';
   }
 
-function acceptAssignmentNow() {
-    console.log("🚀 acceptAssignmentNow() called");
-    
-    const assignment = window.currentAssignment;
-    console.log("📋 Current assignment:", assignment);
-    
-    if (!assignment) {
-        console.error("❌ No current assignment found");
-        return;
-    }
-    
-    // ✅ IMMEDIATELY mark assignment as complete when user clicks "I'll do it now"
-    // Mark assignment as accepted (but not completed)
-if (window.latestAssignmentId) {
-    console.log("📝 Marking assignment as accepted");
-    
-    db.collection('assignments').doc(window.latestAssignmentId).update({
-        status: "in_progress",
-        acceptedAt: firebase.firestore.FieldValue.serverTimestamp()
-    });
-}
-    // Handle different assignment types but they're already marked complete above
-    if (assignment.type === 'speaking' || assignment.type === 'case') {
-        console.log("🎤 Opening camera modal for speaking/case assignment");
-        document.getElementById('cq-assignment-modal').style.display = 'none';
-        
-        // Store assignment questions globally for the camera modal
-        window.currentAssignmentQuestions = {
-            q1: assignment.questions && assignment.questions[0] ? assignment.questions[0] : "No question provided",
-            q2: assignment.questions && assignment.questions[1] ? assignment.questions[1] : "No question provided",
-            title: assignment.title || "Speaking Assignment",
-            description: assignment.description || ""
-        };
-        
-        openCameraModal();
-        return;
-    }
+async function acceptAssignmentNow() {
+  console.log("🚀 acceptAssignmentNow() called");
+  showLoader(); // ⬅️ show loader at the start
+
+  const assignment = window.currentAssignment;
+  console.log("📋 Current assignment:", assignment);
+
+  if (!assignment) {
+    console.error("❌ No current assignment found");
+    hideLoader();
+    return;
+  }
+
+  if (window.latestAssignmentId) {
+    console.log("✅ Marking assignment as complete immediately");
+
+    const updateData = {
+      status: "seen",
+      completedAt: firebase.firestore.FieldValue.serverTimestamp(),
+      acceptedAt: firebase.firestore.FieldValue.serverTimestamp(),
+      autoCompleted: true
+    };
 
     if (assignment.type === 'written') {
-        console.log("✍️ Opening written assignment (already marked complete)");
-        document.getElementById('cq-assignment-modal').style.display = 'none';
-        openWrittenPracticeModal(assignment);
-        return;
+      updateData.score = 0;
+      updateData.maxScore = assignment.writtenQuestions?.length || 10;
     }
 
-    // Handle regular quiz assignments (already marked complete)
-    console.log("📝 Setting up regular quiz assignment (already marked complete)");
-    
-    document.getElementById('cq-assignment-info').style.display = 'none';
-    document.getElementById('cq-assignment-quiz').style.display = 'block';
-
-    document.getElementById('quizDifficulty').textContent = 'Difficulty: ' + (assignment.difficulty || 'Medium');
-    document.getElementById('quizTime').textContent = 'Time: ' + (assignment.time || '10 mins');
-
-    console.log("🎯 Rendering quiz with questions:", quizQuestions);
-    renderQuiz(quizQuestions);
-
-    const radioInputs = document.querySelectorAll('#cq-assignment-quiz input[type="radio"]');
-    const submitBtn = document.getElementById('submitQuizBtn');
-    
-    if (!submitBtn) {
-        console.error("❌ Submit button not found!");
-        return;
+    try {
+      await db.collection('assignments').doc(window.latestAssignmentId).update(updateData);
+      console.log("✅ Assignment marked as complete successfully");
+    } catch (error) {
+      console.error("❌ Error marking assignment as complete:", error);
     }
-    
-    // Enable submit button immediately since assignment is already complete
-    submitBtn.disabled = false;
-    submitBtn.textContent = "Finish Practice"; // Change text since it's already "complete"
-    
-    console.log("🔓 Submit button enabled immediately");
+  }
 
-    // Add event listeners for interactive feedback (optional)
-    radioInputs.forEach((input, index) => {
-        input.addEventListener('change', () => {
-            console.log(`📡 Radio input ${index} changed to:`, input.value);
-        });
-    });
+  // Handle assignment types
+  if (assignment.type === 'speaking' || assignment.type === 'case') {
+    console.log("🎤 Opening camera modal for speaking/case assignment");
+    document.getElementById('cq-assignment-modal').style.display = 'none';
+    openCameraModal();
+    hideLoader(); // ⬅️ hide once camera modal is ready
+    return;
+  }
 
-    // Set up the submit button click handler (for practice/feedback only)
-    submitBtn.onclick = function() {
-        console.log("🔥 FINISH PRACTICE CLICKED (assignment already complete)");
-        
-        // Show completion modal immediately
-        closeAssignmentModal();
-        
-        showCongratsModal({
-            message: `Assignment completed! Thanks for practicing.`,
-            assignmentName: document.getElementById('cq-assignment-title').textContent
-        });
-        
-        // Show confetti
-        confetti({
-            particleCount: 150,
-            spread: 70,
-            origin: { y: 0.6 }
-        });
-        
-        // Clear assignment data
-        window.latestAssignmentId = null;
-        window.currentAssignment = null;
-    };
-    
-    console.log("✅ acceptAssignmentNow() completed - assignment marked complete immediately");
+  if (assignment.type === 'written') {
+    console.log("✍️ Opening written assignment (with GPT if needed)");
+    document.getElementById('cq-assignment-modal').style.display = 'none';
+    await openWrittenPracticeModal(assignment); 
+    // ⬅️ loader will be hidden inside openWrittenPracticeModal, not here
+    return;
+  }
+
+  // Regular quiz
+  console.log("📝 Setting up regular quiz assignment (already marked complete)");
+  document.getElementById('cq-assignment-info').style.display = 'none';
+  document.getElementById('cq-assignment-quiz').style.display = 'block';
+  renderQuiz(quizQuestions);
+
+  hideLoader(); // ⬅️ stop after quiz render
 }
 
 const downloadModalHTML = `
@@ -3285,254 +2593,6 @@ function closeUploadModal() {
     }, 300);
 }
 
-// Add this to your script to inject the CSS
-function addLoadingStyles() {
-    const style = document.createElement('style');
-    style.textContent = `
-        /* Light theme loading container with fade animation */
-        #cq-written-loading {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
-            z-index: 10000;
-            opacity: 0;
-            transition: opacity 0.5s ease-in-out;
-        }
-        
-        #cq-written-loading.show {
-            opacity: 1;
-        }
-        
-        /* HUGE Gradient balls background */
-        .gradient-balls {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            z-index: 1;
-        }
-        
-        .ball {
-            position: absolute;
-            border-radius: 50%;
-            opacity: 0.4;
-            filter: blur(100px);
-            animation: float 25s infinite ease-in-out;
-        }
-        
-        .ball-1 {
-            width: 600px;
-            height: 600px;
-            background: linear-gradient(45deg, #93c5fd, #3b82f6);
-            top: 10%;
-            left: 5%;
-            animation-delay: 0s;
-            animation-duration: 30s;
-        }
-        
-        .ball-2 {
-            width: 550px;
-            height: 550px;
-            background: linear-gradient(45deg, #6ee7b7, #10b981);
-            top: 60%;
-            right: 5%;
-            animation-delay: -7s;
-            animation-duration: 25s;
-        }
-        
-        .ball-3 {
-            width: 650px;
-            height: 650px;
-            background: linear-gradient(45deg, #d8b4fe, #8b5cf6);
-            bottom: 10%;
-            left: 15%;
-            animation-delay: -12s;
-            animation-duration: 35s;
-        }
-        
-        .ball-4 {
-            width: 500px;
-            height: 500px;
-            background: linear-gradient(45deg, #fcd34d, #f59e0b);
-            top: 15%;
-            right: 15%;
-            animation-delay: -5s;
-            animation-duration: 28s;
-        }
-        
-        .ball-5 {
-            width: 700px;
-            height: 700px;
-            background: linear-gradient(45deg, #fda4af, #ec4899);
-            bottom: 5%;
-            right: 10%;
-            animation-delay: -15s;
-            animation-duration: 32s;
-        }
-        
-        @keyframes float {
-            0% {
-                transform: translate(0, 0) scale(1) rotate(0deg);
-            }
-            33% {
-                transform: translate(80px, -60px) scale(1.1) rotate(120deg);
-            }
-            66% {
-                transform: translate(-60px, 70px) scale(0.9) rotate(240deg);
-            }
-            100% {
-                transform: translate(0, 0) scale(1) rotate(360deg);
-            }
-        }
-        
-        .cq-loading-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 3rem 2.5rem;
-            text-align: center;
-            background: rgba(255, 255, 255, 0.85);
-            border-radius: 20px;
-            backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            position: relative;
-            z-index: 2;
-            max-width: 500px;
-            width: 90%;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
-        }
-        
-        .cq-loading-spinner {
-            width: 70px;
-            height: 70px;
-            border: 3px solid rgba(59, 130, 246, 0.1);
-            border-top: 3px solid #3b82f6;
-            border-radius: 50%;
-            animation: cq-spin 1.2s ease-in-out infinite;
-            margin-bottom: 1.5rem;
-            box-sizing: border-box;
-        }
-        
-        @keyframes cq-spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        .cq-loading-text {
-            font-size: 1.5rem;
-            color: #1e293b;
-            margin-bottom: 0.5rem;
-            font-weight: 600;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-        }
-        
-        .cq-loading-subtext {
-            font-size: 1.1rem;
-            color: #64748b;
-            margin-bottom: 1.5rem;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-        }
-        
-        .cq-loading-progress {
-            width: 300px;
-            height: 8px;
-            background-color: rgba(59, 130, 246, 0.1);
-            border-radius: 4px;
-            overflow: hidden;
-            margin-top: 1rem;
-        }
-        
-        .cq-loading-progress-bar {
-            height: 100%;
-            width: 0%;
-            background: linear-gradient(90deg, #3b82f6, #6366f1);
-            border-radius: 4px;
-            transition: width 0.4s ease;
-        }
-        
-        /* Responsive adjustments */
-        @media (max-width: 768px) {
-            .ball {
-                filter: blur(70px);
-            }
-            
-            .ball-1, .ball-2, .ball-3, .ball-4, .ball-5 {
-                width: 400px;
-                height: 400px;
-            }
-            
-            .cq-loading-container {
-                padding: 2rem 1.5rem;
-                width: 85%;
-            }
-            
-            .cq-loading-text {
-                font-size: 1.3rem;
-            }
-            
-            .cq-loading-subtext {
-                font-size: 1rem;
-            }
-            
-            .cq-loading-progress {
-                width: 250px;
-            }
-        }
-    `;
-    document.head.appendChild(style);
-}
-
-// REMOVE the ensureLoaderPosition and applyInlineLoaderStyles functions
-
-// ADD this function to show the loader properly
-function showLoading() {
-    const loadingElement = document.getElementById('cq-written-loading');
-    if (!loadingElement) return;
-    
-    // Create gradient balls if they don't exist
-    if (!loadingElement.querySelector('.gradient-balls')) {
-        const gradientBalls = document.createElement('div');
-        gradientBalls.className = 'gradient-balls';
-        gradientBalls.innerHTML = `
-            <div class="ball ball-1"></div>
-            <div class="ball ball-2"></div>
-            <div class="ball ball-3"></div>
-            <div class="ball ball-4"></div>
-        `;
-        loadingElement.insertBefore(gradientBalls, loadingElement.firstChild);
-    }
-    
-    // Show with fade animation
-    loadingElement.style.display = 'flex';
-    setTimeout(() => {
-        loadingElement.classList.add('show');
-    }, 10);
-    
-    // Start animation
-    startLoadingAnimation();
-}
-
-function hideLoading() {
-    const loadingElement = document.getElementById('cq-written-loading');
-    if (!loadingElement) return;
-    
-    // Fade out first, then hide
-    loadingElement.classList.remove('show');
-    setTimeout(() => {
-        loadingElement.style.display = 'none';
-        completeLoadingAnimation();
-    }, 500); // Match the CSS transition duration
-}
-// Call this function when your script loads
-addLoadingStyles();
-
 function setupUploadModal() {
     const dropZone = document.getElementById('uploadDropZone');
     const fileInput = document.getElementById('uploadFileInput');
@@ -3668,45 +2728,6 @@ function resetUploadModal() {
     if (submitBtn) {
         submitBtn.disabled = true;
     }
-}
-
-// ========== GPT QUESTION GENERATOR ==========
-
-function getQuestionCount(timeStr) {
-  if (!timeStr) return 5;
-  
-  const time = parseInt(timeStr);
-  if (time >= 15) return 10;
-  if (time >= 10) return 7;
-  return 5;
-}
-
-function getFallbackQuestions(count, competencies) {
-  // Simple fallback questions if GPT fails
-  return [
-    {
-      text: "What is the primary goal of business communication?",
-      competency: competencies[0] || "Business Communication",
-      correctAnswer: "Clear and effective information exchange",
-      options: [
-        "Clear and effective information exchange",
-        "Using complex terminology",
-        "Lengthy detailed explanations",
-        "Informal casual language"
-      ]
-    },
-    {
-      text: "Which financial statement shows profitability over time?",
-      competency: competencies[0] || "Accounting",
-      correctAnswer: "Income Statement",
-      options: [
-        "Income Statement",
-        "Balance Sheet",
-        "Cash Flow Statement",
-        "Trial Balance"
-      ]
-    }
-  ].slice(0, count);
 }
 
 async function submitUploadedFile() {
@@ -3947,82 +2968,87 @@ window.testQuizSubmission = testQuizSubmission;
 
 
 async function openWrittenPracticeModal(assignment) {
-    console.log("Opening written practice modal with assignment:", assignment);
-    
-    // Create modal if it doesn't exist
-    if (!writtenModal) {
-        writtenModal = createWrittenModal();
-    }
-    
-    // FIRST hide the content
-    const contentSection = writtenModal.querySelector('.cq-written-modal-content');
-    if (contentSection) {
-        contentSection.style.display = 'none';
-    }
-    
-    // THEN show the modal and loading
-    writtenModal.style.display = 'flex';
-    showLoading(); // Use the new function to show loading
-    
+  console.log("Opening written practice modal with assignment:", assignment);
+
+  try {
     currentQuestionIndex = 0;
     writtenAnswers = {};
-    
-    // Calculate time and question count
+
     const timeInMinutes = parseInt(assignment.time) || 15;
     writtenTimeRemaining = timeInMinutes * 60;
-    const questionCount = getQuestionCount(assignment.time);
-    
-    try {
-        // Generate questions based on assignment competencies and difficulty
-        writtenQuestions = await generateQuestionsFromCompetencies(
-            assignment.competencies || ["General Business"],
-            questionCount,
-            assignment.difficulty || "Medium",
-            assignment
-        );
-        
-        console.log("Generated questions:", writtenQuestions);
-        
-        // Hide loading and show content
-        hideLoading(); // Use the new function to hide loading
-        if (contentSection) {
-            contentSection.style.display = 'block';
-        }
-        
-        // Load first question
-        loadWrittenQuestion();
-        startWrittenTimer();
-        
-    } catch (error) {
-        console.error("Error generating questions:", error);
-        hideLoading(); // Hide loading on error too
-        alert("Failed to generate questions. Please try again.");
-        closeWrittenModal();
+
+    // If no preloaded questions, use GPT
+    if (!assignment.writtenQuestions || assignment.writtenQuestions.length === 0) {
+      console.log("⚡ No preloaded questions, generating via GPT...");
+      assignment.writtenQuestions = await generatePersonalizedQuestionsWithGPT({
+        time: assignment.time || "15 mins",
+        difficulty: assignment.difficulty || "Medium",
+        competencies: assignment.competencies || ["General"],
+        type: "written"
+      });
     }
+
+    writtenQuestions = assignment.writtenQuestions;
+    console.log("✅ Written questions ready:", writtenQuestions);
+
+    // Show modal
+    document.getElementById('cq-written-modal').style.display = 'flex';
+    loadWrittenQuestion();
+    startWrittenTimer();
+
+  } catch (err) {
+    console.error("❌ Error in openWrittenPracticeModal:", err);
+    alert("Could not load written practice. Please try again.");
+  } finally {
+    hideLoader(); // ⬅️ loader hidden ONLY after modal is ready or failed
+    console.log("🛑 Loader hidden inside openWrittenPracticeModal");
+  }
+}
+
+
+function showLoader() {
+  document.getElementById("assignmentLoader").style.display = "flex";
+}
+function hideLoader() {
+  document.getElementById("assignmentLoader").style.display = "none";
+}
+
+
+
+function getQuestionCount(timeStr) {
+  if (!timeStr) return 5;
+
+  const normalized = timeStr.toString().toLowerCase();
+
+  if (normalized.includes("15")) return 10;  // 15 minutes → 10 questions
+  if (normalized.includes("10")) return 7;   // 10 minutes → 7 questions
+  if (normalized.includes("5")) return 5;    // 5 minutes → 5 questions
+
+  return 5; // default
 }
 
 function loadWrittenQuestion() {
-    if (!writtenQuestions || writtenQuestions.length === 0) {
-        console.error("No questions available");
+    const question = writtenQuestions[currentQuestionIndex];
+    if (!question) {
+        console.error("No question found at index", currentQuestionIndex);
         return;
     }
     
-    const question = writtenQuestions[currentQuestionIndex];
+    console.log("Loading question", currentQuestionIndex + 1, ":", question.question);
     
-    // Update UI
-    document.getElementById('cq-written-title').textContent = 
-        window.currentAssignment?.title || 'Written Practice';
+    // Update header
+    document.getElementById('cq-written-title').textContent = window.currentAssignment?.title || 'Written Practice';
     document.getElementById('cq-written-question-count').textContent = 
         `Question ${currentQuestionIndex + 1} of ${writtenQuestions.length}`;
     
-    // Set competency and question text
+    // Update question content
     document.getElementById('cq-written-competency').textContent = question.competency;
-    document.getElementById('cq-written-question').textContent = question.text;
+    document.getElementById('cq-written-question').textContent = question.question;
     
     // Create options
     const optionsContainer = document.getElementById('cq-written-options');
-    optionsContainer.innerHTML = question.options.map(option => `
-        <label class="cq-written-option">
+    optionsContainer.innerHTML = question.options.map((option, index) => `
+        <label class="cq-written-option" data-option="${option}">
             <input type="radio" name="written-q${currentQuestionIndex}" value="${option}">
             <span class="cq-written-option-text">${option}</span>
         </label>
@@ -4038,374 +3064,58 @@ function loadWrittenQuestion() {
         }
     }
     
-    // Add click handlers
+    // Add click handlers for options
     optionsContainer.querySelectorAll('.cq-written-option').forEach(option => {
-        option.addEventListener('click', function() {
+        option.addEventListener('click', function(e) {
+            // Prevent double-triggering if radio button itself was clicked
+            if (e.target.type === 'radio') return;
+            
+            // Remove previous selection
             optionsContainer.querySelectorAll('.cq-written-option').forEach(opt => 
                 opt.classList.remove('selected'));
+            
+            // Add selection to clicked option
             this.classList.add('selected');
             
+            // Check the radio button
             const radio = this.querySelector('input[type="radio"]');
             radio.checked = true;
+            
+            // Save answer
             writtenAnswers[currentQuestionIndex] = radio.value;
+            console.log("Answer saved:", currentQuestionIndex, "->", radio.value);
         });
     });
     
+    // Add change handlers for radio buttons (for keyboard navigation)
+    optionsContainer.querySelectorAll('input[type="radio"]').forEach(radio => {
+        radio.addEventListener('change', function() {
+            if (this.checked) {
+                // Remove previous selection
+                optionsContainer.querySelectorAll('.cq-written-option').forEach(opt => 
+                    opt.classList.remove('selected'));
+                
+                // Add selection to parent option
+                this.closest('.cq-written-option').classList.add('selected');
+                
+                // Save answer
+                writtenAnswers[currentQuestionIndex] = this.value;
+                console.log("Answer saved via radio:", currentQuestionIndex, "->", this.value);
+            }
+        });
+    });
+    
+    // Update progress bar
     updateWrittenProgress();
+    
+    // Update navigation buttons
     updateWrittenNavButtons();
 }
+
 function updateWrittenProgress() {
     const progress = ((currentQuestionIndex + 1) / writtenQuestions.length) * 100;
     document.getElementById('cq-written-progress-fill').style.width = `${progress}%`;
 }
-
-// Fix the training data usage issue
-// FIXED VERSION - Add this after your existing function
-function fixTrainingDataUsage() {
-    console.log("🔧 Fixing training data usage in question generation");
-    
-    // Override the existing function with complete debugging and PDF support
-    window.generateQuestionsFromCompetencies = async function(competencies, questionCount, difficulty, assignment) {
-        console.log("🚀 =========================== QUESTION GENERATION START ===========================");
-        console.log("🔍 Initial parameters:", { 
-            competencies, 
-            questionCount, 
-            difficulty, 
-            assignmentExists: !!assignment,
-            assignmentKeys: assignment ? Object.keys(assignment) : []
-        });
-
-        // Use your existing API key
-        const apiKey = window.openaiApiKey || "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";
-
-        const compText = competencies.join(', ');
-        let trainingContext = "";
-        let allTrainingContent = [];
-        let hasTrainingData = false;
-
-        // ================================ PDF PROCESSING SECTION ================================
-        console.log("📄 =========================== PDF PROCESSING START ===========================");
-        
-        if (!assignment) {
-            console.log("❌ NO ASSIGNMENT OBJECT PROVIDED");
-        } else if (!assignment.trainingPDFs) {
-            console.log("❌ NO trainingPDFs PROPERTY IN ASSIGNMENT");
-            console.log("📋 Available assignment properties:", Object.keys(assignment));
-        } else if (!Array.isArray(assignment.trainingPDFs)) {
-            console.log("❌ trainingPDFs IS NOT AN ARRAY:", typeof assignment.trainingPDFs);
-            console.log("📋 trainingPDFs value:", assignment.trainingPDFs);
-        } else if (assignment.trainingPDFs.length === 0) {
-            console.log("❌ trainingPDFs ARRAY IS EMPTY");
-        } else {
-            console.log("✅ trainingPDFs FOUND - Count:", assignment.trainingPDFs.length);
-            console.log("📄 Full trainingPDFs structure:", JSON.stringify(assignment.trainingPDFs, null, 2));
-            
-            assignment.trainingPDFs.forEach((pdf, index) => {
-                console.log(`\n📄 PROCESSING PDF ${index + 1}/${assignment.trainingPDFs.length}:`);
-                console.log(`   Name: ${pdf.name || 'UNNAMED'}`);
-                console.log(`   Type: ${pdf.type || 'NO TYPE'}`);
-                console.log(`   Processed: ${pdf.processed}`);
-                console.log(`   Has content: ${!!pdf.content}`);
-                console.log(`   Content type: ${typeof pdf.content}`);
-                console.log(`   Content length: ${pdf.content?.length || 0}`);
-                
-                if (!pdf.content) {
-                    console.log("   ❌ SKIP: No content property");
-                } else if (typeof pdf.content !== 'string') {
-                    console.log("   ❌ SKIP: Content is not a string");
-                } else if (pdf.content.trim().length === 0) {
-                    console.log("   ❌ SKIP: Content is empty after trim");
-                } else {
-                    const contentSnippet = pdf.content.trim().substring(0, 1500); // Increased from 1000
-                    allTrainingContent.push(contentSnippet);
-                    hasTrainingData = true;
-                    console.log("   ✅ ADDED PDF to training content");
-                    console.log(`   First 200 chars: "${contentSnippet.substring(0, 200)}..."`);
-                }
-            });
-        }
-
-        // ================================ USER TRAINING DATA SECTION ================================
-        console.log("\n👤 =========================== USER TRAINING DATA START ===========================");
-        
-        if (assignment?.usedMenteeTrainingData === true) {
-            console.log("✅ User training data REQUESTED");
-            try {
-                const currentUser = firebase.auth().currentUser;
-                if (!currentUser) {
-                    console.log("❌ No current user authenticated");
-                } else {
-                    console.log("✅ Current user found:", currentUser.uid);
-                    const userTrainingRef = firebase.firestore().collection('userTraining').doc(currentUser.uid);
-                    const userTrainingDoc = await userTrainingRef.get();
-                    
-                    if (!userTrainingDoc.exists) {
-                        console.log("❌ No user training document exists");
-                    } else {
-                        console.log("✅ User training document exists");
-                        const entriesRef = userTrainingRef.collection('entries').orderBy('timestamp', 'desc').limit(3);
-                        const entriesSnapshot = await entriesRef.get();
-                        
-                        console.log(`📊 Found ${entriesSnapshot.size} user training entries`);
-                        
-                        entriesSnapshot.forEach(doc => {
-                            const data = doc.data();
-                            console.log(`   Entry ID: ${doc.id}`);
-                            console.log(`   Has content: ${!!data.content}`);
-                            console.log(`   Content length: ${data.content?.trim().length || 0}`);
-                            
-                            if (data.content && data.content.trim().length > 0) {
-                                allTrainingContent.push(data.content.trim());
-                                hasTrainingData = true;
-                                console.log("   ✅ ADDED user training content");
-                            }
-                        });
-                    }
-                }
-            } catch (error) {
-                console.error("💥 Error fetching user training data:", error);
-            }
-        } else {
-            console.log("⏭️ User training data NOT requested");
-            console.log(`   usedMenteeTrainingData value: ${assignment?.usedMenteeTrainingData}`);
-        }
-
-        // ================================ TRAINING CONTEXT CREATION ================================
-        console.log("\n🔧 =========================== TRAINING CONTEXT CREATION ===========================");
-        console.log(`Total training content pieces: ${allTrainingContent.length}`);
-        console.log(`Has training data: ${hasTrainingData}`);
-
-        if (hasTrainingData && allTrainingContent.length > 0) {
-            const combinedContent = allTrainingContent.join(' ').substring(0, 2500); // Increased limit
-            trainingContext = combinedContent;
-            
-            console.log("✅ TRAINING CONTEXT CREATED");
-            console.log(`   Combined content length: ${combinedContent.length}`);
-            console.log(`   First 300 chars of context: "${trainingContext.substring(0, 300)}..."`);
-        } else {
-            console.log("❌ NO TRAINING CONTEXT CREATED - No valid training data");
-        }
-
-        // ================================ PROMPT CREATION ================================
-        console.log("\n📝 =========================== PROMPT CREATION ===========================");
-        
-        let prompt;
-        if (hasTrainingData && trainingContext) {
-            prompt = `You are creating FBLA business questions that MUST be directly based on this student's uploaded content:
-
-"${trainingContext}"
-
-Create ${questionCount} multiple choice questions that:
-1. Use concepts, topics, and themes from the student's content above
-2. Connect those concepts to these business competencies: ${compText}
-3. Are at ${difficulty} difficulty level
-4. Have exactly 4 answer choices each
-5. Make the connection between the student's content and business concepts clear
-
-CRITICAL: The questions MUST relate to the actual content the student uploaded. If the content is about prisons, create questions about workplace management, employee conditions, organizational structure, etc. that connect to that theme.
-
-Return JSON only in this exact format:
-[
-  {
-    "text": "Question text that references concepts from the student content?",
-    "competency": "One of the provided competency names",
-    "correctAnswer": "The correct option text",
-    "options": ["Option A", "Option B", "Option C", "Option D"]
-  }
-]`;
-        } else {
-            prompt = `Generate ${questionCount} FBLA multiple choice questions.
-- Difficulty: ${difficulty}
-- Competencies: ${compText}
-- Each must have exactly 4 options, 1 correct answer
-- Make questions realistic for business competitions
-
-Return JSON only in this format:
-[
-  {
-    "text": "Question text?",
-    "competency": "Competency Name",
-    "correctAnswer": "Correct option text",
-    "options": ["Option A", "Option B", "Option C", "Option D"]
-  }
-]`;
-        }
-
-        console.log("📝 FINAL PROMPT DETAILS:");
-        console.log(`   Prompt length: ${prompt.length}`);
-        console.log(`   Has training context: ${!!trainingContext}`);
-        console.log(`   Training context length: ${trainingContext.length}`);
-        
-        console.log("📝 ACTUAL PROMPT BEING SENT:");
-        console.log("=" .repeat(80));
-        console.log(prompt);
-        console.log("=" .repeat(80));
-
-        // ================================ API CALL ================================
-        console.log("\n🌐 =========================== API CALL START ===========================");
-        
-        try {
-            console.log("📤 Sending request to OpenAI...");
-            
-            const requestBody = {
-                model: "gpt-4o-mini",
-                messages: [
-                    { 
-                        role: "system", 
-                        content: hasTrainingData ? 
-                            "You are an expert at creating personalized FBLA questions based on student content. Always connect the student's actual uploaded content to business concepts. Be creative in making these connections." :
-                            "You are an expert FBLA exam writer who creates realistic business competition questions."
-                    },
-                    { role: "user", content: prompt }
-                ],
-                temperature: 0.8,
-                max_tokens: 2500
-            };
-            
-            console.log("📤 Request body summary:", {
-                model: requestBody.model,
-                systemMessage: requestBody.messages[0].content,
-                promptLength: requestBody.messages[1].content.length,
-                temperature: requestBody.temperature
-            });
-            
-            const res = await fetch("https://api.openai.com/v1/chat/completions", {
-                method: "POST",
-                headers: { 
-                    "Authorization": `Bearer ${apiKey}`, 
-                    "Content-Type": "application/json" 
-                },
-                body: JSON.stringify(requestBody)
-            });
-
-            console.log(`📥 Response status: ${res.status} ${res.statusText}`);
-
-            if (!res.ok) {
-                const errorText = await res.text();
-                console.error("💥 GPT API Error:", res.status, errorText);
-                throw new Error(`API Error ${res.status}: ${errorText}`);
-            }
-            
-            const responseData = await res.json();
-            console.log("📥 API response summary:", {
-                hasChoices: !!responseData.choices,
-                choicesLength: responseData.choices?.length || 0,
-                finishReason: responseData.choices?.[0]?.finish_reason
-            });
-            
-            let content = responseData.choices[0].message.content.trim();
-            console.log("📥 Raw content length:", content.length);
-            console.log("📥 Raw content preview:", content.substring(0, 500) + "...");
-            
-            // Clean up the response
-            content = content.replace(/```json|```/g, "");
-            console.log("📥 Content after cleanup preview:", content.substring(0, 500) + "...");
-            
-            const questions = JSON.parse(content);
-            console.log("✅ Successfully parsed JSON - Questions count:", questions.length);
-            
-            // ================================ SAVE QUESTIONS TO GLOBAL VARIABLES ================================
-            console.log("\n💾 =========================== SAVING QUESTIONS ===========================");
-            
-            if (questions && Array.isArray(questions) && questions.length > 0) {
-                // Transform questions to match your expected format
-                window.writtenQuestions = questions.map((q, index) => {
-                    console.log(`   Processing question ${index + 1}:`, {
-                        hasText: !!q.text,
-                        hasOptions: !!q.options,
-                        optionsLength: q.options?.length || 0,
-                        hasCorrectAnswer: !!q.correctAnswer
-                    });
-                    
-                    return {
-                        question: q.text || q.question,
-                        options: q.options || [],
-                        correctAnswer: q.correctAnswer,
-                        competency: q.competency
-                    };
-                });
-                
-                // Initialize answers object
-                window.writtenAnswers = {};
-                
-                console.log("✅ QUESTIONS SAVED TO GLOBAL VARIABLES");
-                console.log(`   window.writtenQuestions length: ${window.writtenQuestions.length}`);
-                console.log(`   window.writtenAnswers initialized: ${typeof window.writtenAnswers}`);
-                console.log("📊 Sample saved question:", window.writtenQuestions[0]);
-                
-                console.log("🎉 =========================== SUCCESS ===========================");
-                console.log(`✅ Generated ${questions.length} questions`);
-                console.log(`✅ Used training data: ${hasTrainingData}`);
-                console.log(`✅ Training content pieces: ${allTrainingContent.length}`);
-                console.log(`✅ PDF processing: ${assignment?.trainingPDFs?.length || 0} PDFs`);
-                console.log(`✅ User training: ${assignment?.usedMenteeTrainingData === true ? 'Requested' : 'Not requested'}`);
-                
-                return questions;
-            } else {
-                throw new Error("No valid questions in response");
-            }
-
-        } catch (err) {
-            console.error("💥 =========================== ERROR OCCURRED ===========================");
-            console.error("💥 Error type:", err.constructor.name);
-            console.error("💥 Error message:", err.message);
-            console.error("💥 Full error:", err);
-            
-            console.log("🔄 =========================== FALLBACK PROCESSING ===========================");
-            
-            let fallbackQuestions = [];
-            
-            // Try to get fallback questions
-            if (typeof getFallbackQuestions === 'function') {
-                console.log("🔄 Trying getFallbackQuestions...");
-                fallbackQuestions = getFallbackQuestions(questionCount, competencies);
-            } else if (typeof createBasicQuestions === 'function') {
-                console.log("🔄 Trying createBasicQuestions...");
-                fallbackQuestions = createBasicQuestions(questionCount, competencies);
-            } else {
-                console.log("🔄 Creating emergency fallback questions...");
-                fallbackQuestions = Array.from({length: questionCount}, (_, i) => ({
-                    question: `Sample FBLA question ${i + 1} for ${competencies[0]}?`,
-                    options: ["Option A", "Option B", "Option C", "Option D"],
-                    correctAnswer: "Option A",
-                    competency: competencies[0]
-                }));
-            }
-            
-            if (fallbackQuestions && fallbackQuestions.length > 0) {
-                window.writtenQuestions = fallbackQuestions;
-                window.writtenAnswers = {};
-                console.log("✅ Fallback questions saved:", window.writtenQuestions.length);
-                return fallbackQuestions;
-            } else {
-                console.error("💥 Even fallback failed!");
-                return [];
-            }
-        }
-    };
-    
-    console.log("✅ Training data usage fixed with complete debugging!");
-}
-
-// Auto-execute the fix
-
-// Helper function for basic questions if everything fails
-function createBasicQuestions(count, competencies) {
-    const basicQuestions = [];
-    for (let i = 0; i < count; i++) {
-        basicQuestions.push({
-            question: `Business Communication Question ${i + 1}?`,
-            options: ["Option A", "Option B", "Option C", "Option D"],
-            correctAnswer: "Option A",
-            competency: competencies[0] || "business-communication"
-        });
-    }
-    return basicQuestions;
-}
-
-// Run the fix
-fixTrainingDataUsage();
-
 
 
 function updateWrittenNavButtons() {
@@ -4485,70 +3195,136 @@ function updateTimerDisplay() {
 
 async function submitWrittenPractice() {
     try {
+        console.log("=== SUBMITTING WRITTEN PRACTICE ===");
+        console.log("Assignment ID:", window.latestAssignmentId);
+        console.log("Current Assignment:", window.currentAssignment);
+        console.log("Questions:", writtenQuestions.length);
+        console.log("Answers:", writtenAnswers);
+
         clearInterval(writtenTimer);
         
+        // CRITICAL: Check if we have an assignment ID
         if (!window.latestAssignmentId) {
-            alert("Error: No assignment ID found.");
+            console.error("❌ CRITICAL ERROR: No assignment ID found!");
+            alert("Error: No assignment ID found. Cannot submit written practice.");
+            closeWrittenModal();
             return;
         }
         
-        // Calculate score - CHECK ALL POSSIBLE CORRECT ANSWER FIELDS
+        // Calculate score and competency stats
         let score = 0;
         const competencyStats = {};
+        const detailedAnswers = [];
+        const totalQuestions = writtenQuestions.length;
         
         writtenQuestions.forEach((question, index) => {
             const userAnswer = writtenAnswers[index];
-            
-            // Try all possible correct answer field names
-            const correctAnswer = question.correctAnswer || question.correct || question.answer || question.correctOption;
-            const isCorrect = userAnswer === correctAnswer;
+            const isCorrect = userAnswer === question.correctAnswer;
             
             if (isCorrect) score++;
             
             // Track competency performance
-            const comp = question.competency || 'Unknown';
-            if (!competencyStats[comp]) {
-                competencyStats[comp] = { total: 0, correct: 0 };
+            if (!competencyStats[question.competency]) {
+                competencyStats[question.competency] = { 
+                    total: 0, 
+                    correct: 0,
+                    questions: []
+                };
             }
-            competencyStats[comp].total++;
-            if (isCorrect) competencyStats[comp].correct++;
+            competencyStats[question.competency].total++;
+            if (isCorrect) competencyStats[question.competency].correct++;
+            
+            // Store detailed answer info
+            detailedAnswers.push({
+                questionIndex: index,
+                question: question.question,
+                competency: question.competency,
+                userAnswer: userAnswer || "No answer",
+                correctAnswer: question.correctAnswer,
+                isCorrect: isCorrect
+            });
         });
         
-        const totalQuestions = writtenQuestions.length || 1; // Prevent divide by zero
+        // Calculate time spent and percentage
+        const originalTime = parseInt(window.currentAssignment?.time) * 60 || 900;
+        const timeSpent = originalTime - writtenTimeRemaining;
         const percentage = Math.round((score / totalQuestions) * 100);
         
-        // Save to Firebase
-        await db.collection('assignments').doc(window.latestAssignmentId).update({
-            status: "complete",
-            completedAt: firebase.firestore.FieldValue.serverTimestamp(),
+        console.log("Final score:", score, "/", totalQuestions);
+        console.log("Competency stats:", competencyStats);
+        console.log("Time spent:", timeSpent, "seconds");
+        
+        // CRITICAL: This is the key update that marks it as complete for mentors
+        const updateData = {
+            status: "complete",  // CRITICAL: This is what mentors filter by
+            completedAt: firebase.firestore.FieldValue.serverTimestamp(), // CRITICAL: This is what mentors sort by
             score: score,
             totalQuestions: totalQuestions,
-            maxScore: totalQuestions,
+            maxScore: totalQuestions,  // CRITICAL: Mentors expect this field
             competencyStats: competencyStats,
+            timeSpent: timeSpent,
+            detailedAnswers: detailedAnswers,
+            competencies: Object.keys(competencyStats),
+            correctCompetencies: Object.entries(competencyStats)
+                .filter(([_, stats]) => stats.correct === stats.total)
+                .map(([comp, _]) => comp),
             percentage: percentage,
             submittedAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
+        };
         
-        // Show results
-        closeWrittenModal(true);
-        showCongratsModal({
-            message: `Great job! You scored ${score}/${totalQuestions}`,
-            assignmentName: window.currentAssignment?.title || "Written Practice",
+        console.log("=== FIREBASE UPDATE DATA ===");
+        console.log("Document ID:", window.latestAssignmentId);
+        console.log("Update Data:", updateData);
+        
+        // Update assignment in Firestore
+        await db.collection('assignments').doc(window.latestAssignmentId).update(updateData);
+        
+        console.log("✅ Assignment updated successfully in Firestore");
+        console.log("✅ Status set to 'complete'");
+        console.log("✅ CompletedAt timestamp added");
+        console.log("✅ MaxScore field added");
+        
+        // Prepare data for modal
+        const resultsData = {
+            message: `Excellent work! You scored ${score}/${totalQuestions}`,
+            assignmentName: window.currentAssignment?.title || 'Written Practice',
             competencyStats: competencyStats,
             score: score,
             totalQuestions: totalQuestions,
-            percentage: percentage
+            percentage: percentage,
+            timeSpent: timeSpent
+        };
+        
+        console.log("Congrats modal data:", resultsData);
+        
+        // Close modal first
+        closeWrittenModal(true);
+        
+        // Show celebration
+        confetti({
+            particleCount: 150,
+            spread: 70,
+            origin: { y: 0.6 },
+            colors: ['#3b82f6', '#1d4ed8', '#1e40af']
         });
         
-        // Clear data
+        // Show results modal
+        showCongratsModal(resultsData);
+        
+        // Clear globals AFTER successful submission
         window.latestAssignmentId = null;
         window.currentAssignment = null;
         
+        console.log("=== WRITTEN PRACTICE SUBMISSION COMPLETE ===");
+        
     } catch (error) {
-        console.error("Submission error:", error);
-        alert("Failed to submit: " + error.message);
+        console.error("❌ Written practice submission error:", error);
+        console.error("❌ Assignment ID was:", window.latestAssignmentId);
+        console.error("❌ Current assignment was:", window.currentAssignment);
+        alert("Failed to submit practice: " + error.message);
     }
 }
+
 
 function calculateQuizResults() {
     console.log("🧮 Calculating quiz results...");
@@ -4674,9 +3450,7 @@ function closeWrittenModal(wasCompleted = false) {
     clearInterval(writtenTimer);
     
     // Hide modal
-    if (writtenModal) {
-        writtenModal.style.display = 'none';
-    }
+    document.getElementById('cq-written-modal').style.display = 'none';
     
     // Reset state
     writtenQuestions = [];
@@ -4704,6 +3478,7 @@ function closeWrittenModal(wasCompleted = false) {
         // Don't clear globals here either - let submitWrittenPractice handle it
     }
 }
+
 
 
 window.previousQuestion = previousQuestion;
@@ -5621,6 +4396,116 @@ function closeCongratsModal(docId) {
         console.error("Error updating assignment status:", error);
     });
 }
+
+function getCurrentUserId() {
+    const user = auth.currentUser;
+    return user ? user.uid : 'anonymous';
+}
+
+async function getCompetenciesFromLatestSubmission(competitionName) {
+    if (!competitionName) return [];
+    
+    try {
+        const snapshot = await db.collection('competition-submissions')
+            .where('competition', '==', competitionName)
+            .orderBy('processedAt', 'desc')
+            .limit(1)
+            .get();
+        
+        if (!snapshot.empty) {
+            const latestDoc = snapshot.docs[0].data();
+            const extractedCompetencies = latestDoc.extractedCompetencies;
+            
+            if (extractedCompetencies) {
+                // Extract competency titles, remove letter prefixes (A., B., etc.)
+                const competencyLines = extractedCompetencies
+                    .split('\n')
+                    .filter(line => /^[A-Z]\.\s/.test(line.trim()))
+                    .map(line => line.replace(/^[A-Z]\.\s*/, '').trim())
+                    .filter(comp => comp.length > 0);
+                
+                return competencyLines;
+            }
+        }
+        
+        return [];
+    } catch (error) {
+        console.error('Error fetching competencies:', error);
+        return [];
+    }
+}
+
+function getFallbackQuestions(count, competencies) {
+  const fallbackQuestions = [
+    {
+      text: "What is the primary purpose of parliamentary procedure?",
+      competency: "Parliamentary Procedure",
+      correctAnswer: "To make meetings more efficient",
+      options: [
+        "To make meetings more efficient",
+        "To give the president more power",
+        "To eliminate debate",
+        "To make meetings longer"
+      ]
+    },
+    {
+      text: "Which motion is used to end a meeting?",
+      competency: "Parliamentary Procedure",
+      correctAnswer: "Adjourn",
+      options: [
+        "Adjourn",
+        "Recess",
+        "Postpone",
+        "Table"
+      ]
+    },
+    {
+      text: "What is the most effective way to communicate in business?",
+      competency: "Business Communication",
+      correctAnswer: "Clear and concise messaging",
+      options: [
+        "Clear and concise messaging",
+        "Using complex terminology",
+        "Lengthy detailed explanations",
+        "Informal casual language"
+      ]
+    },
+    {
+      text: "What is the marketing mix also known as?",
+      competency: "Marketing",
+      correctAnswer: "The 4 P's",
+      options: [
+        "The 4 P's",
+        "The 4 C's",
+        "The 5 S's",
+        "The 3 R's"
+      ]
+    },
+    {
+      text: "What is the basic accounting equation?",
+      competency: "Accounting", 
+      correctAnswer: "Assets = Liabilities + Owner's Equity",
+      options: [
+        "Assets = Liabilities + Owner's Equity",
+        "Revenue = Expenses + Profit",
+        "Assets = Revenue - Expenses",
+        "Liabilities = Assets + Equity"
+      ]
+    }
+  ];
+  
+  // Return the requested number of questions (cycle through if needed)
+  const result = [];
+  for (let i = 0; i < count; i++) {
+    result.push(fallbackQuestions[i % fallbackQuestions.length]);
+  }
+  
+  return result;
+}
+    
+
+
+
 
 // ... rest of your code ...
 

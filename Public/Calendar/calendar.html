@@ -26,15 +26,97 @@
 
   <div class="main-layout">
     <!-- Sidebar -->
-    <aside class="sidebar">
+   <aside class="sidebar">
       <div class="logo">CQ</div>
       <ul class="nav-icons">
-        <li>🏠 <span class="nav-label">Dashboard</span></li>
-        <li>📊 <span class="nav-label">Stats</span></li>
-        <li>🎯 <span class="nav-label">Goals</span></li>
-        <li>📅 <span class="nav-label">Schedule</span></li>
-        <li>⚙️ <span class="nav-label">Settings</span></li>
-      </ul>
+  <li>
+     <a href="/Public/home.html">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M12 3L20 9V21H15V15H9V21H4V9L12 3Z" fill="#3b82f6" fill-opacity="0.3"/>
+      <path d="M12 3L4 9V21H9V15H15V21H20V9L12 3Z" stroke="#3b82f6" stroke-width="2" fill="none" stroke-linejoin="round"/>
+      <rect x="10" y="17" width="4" height="4" fill="#3b82f6"/>
+      <rect x="6" y="11" width="2" height="2" fill="#3b82f6"/>
+      <rect x="16" y="11" width="2" height="2" fill="#3b82f6"/>
+    </svg>
+    
+    <span class="nav-label">Home</span>
+     </a>
+  </li>
+  <li>
+  <a href="javascript:void(0)" onclick="toggleCommentPanel()">  
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- Bell body main fill -->
+      <path d="M18 8C18 6.4087 17.3679 4.88258 16.2426 3.75736C15.1174 2.63214 13.5913 2 12 2C10.4087 2 8.88258 2.63214 7.75736 3.75736C6.63214 4.88258 6 6.4087 6 8C6 15 3 17 3 17H21C21 17 18 15 18 8Z" fill="#3b82f6" fill-opacity="0.3"/>
+      
+      <!-- Bell body lighter overlay -->
+      <path d="M18 8C18 6.4087 17.3679 4.88258 16.2426 3.75736C15.1174 2.63214 13.5913 2 12 2C10.4087 2 8.88258 2.63214 7.75736 3.75736C6.63214 4.88258 6 6.4087 6 8C6 12 6 15 6 15H18C18 15 18 12 18 8Z" fill="#3b82f6" fill-opacity="0.2"/>
+      
+      <!-- Bell outline -->
+      <path d="M18 8C18 6.4087 17.3679 4.88258 16.2426 3.75736C15.1174 2.63214 13.5913 2 12 2C10.4087 2 8.88258 2.63214 7.75736 3.75736C6.63214 4.88258 6 6.4087 6 8C6 15 3 17 3 17H21C21 17 18 15 18 8Z" stroke="#3b82f6" stroke-width="2" fill="none"/>
+      
+      <!-- Bell clapper -->
+      <circle cx="12" cy="8" r="1" fill="#3b82f6"/>
+      
+      <!-- Sound waves -->
+      <path d="M19 4L20 3" stroke="#3b82f6" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/>
+      <path d="M20.5 6.5L22 6" stroke="#3b82f6" stroke-width="1.5" stroke-linecap="round" opacity="0.3"/>
+      <path d="M5 4L4 3" stroke="#3b82f6" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/>
+      <path d="M3.5 6.5L2 6" stroke="#3b82f6" stroke-width="1.5" stroke-linecap="round" opacity="0.3"/>
+      
+      <!-- Bottom notification indicator -->
+      <path d="M13.73 21C13.5542 21.3031 13.3019 21.5547 12.9982 21.7295C12.6946 21.9044 12.3504 21.9965 12 21.9965C11.6496 21.9965 11.3054 21.9044 11.0018 21.7295C10.6982 21.5547 10.4458 21.3031 10.27 21" stroke="#3b82f6" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+    <span class="nav-label">Notifications</span>
+  </a>
+</li>
+  <li>
+    <a href="/practice.html">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="12" cy="12" r="9" fill="#3b82f6" fill-opacity="0.3"/>
+      <circle cx="12" cy="12" r="6" fill="#3b82f6" fill-opacity="0.2"/>
+      <circle cx="12" cy="12" r="9" stroke="#3b82f6" stroke-width="2" fill="none"/>
+      <circle cx="12" cy="12" r="6" stroke="#3b82f6" stroke-width="1.5" fill="none"/>
+      <circle cx="12" cy="12" r="3" stroke="#3b82f6" stroke-width="1.5" fill="none"/>
+      <circle cx="12" cy="12" r="1.5" fill="#3b82f6"/>
+      <path d="M16 8L12 12L16 8Z" fill="#3b82f6"/>
+      <line x1="16" y1="8" x2="19" y2="5" stroke="#3b82f6" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+    <span class="nav-label">Practice</span>
+    </a>
+  </li>
+  <li>
+    <a href="/Public/Forum/forum.html">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M8 6C8 4.89543 8.89543 4 10 4H18C19.1046 4 20 4.89543 20 6V12C20 13.1046 19.1046 14 18 14H12L8 18V6Z" fill="#3b82f6" fill-opacity="0.3"/>
+      <path d="M4 10C4 8.89543 4.89543 8 6 8H8V16L4 20V12C4 11.4477 4.44772 11 5 11C4.44772 11 4 10.5523 4 10Z" fill="#3b82f6" fill-opacity="0.2"/>
+      <path d="M8 6C8 4.89543 8.89543 4 10 4H18C19.1046 4 20 4.89543 20 6V12C20 13.1046 19.1046 14 18 14H12L8 18V6Z" stroke="#3b82f6" stroke-width="2" fill="none"/>
+      <path d="M4 10C4 8.89543 4.89543 8 6 8H8V16L4 20V12C4 11.4477 4.44772 11 5 11C4.44772 11 4 10.5523 4 10Z" stroke="#3b82f6" stroke-width="1.5" fill="none"/>
+      <line x1="11" y1="8" x2="17" y2="8" stroke="#3b82f6" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="11" y1="10" x2="15" y2="10" stroke="#3b82f6" stroke-width="1.5" stroke-linecap="round"/>
+    </svg>
+    <span class="nav-label">Forum</span>
+    </a>
+  </li>
+  <li>
+     <a href="/Public/Calendar/calendar.html">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="3" y="6" width="18" height="15" rx="2" fill="#3b82f6" fill-opacity="0.3"/>
+      <rect x="3" y="6" width="18" height="4" rx="2" fill="#3b82f6" fill-opacity="0.2"/>
+      <rect x="3" y="6" width="18" height="15" rx="2" stroke="#3b82f6" stroke-width="2" fill="none"/>
+      <line x1="7" y1="3" x2="7" y2="7" stroke="#3b82f6" stroke-width="2" stroke-linecap="round"/>
+      <line x1="17" y1="3" x2="17" y2="7" stroke="#3b82f6" stroke-width="2" stroke-linecap="round"/>
+      <line x1="3" y1="10" x2="21" y2="10" stroke="#3b82f6" stroke-width="1" opacity="0.5"/>
+      <line x1="7.5" y1="10" x2="7.5" y2="21" stroke="#3b82f6" stroke-width="1" opacity="0.3"/>
+      <line x1="12" y1="10" x2="12" y2="21" stroke="#3b82f6" stroke-width="1" opacity="0.3"/>
+      <line x1="16.5" y1="10" x2="16.5" y2="21" stroke="#3b82f6" stroke-width="1" opacity="0.3"/>
+      <circle cx="9" cy="13" r="1" fill="#3b82f6"/>
+      <circle cx="15" cy="16" r="1" fill="#3b82f6"/>
+      <circle cx="12" cy="18" r="1" fill="#3b82f6"/>
+    </svg>
+    <span class="nav-label">Calendar</span>
+     </a>
+  </li>
+</ul>
     </aside>
 
     <!-- Main Content -->
@@ -286,189 +368,266 @@
       }
     };
 
+    // Modal backdrop functions
+
+
+// Close modal when clicking backdrop
+document.addEventListener('click', function(e) {
+  if (e.target.classList.contains('modal-backdrop')) {
+    document.querySelectorAll('.competency-modal, .rsvp-modal, .choice-modal').forEach(modal => {
+      hideModal(modal);
+    });
+  }
+});
+
+// Close modal when clicking close buttons
+document.addEventListener('click', function(e) {
+  if (e.target.classList.contains('close-modal') || e.target.classList.contains('close')) {
+    const modal = e.target.closest('.competency-modal, .rsvp-modal, .choice-modal');
+    if (modal) hideModal(modal);
+  }
+});
+
     // --- Modal Functions ---
-    const modalHandler = {
-      currentModal: null,
+   // --- Modal Functions ---
+const modalHandler = {
+  currentModal: null,
+  
+  initModals: function() {
+    elements.modal?.classList.add("hidden");
+    elements.rsvpModal?.classList.add("hidden");
+    elements.choiceModal?.classList.add("hidden");
+    elements.backdrop?.classList.remove("active");
+    elements.backdrop?.classList.add("hidden");
+  },
+  
+  showModal: async function(meetingData = null) {
+    this.closeAllModals();
+    elements.modal.style.display = ''; // Remove inline display style
+elements.backdrop.style.display = ''; // Remove inline display style
+    // Set modal styling
+    if (elements.modal) {
+      elements.modal.style.cssText = `
+        position: fixed !important;
+        top: 50% !important;
+        left: 50% !important;
+        width: 100% !important;
+        max-width: 600px !important;
+        background-color: transparent !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        z-index: 1000 !important;
+        transform: translate(-50%, -50%) !important;
+      `;
       
-      initModals: function() {
-        elements.modal?.classList.add("hidden");
-        elements.rsvpModal?.classList.add("hidden");
-        elements.choiceModal?.classList.add("hidden");
-        elements.backdrop?.classList.remove("active");
-      },
-
-      showChoiceModal: function(meetingId) {
-        this.closeAllModals();
-        elements.choiceModal.dataset.meetingId = meetingId;
-        elements.choiceModal.classList.remove("hidden");
-        elements.backdrop.classList.add("active");
-        document.body.classList.add("modal-open");
-        this.currentModal = 'choice';
-      },
-
-      showModal: async function(meetingData = null) {
-        this.closeAllModals();
-        
-        // Set modal styling to match your working version
-        if (elements.modal) {
-          elements.modal.style.cssText = `
-            position: fixed !important;
-            top: 58% !important;
-            left: 50% !important;
-            width: 100% !important;
-            height: 100% !important;
-            background-color: transparent !important;
-            display: flex !important;
-            align-items: center !important;
-            z-index: 1000 !important;
-            transform: translate(-50%, -50%) !important;
-          `;
-          
-          // Set content styling
-          const modalContent = elements.modal.querySelector('.modal-content');
-          if (modalContent) {
-            modalContent.style.cssText = `
-              background: white !important;
-              border-radius: 8px;
-              box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-              width: 90%;
-              max-width: 500px;
-              margin: 20px auto;
-              padding: 25px;
-            `;
-          }
-        }
-        
-        // Show modal
-        elements.modal?.classList.remove("hidden");
-        document.body.classList.add("modal-open");
-        
-        // Reset or populate form
-        if (elements.form) {
-          elements.form.classList.remove("hidden");
-          if (meetingData) {
-            elements.form.name.value = meetingData.name || '';
-            elements.form.email.value = meetingData.email || '';
-            elements.form.datetime.value = meetingData.datetime || '';
-            elements.form.message.value = meetingData.message || '';
-            elements.form.meetingComp.value = meetingData.competition || '';
-            elements.form.dataset.meetingId = meetingData.meetingId || '';
-          } else {
-            elements.form.reset();
-            elements.form.dataset.meetingId = '';
-          }
-        }
-        
-        if (elements.confirmation) {
-          elements.confirmation.classList.add("hidden");
-        }
-        
-        await dataHandler.populateCompetitionOptions(meetingData?.competition);
-        this.currentModal = 'edit';
-      },
-
-      showRsvpModal: function(meeting) {
-        this.closeAllModals();
-        try {
-          const options = { 
-            weekday: 'long', 
-            month: 'long', 
-            day: 'numeric',
-            hour: '2-digit', 
-            minute: '2-digit'
-          };
-          const meetingDate = new Date(meeting.datetime).toLocaleString('en-US', options);
-          
-          if (elements.rsvpMessage) {
-            elements.rsvpMessage.innerHTML = `
-              <div class="rsvp-header">
-                <h3>Meeting Invitation</h3>
-                <p>From: ${meeting.scheduledByName || "Mentor"}</p>
-                <h4>${meeting.name}</h4>
-              </div>
-              <div class="rsvp-details">
-                <p><strong>When:</strong> ${meetingDate}</p>
-                <p><strong>Competition:</strong> ${meeting.competition || 'General'}</p>
-                ${meeting.message ? `<p class="meeting-note">${meeting.message}</p>` : ''}
-              </div>
-            `;
-          }
-          
-          if (elements.rsvpModal) {
-            elements.rsvpModal.dataset.meetingId = meeting.meetingId;
-            elements.rsvpModal.dataset.scheduledby = meeting.scheduledBy;
-          }
-          elements.backdrop?.classList.add("active");
-          elements.rsvpModal?.classList.remove("hidden");
-          this.currentModal = 'rsvp';
-        } catch (error) {
-          console.error("Error showing RSVP modal:", error);
-        }
-      },
-
-      closeAllModals: function() {
-        elements.modal?.classList.add("hidden");
-        elements.rsvpModal?.classList.add("hidden");
-        elements.choiceModal?.classList.add("hidden");
-        elements.backdrop?.classList.remove("active");
-        document.body.classList.remove("modal-open");
-        this.currentModal = null;
-      },
-
-      closeModal: function() {
-        if (elements.modal) {
-          elements.modal.style.display = 'none';
-          elements.modal.classList.add("hidden");
-        }
-        elements.backdrop?.classList.remove("active");
-        document.body.classList.remove("modal-open");
-        // Reset form state
-        if (elements.form) {
-          elements.form.reset();
-          elements.form.classList.remove("hidden");
-        }
-        if (elements.confirmation) {
-          elements.confirmation.classList.add("hidden");
-        }
-      },
-      
-      closeRsvpModal: function() {
-        elements.rsvpModal?.classList.add("hidden");
-        elements.backdrop?.classList.remove("active");
-        document.body.classList.remove("modal-open");
-      },
-      
-      closeChoiceModal: function() {
-        elements.choiceModal?.classList.add("hidden");
-        elements.backdrop?.classList.remove("active");
-        document.body.classList.remove("modal-open");
-      },
-
-      checkBackdrop: function() {
-        if ((elements.modal && !elements.modal.classList.contains("hidden")) || 
-            (elements.rsvpModal && !elements.rsvpModal.classList.contains("hidden")) || 
-            (elements.choiceModal && !elements.choiceModal.classList.contains("hidden"))) {
-          return;
-        }
-        elements.backdrop?.classList.remove("active");
-        document.body.classList.remove("modal-open");
+      // Set content styling
+      const modalContent = elements.modal.querySelector('.modal-content');
+      if (modalContent) {
+        modalContent.style.cssText = `
+          background: white !important;
+          border-radius: 12px;
+          box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+          width: 90%;
+          max-width: 500px;
+          margin: 0 auto;
+          padding: 30px;
+        `;
       }
-    };
+    }
+    
+    // Show backdrop with blur
+    elements.backdrop?.classList.remove('hidden');
+    elements.backdrop?.classList.add('active');
+    
+    // Show modal
+    elements.modal?.classList.remove('hidden');
+    document.body.classList.add("modal-open");
+    document.body.style.overflow = 'hidden';
+    
+    // Reset or populate form
+    if (elements.form) {
+      elements.form.classList.remove("hidden");
+      if (meetingData) {
+        elements.form.name.value = meetingData.name || '';
+        elements.form.email.value = meetingData.email || '';
+        elements.form.datetime.value = meetingData.datetime || '';
+        elements.form.message.value = meetingData.message || '';
+        elements.form.meetingComp.value = meetingData.competition || '';
+        elements.form.dataset.meetingId = meetingData.meetingId || '';
+      } else {
+        elements.form.reset();
+        elements.form.dataset.meetingId = '';
+      }
+    }
+    
+    if (elements.confirmation) {
+      elements.confirmation.classList.add("hidden");
+    }
+    
+    await dataHandler.populateCompetitionOptions(meetingData?.competition);
+    this.currentModal = 'edit';
+  },
+
+  showRsvpModal: function(meeting) {
+    this.closeAllModals();
+    
+    try {
+      const options = { 
+        weekday: 'long', 
+        month: 'long', 
+        day: 'numeric',
+        hour: '2-digit', 
+        minute: '2-digit'
+      };
+      const meetingDate = new Date(meeting.datetime).toLocaleString('en-US', options);
+      
+      if (elements.rsvpMessage) {
+        elements.rsvpMessage.innerHTML = `
+          <div class="rsvp-header">
+            <h3>Meeting Invitation</h3>
+            <p>From: ${meeting.scheduledByName || "Mentor"}</p>
+            <h4>${meeting.name}</h4>
+          </div>
+          <div class="rsvp-details">
+            <p><strong>When:</strong> ${meetingDate}</p>
+            <p><strong>Competition:</strong> ${meeting.competition || 'General'}</p>
+            ${meeting.message ? `<p class="meeting-note">${meeting.message}</p>` : ''}
+          </div>
+        `;
+      }
+      
+      if (elements.rsvpModal) {
+        elements.rsvpModal.dataset.meetingId = meeting.meetingId;
+        elements.rsvpModal.dataset.scheduledby = meeting.scheduledBy;
+      }
+      
+      // Show backdrop with blur
+      elements.backdrop?.classList.remove('hidden');
+      elements.backdrop?.classList.add('active');
+      
+      // Show modal
+      elements.rsvpModal?.classList.remove('hidden');
+      document.body.classList.add("modal-open");
+      document.body.style.overflow = 'hidden';
+      
+      this.currentModal = 'rsvp';
+    } catch (error) {
+      console.error("Error showing RSVP modal:", error);
+    }
+  },
+
+  showChoiceModal: function(meetingId) {
+    this.closeAllModals();
+    
+    if (elements.choiceModal) {
+      elements.choiceModal.dataset.meetingId = meetingId;
+    }
+    
+    // Show backdrop with blur
+    elements.backdrop?.classList.remove('hidden');
+    elements.backdrop?.classList.add('active');
+    
+    // Show modal
+    elements.choiceModal?.classList.remove('hidden');
+    document.body.classList.add("modal-open");
+    document.body.style.overflow = 'hidden';
+    
+    this.currentModal = 'choice';
+  },
+
+ closeAllModals: function() {
+  // Hide all modals
+  if (elements.modal) {
+    elements.modal.classList.add("hidden");
+    elements.modal.style.display = 'none'; // Force hide
+  }
+  if (elements.rsvpModal) {
+    elements.rsvpModal.classList.add("hidden");
+    elements.rsvpModal.style.display = 'none'; // Force hide
+  }
+  if (elements.choiceModal) {
+    elements.choiceModal.classList.add("hidden");
+    elements.choiceModal.style.display = 'none'; // Force hide
+  }
+  
+  // Hide backdrop
+  if (elements.backdrop) {
+    elements.backdrop.classList.remove("active");
+    elements.backdrop.classList.add("hidden");
+    elements.backdrop.style.display = 'none'; // Force hide
+  }
+  
+  // Restore scroll
+  document.body.classList.remove("modal-open");
+  document.body.style.overflow = '';
+  
+  this.currentModal = null;
+},
+
+  closeModal: function() {
+    if (elements.modal) {
+      elements.modal.style.display = 'none';
+      elements.modal.classList.add("hidden");
+    }
+    elements.backdrop?.classList.remove("active");
+    elements.backdrop?.classList.add("hidden");
+    document.body.classList.remove("modal-open");
+    document.body.style.overflow = '';
+    
+    // Reset form state
+    if (elements.form) {
+      elements.form.reset();
+      elements.form.classList.remove("hidden");
+    }
+    if (elements.confirmation) {
+      elements.confirmation.classList.add("hidden");
+    }
+  },
+  
+  closeRsvpModal: function() {
+    elements.rsvpModal?.classList.add("hidden");
+    elements.backdrop?.classList.remove("active");
+    elements.backdrop?.classList.add("hidden");
+    document.body.classList.remove("modal-open");
+    document.body.style.overflow = '';
+  },
+  
+  closeChoiceModal: function() {
+    elements.choiceModal?.classList.add("hidden");
+    elements.backdrop?.classList.remove("active");
+    elements.backdrop?.classList.add("hidden");
+    document.body.classList.remove("modal-open");
+    document.body.style.overflow = '';
+  },
+
+  checkBackdrop: function() {
+    if ((elements.modal && !elements.modal.classList.contains("hidden")) || 
+        (elements.rsvpModal && !elements.rsvpModal.classList.contains("hidden")) || 
+        (elements.choiceModal && !elements.choiceModal.classList.contains("hidden"))) {
+      return;
+    }
+    elements.backdrop?.classList.remove("active");
+    elements.backdrop?.classList.add("hidden");
+    document.body.classList.remove("modal-open");
+    document.body.style.overflow = '';
+  }
+};
 
     // --- Event Listeners ---
     const setupEventListeners = () => {
       // Modal controls
       elements.closeBtns?.forEach(btn => btn.addEventListener("click", (e) => {
-        e.preventDefault();
-        modalHandler.closeModal();
-      }));
+  e.preventDefault();
+  modalHandler.closeAllModals();
+}));
 
       // Backdrop click handler
-      elements.backdrop?.addEventListener("click", (e) => {
-        if (e.target === elements.backdrop) {
-          modalHandler.closeModal();
-        }
-      });
+     elements.backdrop?.addEventListener("click", (e) => {
+  if (e.target === elements.backdrop) {
+    modalHandler.closeAllModals();
+  }
+});
 
       elements.openBtn?.addEventListener("click", () => modalHandler.showModal());
 
@@ -517,12 +676,12 @@
             
             // Close modal after 2 seconds
             setTimeout(() => {
-              modalHandler.closeModal();
-              // Reset form for next use
-              elements.form?.reset();
-              elements.form?.classList.remove("hidden");
-              elements.confirmation?.classList.add("hidden");
-            }, 2000);
+  modalHandler.closeAllModals();
+  // Reset form for next use
+  elements.form?.reset();
+  elements.form?.classList.remove("hidden");
+  elements.confirmation?.classList.add("hidden");
+}, 2000);
           }
         } catch (error) {
           console.error("Error saving meeting:", error);
@@ -606,11 +765,10 @@
 
       // Add close handler for choice modal
       elements.closeChoiceBtns?.forEach(btn => {
-        btn.addEventListener("click", () => {
-          modalHandler.closeChoiceModal();
-          modalHandler.closeModal();
-        });
-      });
+  btn.addEventListener("click", () => {
+    modalHandler.closeAllModals();
+  });
+});
 
       // Tab switching
       elements.tabs?.forEach((tab, idx) => {
@@ -832,9 +990,9 @@
             });
           });
           
-          await batch.commit();
-          modalHandler.closeRsvpModal();
-          location.reload();
+        await batch.commit();
+modalHandler.closeRsvpModal();  
+location.reload();
         } catch (error) {
           console.error("Error declining meeting:", error);
           alert("Failed to decline meeting. Please try again.");

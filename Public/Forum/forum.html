@@ -28,12 +28,14 @@
   </div>
 
   <!-- Section Header -->
-  <div class="section-header-background">
+  <div class="section-header-background glassmorphic">
+        <div class="gradient-blob-1"></div>
+<div class="gradient-blob-2"></div>
     <div class="section-header-content">
       <h1 class="unit-title"><span class="name">Competitions Forum</span></h1>
       <div class="recent-questions">
-        <h2 class="text">Recent Questions</h2>
-        <div class="question-tabs">
+
+        <div class="question-tabs glassmorphic">
           <div class="tab active">Not Solved</div>
           <div class="tab">Solved</div>
           <div class="tab">All</div>
@@ -47,12 +49,94 @@
     <aside class="sidebar">
       <div class="logo">CQ</div>
       <ul class="nav-icons">
-        <li>🏠 <span class="nav-label">Dashboard</span></li>
-        <li>📊 <span class="nav-label">Stats</span></li>
-        <li>🎯 <span class="nav-label">Goals</span></li>
-        <li>📅 <span class="nav-label">Schedule</span></li>
-        <li>⚙️ <span class="nav-label">Settings</span></li>
-      </ul>
+  <li>
+     <a href="/Public/home.html">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M12 3L20 9V21H15V15H9V21H4V9L12 3Z" fill="#3b82f6" fill-opacity="0.3"/>
+      <path d="M12 3L4 9V21H9V15H15V21H20V9L12 3Z" stroke="#3b82f6" stroke-width="2" fill="none" stroke-linejoin="round"/>
+      <rect x="10" y="17" width="4" height="4" fill="#3b82f6"/>
+      <rect x="6" y="11" width="2" height="2" fill="#3b82f6"/>
+      <rect x="16" y="11" width="2" height="2" fill="#3b82f6"/>
+    </svg>
+    
+    <span class="nav-label">Home</span>
+     </a>
+  </li>
+  <li>
+  <a href="javascript:void(0)" onclick="toggleCommentPanel()">  
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- Bell body main fill -->
+      <path d="M18 8C18 6.4087 17.3679 4.88258 16.2426 3.75736C15.1174 2.63214 13.5913 2 12 2C10.4087 2 8.88258 2.63214 7.75736 3.75736C6.63214 4.88258 6 6.4087 6 8C6 15 3 17 3 17H21C21 17 18 15 18 8Z" fill="#3b82f6" fill-opacity="0.3"/>
+      
+      <!-- Bell body lighter overlay -->
+      <path d="M18 8C18 6.4087 17.3679 4.88258 16.2426 3.75736C15.1174 2.63214 13.5913 2 12 2C10.4087 2 8.88258 2.63214 7.75736 3.75736C6.63214 4.88258 6 6.4087 6 8C6 12 6 15 6 15H18C18 15 18 12 18 8Z" fill="#3b82f6" fill-opacity="0.2"/>
+      
+      <!-- Bell outline -->
+      <path d="M18 8C18 6.4087 17.3679 4.88258 16.2426 3.75736C15.1174 2.63214 13.5913 2 12 2C10.4087 2 8.88258 2.63214 7.75736 3.75736C6.63214 4.88258 6 6.4087 6 8C6 15 3 17 3 17H21C21 17 18 15 18 8Z" stroke="#3b82f6" stroke-width="2" fill="none"/>
+      
+      <!-- Bell clapper -->
+      <circle cx="12" cy="8" r="1" fill="#3b82f6"/>
+      
+      <!-- Sound waves -->
+      <path d="M19 4L20 3" stroke="#3b82f6" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/>
+      <path d="M20.5 6.5L22 6" stroke="#3b82f6" stroke-width="1.5" stroke-linecap="round" opacity="0.3"/>
+      <path d="M5 4L4 3" stroke="#3b82f6" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/>
+      <path d="M3.5 6.5L2 6" stroke="#3b82f6" stroke-width="1.5" stroke-linecap="round" opacity="0.3"/>
+      
+      <!-- Bottom notification indicator -->
+      <path d="M13.73 21C13.5542 21.3031 13.3019 21.5547 12.9982 21.7295C12.6946 21.9044 12.3504 21.9965 12 21.9965C11.6496 21.9965 11.3054 21.9044 11.0018 21.7295C10.6982 21.5547 10.4458 21.3031 10.27 21" stroke="#3b82f6" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+    <span class="nav-label">Notifications</span>
+  </a>
+</li>
+  <li>
+    <a href="/practice.html">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="12" cy="12" r="9" fill="#3b82f6" fill-opacity="0.3"/>
+      <circle cx="12" cy="12" r="6" fill="#3b82f6" fill-opacity="0.2"/>
+      <circle cx="12" cy="12" r="9" stroke="#3b82f6" stroke-width="2" fill="none"/>
+      <circle cx="12" cy="12" r="6" stroke="#3b82f6" stroke-width="1.5" fill="none"/>
+      <circle cx="12" cy="12" r="3" stroke="#3b82f6" stroke-width="1.5" fill="none"/>
+      <circle cx="12" cy="12" r="1.5" fill="#3b82f6"/>
+      <path d="M16 8L12 12L16 8Z" fill="#3b82f6"/>
+      <line x1="16" y1="8" x2="19" y2="5" stroke="#3b82f6" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+    <span class="nav-label">Practice</span>
+    </a>
+  </li>
+  <li>
+    <a href="/Public/Forum/forum.html">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M8 6C8 4.89543 8.89543 4 10 4H18C19.1046 4 20 4.89543 20 6V12C20 13.1046 19.1046 14 18 14H12L8 18V6Z" fill="#3b82f6" fill-opacity="0.3"/>
+      <path d="M4 10C4 8.89543 4.89543 8 6 8H8V16L4 20V12C4 11.4477 4.44772 11 5 11C4.44772 11 4 10.5523 4 10Z" fill="#3b82f6" fill-opacity="0.2"/>
+      <path d="M8 6C8 4.89543 8.89543 4 10 4H18C19.1046 4 20 4.89543 20 6V12C20 13.1046 19.1046 14 18 14H12L8 18V6Z" stroke="#3b82f6" stroke-width="2" fill="none"/>
+      <path d="M4 10C4 8.89543 4.89543 8 6 8H8V16L4 20V12C4 11.4477 4.44772 11 5 11C4.44772 11 4 10.5523 4 10Z" stroke="#3b82f6" stroke-width="1.5" fill="none"/>
+      <line x1="11" y1="8" x2="17" y2="8" stroke="#3b82f6" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="11" y1="10" x2="15" y2="10" stroke="#3b82f6" stroke-width="1.5" stroke-linecap="round"/>
+    </svg>
+    <span class="nav-label">Forum</span>
+    </a>
+  </li>
+  <li>
+     <a href="/Public/Calendar/calendar.html">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="3" y="6" width="18" height="15" rx="2" fill="#3b82f6" fill-opacity="0.3"/>
+      <rect x="3" y="6" width="18" height="4" rx="2" fill="#3b82f6" fill-opacity="0.2"/>
+      <rect x="3" y="6" width="18" height="15" rx="2" stroke="#3b82f6" stroke-width="2" fill="none"/>
+      <line x1="7" y1="3" x2="7" y2="7" stroke="#3b82f6" stroke-width="2" stroke-linecap="round"/>
+      <line x1="17" y1="3" x2="17" y2="7" stroke="#3b82f6" stroke-width="2" stroke-linecap="round"/>
+      <line x1="3" y1="10" x2="21" y2="10" stroke="#3b82f6" stroke-width="1" opacity="0.5"/>
+      <line x1="7.5" y1="10" x2="7.5" y2="21" stroke="#3b82f6" stroke-width="1" opacity="0.3"/>
+      <line x1="12" y1="10" x2="12" y2="21" stroke="#3b82f6" stroke-width="1" opacity="0.3"/>
+      <line x1="16.5" y1="10" x2="16.5" y2="21" stroke="#3b82f6" stroke-width="1" opacity="0.3"/>
+      <circle cx="9" cy="13" r="1" fill="#3b82f6"/>
+      <circle cx="15" cy="16" r="1" fill="#3b82f6"/>
+      <circle cx="12" cy="18" r="1" fill="#3b82f6"/>
+    </svg>
+    <span class="nav-label">Calendar</span>
+     </a>
+  </li>
+</ul>
     </aside>
     <main class="content">
       <div class="forum-wrapper">
@@ -76,27 +160,30 @@
         <!-- Side Panel -->
         <aside class="forum-info-panel">
             <div class="stats-box">
-                <div class="stats-header">
-                  <h3>Physics Help</h3>
-                  <span class="info-icon">ⓘ</span>
-                </div>
-                <p class="stats-description">To ask Physics questions.</p>
-                <ul class="guidelines">
-                  <li>Provide as much detail as possible.</li>
-                  <li>Share your progress so far.</li>
-                  <li>React with 👀 when helping someone.</li>
-                </ul>
-                <div class="stats-grid">
-                  <div class="stat">
-                    <div class="value posts-count">2064</div>
-                    <div class="label">Posts</div>
-                  </div>
-                  <div class="stat">
-  <div class="value members-count">0</div>
-  <div class="label">Members</div>
+  <div class="stats-header">
+    <h3>FBLA Forum</h3>
+    <span class="info-icon">ⓘ</span>
+  </div>
+  <p class="stats-description">
+    Ask questions about your competition, studying, and anything FBLA-related!
+  </p>
+  <ul class="guidelines">
+    <li>Be specific about the event or topic you're asking about.</li>
+    <li>Share your study methods or project progress when possible.</li>
+    <li>Use 🙌 or 💬 to show appreciation or start discussions.</li>
+  </ul>
+  <div class="stats-grid">
+    <div class="stat">
+      <div class="value posts-count">2064</div>
+      <div class="label">Posts</div>
+    </div>
+    <div class="stat">
+      <div class="value members-count">0</div>
+      <div class="label">Members</div>
+    </div>
+  </div>
 </div>
-                </div>
-              </div>
+
           <br>
           <div class="stats-box">
             <div class="stats-header">
@@ -128,11 +215,8 @@
    <div id="questionModal" class="modal hidden" tabindex="-1">
             <div class="modal-content">
               <button class="close-btn" id="closeModal" aria-label="Close modal">&times;</button>
-              <h2>New Question in Physics</h2>
-              <div class="user-info">
-                <img src="/Public/assets/duckpfp.jpg" alt="User Pic" class="user-pic" />
-                <div class="user-name">Anjay P </div>
-              </div>
+              <h2>I have a question!</h2>
+             
               <p class="help-prompt">What do you need help with today?</p>
               <div class="options">
                 <button class="option-btn" data-type="quick">
@@ -193,6 +277,14 @@
   </div>
 </div>
 
+<!-- XP Notification Modal -->
+<div id="xpNotificationModal" class="notification-modal hidden" style="background: rgba(0,0,0,0.8);">
+  <div class="notification-content" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none;">
+    <p id="xpNotificationText">+20 XP earned!</p>
+    <button id="closeXpNotificationBtn" style="background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.3);">Awesome!</button>
+  </div>
+</div>
+
 
 <script>
   document.addEventListener("DOMContentLoaded", () => {
@@ -227,6 +319,57 @@
       await updateMemberCount();
       await updateSolvedPercentage();
       await updateMedianResponseTime();
+    });
+
+    // --------- XP SYSTEM FUNCTIONS ---------
+    async function awardXP(userId, amount, reason) {
+      try {
+        const userRef = db.collection('users').doc(userId);
+        const userDoc = await userRef.get();
+        
+        if (userDoc.exists) {
+          // User document exists, increment XP
+          await userRef.update({
+            XP: firebase.firestore.FieldValue.increment(amount)
+          });
+        } else {
+          // User document doesn't exist, create it with initial XP
+          await userRef.set({
+            XP: amount
+          });
+        }
+        
+        console.log(`[CQ] Awarded ${amount} XP to user ${userId} for ${reason}`);
+        showXPNotification(amount, reason);
+        
+      } catch (error) {
+        console.error("[CQ] Failed to award XP:", error);
+      }
+    }
+
+    function showXPNotification(amount, reason) {
+      const modal = document.getElementById("xpNotificationModal");
+      const textElem = document.getElementById("xpNotificationText");
+      
+      let message = `+${amount} XP earned!`;
+      if (reason === 'posting') {
+        message = `🎉 +${amount} XP for posting a question!`;
+      } else if (reason === 'commenting') {
+        message = `💬 +${amount} XP for helping out!`;
+      }
+      
+      textElem.textContent = message;
+      modal.classList.remove("hidden");
+
+      // Auto-close after 3 seconds
+      setTimeout(() => {
+        modal.classList.add("hidden");
+      }, 3000);
+    }
+
+    // Close XP notification manually
+    document.getElementById("closeXpNotificationBtn").addEventListener("click", () => {
+      document.getElementById("xpNotificationModal").classList.add("hidden");
     });
 
     // --------- MODAL OPEN/CLOSE ---------
@@ -312,6 +455,9 @@
         solved: false,
         timestamp: firebase.firestore.FieldValue.serverTimestamp()
       });
+
+      // Award 20 XP for posting a question
+      await awardXP(user.uid, 20, 'posting');
 
       // Reset modal and form
       modal.classList.add("hidden");
@@ -444,17 +590,16 @@
     });
 
     function showNotification(message) {
-  console.log("showNotification called with message:", message);  // Add this line
-  const modal = document.getElementById("notificationModal");
-  const textElem = modal.querySelector("p");
-  textElem.textContent = message;
-  modal.classList.remove("hidden");
+      console.log("showNotification called with message:", message);
+      const modal = document.getElementById("notificationModal");
+      const textElem = modal.querySelector("p");
+      textElem.textContent = message;
+      modal.classList.remove("hidden");
 
-  setTimeout(() => {
-    modal.classList.add("hidden");
-  }, 3000);
-}
-
+      setTimeout(() => {
+        modal.classList.add("hidden");
+      }, 3000);
+    }
 
     // --------- UPDATE POST COUNT ---------
     async function updatePostCount() {
@@ -601,6 +746,12 @@
           text: comment.text,
           timestamp: firebase.firestore.FieldValue.serverTimestamp()
         });
+        
+        // Award 5 XP for commenting (if user is logged in)
+        if (window.currentUser) {
+          await awardXP(window.currentUser.uid, 5, 'commenting');
+        }
+        
       } catch (error) {
         console.error("[CQ] Failed to add comment:", error);
         throw error;
@@ -656,14 +807,9 @@
     window.updateMemberCount = updateMemberCount;
     window.updateSolvedPercentage = updateSolvedPercentage;
     window.updateMedianResponseTime = updateMedianResponseTime;
+    window.awardXP = awardXP; // Expose for debugging
   });
 </script>
-
-
-
-
-
-
 
 </body>
 </html>
