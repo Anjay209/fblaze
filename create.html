@@ -5216,8 +5216,8 @@ setTimeout(setupDragAndDrop, 100);
             assignmentKeys: assignment ? Object.keys(assignment) : []
         });
 
-        // Use your existing API key
-        const apiKey = window.openaiApiKey || "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";
+        // Cloud backend API endpoint
+        const CLOUD_API_URL = "https://fblaze-529904751843.us-central1.run.app/api/chat";
 
         const compText = competencies.join(', ');
         let trainingContext = "";
@@ -5410,13 +5410,14 @@ Return JSON only in this format:
                 temperature: requestBody.temperature
             });
             
-            const res = await fetch("https://api.openai.com/v1/chat/completions", {
+            const res = await fetch(CLOUD_API_URL, {
                 method: "POST",
                 headers: { 
-                    "Authorization": `Bearer ${apiKey}`, 
                     "Content-Type": "application/json" 
                 },
-                body: JSON.stringify(requestBody)
+                body: JSON.stringify({
+                    message: prompt
+                })
             });
 
             console.log(`📥 Response status: ${res.status} ${res.statusText}`);
@@ -5429,12 +5430,11 @@ Return JSON only in this format:
             
             const responseData = await res.json();
             console.log("📥 API response summary:", {
-                hasChoices: !!responseData.choices,
-                choicesLength: responseData.choices?.length || 0,
-                finishReason: responseData.choices?.[0]?.finish_reason
+                hasResponse: !!responseData.response,
+                responseLength: responseData.response?.length || 0
             });
             
-            let content = responseData.choices[0].message.content.trim();
+            let content = responseData.response.trim();
             console.log("📥 Raw content length:", content.length);
             console.log("📥 Raw content preview:", content.substring(0, 500) + "...");
             
@@ -5846,7 +5846,7 @@ async function generateFlashcardsWithAI(competency, questions) {
   });
 
   const data = await response.json();
-  const content = data.choices[0].message.content;
+  const content = data.response;
   
   // Extract JSON from response
   const jsonStart = content.indexOf('[');
@@ -7025,7 +7025,7 @@ async function getLatestKeyChanges(competitionName) {
 
 // Modified main function
 async function generatePersonalizedQuestionsWithGPT(formData) {
-  const apiKey = "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";
+  const CLOUD_API_URL = "https://fblaze-529904751843.us-central1.run.app/api/chat";
   
   const questionCount = getQuestionCount(formData.time);
   const competenciesText = formData.competencies.join(', ');
@@ -7137,26 +7137,13 @@ USE the specific details (San Jose Sharks, ice skating, specific activities, etc
 ]`;
 
   try {
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+    const response = await fetch(CLOUD_API_URL, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${apiKey}`,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        model: 'gpt-4',
-        messages: [
-          {
-            role: 'system',
-            content: `You are an expert FBLA exam question writer. Use specific names, companies, activities, amounts, and details directly from the study material in your questions. Never reference the source document itself. If the content mentions "San Jose Sharks" and "ice skating activities", ask about San Jose Sharks and ice skating directly. Present all specific details as established facts. Forbidden phrases: "the agreement", "as specified", "the document", "according to". Create questions about the specific content, not about what the content says. Always return valid JSON only.`
-          },
-          {
-            role: 'user',
-            content: prompt
-          }
-        ],
-        temperature: 0.7,
-        max_tokens: 4000
+        message: prompt
       })
     });
 
@@ -7165,7 +7152,7 @@ USE the specific details (San Jose Sharks, ice skating, specific activities, etc
     }
 
     const data = await response.json();
-    let content = data.choices[0].message.content.trim();
+    let content = data.response.trim();
     
     // Clean JSON formatting
     content = content.replace(/```json\n?/g, '').replace(/```\n?/g, '');
@@ -7957,7 +7944,7 @@ async function saveQuizResultsToFirebase(results) {
 
 
 async function generateQuestionsWithGPT(formData) {
-  const apiKey = "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";
+  const CLOUD_API_URL = "https://fblaze-529904751843.us-central1.run.app/api/chat";
   
   const questionCount = getQuestionCount(formData.time);
   const competenciesText = formData.competencies.join(', ');
@@ -8048,26 +8035,13 @@ Use specific names, dates, laws, companies, amounts, percentages - just present 
 ]`;
 
   try {
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+    const response = await fetch(CLOUD_API_URL, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${apiKey}`,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        model: 'gpt-4',
-        messages: [
-          {
-            role: 'system',
-            content: `You are an expert FBLA exam question writer. Use specific facts, names, dates, laws, and details from the study material, but never reference the source document itself. Present all information as established business knowledge. You can mention specific laws like "The Sherman Act of 1890" or specific companies, but never say "according to the document" or "as mentioned in the text". Create detailed, fact-based questions using concrete information. Always return valid JSON only.`
-          },
-          {
-            role: 'user',
-            content: prompt
-          }
-        ],
-        temperature: 0.7,
-        max_tokens: 4000
+        message: prompt
       })
     });
 
@@ -8076,7 +8050,7 @@ Use specific names, dates, laws, companies, amounts, percentages - just present 
     }
 
     const data = await response.json();
-    let content = data.choices[0].message.content.trim();
+    let content = data.response.trim();
     
     // Clean JSON formatting
     content = content.replace(/```json\n?/g, '').replace(/```\n?/g, '');
@@ -9524,7 +9498,6 @@ async function generateQuestions() {
     }
 
     try {
-        const apiKey = "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";
         
         // Improved prompt with strict formatting
         const prompt = `ANALYZE THIS SPEECH AND CREATE 3 FOLLOW-UP QUESTIONS:
@@ -9547,23 +9520,14 @@ Generate 3 thoughtful, challenging questions that test the speaker's understandi
         console.log("🚀 Sending request to GPT...");
         console.log("Speech length:", speech.length);
 
-        const response = await fetch('https://api.openai.com/v1/chat/completions', {
+        const CLOUD_API_URL = "https://fblaze-529904751843.us-central1.run.app/api/chat";
+        const response = await fetch(CLOUD_API_URL, {
             method: 'POST',
             headers: {
-                'Authorization': `Bearer ${apiKey}`,
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                model: 'gpt-4',
-                messages: [{
-                    role: 'system',
-                    content: `You are an expert debate coach. Create 3 challenging follow-up questions based on speech content. Return ONLY the 3 questions, one per line, with no numbers, bullets, or additional text.`
-                }, {
-                    role: 'user',
-                    content: prompt
-                }],
-                temperature: 0.7,
-                max_tokens: 400
+                message: prompt
             })
         });
 
@@ -9574,7 +9538,7 @@ Generate 3 thoughtful, challenging questions that test the speaker's understandi
         }
 
         const data = await response.json();
-        const responseText = data.choices[0].message.content.trim();
+        const responseText = data.response.trim();
         
         console.log("✅ Raw GPT Response:", responseText);
 
@@ -10267,7 +10231,7 @@ async function generateCase() {
     }
 
     try {
-        const apiKey = "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";
+        const CLOUD_API_URL = "https://fblaze-529904751843.us-central1.run.app/api/chat";
         
         const trainingData = await getAllTrainingEntries(selectedCompetition);
         const latestKeyChanges = await getLatestKeyChanges(selectedCompetition);
@@ -10330,23 +10294,13 @@ Make the case engaging, realistic, and clearly connected to the selected compete
 
         console.log("Generating case with prompt:", prompt);
 
-        const response = await fetch('https://api.openai.com/v1/chat/completions', {
+        const response = await fetch(CLOUD_API_URL, {
             method: 'POST',
             headers: {
-                'Authorization': `Bearer ${apiKey}`,
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                model: 'gpt-4',
-                messages: [{
-                    role: 'system',
-                    content: `You are an expert ${selectedCompetition} case study writer. Create engaging, realistic business scenarios that clearly test specific competencies. Make cases appropriate for high school students and directly relevant to the competition focus.`
-                }, {
-                    role: 'user',
-                    content: prompt
-                }],
-                temperature: 0.7,
-                max_tokens: 1500
+                message: prompt
             })
         });
 
@@ -10355,7 +10309,7 @@ Make the case engaging, realistic, and clearly connected to the selected compete
         }
 
         const data = await response.json();
-        const generatedCase = data.choices[0].message.content;
+        const generatedCase = data.response;
 
         // Hide prompt section and show results
         document.getElementById('casePromptSection').style.display = 'none';

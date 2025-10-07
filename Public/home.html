@@ -4075,8 +4075,8 @@ function fixTrainingDataUsage() {
             assignmentKeys: assignment ? Object.keys(assignment) : []
         });
 
-        // Use your existing API key
-        const apiKey = window.openaiApiKey || "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";
+        // Cloud backend API endpoint
+        const CLOUD_API_URL = "https://fblaze-529904751843.us-central1.run.app/api/chat";
 
         const compText = competencies.join(', ');
         let trainingContext = "";
@@ -4269,13 +4269,14 @@ Return JSON only in this format:
                 temperature: requestBody.temperature
             });
             
-            const res = await fetch("https://api.openai.com/v1/chat/completions", {
+            const res = await fetch(CLOUD_API_URL, {
                 method: "POST",
                 headers: { 
-                    "Authorization": `Bearer ${apiKey}`, 
                     "Content-Type": "application/json" 
                 },
-                body: JSON.stringify(requestBody)
+                body: JSON.stringify({
+                    message: prompt
+                })
             });
 
             console.log(`📥 Response status: ${res.status} ${res.statusText}`);
@@ -4288,12 +4289,11 @@ Return JSON only in this format:
             
             const responseData = await res.json();
             console.log("📥 API response summary:", {
-                hasChoices: !!responseData.choices,
-                choicesLength: responseData.choices?.length || 0,
-                finishReason: responseData.choices?.[0]?.finish_reason
+                hasResponse: !!responseData.response,
+                responseLength: responseData.response?.length || 0
             });
             
-            let content = responseData.choices[0].message.content.trim();
+            let content = responseData.response.trim();
             console.log("📥 Raw content length:", content.length);
             console.log("📥 Raw content preview:", content.substring(0, 500) + "...");
             

@@ -478,7 +478,7 @@ let writtenTimer = null;
 let writtenTimeRemaining = 0;
 
 async function generateQuestionsFromCompetencies(competencies, questionCount, difficulty) {
-  const apiKey = "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";
+  const CLOUD_API_URL = "https://fblaze-529904751843.us-central1.run.app/api/chat";
 
   let prompt = `Generate ${questionCount} FBLA-style multiple choice questions. 
 Each must have exactly 4 options and 1 correct answer. 
@@ -502,25 +502,18 @@ Return ONLY valid JSON array in this format:
 ]`;
 
   try {
-    const res = await fetch("https://api.openai.com/v1/chat/completions", {
+    const res = await fetch(CLOUD_API_URL, {
       method: "POST",
       headers: {
-        "Authorization": `Bearer ${apiKey}`,
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        model: "gpt-4o-mini",
-        messages: [
-          { role: "system", content: "You are an expert FBLA test writer." },
-          { role: "user", content: prompt }
-        ],
-        temperature: 0.7,
-        max_tokens: 3000
+        message: prompt
       })
     });
 
     if (!res.ok) throw new Error(await res.text());
-    let content = (await res.json()).choices[0].message.content.trim();
+    let content = (await res.json()).response.trim();
     content = content.replace(/```json|```/g, "");
     return JSON.parse(content);
 
@@ -531,7 +524,7 @@ Return ONLY valid JSON array in this format:
 }
 
 async function generateQuestionsFromCompetencies(competencies, count, difficulty) {
-  const apiKey = "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";
+  const CLOUD_API_URL = "https://fblaze-529904751843.us-central1.run.app/api/chat";
   const compText = competencies.join(", ");
 
   const prompt = `Generate ${count} FBLA multiple choice questions.
@@ -541,22 +534,16 @@ async function generateQuestionsFromCompetencies(competencies, count, difficulty
 - Never reference "the document" or "the text"
 Return JSON only.`;
 
-  const res = await fetch("https://api.openai.com/v1/chat/completions", {
+  const res = await fetch(CLOUD_API_URL, {
     method: "POST",
-    headers: { "Authorization": `Bearer ${apiKey}`, "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      model: "gpt-4o-mini",
-      messages: [
-        { role: "system", content: "You are an expert FBLA exam writer." },
-        { role: "user", content: prompt }
-      ],
-      temperature: 0.7,
-      max_tokens: 1500
+      message: prompt
     })
   });
 
   const data = await res.json();
-  let content = data.choices[0].message.content.trim();
+  let content = data.response.trim();
   content = content.replace(/```json|```/g, "");
   return JSON.parse(content);
 }
@@ -566,7 +553,7 @@ Return JSON only.`;
 // ========== MAIN GPT GENERATOR ==========
 // ========== GPT QUESTION GENERATOR (NO COMPETITION / NO TRAINING DATA) ==========
 async function generatePersonalizedQuestionsWithGPT(formData) {
-  const apiKey = "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";  // ⚠️ never expose in production, proxy it server-side
+  const CLOUD_API_URL = "https://fblaze-529904751843.us-central1.run.app/api/chat";
 
   const questionCount = getQuestionCount(formData.time);
   const competenciesText = formData.competencies.join(', ');
@@ -592,25 +579,18 @@ async function generatePersonalizedQuestionsWithGPT(formData) {
 ]`;
 
   try {
-    const res = await fetch("https://api.openai.com/v1/chat/completions", {
+    const res = await fetch(CLOUD_API_URL, {
       method: "POST",
       headers: {
-        "Authorization": `Bearer ${apiKey}`,
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        model: "gpt-4o-mini",
-        messages: [
-          { role: "system", content: "You are an expert FBLA exam writer. Generate valid multiple choice questions that are realistic and challenging. Never reference source documents." },
-          { role: "user", content: prompt }
-        ],
-        temperature: 0.7,
-        max_tokens: 2500
+        message: prompt
       })
     });
 
     if (!res.ok) throw new Error(await res.text());
-    let content = (await res.json()).choices[0].message.content.trim();
+    let content = (await res.json()).response.trim();
 
     // Clean and parse JSON
     content = content.replace(/```json|```/g, "");

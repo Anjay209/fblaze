@@ -1144,30 +1144,29 @@ function transformToAISearchBar() {
     }
 }
 
-// Initialize OpenAI GPT API
-const openAIApiKey = "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";
+// Cloud backend API endpoint
+const CLOUD_API_URL = "https://fblaze-529904751843.us-central1.run.app/api/chat";
 
 // Function to call GPT API
 async function callGPTAPI(messages, temperature = 0.7, maxTokens = 2000) {
     try {
-        const response = await fetch('https://api.openai.com/v1/chat/completions', {
+        // Convert messages array to a single prompt string
+        const prompt = messages.map(msg => `${msg.role}: ${msg.content}`).join('\n\n');
+        
+        const response = await fetch(CLOUD_API_URL, {
             method: 'POST',
             headers: {
-                'Authorization': `Bearer ${openAIApiKey}`,
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                model: 'gpt-4',
-                messages: messages,
-                temperature: temperature,
-                max_tokens: maxTokens
+                message: prompt
             })
         });
         if (!response.ok) {
             throw new Error(`API Error: ${response.status} - ${response.statusText}`);
         }
         const data = await response.json();
-        return data.choices[0].message.content.trim();
+        return data.response.trim();
         
     } catch (error) {
         console.error('GPT API Error:', error);
