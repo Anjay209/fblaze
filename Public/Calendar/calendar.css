@@ -145,7 +145,7 @@
   .container {
     max-width: 85vw;
     margin: auto;
-    margin-left: 10vw;
+    margin-left: 20vw;
   }
   
   h1 {
@@ -156,6 +156,7 @@
   .subtext {
     color: #666;
     margin-bottom: 2rem;
+    margin-left: 10px;
   }
   
   .tabs {
@@ -165,7 +166,9 @@
     padding: 0.5rem;
     border-radius: 12px;
     width: fit-content;
+    flex-wrap: wrap;
     margin: 1.5rem 0;
+    padding-inline: 10px;
   }
   
   .tab {
@@ -306,13 +309,13 @@
 
 
   .title {
-    font-size: 5rem;
+    font-size: 2rem;
     font-weight: 700;
     margin-bottom: 0.5rem;
-    margin-left: -40px;
+    /* margin-left: -40px; */
     margin-top: 2.5rem;
     padding-top: 2.5rem;
-    line-height: 1.4; /* Add this */
+    /* line-height: 1.4; Add this */
     background: linear-gradient(to right, #3b82f6 0%, #00dfd8 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;

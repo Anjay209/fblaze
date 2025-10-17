@@ -20,7 +20,7 @@
   /* Layout */
   .main-layout {
     display: flex;
-    margin-top: 60px; /* same height as .top-header */
+    margin-top: 10px; /* same height as .top-header */
     width: 100vw; /* force full width */
   }
   
@@ -36,7 +36,7 @@
     padding: 1rem 0;
     gap: 2rem;
     position: fixed;
-    top: 60px;
+    top: 87px;
     left: 0;
     z-index: 2;
   }
@@ -101,11 +101,13 @@
     background: white;
     padding: 0.75rem 2rem;
     display: flex;
-    justify-content: space-between;
+    /* justify-content: space-between; */
     align-items: center;
     border-bottom: 1px solid #eee;
     z-index: 1000;
-    height: 60px;
+    /* height: 60px; */
+    gap: 5px;
+    flex-wrap: wrap;
   }
   
   .nav-title {
@@ -226,7 +228,7 @@
   }
   
   .unit-title {
-    font-size: 5rem;
+    /* font-size: 5rem; */
     font-weight: 800;
     margin-top: 0.5rem;
     margin-bottom: 0.5rem;
@@ -241,14 +243,24 @@
     background: linear-gradient(to right, #007cf0, #00dfd8);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    font-size: 5rem;
-    margin-left: 23vw;
+    font-size: 3rem;
+    /* margin-left: 23vw; */
   }
 
+  @media ( width <= 700px){
+     .name{
+      font-size: 1rem;
+      margin-left: 220px;
+     }
+     .question-tabs{
+      display: block !important;
+        margin-left: 120px;
+     }
+  }
   .section-header-background {
-    width: 100vw; /* Full viewport width */
+    /* width: 100vw; Full viewport width */
     background-color: #ffffff;
-    padding: 1.5rem 3rem 0.5rem; /* ⬅ reduced top & bottom padding */
+    /* padding: 1.5rem 3rem 0.5rem; ⬅ reduced top & bottom padding */
     margin-bottom: 0;
     box-shadow: 0 1px 0 rgba(0, 0, 0, 0.05);
     position: relative;
@@ -270,18 +282,18 @@
     position: relative;
     justify-content: flex-start;
     align-items: flex-end;
- 
-    margin-left: 14.5vw;
-    width: 100%; /* 👈 ensures grey line can stretch */
+ flex-wrap: wrap;
+    /* margin-left: 14.5vw; */
+    /* width: 100%; 👈 ensures grey line can stretch */
   }
 
   .tab.active::after {
     content: '';
     position: absolute;
-    bottom: -7px;
+    bottom: -3px;
     left: 0;
     height: 2px;
-    width: 100%;
+    width: 50%;
     padding: 0;
     margin-bottom: 0;
     background-color: #1a73e8;
@@ -293,6 +305,7 @@
     cursor: pointer;
     font-weight: 500;
     color: #555;
+    /* width: 100%; */
     position: relative;
     padding: 4px 0; /* 👈 ensures enough spacing from border line */
   }
@@ -304,11 +317,11 @@
   
   .content {
     margin-left: 70px;
-    padding: 2rem;
-    margin-top: -2rem;
+    padding: 1rem;
+    /* margin-top: -2rem;
     width: 70vw;
   margin-left: 310px; /* 70 + 240 */
-  width: calc(100vw - 310px); /* full width minus sidebars */
+  /* width: calc(100vw - 310px); full width minus sidebars */ 
   }
 
   /* Report Button States */
@@ -718,7 +731,7 @@
   .assignments-header {
   display: flex;
   align-items: center;
-  justify-content: space-between; /* or flex-start if you want tight grouping */
+  justify-content: center; /* or flex-start if you want tight grouping */
   margin-bottom: 1rem;
   gap: 1rem;
   flex-wrap: wrap;
@@ -786,7 +799,7 @@
   font-size: 1.25rem;
   font-weight: 600;
   color: #0070f3; /* blue from your screenshot */
-  margin-left: -75px;
+  /* margin-left: -75px; */
 }
 
 .dropdown-sort {
@@ -807,9 +820,9 @@
 }
 
 .exam-summary-container {
-    margin-left: -80px;
+    /* margin-left: -80px; */
     font-family: 'Inter', sans-serif;
-    width: 70vw;
+    /* width: 70vw; */
   }
   
   .create-exam-card {
@@ -864,7 +877,7 @@
     margin: 6% auto;
     padding: 2rem;
     border-radius: 12px;
-    width: 460px;
+    /* width: 460px; */
     font-family: 'Inter', sans-serif;
     box-shadow: 0 8px 30px rgba(0,0,0,0.15);
     animation: fadeIn 0.3s ease-in-out;
@@ -1561,7 +1574,7 @@
     border-radius: 16px !important;
     box-shadow: 0 8px 32px rgba(59, 130, 246, 0.08) !important;
     padding: 2rem !important;
-    max-width: 520px !important;
+    /* max-width: 520px !important; */
 }
 
 /* Clean Headers */

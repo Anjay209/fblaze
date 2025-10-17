@@ -223,11 +223,11 @@
   }
   
   .unit-title {
-    font-size: 5rem;
+    /* font-size: 5rem; */
     font-weight: 800;
     margin-top: 0.5rem;
     margin-bottom: 0.5rem;
-    margin-left: -17vw;
+    /* margin-left: -17vww; */
   }
   
   .unit-title {
@@ -239,7 +239,7 @@
     background: linear-gradient(to right, #007cf0, #00dfd8);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    font-size: 5rem;
+    font-size: 2rem;
     margin-left: 20vw;
   }
 
@@ -288,7 +288,7 @@
   
   .cards {
     display: flex;
-  flex-wrap: nowrap; /* or wrap if you want responsive stacking */
+  flex-wrap: wrap; /* or wrap if you want responsive stacking */
   gap: 1rem;
   margin-top: 1.5rem;
   overflow-x: auto;
@@ -343,7 +343,7 @@
   .content {
     flex: 1;
     padding: 2rem;
-    margin-left: 15rem;
+    margin-left: 3rem;
     margin-top:-2rem;
   }
   
@@ -501,7 +501,7 @@
 /* FAQ */
 .faq-wrapper {
   margin-top: 2rem;
-  margin-left: 18vw;
+  margin-left: 26vw;
   width: 73.5vw;
 }
 

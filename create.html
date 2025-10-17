@@ -45,7 +45,7 @@
 }
   
   /* Sidebar */
-  .sidebar {
+  /* .sidebar {
     width: 70px;
     height: 100vh;
     background: white;
@@ -58,7 +58,7 @@
     position: fixed;
     top: 60px;
     left: 0;
-  }
+  } */
 
   .notification-item {
   background: #eef2ff;
@@ -174,7 +174,7 @@
     align-items: center;
     border-bottom: 1px solid #eee;
     z-index: 1000;
-    height: 60px;
+    /* height: 60px; */
   }
   
   .nav-title {
@@ -214,16 +214,19 @@
   
   /* Content Area */
   .content {
-    margin-left: 70px;
-    padding: 2rem;
+    /* margin-left: 70px; */
+    /* padding: 2rem; */
     width: 100%;
-    width: calc(100% - 160px); /* Use available space */
-    margin-left: 120px; /* Creates space from the sidebar */
+    /* width: calc(100% - 160px); Use available space */
+    /* margin-left: 120px; Creates space from the sidebar */
   }
   
   /* Welcome Section */
   .welcome-section {
     margin-bottom: 1rem;
+  }
+  .create-exam-card{
+    margin-left: 103px;
   }
   
   .course-title {
@@ -236,7 +239,7 @@
   }
   
   .unit-title {
-    font-size: 5rem;
+    /* font-size: 5rem; */
     font-weight: 800;
     margin-top: 0.5rem;
     margin-bottom: 0.5rem;
@@ -3289,7 +3292,7 @@ button[onclick*="difficulty"].selected, .difficulty-btn.selected {
     border: 1px solid rgba(255, 255, 255, 0.3);
     border-radius: 24px;
     padding: 3rem 2rem;
-    height: 50vh;
+    /* height: 50vh; */
     margin: 2rem;
     margin-left: 90px;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
@@ -3574,7 +3577,7 @@ button[onclick="generateQuestions()"]:hover {
     <div class="search-section">
   <div class="search-container">
     <input type="text" placeholder="Search practice materials, topics and more..." class="main-search">
- <button class="training-btn" id="openModalBtn" onclick="openTrainingModal()" style="z-index: 10000000; margin-top: -2vh;" title="Train GPT Model">
+ <button class="training-btn" id="openModalBtn" onclick="openTrainingModal()" style="z-index: 10000000; " title="Train GPT Model">
    Train  Your Model
 </button>
       
@@ -3695,7 +3698,7 @@ button[onclick="generateQuestions()"]:hover {
 
     <div class="exam-summary-container">
         <!-- Exam Creation -->
-        <div class="create-exam-card" style="margin-left: 0px; width: 1000px;">
+        <div class="create-exam-card" >
           <h2>Create your Practice</h2>
           <p>We’ll generate an exam based on what you want to practice</p>
           <div class="exam-buttons">

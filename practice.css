@@ -35,7 +35,7 @@
     padding: 1rem 0;
     gap: 2rem;
     position: fixed;
-    top: 60px;
+    top: 242px;
     left: 0;
     z-index: 2;
     box-shadow: 2px 0 20px rgba(0, 0, 0, 0.05);
@@ -103,16 +103,16 @@
   .top-header {
     position: sticky;
     top: 0;
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(20px);
+    background: white;
     padding: 0.75rem 2rem;
     display: flex;
-    justify-content: space-between;
+    /* justify-content: space-between; */
     align-items: center;
-    border-bottom: 1px solid rgba(238, 238, 238, 0.6);
+    border-bottom: 1px solid #eee;
     z-index: 1000;
-    height: 60px;
-    box-shadow: 0 1px 20px rgba(0, 0, 0, 0.05);
+    /* height: 60px; */
+    gap: 5px;
+    flex-wrap: wrap;
   }
   
   .nav-title {
@@ -292,7 +292,7 @@
     border: 1px solid rgba(255, 255, 255, 0.3);
     border-radius: 24px;
     padding: 3rem 2rem;
-    height: 50vh;
+    /* height: 50vh; */
     margin: 2rem;
     margin-left: 90px;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
@@ -427,6 +427,7 @@
   .question-tabs.glassmorphic {
     margin-left: 0;
     justify-content: center;
+    flex-wrap: wrap;
     gap: 0.5rem;
     background: rgba(255, 255, 255, 0.6);
     backdrop-filter: blur(10px);
@@ -469,9 +470,9 @@
   .content {
     margin-left: 70px;
     padding: 2rem;
-    margin-top: -2rem;
-    width: calc(100% - 160px);
-    margin-left: 25vw;
+    /* margin-top: -2rem; */
+    /* width: calc(100% - 160px); */
+    /* margin-left: 25vw; */
   }
 
   /* Glassmorphic content adjustments */
@@ -491,7 +492,7 @@
     align-items: center;
     margin-bottom: 2rem;
     width: 100%;
-    margin-left: -8vw;
+    /* margin-left: -8vw; */
     max-width: 1050px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
     transition: all 0.3s ease;
