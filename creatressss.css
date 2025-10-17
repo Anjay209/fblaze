@@ -190,11 +190,11 @@
   
   /* Content Area */
   .content {
-    margin-left: 70px;
+    /* margin-left: 70px; */
     padding: 2rem;
     width: 100%;
-    width: calc(100% - 160px); /* Use available space */
-    margin-left: 120px; /* Creates space from the sidebar */
+    /* width: calc(100% - 160px); Use available space */
+    /* margin-left: 120px; Creates space from the sidebar */
   }
   
   /* Welcome Section */
