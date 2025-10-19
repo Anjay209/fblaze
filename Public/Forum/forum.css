@@ -1257,14 +1257,22 @@
   }
   .text { margin-left: 0; }
 
-  /* Tabs: center, allow wrapping */
+  /* Tabs: center, keep on same line */
   .question-tabs, /* base class further down in the file */
   .question-tabs.glassmorphic {
     margin: .5rem auto 0;
     width: 100%;
     justify-content: center;
     gap: .5rem;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
+  }
+
+  /* Mobile tab button adjustments */
+  .question-tabs.glassmorphic .tab {
+    min-width: 80px;
+    white-space: nowrap;
+    font-size: 0.9rem;
+    padding: 0.6rem 1.2rem;
   }
 
   /* Forum wrapper stacks: feed first, info panel after */
