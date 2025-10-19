@@ -2,6 +2,7 @@ body {
   min-height: 100vh;
   font-family: 'Inter', sans-serif;
   margin: 0;
+  padding: 0;
   background:
     radial-gradient(circle at 70% 20%, #ffe084cc 0%, transparent 45%),
     radial-gradient(circle at 30% 85%, #3053cb55 0%, transparent 60%),
@@ -9,6 +10,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow-x: hidden;
 }
 
 .login-outer {
@@ -16,6 +18,9 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 100%;
+  padding: 1rem;
+  box-sizing: border-box;
 }
 
 .login-container {
@@ -24,11 +29,13 @@ body {
   box-shadow: 0 3px 18px rgba(0,0,0,0.05);
   padding: 2.5rem 2.2rem 2.2rem 2.2rem;
   border: 2px solid #e0e8f0;
-  width: 430px;
+  width: 100%;
+  max-width: 430px;
   display: flex;
   flex-direction: column;
   gap: 1.05rem;
   min-width: 320px;
+  box-sizing: border-box;
 }
 
 .login-title {
@@ -231,4 +238,48 @@ input[type="text"]:focus {
 }
 .signup a:hover {
   text-decoration: underline;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 480px) {
+  .login-outer {
+    padding: 0.5rem;
+  }
+  
+  .login-container {
+    padding: 1.5rem 1.2rem 1.2rem 1.2rem;
+    min-width: 280px;
+  }
+  
+  .login-title {
+    font-size: 1.8rem;
+  }
+  
+  input[type="email"],
+  input[type="password"],
+  input[type="text"] {
+    font-size: 1rem;
+    height: 44px;
+  }
+  
+  .sign-in-btn {
+    font-size: 1.05rem;
+    height: 44px;
+  }
+  
+  .custom-google-btn {
+    font-size: 1rem;
+    padding: 0.75rem 0;
+  }
+}
+
+@media (max-width: 360px) {
+  .login-container {
+    padding: 1.2rem 1rem 1rem 1rem;
+    min-width: 260px;
+  }
+  
+  .login-title {
+    font-size: 1.6rem;
+  }
 }

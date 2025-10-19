@@ -1180,3 +1180,168 @@
 .main-search:focus + .search-icon {
   color: #4facfe;
 }
+
+/* =========================
+   MOBILE/TABLET RESPONSIVE
+   ========================= */
+
+/* --- Large tablets / small laptops --- */
+@media (max-width: 1200px) {
+  .forum-card,
+  .ask-box { max-width: 720px; }
+
+  .question-tabs.glassmorphic {
+    margin-left: 0;
+    margin-right: 0;
+  }
+}
+
+/* --- Tablets and below (≤1024px) --- */
+@media (max-width: 1024px) {
+  /* Layout: content goes full width; add bottom padding for mobile dock */
+  .content {
+    margin-left: 0;
+    width: 100%;
+    padding: 1rem 1rem 5rem; /* bottom space for the docked sidebar */
+  }
+
+  /* Sidebar becomes a bottom dock */
+  .sidebar {
+    position: fixed;
+    top: auto;
+    bottom: 0;
+    left: 0; right: 0;
+    width: 100%;
+    height: 56px;
+    border-right: none;
+    border-top: 1px solid #ddd;
+    flex-direction: row;
+    padding: .5rem .75rem;
+    gap: 1rem;
+    z-index: 1000;
+    background: #fff;
+    justify-content: center;
+  }
+  .nav-icons {
+    flex-direction: row;
+    gap: .75rem;
+  }
+  .nav-icons li {
+    width: 44px; height: 44px;
+    border-radius: 12px;
+  }
+  .nav-label { display: none; } /* hide hover labels on touch */
+
+  /* Header stays sticky and compact (already sticky) */
+  .top-header { padding: .5rem 1rem; }
+
+  /* Section header glass: full-width, comfy on mobile */
+  .section-header-background.glassmorphic {
+    width: 100%;
+    margin: 0;
+    border-radius: 0;
+    height: auto;
+    padding: 1.25rem 1rem 1rem;
+  }
+
+  /* Reduce visual load from background blobs on mobile */
+  body::before, body::after,
+  .gradient-blob-1, .gradient-blob-2 { display: none; }
+
+  /* Title sizing and alignment */
+  .unit-title { margin: .25rem 0 0; text-align: center; }
+  .name {
+    margin: 0;
+    font-size: clamp(1.75rem, 6vw, 3rem);
+    -webkit-text-fill-color: transparent; /* keep gradient text */
+  }
+  .text { margin-left: 0; }
+
+  /* Tabs: center, allow wrapping */
+  .question-tabs, /* base class further down in the file */
+  .question-tabs.glassmorphic {
+    margin: .5rem auto 0;
+    width: 100%;
+    justify-content: center;
+    gap: .5rem;
+    flex-wrap: wrap;
+  }
+
+  /* Forum wrapper stacks: feed first, info panel after */
+  .forum-wrapper {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .forum-main {
+    margin-left: 0;
+    max-width: 100%;
+    padding: 0 .5rem;
+  }
+
+  /* Cards & ask box: full width, tighter spacing */
+  .forum-card,
+  .ask-box {
+    width: 100%;
+    max-width: 100%;
+    margin: 0 0 1rem 0;
+  }
+  .forum-card { margin-top: 0; }
+
+  /* Side info panel becomes full-width blocks */
+  .forum-info-panel {
+    order: 2;
+    flex: 1 1 auto;
+    max-width: 100%;
+    min-width: 0;
+    margin: 0;
+  }
+  .stats-box { width: 100%; }
+
+  /* Search strip in hero */
+  .search-section { padding: 1rem .5rem; margin-bottom: 1rem; }
+  .search-container { max-width: 100%; }
+
+  /* Right panel (comments) slides over the screen nicely on mobile */
+  .comment-panel {
+    width: 100%;
+    top: 60px;
+    bottom: 56px; /* above the bottom dock */
+    height: auto;
+  }
+
+  /* Modal width already responsive; small nudge */
+  .modal-content { width: 92vw; max-width: 520px; }
+}
+
+/* --- Phones (≤768px) --- */
+@media (max-width: 768px) {
+  /* Compact avatars & meta text */
+  .avatar { width: 40px; height: 40px; font-size: 1rem; }
+  .user-meta strong { font-size: .95rem; }
+  .time-meta { font-size: .85rem; }
+
+  /* Card text a tad smaller */
+  .question-content p,
+  .card-body p { font-size: .95rem; }
+
+  /* Icon bubbles tighter */
+  .icon-bubble { padding: 6px 10px; gap: 6px; }
+  .icon-bubble img { width: 18px; height: 18px; }
+  .icon-bubble .count { font-size: .95rem; }
+
+  /* “Not solved” chip and button scale */
+  .not-solved { font-size: .85rem; padding: 4px 10px; }
+  .resolve-btn { padding: 6px 12px; font-size: .9rem; }
+}
+
+/* --- Small phones (≤480px) --- */
+@media (max-width: 480px) {
+  .top-header { height: 56px; }
+  .nav-right input { display: none; }      /* hide long input */
+  #navbarSearchIcon { pointer-events: auto; } /* keep icon tappable */
+
+  /* Space economy in cards */
+  .menu-icon { font-size: 1rem; }
+  .stats-grid { gap: .75rem 1rem; }
+  .stat { width: auto; }
+}

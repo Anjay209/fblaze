@@ -34,6 +34,16 @@
     top: 60px;
     left: 0;
     z-index: 20;
+    transition: transform 0.3s ease;
+  }
+
+  /* Mobile Sidebar Styles */
+  .sidebar.mobile-open {
+    transform: translateX(0);
+  }
+
+  .sidebar.mobile-closed {
+    transform: translateX(-100%);
   }
 
   .notification-item {
@@ -116,6 +126,13 @@
     background-color: #d8e5ff;
   }
 
+  /* Disable hover background on mobile devices */
+  @media (max-width: 1024px) {
+    .nav-icons li:hover {
+      background-color: transparent;
+    }
+  }
+
   .nav-label {
     position: absolute;
     left: 100%;
@@ -138,19 +155,109 @@
     opacity: 1;
     transform: translateY(-50%) translateX(0px);
   }
+
+  /* Disable hover effects on mobile devices */
+  @media (max-width: 1024px) {
+    .nav-icons li:hover .nav-label {
+      opacity: 0;
+      transform: translateY(-50%) translateX(10px);
+    }
+  }
   
   /* Top Header */
   .top-header {
     position: sticky;
     top: 0;
-    background: white;
+    z-index: 50;
+    background: #fff;
+    border-bottom: 1px solid #e5e7eb;
     padding: 0.75rem 2rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid #eee;
-    z-index: 1000;
     height: 60px;
+  }
+
+  /* Hamburger Menu */
+  .hamburger-menu {
+    display: none;
+    flex-direction: column;
+    gap: 4px;
+    background: transparent;
+    border: 0;
+    padding: .25rem;
+    cursor: pointer;
+    position: relative;
+    z-index: 100;
+  }
+
+  .hamburger-menu span {
+    width: 22px; 
+    height: 2px; 
+    background: #111; 
+    display: block;
+  }
+
+  .hamburger-menu.active span:nth-child(1) {
+    transform: rotate(45deg) translate(5px, 5px);
+  }
+
+  .hamburger-menu.active span:nth-child(2) {
+    opacity: 0;
+  }
+
+  .hamburger-menu.active span:nth-child(3) {
+    transform: rotate(-45deg) translate(7px, -6px);
+  }
+
+  .nav-left {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .nav-globe {
+    font-size: 1.2rem;
+  }
+
+  /* Sidebar Backdrop */
+  .sidebar-backdrop {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 15;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+  }
+
+  .sidebar-backdrop.active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  /* Notification Panel Backdrop */
+  .notification-backdrop {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 5;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+  }
+
+  .notification-backdrop.active {
+    opacity: 1;
+    pointer-events: auto;
   }
   
   .nav-title {
@@ -190,11 +297,12 @@
   
   /* Content Area */
   .content {
-    margin-left: 70px;
-    padding: 2rem;
+    margin-left: 70px;         /* matches fixed sidebar width */
+    padding: 1.5rem 2rem;
+    max-width: 1200px;
     width: 100%;
-    width: calc(100% - 160px); /* Use available space */
-    margin-left: 120px; /* Creates space from the sidebar */
+    position: relative;
+    z-index: 1;
   }
   
   /* Welcome Section */
@@ -249,9 +357,10 @@
   
   /* Cards */
   .cards {
-    display: flex;
-    gap: 1.5rem;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.25rem;
+    margin-top: 1.25rem;
     margin-bottom: 2rem;
   }
   
@@ -261,11 +370,12 @@
     border-radius: 12px;
     padding: 1.5rem;
     width: 100%;
-    max-width: 275px;
     box-shadow: 0 1px 2px rgba(0,0,0,0.04);
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
+    position: relative;
+    z-index: 2;
   }
   
   .card-icon {
@@ -294,6 +404,9 @@
     color: #2563eb;
     font-weight: 600;
     text-decoration: none;
+    position: relative;
+    z-index: 3;
+    pointer-events: auto;
   }
   
   .card-content a:hover {
@@ -357,7 +470,7 @@
   
   .feature-box-icon {
     width: 48px;
-    height: 48px;
+    height: auto;
     margin-bottom: 12px;
     display: block;
     object-fit: contain;
@@ -1640,6 +1753,26 @@ canvas {
   z-index: 10; /* ensure it's above sidebar */
 }
 
+/* Mobile notification panel styles */
+@media (max-width: 1024px) {
+  .comment-panel {
+    left: 0;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 4px 0 20px rgba(0, 0, 0, 0.15);
+  }
+}
+
+@media (max-width: 768px) {
+  .comment-panel {
+    width: 100vw;
+    max-width: 100vw;
+    left: 0;
+    top: 60px;
+    height: calc(100vh - 60px);
+  }
+}
+
 .comment-panel.active {
   transform: translateX(0);
 }
@@ -2323,6 +2456,54 @@ canvas {
     outline: none;
     border-color: #3b82f6;
     background-color: white;
+}
+
+/* Mobile/tablet behavior (≤1024px): show hamburger, hide full search input,
+   and keep the sidebar off-canvas by default. */
+@media (max-width: 1024px) {
+  /* Show the hamburger */
+  .hamburger-menu { display: flex; }
+
+  /* Hide the long search box but keep the icon tappable */
+  .nav-right input { display: none; }
+  .search-icon { pointer-events: auto; }
+
+  /* Content goes full width (no left margin for the fixed sidebar) */
+  .content { margin-left: 0; padding: 1rem 1rem 2rem; }
+
+  /* Sidebar starts off-canvas on mobile */
+  .sidebar {
+    transform: translateX(-100%);
+    /* keep it over content when opened */
+    z-index: 1001;
+  }
+
+  /* When opened via JS, slide it in */
+  .sidebar.mobile-open {
+    transform: translateX(0);
+  }
+
+  /* Backdrop appears when sidebar opens */
+  .sidebar-backdrop { display: block; }
+  .sidebar-backdrop.active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+}
+
+
+
+  /* Mobile-specific: Make cards have same width and margin as FAQ */
+  .cards {
+    margin-top: 2rem;
+    flex-direction: column;
+  }
+
+  .schoolhouse-card {
+    margin: 0;
+    max-width: 100%;
+    width: 100%;
+  }
 }
 
 /* Mentor section styles */
