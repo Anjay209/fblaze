@@ -1123,3 +1123,184 @@ form button[type="submit"]:hover {
 .main-search:focus + .search-icon {
   color: #4facfe;
 }
+
+/* =========================
+   RESPONSIVE ENHANCEMENTS
+   ========================= */
+
+/* -------- Shared tweaks (scale big type gracefully) -------- */
+.title {
+  /* 5rem is gorgeous on desktop but huge on phones */
+  font-size: clamp(1.8rem, 7.5vw, 5rem);
+  /* Remove hard left nudge that clips on mobile */
+  margin-left: 0;
+  padding-top: 1.25rem;
+  line-height: 1.2;
+}
+
+/* Tabs: avoid fixed viewport offsets that cause overflow */
+.question-tabs,
+.tabs {
+  flex-wrap: nowrap;
+  justify-content: center;
+  gap: .5rem .75rem;
+  margin: .75rem auto 1rem auto;
+  width: 100%;
+  overflow-x: auto;
+}
+
+/* Search dropdown: avoid off-screen overflow on phones */
+#searchDropdown {
+  width: min(92vw, 340px);
+  right: 0;
+}
+
+/* -------- Large tablets / small laptops -------- */
+@media (max-width: 1200px) {
+  .section-header-background.glassmorphic {
+    /* Loosen strict vw math bound to sidebar, keep the vibe */
+    width: min(96vw, 1100px);
+    margin: 1rem auto;
+    height: auto;
+    border-radius: 20px;
+  }
+}
+
+/* -------- Tablets and below (≤1024px) -------- */
+@media (max-width: 1024px) {
+  /* Sidebar: stop reserving left margin; let content breathe */
+  .container {
+    max-width: 100vw;
+    margin: 0 auto;
+    padding: 0 1rem 5rem; /* bottom padding for safe area */
+  }
+
+  /* Sidebar becomes a bottom dock */
+  .sidebar {
+    position: fixed;
+    top: auto;
+    bottom: 0;
+    left: 0; right: 0;
+    height: 56px;
+    width: 100%;
+    border-right: none;
+    border-top: 1px solid #ddd;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: .75rem;
+    padding: .5rem .75rem;
+    z-index: 1000;
+    background: #fff;
+  }
+  .nav-icons { flex-direction: row; gap: .75rem; }
+  .nav-icons li { width: 44px; height: 44px; border-radius: 12px; }
+  .nav-label { display: none; } /* hover labels don't help on touch */
+
+  /* Keep header compact on mobile */
+  .top-header { padding: .5rem 1rem; }
+
+  /* Glass hero: full-width strip, no off-screen math */
+  .section-header-background.glassmorphic {
+    width: 100%;
+    margin: 0;
+    border-radius: 0;
+    height: auto;
+    padding: 1.25rem 1rem 1rem;
+  }
+
+  /* Calm the background blobs for performance/readability */
+  body::before, body::after,
+  .gradient-blob-1, .gradient-blob-2 { display: none; }
+
+  /* Subtext spacing */
+  .subtext { margin: .5rem 0 1rem; }
+
+  /* Event list cards stack nicely */
+  .event-card {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+  }
+  .event-content {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: .5rem;
+  }
+  .event-date {
+    border-right: none;
+    border-bottom: 1px solid #eee;
+    padding-right: 0;
+    margin-right: 0;
+    padding-bottom: .75rem;
+  }
+
+  /* Timeline: reduce left padding; align markers */
+  .timeline { padding-left: 16px; }
+  .timeline-line { left: 8px; }
+  .timeline-event::before { left: -4px; top: 28px; } /* earlier card top */
+
+  /* Search: hide long input but keep icon tappable */
+  .nav-right input { display: none; }
+  .search-icon { pointer-events: auto; }
+
+  /* Modals fit small viewports */
+  .modal-content {
+    width: 92vw !important;
+    max-width: 520px !important;
+    padding: 1.25rem 1rem 1rem !important;
+  }
+
+  /* Inline header row spacing */
+  .section-header-inline {
+    padding: 0 1rem;
+    gap: .75rem;
+  }
+
+  /* Buttons scale */
+  .competency-button { font-size: .95rem; padding: .55rem 1rem; }
+}
+
+/* -------- Phones (≤768px) -------- */
+@media (max-width: 768px) {
+  .event-avatars img { width: 24px; height: 24px; }
+  .event-info, .event-title { font-size: .95rem; }
+  .event-date .day { font-size: 1.4rem; }
+  .event-date .weekday { font-size: .85rem; }
+  
+  /* Tab button adjustments for mobile */
+  .tabs .tab { 
+    padding: .5rem .8rem; 
+    font-size: .9rem; 
+    min-width: 70px;
+    white-space: nowrap;
+  }
+
+  .info-banner {
+    padding: .75rem 1rem;
+    font-size: .9rem;
+  }
+
+  /* Tighten chip/buttons */
+  .status-tag { font-size: .7rem; padding: 2px 8px; }
+  .edit-btn { padding: 6px 10px; font-size: .9rem; }
+
+  /* Timeline markers less dominant on small screens */
+  .timeline-line { display: none; }
+  .timeline { padding-left: 0; }
+  .timeline-event::before { display: none; }
+}
+
+/* -------- Small phones (≤480px) -------- */
+@media (max-width: 480px) {
+  .top-header { height: 56px; }
+  .unit-title { text-align: center; }
+  .tabs .tab { 
+    padding: .45rem .7rem; 
+    font-size: .85rem; 
+    min-width: 60px;
+    white-space: nowrap;
+  }
+  .event-card { padding: 1rem; }
+  .rsvp-dialog { width: 94vw; max-width: 360px; }
+}
