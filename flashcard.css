@@ -903,3 +903,323 @@
   .nav-icons li:hover {
     background-color: #d8e5ff;
   }
+
+  /* =========================
+   FLASHCARDS: RESPONSIVE PATCH
+   ========================= */
+
+/* Scale big headings gracefully & neutralize desktop nudges */
+.name       { font-size: clamp(1.6rem, 7vw, 5rem); margin-left: 0 !important; }
+.unit-title { font-size: clamp(1.8rem, 8vw, 5rem); margin-left: 0 !important; }
+.text       { margin-left: 0 !important; }
+
+/* Avoid accidental side-scroll everywhere */
+html, body { overflow-x: hidden; }
+
+/* Clamp search dropdown so it never hangs off-screen */
+#searchDropdown { width: min(92vw, 340px); right: 0; }
+
+/* ------------- Large tablets / small laptops ------------- */
+@media (max-width: 1200px) {
+  .section-header-background.glassmorphic,
+  .section-header-background {
+    width: min(96vw, 1100px);
+    margin: 1rem auto;
+    height: auto;
+    border-radius: 20px;
+  }
+}
+
+/* ------------- Tablets and below (≤1024px) ------------- */
+@media (max-width: 1024px) {
+  /* LEFT NAVS: convert the 70px rail to a bottom dock; hide the sub-sidebar */
+  .sidebar {
+    position: fixed;
+    top: auto; bottom: 0; left: 0; right: 0;
+    height: 56px; width: 100%;
+    border-right: 0; border-top: 1px solid #ddd;
+    flex-direction: row; align-items: center; justify-content: center;
+    gap: .75rem; padding: .5rem .75rem;
+    z-index: 1000; background: #fff;
+  }
+  .nav-icons { flex-direction: row; gap: .75rem; }
+  .nav-icons li { width: 44px; height: 44px; border-radius: 12px; }
+  .nav-label { display: none; }  /* hover labels don’t help on touch */
+  .sub-sidebar { display: none !important; }
+
+  /* CONTENT: stop reserving desktop side space; give full width & safe bottom pad */
+  .content {
+    margin: 0 !important;
+    width: 100% !important;
+    max-width: 100%;
+    padding: 1rem 1rem 5rem; /* bottom pad so the dock doesn’t cover content */
+  }
+
+  /* HERO/TABS: full-bleed, wrap tabs, remove vw offsets */
+  .section-header-background {
+    width: 100% !important; margin: 0 !important; border-radius: 0 !important;
+    height: auto !important; padding: 1.25rem 1rem 1rem !important;
+  }
+  .question-tabs {
+    margin: .5rem auto 0 !important;
+    width: 100%; justify-content: center; align-items: center;
+    gap: .5rem .75rem; flex-wrap: wrap;
+  }
+
+  /* Hide long search input, keep icon tappable */
+  .nav-right input { display: none; }
+  .search-icon { pointer-events: auto; }
+
+  /* CARDS/SECTIONS: kill fixed 65vw widths and left shifts */
+  .challenge-card,
+  .cards,
+  .recent-section,
+  .faq-wrapper {
+    width: 100% !important;
+    margin-left: 0 !important;
+  }
+  .challenge-card {
+    max-width: 100%;
+    display: flex; flex-direction: row; align-items: center;
+  }
+
+  /* Deck grid already responsive; ensure container breathes on mobile */
+  .deck-grid { max-width: 100%; }
+
+  /* Modals & accordions fit */
+  .modal-content { width: 92vw !important; max-width: 520px !important; }
+
+  /* Nix extreme right push on the “study” link */
+  .study { margin-right: 0 !important; }
+}
+
+/* ------------- Phones (≤768px) ------------- */
+@media (max-width: 768px) {
+  /* Stack challenge card neatly */
+  .challenge-card { flex-direction: column; align-items: flex-start; gap: 1rem; }
+  .challenge-card img { width: 80px; margin-right: 0; }
+
+  /* Assignment cards stack & button spans width */
+  .assignment-card { flex-direction: column; align-items: stretch; }
+  .assignment-info { margin-right: 0; margin-bottom: .75rem; }
+  .start-btn { width: 100%; }
+
+  /* Deck & text sizing */
+  .deck-grid { grid-template-columns: 1fr; gap: 1rem; }
+  .deck-cover { padding: 1.1rem; }
+  .deck-stats { flex-direction: column; align-items: stretch; gap: .75rem; }
+
+  /* Tighten header row */
+  .top-header { padding: .5rem 1rem; height: 56px; }
+}
+
+/* ------------- Small phones (≤480px) ------------- */
+@media (max-width: 480px) {
+  .content { padding: 1rem 1rem 5rem; }
+  .deck-title { font-size: 1rem; }
+  .deck-description { font-size: .9rem; }
+  .deadline-badge { font-size: .8rem; padding: .35rem .8rem; }
+  .tab { padding: .45rem .9rem; font-size: .95rem; }
+}
+
+/* =========================
+   MOBILE NAVIGATION STYLES
+   ========================= */
+
+/* Hamburger Menu */
+.hamburger-menu {
+  display: none;
+  flex-direction: column;
+  gap: 4px;
+  background: transparent;
+  border: 0;
+  padding: .25rem;
+  cursor: pointer;
+  position: relative;
+  z-index: 100;
+}
+
+.hamburger-menu span {
+  width: 22px;
+  height: 2px;
+  background: #111;
+  display: block;
+  transition: all 0.3s ease;
+}
+
+.hamburger-menu.active span:nth-child(1) {
+  transform: rotate(45deg) translate(5px, 5px);
+}
+
+.hamburger-menu.active span:nth-child(2) {
+  opacity: 0;
+}
+
+.hamburger-menu.active span:nth-child(3) {
+  transform: rotate(-45deg) translate(7px, -6px);
+}
+
+/* Nav Left Container */
+.nav-left {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.nav-globe {
+  font-size: 1.2rem;
+}
+
+/* Sidebar Backdrop */
+.sidebar-backdrop {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.sidebar-backdrop.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Notification Backdrop */
+.notification-backdrop {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.3);
+  z-index: 998;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.notification-backdrop.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* --- MOBILE FIXES (≤1024px) --- */
+@media (max-width: 1024px) {
+  /* 1) Make the hamburger visible and clickable */
+  .hamburger-menu {
+    display: flex !important;
+    visibility: visible !important;
+    z-index: 1101;              /* above sidebar/backdrops */
+  }
+
+  /* 2) Keep the main left rail off-canvas by default */
+  .sidebar {
+    transform: translateX(-100%);
+    transition: transform .25s ease;
+    z-index: 1100;              /* below header, above content */
+  }
+  .sidebar.mobile-open { transform: translateX(0); }
+
+  /* 3) Hide the SECONDARY fixed nav on mobile (this is the thing you see "sticking out") */
+  .sub-sidebar { 
+    display: none !important;
+  }
+
+  /* 4) Content should not reserve desktop side space */
+  .content {
+    margin-left: 0 !important;
+    width: 100% !important;
+    padding: 1rem 1rem 2rem;
+  }
+
+  /* 5) Header spacer so the top tabs aren't clipped under sticky header */
+  :root { --header-h: 60px; }   /* adjust if your header differs */
+  .section-header-background,
+  .section-header-inline,
+  .tabs,
+  .question-tabs {
+    margin-top: calc(var(--header-h) + 8px) !important;
+  }
+
+  /* 6) Kill desktop-only vw nudges that cause the weird left shift */
+  .name,
+  .unit-title,
+  .text,
+  .question-tabs {
+    margin-left: 0 !important;
+  }
+
+  /* Optional: keep search icon usable but hide long input */
+  .nav-right input { display: none; }
+  .search-icon { pointer-events: auto; }
+
+  /* Backdrop appears when sidebar opens */
+  .sidebar-backdrop { display: block; }
+  .sidebar-backdrop.active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+}
+
+/* Ensure page never side-scrolls while we slide the sidebar */
+html, body { overflow-x: hidden; }
+
+/* --- HARD MOBILE OVERRIDES (≤1024px) --- */
+@media (max-width:1024px){
+  /* 1) Hide the 70px left rail by default (off-canvas, non-clickable) */
+  .sidebar{
+    position: fixed !important;
+    left: 0 !important;
+    top: 60px !important;
+    height: calc(100vh - 60px) !important;
+    transform: translateX(-120%) !important;   /* shove fully off screen */
+    pointer-events: none !important;           /* no stray taps */
+    visibility: hidden !important;             /* no paint "glow" */
+    z-index: 1100 !important;
+    transition: transform .25s ease;
+  }
+  /* When opened (via your JS), it slides in and becomes interactive */
+  .sidebar.mobile-open{
+    transform: translateX(0) !important;
+    pointer-events: auto !important;
+    visibility: visible !important;
+  }
+
+  /* 2) Nuke the secondary fixed nav that sits at left:70px */
+  .sub-sidebar{ display:none !important; }
+
+  /* 3) Don't reserve desktop side space on content */
+  .content{
+    margin-left:0 !important;
+    width:100% !important;
+    padding:1rem 1rem 2rem !important;
+  }
+
+  /* 4) Kill desktop-only vw nudges that cause the left shift */
+  .name, .unit-title, .text, .question-tabs{ margin-left:0 !important; }
+
+  /* 5) Tabs under a sticky header need breathing room */
+  :root{ --header-h:60px; }
+  .section-header-background,
+  .section-header-inline,
+  .tabs, .question-tabs{
+    margin-top: calc(var(--header-h) + 8px) !important;
+  }
+
+  /* 6) Show the hamburger above everything */
+  .hamburger-menu{
+    display:flex !important;
+    visibility:visible !important;
+    z-index: 1101 !important;
+  }
+
+  /* Optional: hide the long search input on small screens */
+  .nav-right input{ display:none !important; }
+}

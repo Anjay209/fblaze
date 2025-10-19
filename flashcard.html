@@ -506,7 +506,14 @@
 
   <!-- Top Nav -->
   <div class="top-header">
-    <div class="nav-left">🌐</div>
+    <div class="nav-left">
+      <button class="hamburger-menu" id="hamburgerMenu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+      <span class="nav-globe">🌐</span>
+    </div>
     <div class="nav-title">Dashboard <span class="new-badge">(New!)</span></div>
     <div class="nav-right">
       <input type="text" id="navbarSearch" placeholder="Search CertQuest..." />
@@ -517,7 +524,7 @@
 
   <div class="main-layout">
     <!-- Sidebar -->
-      <aside class="sidebar">
+      <aside class="sidebar" id="sidebar">
       <div class="logo">CQ</div>
       <ul class="nav-icons">
   <li>
@@ -1240,7 +1247,39 @@ function checkForSpecificDeck() {
     window.location.href = 'public/home.html';
 }
 
+// Mobile sidebar functionality
+(function () {
+  const sidebar = document.getElementById('sidebar');            // main left rail
+  const hamburger = document.getElementById('hamburgerMenu');    // three-line button
+  const sidebarBackdrop = document.getElementById('sidebarBackdrop');
+
+  function openSidebar() {
+    if (sidebar) sidebar.classList.add('mobile-open');
+    if (sidebarBackdrop) sidebarBackdrop.classList.add('active');
+    if (hamburger) hamburger.classList.add('active');
+  }
+
+  function closeSidebar() {
+    if (sidebar) sidebar.classList.remove('mobile-open');
+    if (sidebarBackdrop) sidebarBackdrop.classList.remove('active');
+    if (hamburger) hamburger.classList.remove('active');
+  }
+
+  if (hamburger) {
+    hamburger.addEventListener('click', () => {
+      const isOpen = sidebar && sidebar.classList.contains('mobile-open');
+      isOpen ? closeSidebar() : openSidebar();
+    });
+  }
+  if (sidebarBackdrop) sidebarBackdrop.addEventListener('click', closeSidebar);
+  window.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeSidebar(); });
+})();
 
   </script>
+
+  <!-- Mobile Navigation Backdrops -->
+  <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+  <div class="notification-backdrop" id="notificationBackdrop"></div>
+
 </body>
 </html>

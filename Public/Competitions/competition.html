@@ -15,7 +15,14 @@
 
   <!-- Top Nav -->
   <div class="top-header">
-    <div class="nav-left">🌐</div>
+    <div class="nav-left">
+      <button class="hamburger-menu" id="hamburgerMenu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+      <span class="nav-globe">🌐</span>
+    </div>
      <div class="nav-title"><div class="nav-pills">
     <a class="nav-pill active" href="Public/Competitions/competition.html">Your Journey</a>
     <a class="nav-pill" href="/practice.html">Practice Hub</a>
@@ -30,7 +37,7 @@
 
   <div class="main-layout">
     <!-- Sidebar -->
-    <aside class="sidebar">
+    <aside class="sidebar" id="sidebar">
       <div class="logo">CQ</div>
       <ul class="nav-icons">
   <li>
@@ -1044,6 +1051,39 @@ function refreshUsers() {
 // Auto-refresh every 30 seconds (optional)
 setInterval(refreshUsers, 30000);
 
+// Mobile sidebar functionality
+(function () {
+  const sidebar = document.getElementById('sidebar');            // main left rail
+  const hamburger = document.getElementById('hamburgerMenu');    // three-line button
+  const sidebarBackdrop = document.getElementById('sidebarBackdrop');
+
+  function openSidebar() {
+    if (sidebar) sidebar.classList.add('mobile-open');
+    if (sidebarBackdrop) sidebarBackdrop.classList.add('active');
+    if (hamburger) hamburger.classList.add('active');
+  }
+
+  function closeSidebar() {
+    if (sidebar) sidebar.classList.remove('mobile-open');
+    if (sidebarBackdrop) sidebarBackdrop.classList.remove('active');
+    if (hamburger) hamburger.classList.remove('active');
+  }
+
+  if (hamburger) {
+    hamburger.addEventListener('click', () => {
+      const isOpen = sidebar && sidebar.classList.contains('mobile-open');
+      isOpen ? closeSidebar() : openSidebar();
+    });
+  }
+  if (sidebarBackdrop) sidebarBackdrop.addEventListener('click', closeSidebar);
+  window.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeSidebar(); });
+})();
+
 </script>
+
+  <!-- Mobile Navigation Backdrops -->
+  <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+  <div class="notification-backdrop" id="notificationBackdrop"></div>
+
 </body>
 </html>

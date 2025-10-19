@@ -817,7 +817,7 @@
     justify-content: center;
     gap: 0.5rem;
     margin: 2rem 0;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     background: rgba(255, 255, 255, 0.6);
     backdrop-filter: blur(10px);
     border-radius: 50px;
@@ -826,6 +826,7 @@
     margin-left: auto;
     margin-right: auto;
     border: 1px solid rgba(255, 255, 255, 0.3);
+    overflow-x: auto;
   }
 
   .nav-pill {
@@ -928,5 +929,446 @@
     background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
     animation-delay: 15s;
   }
+
+  /* =========================
+   COMPETITION: RESPONSIVE PATCH
+   ========================= */
+
+/* Scales gracefully everywhere */
+html, body { max-width: 100%; overflow-x: hidden; }
+.journey-card h2 { line-height: 1.2; }
+
+/* ---------- Large tablets / small laptops ---------- */
+@media (max-width: 1200px) {
+  /* Loosen strict widths/offsets for the hero/primary content */
+  .journey-card { max-width: 820px; margin: 2rem auto; margin-left: auto; }
+  .sub-sidebar { width: 220px; }
+}
+
+/* ---------- Tablets and below (≤1024px) ---------- */
+@media (max-width: 1024px) {
+  /* Left sub-sidebar → bottom dock so content stays full width */
+  .sub-sidebar {
+    position: fixed;
+    top: auto;
+    bottom: 0;
+    left: 0; right: 0;
+    height: 56px;
+    width: 100%;
+    margin-left: 0;
+    border-right: none;
+    border-top: 1px solid #ddd;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: .75rem;
+    padding: .5rem .75rem;
+    z-index: 1000;
+    background: #fff;
+  }
+  .sub-nav-wrapper { padding: 0 .5rem; }
+  .sub-nav { flex-direction: row; gap: .75rem; }
+  .sub-nav li,
+  .sub-nav li.active,
+  .sub-nav li:hover { width: auto; }
+
+  /* Main two-column layout → stacked */
+  .journey-layout {
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem;
+    margin-top: 2rem; /* Add proper top spacing */
+  }
+
+  /* Content should take the width; remove desktop nudges */
+  .journey-card {
+    margin: 0;
+    margin-left: 0 !important;
+    max-width: 100%;
+    padding: 1.25rem;
+    margin-top: 1rem; /* Add top margin for proper spacing */
+  }
+  .profile-card {
+    width: 100%;
+    order: -1;              /* show profile above the content on mobile */
+  }
+
+  /* Fix nav pills positioning on tablets */
+  .nav-pills {
+    margin: 5rem 0 2rem 0; /* Increased top margin for tablets */
+    flex-wrap: nowrap;
+    gap: 0.3rem;
+  }
+
+  /* Adjust nav pill buttons for tablets */
+  .nav-pill {
+    padding: 0.6rem 1.2rem;
+    font-size: 0.9rem;
+    min-width: 80px;
+    white-space: nowrap;
+  }
+
+  /* Kill desktop-only left shifts that cause horizontal scroll */
+  .text,
+  .question-tabs { margin-left: 0 !important; }
+
+  /* Tabs: center + wrap */
+  .question-tabs {
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: .5rem .75rem;
+    margin-top: .5rem;
+  }
+
+  /* Progress timeline: align markers with new padding */
+  .progress-wrapper { padding-left: 1.25rem; }
+  .emoji-marker { left: -1.6rem; }
+
+  /* Search UX: hide long input, keep icon tappable; clamp dropdown width */
+  .nav-right input { display: none; }
+  .search-icon { pointer-events: auto; }
+  #searchDropdown { width: min(92vw, 340px); right: 0; }
+
+  /* Calm the background blobs on small screens to avoid clutter/paint */
+  body::before,
+  body::after,
+  .gradient-blob-1,
+  .gradient-blob-2 { display: none; }
+}
+
+/* ---------- Phones (≤768px) ---------- */
+@media (max-width: 768px) {
+  .top-header { padding: .5rem 1rem; height: 56px; }
+  .nav-title { font-size: 1.05rem; }
+
+  .journey-card p,
+  .task-row span { font-size: .95rem; }
+
+  .task-row { gap: .75rem; }
+  .task-row button { padding: 6px 12px; font-size: .85rem; }
+
+  .profile-card { padding: 1rem; }
+  .profile-name { font-size: 1rem; }
+  .profile-meta { font-size: .85rem; }
+
+  /* Ensure proper top spacing for mobile */
+  .journey-layout {
+    margin-top: 2.5rem;
+    padding-top: 1.5rem;
+  }
+  
+  .journey-card {
+    margin-top: 1.5rem;
+  }
+
+  /* Fix nav pills positioning on mobile */
+  .nav-pills {
+    margin: 6rem 0 2rem 0; /* Increased top margin to push buttons further down */
+    padding: 0.5rem;
+    flex-wrap: nowrap;
+    gap: 0.25rem;
+  }
+
+  /* Adjust nav pill buttons for mobile */
+  .nav-pill {
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+    min-width: 70px;
+    white-space: nowrap;
+  }
+
+  /* Timeline dots/line can be visually heavy on small phones */
+  .progress-wrapper { padding-left: .75rem; border-left-width: 2px; }
+  .emoji-marker { display: none; }
+}
+
+/* ---------- Small phones (≤480px) ---------- */
+@media (max-width: 480px) {
+  .journey-card { 
+    padding: 1rem; 
+    margin-top: 1.5rem;
+  }
+  .journey-card h2 { font-size: 1.15rem; }
+  .task { padding: .5rem .75rem; }
+
+  .nav-icons li { width: 44px; height: 44px; border-radius: 12px; }
+  .nav-label { display: none; } /* hover labels don't help on touch */
+
+  /* Additional top spacing for small phones */
+  .journey-layout {
+    margin-top: 3rem;
+    padding-top: 2rem;
+  }
+
+  /* Fix nav pills positioning on small phones */
+  .nav-pills {
+    margin: 7rem 0 2rem 0; /* Maximum top margin for small phones */
+    padding: 0.4rem;
+    flex-wrap: nowrap;
+    gap: 0.2rem;
+  }
+
+  /* Adjust nav pill buttons for small phones */
+  .nav-pill {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.8rem;
+    min-width: 60px;
+    white-space: nowrap;
+  }
+}
+
+/* =========================
+   MOBILE NAVIGATION STYLES
+   ========================= */
+
+/* Hamburger Menu */
+.hamburger-menu {
+  display: none;
+  flex-direction: column;
+  gap: 4px;
+  background: transparent;
+  border: 0;
+  padding: .25rem;
+  cursor: pointer;
+  position: relative;
+  z-index: 100;
+}
+
+.hamburger-menu span {
+  width: 22px;
+  height: 2px;
+  background: #111;
+  display: block;
+  transition: all 0.3s ease;
+}
+
+.hamburger-menu.active span:nth-child(1) {
+  transform: rotate(45deg) translate(5px, 5px);
+}
+
+.hamburger-menu.active span:nth-child(2) {
+  opacity: 0;
+}
+
+.hamburger-menu.active span:nth-child(3) {
+  transform: rotate(-45deg) translate(7px, -6px);
+}
+
+/* Nav Left Container */
+.nav-left {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.nav-globe {
+  font-size: 1.2rem;
+}
+
+/* Sidebar Backdrop */
+.sidebar-backdrop {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.sidebar-backdrop.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Notification Backdrop */
+.notification-backdrop {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.3);
+  z-index: 998;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.notification-backdrop.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* =========================
+   FIX: mobile left-rail + clipped tabs
+   ========================= */
+
+/* --- MOBILE FIXES (≤1024px) --- */
+@media (max-width: 1024px) {
+  /* 1) Make the hamburger visible and clickable */
+  .hamburger-menu {
+    display: flex !important;
+    visibility: visible !important;
+    z-index: 1101;              /* above sidebar/backdrops */
+  }
+
+  /* 2) Keep the main left rail off-canvas by default */
+  .sidebar {
+    transform: translateX(-100%);
+    transition: transform .25s ease;
+    z-index: 1100;              /* below header, above content */
+  }
+  .sidebar.mobile-open { transform: translateX(0); }
+
+  /* 3) Hide the SECONDARY fixed nav on mobile (this is the thing you see "sticking out") */
+  .sub-sidebar { 
+    display: none !important;
+  }
+
+  /* 4) Content should not reserve desktop side space */
+  .content {
+    margin-left: 0 !important;
+    width: 100% !important;
+    padding: 1rem 1rem 2rem;
+  }
+
+  /* 5) Header spacer so the top tabs aren't clipped under sticky header */
+  :root { --header-h: 60px; }   /* adjust if your header differs */
+  .section-header-background,
+  .section-header-inline,
+  .tabs,
+  .question-tabs {
+    margin-top: calc(var(--header-h) + 8px) !important;
+  }
+
+  /* 6) Kill desktop-only vw nudges that cause the weird left shift */
+  .name,
+  .unit-title,
+  .text,
+  .question-tabs {
+    margin-left: 0 !important;
+  }
+
+  /* Optional: keep search icon usable but hide long input */
+  .nav-right input { display: none; }
+  .search-icon { pointer-events: auto; }
+
+  /* Backdrop appears when sidebar opens */
+  .sidebar-backdrop { display: block; }
+  .sidebar-backdrop.active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  /* Make sure main content doesn't reserve left space */
+  .content,
+  .journey-layout,
+  .journey-card,
+  .section-header-background {
+    margin-left: 0 !important;
+    max-width: 100% !important;
+  }
+
+  /* 2) Give content a spacer under the sticky header so tabs aren’t cut */
+  :root { --header-h: 60px; }       /* adjust if your header is taller */
+  .top-header {
+    position: sticky;
+    top: 0;
+    z-index: 1002;                  /* stay above cards/sidebar */
+  }
+  /* Add safe top spacing for the first section and its tabs */
+  .section-header-background,
+  .section-header-inline,
+  .tabs,
+  .question-tabs {
+    margin-top: calc(var(--header-h) + 8px) !important;
+  }
+
+  /* Keep the tab row readable and centered on small screens */
+  .tabs,
+  .question-tabs {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: .5rem .75rem;
+  }
+
+  /* Avoid any horizontal scroll from wide containers */
+  html, body { overflow-x: hidden; }
+}
+
+/* --- Small phones --- */
+@media (max-width: 480px) {
+  /* Slightly tighter top spacer on very small devices */
+  :root { --header-h: 56px; }
+  .tabs .tab,
+  .question-tabs .tab {
+    padding: .45rem .9rem;
+    font-size: .95rem;
+  }
+}
+
+/* Ensure page never side-scrolls while we slide the sidebar */
+html, body { overflow-x: hidden; }
+
+/* --- HARD MOBILE OVERRIDES (≤1024px) --- */
+@media (max-width:1024px){
+  /* 1) Hide the 70px left rail by default (off-canvas, non-clickable) */
+  .sidebar{
+    position: fixed !important;
+    left: 0 !important;
+    top: 60px !important;
+    height: calc(100vh - 60px) !important;
+    transform: translateX(-120%) !important;   /* shove fully off screen */
+    pointer-events: none !important;           /* no stray taps */
+    visibility: hidden !important;             /* no paint "glow" */
+    z-index: 1100 !important;
+    transition: transform .25s ease;
+  }
+  /* When opened (via your JS), it slides in and becomes interactive */
+  .sidebar.mobile-open{
+    transform: translateX(0) !important;
+    pointer-events: auto !important;
+    visibility: visible !important;
+  }
+
+  /* 2) Nuke the secondary fixed nav that sits at left:70px */
+  .sub-sidebar{ display:none !important; }
+
+  /* 3) Don't reserve desktop side space on content */
+  .content{
+    margin-left:0 !important;
+    width:100% !important;
+    padding:1rem 1rem 2rem !important;
+  }
+
+  /* 4) Kill desktop-only vw nudges that cause the left shift */
+  .name, .unit-title, .text, .question-tabs{ margin-left:0 !important; }
+
+  /* 5) Tabs under a sticky header need breathing room */
+  :root{ --header-h:60px; }
+  .section-header-background,
+  .section-header-inline,
+  .tabs, .question-tabs{
+    margin-top: calc(var(--header-h) + 8px) !important;
+  }
+
+  /* 6) Show the hamburger above everything */
+  .hamburger-menu{
+    display:flex !important;
+    visibility:visible !important;
+    z-index: 1101 !important;
+  }
+
+  /* Optional: hide the long search input on small screens */
+  .nav-right input{ display:none !important; }
+}
 
   
