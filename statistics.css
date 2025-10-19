@@ -274,8 +274,10 @@
     margin-top: 0; /* Try 0.25rem if you want it tighter */
     border-radius: 8px;
     margin-bottom: 2rem;
-    width: 74vw;
+    width: 100%;
+    max-width: 350px; /* Match the max-width of schoolhouse-card */
     border-left: 5px solid #00bfff; /* sky blue border */
+    margin-left: 0; /* Ensure left margin matches other cards */
   }
   
   .ai-summary h3 {
@@ -291,6 +293,7 @@
   flex-wrap: nowrap; /* or wrap if you want responsive stacking */
   gap: 1rem;
   margin-top: 1.5rem;
+  margin-left: 0; /* Ensure left margin matches ai-summary */
   overflow-x: auto;
   }
   
@@ -1082,4 +1085,180 @@
 
 .main-search:focus + .search-icon {
   color: #4facfe;
+}
+
+/* =========================
+   STATISTICS — RESPONSIVE PATCH
+   ========================= */
+
+/* keep pages from side-scrolling while we adjust layout */
+html, body { overflow-x: hidden; }
+
+/* large tablets / small laptops */
+@media (max-width: 1200px) {
+  .section-header-background.glassmorphic,
+  .section-header-background {
+    width: min(96vw, 1100px);
+    margin: 1rem auto;
+    height: auto;
+    border-radius: 20px;
+    padding: 2rem 1.5rem;
+  }
+}
+
+/* tablets and below (≤1024px) */
+@media (max-width: 1024px) {
+  /* 1) Hide the 70px rail on mobile; don't reserve space */
+  .sidebar { display: none !important; }
+
+  /* 2) Give content the full width and remove desktop nudges */
+  .content {
+    margin: 0 !important;
+    width: 100% !important;
+    max-width: 100%;
+    padding: 1rem 1rem 2rem !important;
+  }
+
+  /* 3) Headings/titles: clamp and remove vw shifts */
+  .unit-title,
+  .name { margin-left: 0 !important; }
+  .unit-title { font-size: clamp(1.8rem, 7vw, 3rem) !important; line-height: 1.2; }
+  .name       { font-size: clamp(1.6rem, 6.5vw, 3rem) !important; }
+
+  .text { margin-left: 0 !important; }
+
+  /* 4) Hero/section header: full-bleed strip on mobile */
+  .section-header-background {
+    width: 100% !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+    height: auto !important;
+    padding: 1.25rem 1rem 1rem !important;
+    text-align: center;
+  }
+
+  /* 5) AI summary and cards: go full width */
+  .ai-summary,
+  .cards,
+  .faq-wrapper { width: 100% !important; margin-left: 0 !important; }
+
+  .ai-summary { padding: 1rem; border-left-width: 3px; }
+
+  /* 6) Search UI: hide long input, keep icon; clamp dropdown width */
+  .nav-right input { display: none; }
+  .search-icon { pointer-events: auto; }
+  #searchDropdown { width: min(92vw, 340px) !important; right: 0 !important; }
+
+  /* 7) Grid: make it scrollable horizontally, not squished */
+  .grid-wrapper { overflow-x: auto; padding-bottom: 0.5rem; }
+  .grid-header  { grid-template-columns: 100px repeat(10, 30px); }
+  .row-label    { width: 100px; }
+
+  /* 8) Calm background blobs for small screens */
+  body::before,
+  body::after,
+  .gradient-blob-1,
+  .gradient-blob-2 { display: none; }
+
+  /* 9) Remove negative top pulls that clip under sticky header */
+  .question-tabs { margin-left: 0 !important; margin-top: 0 !important; }
+
+  /* 10) Fix nav pills positioning on tablets */
+  .nav-pills { 
+    margin: 3rem auto 2rem auto; /* Move buttons down on tablets */
+    flex-wrap: nowrap; /* Keep buttons on same line */
+    gap: 0.4rem; /* Slightly larger gap for tablets */
+  }
+
+  /* Adjust nav pill buttons for tablets */
+  .nav-pill {
+    padding: 0.7rem 1.4rem;
+    font-size: 0.95rem;
+    min-width: 85px;
+    white-space: nowrap;
+  }
+}
+
+/* phones (≤768px) */
+@media (max-width: 768px) {
+  .top-header { padding: .5rem 1rem; height: 56px; }
+
+  /* Wrap & center pills/tabs nicely */
+  .nav-pills { 
+    margin: 4rem auto 2rem auto; /* Move buttons down significantly */
+    flex-wrap: nowrap; /* Keep buttons on same line */
+    gap: 0.3rem; /* Reduce gap for better fit */
+  }
+  .question-tabs { flex-wrap: wrap; justify-content: center; gap: .5rem .75rem; }
+
+  /* Adjust nav pill buttons for mobile */
+  .nav-pill {
+    padding: 0.6rem 1.2rem;
+    font-size: 0.9rem;
+    min-width: 80px;
+    white-space: nowrap;
+  }
+
+  /* Cards: single column */
+  .cards { flex-wrap: wrap; overflow-x: visible; }
+  .schoolhouse-card { max-width: 100%; }
+
+  /* Grid: fewer columns with smaller squares for readability */
+  .grid-header { grid-template-columns: 90px repeat(5, 24px); }
+  .row-label   { width: 90px; font-size: .85rem; }
+  .row-grid    { display: grid; grid-template-columns: repeat(5, 24px); gap: 4px; }
+  .square      { width: 24px; height: 24px; margin: 0; }
+
+  /* FAQ spacing */
+  .accordion-toggle { padding: .75rem 0; }
+}
+
+/* small phones (≤480px) */
+@media (max-width: 480px) {
+  .unit-title { font-size: 1.6rem !important; }
+  .name       { font-size: 1.6rem !important; }
+  .ai-summary p { font-size: .95rem; }
+
+  .nav-pill { 
+    padding: .55rem .95rem; 
+    font-size: .9rem; 
+    min-width: 70px;
+    white-space: nowrap;
+  }
+
+  /* Fix nav pills positioning on small phones */
+  .nav-pills { 
+    margin: 5rem auto 2rem auto; /* Even more top margin for small phones */
+    flex-wrap: nowrap; /* Keep buttons on same line */
+    gap: 0.2rem; /* Smaller gap for small phones */
+  }
+
+  .grid-header { grid-template-columns: 80px repeat(4, 22px); }
+  .row-label   { width: 80px; font-size: .8rem; }
+  .row-grid    { grid-template-columns: repeat(4, 22px); }
+  .square      { width: 22px; height: 22px; }
+}
+
+/* =========================
+   ALIGN "PERFORMANCE SUMMARY" WITH CARDS ABOVE
+   ========================= */
+
+/* Align "Performance Summary" with the cards above */
+.faq-wrapper{
+  /* match .content */
+  max-width: 1200px;
+  margin: 2rem auto;         /* center it like .content */
+  padding: 0 2rem;            /* same side padding as .content */
+  width: 100% !important;     /* override older vw width */
+}
+
+/* kill old desktop offsets that push it right */
+.faq-wrapper{ margin-left: 0 !important; }
+
+/* tablets/phones: keep the same rhythm as your mobile .content padding */
+@media (max-width: 1024px){
+  .faq-wrapper{
+    margin: 1.25rem auto 2rem;
+    padding: 0 1rem;          /* .content uses ~1rem on mobile */
+  }
 }
