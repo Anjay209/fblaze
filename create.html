@@ -3545,13 +3545,19 @@ button[onclick="generateQuestions()"]:hover {
 
 </style>
 
-  <link rel="stylesheet" href="responsive.css" />
 </head>
 <body>
 
   <!-- Top Nav -->
   <div class="top-header">
-    <div class="nav-left">🌐</div>
+    <div class="nav-left">
+      <button class="hamburger-menu" id="hamburgerMenu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+      🌐
+    </div>
      <div class="nav-title"><div class="nav-pills">
     <a class="nav-pill" href="Public/Competitions/competition.html">Your Journey</a>
     <a class="nav-pill active" href="/practice.html">Practice Hub</a>
@@ -3593,7 +3599,7 @@ button[onclick="generateQuestions()"]:hover {
      
   </div>
 
-    <aside class="sidebar">
+    <aside class="sidebar" id="sidebar">
       <div class="logo">CQ</div>
       <ul class="nav-icons">
   <li>
@@ -3697,7 +3703,7 @@ button[onclick="generateQuestions()"]:hover {
 
     <div class="exam-summary-container">
         <!-- Exam Creation -->
-        <div class="create-exam-card" style="margin-left: 0px; width: 1000px;">
+        <div class="create-exam-card">
           <h2>Create your Practice</h2>
           <p>We’ll generate an exam based on what you want to practice</p>
           <div class="exam-buttons">
@@ -3708,7 +3714,7 @@ button[onclick="generateQuestions()"]:hover {
         </div>
       
         <!-- Score + Breakdown -->
-        <div class="performance-section" style="margin-left: -1100px; width: 50vw;">
+        <div class="performance-section">
           <div class="performance-summary">
             <div class="score-ring">
               <svg viewBox="0 0 36 36">
@@ -12416,6 +12422,23 @@ console.log('🎯 Modal reset setup complete. Try closing the modal now!');
   
   
   
+  
+  <!-- Mobile Backdrops -->
+  <div id="sidebarBackdrop" class="sidebar-backdrop"></div>
+  
+  <!-- Mobile sidebar functionality -->
+  <script>
+  (() => {
+    const sidebar = document.getElementById('sidebar');
+    const hamburger = document.getElementById('hamburgerMenu');
+    const backdrop = document.getElementById('sidebarBackdrop');
+    const open = () => { sidebar?.classList.add('mobile-open'); backdrop?.classList.add('active'); hamburger?.classList.add('active'); };
+    const close = () => { sidebar?.classList.remove('mobile-open'); backdrop?.classList.remove('active'); hamburger?.classList.remove('active'); };
+    hamburger?.addEventListener('click', () => sidebar?.classList.contains('mobile-open') ? close() : open());
+    backdrop?.addEventListener('click', close);
+    window.addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
+  })();
+  </script>
   
 </body>
 </html> 

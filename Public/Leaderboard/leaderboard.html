@@ -13,7 +13,14 @@
 
   <!-- Top Nav -->
   <div class="top-header">
-    <div class="nav-left">🌐</div>
+    <div class="nav-left">
+      <button class="hamburger-menu" id="hamburgerMenu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+      🌐
+    </div>
     <div class="nav-title">Dashboard <span class="new-badge">(New!)</span></div>
     <div class="nav-right">
   <input type="text" id="navbarSearch" placeholder="Search CertQuest..." />
@@ -24,7 +31,7 @@
 
   <div class="main-layout">
     <!-- Sidebar -->
-    <aside class="sidebar">
+    <aside class="sidebar" id="sidebar">
       <div class="logo">CQ</div>
       <ul class="nav-icons">
   <li>
@@ -220,6 +227,10 @@
         </div>
       </section>
   </div>
+  
+  <!-- Mobile Backdrops -->
+  <div id="sidebarBackdrop" class="sidebar-backdrop"></div>
+  
   <canvas id="confetti-canvas"></canvas>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/meilisearch@latest/dist/bundles/meilisearch.umd.min.js"></script>
@@ -436,7 +447,39 @@ function openNotificationsOnHome() {
     window.location.href = 'public/home.html';
 }
 
-    
+// Mobile sidebar functionality
+(function () {
+  const sidebar = document.getElementById('sidebar');
+  const hamburger = document.getElementById('hamburgerMenu');
+  const sidebarBackdrop = document.getElementById('sidebarBackdrop');
+
+  function openSidebar() {
+    if (sidebar) sidebar.classList.add('mobile-open');
+    if (sidebarBackdrop) sidebarBackdrop.classList.add('active');
+    if (hamburger) hamburger.classList.add('active');
+  }
+
+  function closeSidebar() {
+    if (sidebar) sidebar.classList.remove('mobile-open');
+    if (sidebarBackdrop) sidebarBackdrop.classList.remove('active');
+    if (hamburger) hamburger.classList.remove('active');
+  }
+
+  if (hamburger) {
+    hamburger.addEventListener('click', () => {
+      const isOpen = sidebar && sidebar.classList.contains('mobile-open');
+      isOpen ? closeSidebar() : openSidebar();
+    });
+  }
+
+  if (sidebarBackdrop) {
+    sidebarBackdrop.addEventListener('click', closeSidebar);
+  }
+
+  window.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeSidebar();
+  });
+})();
 
   </script>
 

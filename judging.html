@@ -2139,7 +2139,14 @@ canvas {
 
   <!-- Top Nav -->
   <div class="top-header">
-    <div class="nav-left">🌐</div>
+    <div class="nav-left">
+      <button class="hamburger-menu" id="hamburgerMenu" aria-label="Open menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+      🌐
+    </div>
     <div class="nav-title"><div class="nav-pills">
     <a class="nav-pill" href="Public/Competitions/competition.html">Your Journey</a>
     <a class="nav-pill active" href="/practice.html">Practice Hub</a>
@@ -2181,7 +2188,7 @@ canvas {
 
   <div class="main-layout">
     <!-- Sidebar -->
-    <aside class="sidebar">
+    <aside class="sidebar" id="sidebar">
       <div class="logo">CQ</div>
       <ul class="nav-icons">
   <li>
@@ -5441,10 +5448,22 @@ function openNotificationsOnHome() {
 </script>
 
 
-
-
-
-
-
+  <!-- Mobile Backdrops -->
+  <div id="sidebarBackdrop" class="sidebar-backdrop"></div>
+  
+  <!-- Mobile sidebar functionality -->
+  <script>
+  (() => {
+    const sidebar  = document.getElementById('sidebar');
+    const burger   = document.getElementById('hamburgerMenu');
+    const backdrop = document.getElementById('sidebarBackdrop');
+    const open  = () => { sidebar?.classList.add('mobile-open'); backdrop?.classList.add('active'); burger?.classList.add('active'); };
+    const close = () => { sidebar?.classList.remove('mobile-open'); backdrop?.classList.remove('active'); burger?.classList.remove('active'); };
+    burger?.addEventListener('click', () => sidebar?.classList.contains('mobile-open') ? close() : open());
+    backdrop?.addEventListener('click', close);
+    window.addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
+  })();
+  </script>
+  
 </body>
 </html>

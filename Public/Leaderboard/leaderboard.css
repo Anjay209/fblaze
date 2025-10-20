@@ -301,3 +301,161 @@
   background: #f2f8fd;
   color: #0072ff;
 }
+
+/* =========================
+   LEADERBOARDS — RESPONSIVE
+   ========================= */
+
+/* Prevent sneaky side-scroll during animations & fixed rails */
+html, body { overflow-x: hidden; }
+
+/* Large tablets / small laptops */
+@media (max-width: 1200px) {
+  .title { font-size: clamp(2.2rem, 6vw, 5rem); }
+  .container { max-width: 1000px; }
+}
+
+/* Tablets and below (≤1024px) */
+@media (max-width: 1024px) {
+  /* Sidebar visibility is handled by mobile overrides below */
+
+  /* Header gets compact padding; keep search icon tappable */
+  .top-header { padding: .5rem 1rem; height: 56px; }
+  .nav-right input { display: none; }
+  .search-icon { pointer-events: auto; }
+
+  /* Keep the search dropdown inside the viewport */
+  #searchDropdown { width: min(92vw, 340px); right: 0; }
+
+  /* Give the main content full width with comfy edges */
+  .container {
+    max-width: 100%;
+    padding: 1rem 1rem 2rem;
+    text-align: center;
+  }
+
+  /* Big gradient title shouldn't overflow on phones */
+  .title { font-size: clamp(1.8rem, 8vw, 3rem); }
+
+  /* Tabs: center, allow wrapping */
+  .tabs {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: .5rem .75rem;
+    margin-bottom: 1.25rem;
+  }
+  .tabs button { padding: .55rem 1rem; }
+
+  /* Boards: single column first, auto-fit when space allows */
+  .leaderboards {
+    gap: 1rem;
+    justify-content: stretch;
+  }
+  .board {
+    flex: 1 1 320px;
+    width: 100%;
+    padding: 1rem;
+  }
+}
+
+/* Phones (≤768px) */
+@media (max-width: 768px) {
+  .subtitle { font-size: .95rem; }
+  .board h2 { font-size: 1.05rem; }
+  .board li { font-size: .95rem; padding: .5rem 0; }
+}
+
+/* Small phones (≤480px) */
+@media (max-width: 480px) {
+  .tabs button { padding: .45rem .85rem; font-size: .95rem; }
+  .footer { padding: .75rem; }
+}
+
+/* =========================
+   HAMBURGER MENU & MOBILE OVERRIDES
+   ========================= */
+
+/* Hamburger menu styles */
+.hamburger-menu {
+  display: none;
+  flex-direction: column;
+  gap: 4px;
+  background: transparent;
+  border: 0;
+  padding: .25rem;
+  cursor: pointer;
+  z-index: 1101;
+}
+
+.hamburger-menu span {
+  width: 22px;
+  height: 2px;
+  background: #111;
+  display: block;
+  transition: all 0.3s ease;
+}
+
+.hamburger-menu.active span:nth-child(1) {
+  transform: rotate(45deg) translate(5px, 5px);
+}
+
+.hamburger-menu.active span:nth-child(2) {
+  opacity: 0;
+}
+
+.hamburger-menu.active span:nth-child(3) {
+  transform: rotate(-45deg) translate(5px, -5px);
+}
+
+/* Sidebar backdrop */
+.sidebar-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1099;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+  pointer-events: none;
+}
+
+.sidebar-backdrop.active {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+/* --- HARD MOBILE OVERRIDES (≤1024px) --- */
+@media (max-width: 1024px) {
+  .sidebar {
+    position: fixed !important;
+    left: 0 !important;
+    top: 60px !important;
+    height: calc(100vh - 60px) !important;
+    transform: translateX(-120%) !important;
+    pointer-events: none !important;
+    visibility: hidden !important;
+    z-index: 1100 !important;
+    transition: transform .25s ease;
+  }
+  
+  .sidebar.mobile-open {
+    transform: translateX(0) !important;
+    pointer-events: auto !important;
+    visibility: visible !important;
+  }
+  
+  .hamburger-menu {
+    display: flex !important;
+    visibility: visible !important;
+    z-index: 1101 !important;
+  }
+  
+  .nav-right input {
+    display: none !important;
+  }
+}

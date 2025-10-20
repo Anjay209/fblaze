@@ -1501,3 +1501,285 @@
     margin: 2rem 0;
     text-align: center;
   }
+
+/* =========================
+   JUDGING — MOBILE/TABLET PATCH
+   ========================= */
+
+/* Hamburger menu base styles */
+.hamburger-menu {
+  display: none;
+  flex-direction: column;
+  gap: 4px;
+  background: transparent;
+  border: 0;
+  padding: .25rem;
+  cursor: pointer;
+  z-index: 1101;
+}
+
+.hamburger-menu span {
+  width: 22px;
+  height: 2px;
+  background: #111;
+  display: block;
+  transition: all 0.3s ease;
+}
+
+.hamburger-menu.active span:nth-child(1) {
+  transform: rotate(45deg) translate(5px, 5px);
+}
+
+.hamburger-menu.active span:nth-child(2) {
+  opacity: 0;
+}
+
+.hamburger-menu.active span:nth-child(3) {
+  transform: rotate(-45deg) translate(5px, -5px);
+}
+
+/* keep header above everything */
+.top-header { z-index: 1102 !important; }
+
+/* large tablets: soften sizes and center containers */
+@media (max-width: 1200px){
+  .unit-title { font-size: clamp(2rem, 6.5vw, 3rem); }
+  .name       { font-size: clamp(1.8rem, 6vw, 3rem); }
+}
+
+/* tablets & phones (≤1024px) */
+@media (max-width: 1024px){
+
+  /* Show hamburger menu on mobile */
+  .hamburger-menu {
+    display: flex !important;
+    visibility: visible !important;
+  }
+
+  /* 1) Sidebar becomes off-canvas; toggled by .mobile-open */
+  .sidebar{
+    position: fixed !important;
+    top: 60px !important;
+    left: 0 !important;
+    height: calc(100vh - 60px) !important;
+    transform: translateX(-120%) !important;
+    transition: transform .25s ease;
+    z-index: 1100 !important;
+  }
+  .sidebar.mobile-open{ transform: translateX(0) !important; }
+
+  /* Hide any secondary rail on mobile */
+  .sub-sidebar{ display: none !important; }
+
+  /* Hide notification panels on mobile */
+  .comment-panel1, .comment-panel, #commentPanel1, #commentPanel { 
+    display: none !important; 
+  }
+
+  /* Optional: dim background when drawer open */
+  .sidebar-backdrop{
+    display:none; position:fixed; inset:0; background:rgba(0,0,0,.45);
+    z-index:1099; opacity:0; transition:opacity .25s ease; pointer-events:none;
+  }
+  .sidebar-backdrop.active{ display:block; opacity:1; pointer-events:auto; }
+
+  /* 2) Content uses full width; remove desktop offsets */
+  .content{
+    margin: 0 !important;
+    width: 100% !important;
+    max-width: 100%;
+    padding: 1rem 1rem 2rem !important;
+  }
+
+  /* 3) Kill vw pushes + negative margins on headings/tabs */
+  .name, .unit-title, .text{ margin-left: 0 !important; }
+  .question-tabs{
+    margin-left: 0 !important;
+    width: 100% !important;
+    justify-content: center; align-items: center;
+    gap: .5rem .75rem; flex-wrap: nowrap;
+  }
+  
+  .question-tabs.glassmorphic .tab {
+    padding: 0.6rem 1.2rem !important;
+    font-size: 0.9rem !important;
+    min-width: 80px !important;
+    white-space: nowrap !important;
+  }
+
+  /* 4) Grids/cards: stop oversizing and left shifting */
+  .training-grid{
+    grid-template-columns: repeat(auto-fit, minmax(260px,1fr));
+    width: 100% !important;
+    margin-left: 0 !important;
+    gap: 1rem;
+  }
+  .training-card{ max-width: 100%; }
+
+  /* 5) Summary/sections align with content */
+  .ai-summary{ width: 100% !important; max-width: 100% !important; }
+  .exam-summary-container{
+    max-width: 100% !important;
+    margin: 0 auto !important;
+  }
+
+  /* 6) Start a Challenge card mobile positioning */
+  .involvement-card {
+    max-width: 100% !important;
+    width: 100% !important;
+    margin-top: 2rem !important;
+    margin-bottom: 2rem !important;
+    padding: 1.5rem 1rem !important;
+  }
+
+  /* 7) Plus card width alignment */
+  .plus-card {
+    max-width: 100% !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 200px !important;
+  }
+
+  /* 8) Study goal modal mobile optimization */
+  .goal-modal {
+    width: 95vw !important;
+    max-width: 400px !important;
+    max-height: 90vh !important;
+    overflow-y: auto !important;
+    padding: 1.5rem 1rem !important;
+    margin: 1rem !important;
+    z-index: 1002 !important;
+    pointer-events: auto !important;
+  }
+  
+  .goal-modal .modal-content {
+    gap: 1rem !important;
+  }
+  
+  .goal-modal h2 {
+    font-size: 1.5rem !important;
+    text-align: center !important;
+    margin-bottom: 1rem !important;
+  }
+  
+  .goal-choices {
+    flex-direction: column !important;
+    gap: 0.75rem !important;
+  }
+  
+  .goal-card {
+    padding: 1rem !important;
+    font-size: 1rem !important;
+    min-height: 60px !important;
+  }
+  
+  .goal-modal input[type="text"] {
+    font-size: 1rem !important;
+    padding: 0.75rem !important;
+  }
+  
+  .goal-modal button {
+    padding: 0.75rem 1.5rem !important;
+    font-size: 1rem !important;
+    pointer-events: auto !important;
+    z-index: 1003 !important;
+    position: relative !important;
+    min-height: 44px !important;
+    touch-action: manipulation !important;
+  }
+
+  /* 6) Search: hide long input, keep icon tappable */
+  .nav-right input{ display: none; }
+  #searchDropdown{ width: min(92vw, 340px) !important; right: 0 !important; }
+
+  /* 7) Avoid background jank on small screens */
+  html, body { overflow-x: hidden; }
+
+  /* 8) Nav pills positioning for mobile */
+  .nav-pills {
+    margin-top: 3rem !important;
+    margin-bottom: 1rem !important;
+    justify-content: center !important;
+    flex-wrap: nowrap !important;
+    gap: 0.5rem !important;
+  }
+  
+  .nav-pill {
+    padding: 0.6rem 1.2rem !important;
+    font-size: 0.9rem !important;
+    min-width: 80px !important;
+    white-space: nowrap !important;
+  }
+}
+
+/* phones (≤768px) — tighten spacing */
+@media (max-width: 768px){
+  .top-header{ padding: .5rem 1rem; height: 56px; }
+  .ai-summary{ padding: 1rem; border-left-width: 3px; }
+  .training-card{ padding: 1.25rem; }
+  
+  /* Nav pills for small phones */
+  .nav-pills {
+    margin-top: 2.5rem !important;
+    gap: 0.3rem !important;
+  }
+  
+  .nav-pill {
+    padding: 0.5rem 1rem !important;
+    font-size: 0.85rem !important;
+    min-width: 70px !important;
+  }
+  
+  /* Question tabs for small phones */
+  .question-tabs.glassmorphic .tab {
+    padding: 0.5rem 1rem !important;
+    font-size: 0.85rem !important;
+    min-width: 70px !important;
+  }
+  
+  /* Start a Challenge card for small phones */
+  .involvement-card {
+    margin-top: 1.5rem !important;
+    padding: 1.25rem 0.75rem !important;
+  }
+  
+  /* Plus card for small phones */
+  .plus-card {
+    min-height: 180px !important;
+    font-size: 2.5rem !important;
+  }
+  
+  /* Study goal modal for small phones */
+  .goal-modal {
+    width: 98vw !important;
+    padding: 1rem 0.75rem !important;
+    margin: 0.5rem !important;
+    z-index: 1002 !important;
+    pointer-events: auto !important;
+  }
+  
+  .goal-modal h2 {
+    font-size: 1.25rem !important;
+  }
+  
+  .goal-card {
+    padding: 0.75rem !important;
+    font-size: 0.9rem !important;
+    min-height: 50px !important;
+  }
+  
+  .goal-modal input[type="text"] {
+    font-size: 0.9rem !important;
+    padding: 0.6rem !important;
+  }
+  
+  .goal-modal button {
+    padding: 0.6rem 1.25rem !important;
+    font-size: 0.9rem !important;
+    pointer-events: auto !important;
+    z-index: 1003 !important;
+    position: relative !important;
+    min-height: 44px !important;
+    touch-action: manipulation !important;
+  }
+}

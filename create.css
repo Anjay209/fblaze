@@ -2868,5 +2868,377 @@ button[onclick="generateQuestions()"]:hover {
     accent-color: #3b82f6;
 }
 
- 
+/* =========================
+   CREATE — RESPONSIVE PATCH
+   ========================= */
+
+/* Hamburger menu base styles */
+.hamburger-menu {
+  display: none;
+  flex-direction: column;
+  gap: 4px;
+  background: transparent;
+  border: 0;
+  padding: .25rem;
+  cursor: pointer;
+  z-index: 1101;
+}
+
+.hamburger-menu span {
+  width: 22px;
+  height: 2px;
+  background: #111;
+  display: block;
+  transition: all 0.3s ease;
+}
+
+.hamburger-menu.active span:nth-child(1) {
+  transform: rotate(45deg) translate(5px, 5px);
+}
+
+.hamburger-menu.active span:nth-child(2) {
+  opacity: 0;
+}
+
+.hamburger-menu.active span:nth-child(3) {
+  transform: rotate(-45deg) translate(5px, -5px);
+}
+
+/* keep pages from side-scrolling */
+html, body { overflow-x: hidden; }
+
+/* Large tablets / small laptops */
+@media (max-width: 1200px) {
+  .section-header-background.glassmorphic,
+  .section-header-background {
+    width: min(96vw, 1100px);
+    margin: 1rem auto;
+    height: auto;
+    border-radius: 20px;
+    padding: 2rem 1.5rem;
+  }
+}
+
+/* Tablets and below (≤1024px) */
+@media (max-width: 1024px) {
+  /* Show hamburger, keep it above everything */
+  .hamburger-menu{
+    display: flex !important;
+    visibility: visible !important;
+    z-index: 1101 !important;
+    gap: 4px; background: transparent; border: 0; padding: .25rem;
+  }
+  .hamburger-menu span{ width:22px; height:2px; background:#111; display:block; transition:.3s; }
+  .hamburger-menu.active span:nth-child(1){ transform:rotate(45deg) translate(5px,5px); }
+  .hamburger-menu.active span:nth-child(2){ opacity:0; }
+  .hamburger-menu.active span:nth-child(3){ transform:rotate(-45deg) translate(5px,-5px); }
+
+  /* Slide-in left rail (off-canvas by default) */
+  .sidebar{
+    position: fixed !important;
+    top: 60px !important;
+    left: 0 !important;
+    height: calc(100vh - 60px) !important;
+    transform: translateX(-120%) !important;
+    transition: transform .25s ease;
+    z-index: 1100 !important;
+    pointer-events: none; visibility: hidden;
+  }
+  .sidebar.mobile-open{
+    transform: translateX(0) !important;
+    pointer-events: auto; visibility: visible;
+  }
+  /* hide any secondary rail if present */
+  .sub-sidebar{ display: none !important; }
+
+  /* Content uses full width; remove desktop nudges */
+  .content{
+    margin: 0 !important;
+    width: 100% !important;
+    max-width: 100%;
+    padding: 1rem 1rem 2rem !important;
+  }
+
+  /* Hero/header blocks become full-bleed, centered */
+  .section-header-background{
+    width: 100% !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+    height: auto !important;
+    padding: 1.25rem 1rem 1rem !important;
+    text-align: center;
+  }
+  .section-header-background.glassmorphic{
+    width: 100% !important;
+    margin: 1rem 0 !important;
+    margin-left: 0 !important;
+    height: auto !important;
+  }
+
+  /* Clamp big headings; remove left pushes */
+  .unit-title{ font-size: clamp(1.9rem, 6.8vw, 3rem) !important; margin: .25rem 0 !important; }
+  .name{ font-size: clamp(1.8rem, 6.5vw, 3rem) !important; margin-left: 0 !important; }
+  .text{ margin-left: 0 !important; }
+
+  /* Tabs center & wrap; kill negative/extra margins */
+  .question-tabs{
+    margin-left: 0 !important;
+    margin-top: 0 !important;
+    width: 100% !important;
+    justify-content: center; align-items: center;
+    gap: .5rem .75rem; flex-wrap: wrap;
+  }
+
+  /* Search: hide long input, keep the icon tappable; clamp dropdown */
+  .nav-right input{ display: none; }
+  .search-icon{ pointer-events: auto; }
+  #searchDropdown{ width: min(92vw, 340px) !important; right: 0 !important; }
+
+  /* Cards & AI summary line up and fill width */
+  .cards{ gap: 1rem; justify-content: center; }
+  .schoolhouse-card{ max-width: 100%; }
+  .ai-summary{
+    width: 100% !important;
+    max-width: 100% !important;
+    margin-left: 0 !important;
+    padding: 1rem !important;
+    border-left-width: 3px;
+  }
+
+  /* Exam summary container should not be offset */
+  .exam-summary-container{
+    max-width: 100% !important;
+    margin: 0 auto !important;
+    padding: 0 1rem !important;
+    margin-left: 0 !important;
+  }
+
+  /* Nix extreme offsets that broke layout */
+  .performance-section{
+    margin: 1rem 0 0 0 !important;
+    padding: 1rem !important;
+    border-radius: 12px; border: 1px solid #e2e8f0;
+    background: #fff;
+  }
+  .performance-summary{ margin-left: 0 !important; gap: 1rem; }
+
+  /* Buttons should be sane */
+  .training-btn{ margin-top: 1rem !important; z-index: 1 !important; }
+
+  /* Modals scale to viewport */
+  .modal-content{ width: 92vw !important; max-width: 560px !important; }
+}
+
+/* Phones (≤768px) */
+@media (max-width: 768px){
+  .top-header{ padding: .5rem 1rem; height: 56px; }
+  .cards{ flex-wrap: wrap; }
+  .schoolhouse-card{ max-width: 100%; }
+  .question-tabs.glassmorphic .tab{ padding: .6rem 1.2rem; }
   
+  /* Ensure hamburger is visible on phones */
+  .hamburger-menu {
+    display: flex !important;
+    visibility: visible !important;
+  }
+}
+
+/* Small phones (≤480px) */
+@media (max-width: 480px){
+  .unit-title, .name{ font-size: 1.6rem !important; }
+  .ai-summary p{ font-size: .95rem; }
+  .question-tabs.glassmorphic .tab{ padding: .5rem 1rem; }
+  
+  /* Nav pills for small phones */
+  .nav-pills {
+    margin-top: 2.5rem !important;
+    gap: 0.3rem !important;
+  }
+  
+  .nav-pill {
+    padding: 0.5rem 1rem !important;
+    font-size: 0.85rem !important;
+    min-width: 70px !important;
+  }
+}
+
+/* Backdrop for slide-in sidebar (if not already present) */
+.sidebar-backdrop{
+  display:none; position:fixed; inset:0; background:rgba(0,0,0,.45);
+  z-index:1099; opacity:0; transition:opacity .25s ease; pointer-events:none;
+}
+.sidebar-backdrop.active{ display:block; opacity:1; pointer-events:auto; }
+
+/* ===== CREATE — LAYOUT FIX & RESPONSIVE PATCH ===== */
+
+/* 1) Use a sane content container */
+.content{
+  margin: 0 auto !important;
+  max-width: 1200px;
+  width: 100%;
+  padding: 1rem 1rem 2rem;
+}
+
+/* 2) Align exam summary with the rest of the content */
+.exam-summary-container{
+  margin: 0 auto !important;
+  max-width: 1200px;
+  padding: 0 1rem;
+}
+
+/* 3) Remove destructive offsets */
+.performance-section,
+.performance-summary{ margin-left: 0 !important; }
+.training-btn{
+  margin-top: 1rem !important;
+  z-index: 1 !important;
+}
+
+/* 4) Hero/header: fluid size, no left shove */
+.section-header-background{
+  width: 100% !important;
+  margin: 0;
+  padding: 2rem 1rem;
+  text-align: center;
+}
+.section-header-background.glassmorphic{
+  width: 100% !important;
+  max-width: 1200px;
+  margin: 1rem auto !important;
+  height: auto !important;
+  padding: 2rem 1rem !important;
+  border-radius: 20px !important;
+}
+
+/* 5) Big headings clamp instead of overflowing */
+.unit-title{ font-size: clamp(1.9rem, 6.8vw, 3rem); margin: .25rem 0; }
+.name{       font-size: clamp(1.8rem, 6.5vw, 3rem); }
+
+/* 6) Tabs: center & wrap; kill vw/negative nudges */
+.question-tabs{
+  margin: .5rem auto 0 !important;
+  width: 100% !important;
+  justify-content: center;
+  align-items: center;
+  gap: .5rem .75rem;
+  flex-wrap: wrap;
+}
+.question-tabs.glassmorphic{ margin: .5rem auto !important; }
+
+/* 7) Keep sticky header above, and ensure content clears it */
+.top-header{ z-index: 1102 !important; }
+.main-layout{ margin-top: 60px; }
+
+/* 8) Card widths */
+.individual-quiz-card,
+.create-exam-card,
+.performance-section{ max-width: 1100px; margin: 0 auto 1rem; }
+
+/* 9) Mobile/tablet: off-canvas sidebar + calmer visuals */
+@media (max-width: 1024px){
+  /* slide-in rail; opens when you toggle .mobile-open via JS */
+  .sidebar{
+    position: fixed !important;
+    top: 60px !important;
+    left: 0 !important;
+    height: calc(100vh - 60px) !important;
+    transform: translateX(-120%) !important;
+    transition: transform .25s ease;
+    z-index: 1100 !important;
+  }
+  .sidebar.mobile-open{ transform: translateX(0) !important; }
+  .sub-sidebar{ display: none !important; }
+
+  /* content uses full width on mobile */
+  .content{ max-width: 100%; }
+
+  /* hide long search box, clamp dropdown */
+  .nav-right input{ display: none; }
+  #searchDropdown{ width: min(92vw, 340px); right: 0; }
+
+  /* disable background blobs to prevent overflow/jank */
+  body::before, body::after, .gradient-blob-1, .gradient-blob-2{ display: none !important; }
+}
+
+/* =========================
+   CREATE — STABILIZE LAYOUT
+   (drop this at the very end)
+   ========================= */
+
+/* 0) Keep the header above everything */
+.top-header { z-index: 1102 !important; }
+
+/* 1) Content should be centered, not shoved left/right */
+.content,
+.exam-summary-container {
+  margin: 0 auto !important;
+  max-width: 1200px;
+  width: 100%;
+  padding: 1rem 1rem 2rem;
+}
+
+/* 2) Remove destructive offsets */
+.performance-section,
+.performance-summary { margin-left: 0 !important; }
+
+.training-btn {               /* was margin-top: 5000px */
+  margin-top: 1rem !important;
+  z-index: 1 !important;
+}
+
+/* 3) Hero/header must be fluid, not fixed height or offset */
+.section-header-background {
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 2rem 1rem !important;
+  text-align: center;
+}
+.section-header-background.glassmorphic {         /* was height:50vh; margin-left:90px */
+  width: 100% !important;
+  max-width: 1200px;
+  height: auto !important;
+  margin: 1rem auto !important;
+  border-radius: 20px !important;
+  padding: 2rem 1rem !important;
+}
+
+/* 4) Tabs: stop pushing with vw and negative margins */
+.question-tabs {                                   /* was margin-left:23.5vw; margin-top:-35px */
+  margin: .5rem auto 0 !important;
+  width: 100% !important;
+  justify-content: center !important;
+  align-items: center;
+  gap: .5rem .75rem;
+  flex-wrap: wrap;
+}
+
+/* 5) Big headings clamp on small screens */
+.unit-title { font-size: clamp(1.9rem, 6.8vw, 3rem) !important; margin: .25rem 0 !important; }
+.name       { font-size: clamp(1.8rem, 6.5vw, 3rem) !important; }
+
+/* 6) Mobile: off-canvas sidebar + calmer visuals */
+@media (max-width: 1024px){
+  /* full-width content; clamp search dropdown */
+  .content, .exam-summary-container { max-width: 100%; }
+  .nav-right input{ display: none; }
+  #searchDropdown{ width: min(92vw, 340px) !important; right: 0 !important; }
+
+  /* disable background blobs that cause overflow/jank */
+  body::before, body::after, .gradient-blob-1, .gradient-blob-2 { display: none !important; }
+
+  /* Nav pills positioning for mobile */
+  .nav-pills {
+    margin-top: 3rem !important;
+    margin-bottom: 1rem !important;
+    justify-content: center !important;
+    flex-wrap: nowrap !important;
+    gap: 0.5rem !important;
+  }
+  
+  .nav-pill {
+    padding: 0.6rem 1.2rem !important;
+    font-size: 0.9rem !important;
+    min-width: 80px !important;
+    white-space: nowrap !important;
+  }
+}
