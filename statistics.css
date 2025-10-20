@@ -1108,8 +1108,8 @@ html, body { overflow-x: hidden; }
 
 /* tablets and below (≤1024px) */
 @media (max-width: 1024px) {
-  /* 1) Hide the 70px rail on mobile; don't reserve space */
-  .sidebar { display: none !important; }
+  /* 1) Hide the 70px rail on mobile; don't reserve space - REMOVED: now using slide-in pattern */
+  /* .sidebar { display: none !important; } */
 
   /* 2) Give content the full width and remove desktop nudges */
   .content {
@@ -1138,11 +1138,16 @@ html, body { overflow-x: hidden; }
   }
 
   /* 5) AI summary and cards: go full width */
-  .ai-summary,
   .cards,
   .faq-wrapper { width: 100% !important; margin-left: 0 !important; }
 
-  .ai-summary { padding: 1rem; border-left-width: 3px; }
+  .ai-summary { 
+    padding: 1rem; 
+    border-left-width: 3px; 
+    width: 100% !important; 
+    margin-left: 0 !important;
+    max-width: 100% !important; /* Match schoolhouse-card behavior */
+  }
 
   /* 6) Search UI: hide long input, keep icon; clamp dropdown width */
   .nav-right input { display: none; }
@@ -1202,6 +1207,9 @@ html, body { overflow-x: hidden; }
   /* Cards: single column */
   .cards { flex-wrap: wrap; overflow-x: visible; }
   .schoolhouse-card { max-width: 100%; }
+  
+  /* AI summary: match schoolhouse-card width behavior */
+  .ai-summary { max-width: 100% !important; }
 
   /* Grid: fewer columns with smaller squares for readability */
   .grid-header { grid-template-columns: 90px repeat(5, 24px); }
@@ -1252,8 +1260,12 @@ html, body { overflow-x: hidden; }
   width: 100% !important;     /* override older vw width */
 }
 
-/* kill old desktop offsets that push it right */
-.faq-wrapper{ margin-left: 0 !important; }
+/* Desktop: add left margin to match content positioning */
+@media (min-width: 1025px) {
+  .faq-wrapper {
+    margin-left: 15rem;       /* match .content margin-left */
+  }
+}
 
 /* tablets/phones: keep the same rhythm as your mobile .content padding */
 @media (max-width: 1024px){
@@ -1262,3 +1274,64 @@ html, body { overflow-x: hidden; }
     padding: 0 1rem;          /* .content uses ~1rem on mobile */
   }
 }
+
+/* ===== HAMBURGER + SLIDE-IN SIDEBAR (≤1024px) ===== */
+@media (max-width:1024px){
+
+  /* show the hamburger and keep it above everything */
+  .hamburger-menu{
+    display: flex !important;
+    flex-direction: column !important; /* Stack spans vertically */
+    visibility: visible !important;
+    z-index: 1101 !important; /* higher than sidebar/backdrops */
+    gap: 4px;
+    background: transparent;
+    border: 0;
+    padding: .25rem;
+    cursor: pointer;
+  }
+  .hamburger-menu span{
+    width: 22px; height: 2px; background:#111; display:block; transition:.3s;
+  }
+
+  /* DO NOT hide the sidebar; keep it off-canvas by default */
+  .sidebar{
+    position: fixed !important;
+    top: 60px !important;       /* same as sticky header height */
+    left: 0 !important;
+    height: calc(100vh - 60px) !important;
+    transform: translateX(-120%) !important;   /* fully off screen */
+    transition: transform .25s ease;
+    z-index: 1100 !important;
+    pointer-events: none;        /* non-clickable while hidden */
+    visibility: hidden;
+  }
+  /* when opened (JS toggles .mobile-open) */
+  .sidebar.mobile-open{
+    transform: translateX(0) !important;
+    pointer-events: auto;
+    visibility: visible;
+  }
+
+  /* if this page has a secondary fixed rail, hide it on mobile */
+  .sub-sidebar{ display:none !important; }
+
+  /* content should not reserve desktop side space */
+  .content{ margin-left:0 !important; width:100% !important; }
+
+  /* keep long search box hidden on mobile, magnifier tappable */
+  .nav-right input{ display:none; }
+  .search-icon{ pointer-events:auto; }
+}
+
+/* backdrop for slide-in */
+.sidebar-backdrop{
+  display:none; position:fixed; inset:0; background:rgba(0,0,0,.45);
+  z-index:1099; opacity:0; transition:opacity .25s ease; pointer-events:none;
+}
+.sidebar-backdrop.active{ display:block; opacity:1; pointer-events:auto; }
+
+/* pretty X animation (optional) */
+.hamburger-menu.active span:nth-child(1){ transform:rotate(45deg) translate(5px,5px); }
+.hamburger-menu.active span:nth-child(2){ opacity:0; }
+.hamburger-menu.active span:nth-child(3){ transform:rotate(-45deg) translate(7px,-6px); }

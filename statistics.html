@@ -17,7 +17,14 @@
 
   <!-- Top Nav -->
   <div class="top-header">
-    <div class="nav-left">🌐</div>
+    <div class="nav-left">
+      <button class="hamburger-menu" id="hamburgerMenu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+      <span class="nav-globe">🌐</span>
+    </div>
     <div class="nav-title"><div class="nav-pills">
     <a class="nav-pill" href="Public/Competitions/competition.html">Your Journey</a>
     <a class="nav-pill" href="/practice.html">Practice Hub</a>
@@ -42,7 +49,7 @@
 
   <div class="main-layout">
     <!-- Sidebar -->
-     <aside class="sidebar">
+     <aside class="sidebar" id="sidebar">
       <div class="logo">CQ</div>
       <ul class="nav-icons">
   <li>
@@ -1321,7 +1328,35 @@ async function showCompetencyOverview() {
     `;
   }
 }
+
+// Mobile sidebar functionality
+(function(){
+  const sidebar = document.getElementById('sidebar');
+  const hamburger = document.getElementById('hamburgerMenu');
+  const backdrop = document.getElementById('sidebarBackdrop');
+
+  function openSidebar(){
+    sidebar?.classList.add('mobile-open');
+    backdrop?.classList.add('active');
+    hamburger?.classList.add('active');
+  }
+  function closeSidebar(){
+    sidebar?.classList.remove('mobile-open');
+    backdrop?.classList.remove('active');
+    hamburger?.classList.remove('active');
+  }
+
+  hamburger?.addEventListener('click', () => {
+    sidebar?.classList.contains('mobile-open') ? closeSidebar() : openSidebar();
+  });
+  backdrop?.addEventListener('click', closeSidebar);
+  window.addEventListener('keydown', e => { if (e.key === 'Escape') closeSidebar(); });
+})();
+
   </script>
+
+  <!-- Mobile Navigation Backdrop -->
+  <div id="sidebarBackdrop" class="sidebar-backdrop"></div>
 
 </body>
 </html>
