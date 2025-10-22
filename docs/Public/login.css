@@ -1,0 +1,234 @@
+body {
+  min-height: 100vh;
+  font-family: 'Inter', sans-serif;
+  margin: 0;
+  background:
+    radial-gradient(circle at 70% 20%, #ffe084cc 0%, transparent 45%),
+    radial-gradient(circle at 30% 85%, #3053cb55 0%, transparent 60%),
+    linear-gradient(120deg, #f7fafd, #e2e6ee 90%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-outer {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-container {
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 3px 18px rgba(0,0,0,0.05);
+  padding: 2.5rem 2.2rem 2.2rem 2.2rem;
+  border: 2px solid #e0e8f0;
+  width: 430px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.05rem;
+  min-width: 320px;
+}
+
+.login-title {
+  text-align: center;
+  margin-bottom: 1.2rem;
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: #1d2737;
+  letter-spacing: -0.5px;
+}
+
+.google-btn,
+.g_id_signin {
+  width: 100% !important;
+  min-height: 48px;
+  border-radius: 8px;
+  box-sizing: border-box;
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.9rem;
+  border: 1.5px solid #e5e7eb;
+  background: #fff;
+  transition: box-shadow 0.15s;
+}
+
+.g_id_signin {
+  display: none !important;
+}
+
+
+.google-btn:hover {
+  box-shadow: 0 2px 10px rgba(110, 110, 255, 0.06);
+}
+.google-btn img {
+  width: 22px;
+  height: 22px;
+}
+
+.divider-row {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  margin-bottom: 0.7rem;
+  color: #888;
+}
+.divider {
+  height: 1.2px;
+  flex: 1;
+  background: #e5e7eb;
+  border-radius: 2px;
+}
+.divider-text {
+  font-size: 0.98rem;
+  color: #9498ad;
+}
+
+.label {
+  font-weight: 600;
+  margin-top: 0.1rem;
+  margin-bottom: 0.17rem;
+  font-size: 1.03rem;
+  color: #1a2032;
+  letter-spacing: -0.03em;
+}
+
+input[type="email"],
+input[type="password"]  {
+  width: 100%;
+  height: 48px;                 /* MATCHES GOOGLE BUTTON */
+  padding: 0 16px;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 1.08rem;
+  background: #f8fafc;
+  margin-bottom: 0.32rem;
+  transition: border-color 0.13s, box-shadow 0.13s;
+  box-sizing: border-box;
+  font-weight: 500;
+  display: block;
+}
+input[type="email"]:focus,
+input[type="password"]:focus  {
+  outline: none;
+  border-color: #2994f1;
+  box-shadow: 0 0 0 2px #2994f133;
+}
+
+input[type="text"]  {
+     width: 100%;
+  height: 48px;                 /* MATCHES GOOGLE BUTTON */
+  padding: 0 16px;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 1.08rem;
+  background: #f8fafc;
+  margin-bottom: 0.32rem;
+  transition: border-color 0.13s, box-shadow 0.13s;
+  box-sizing: border-box;
+  font-weight: 500;
+  display: block;
+}
+
+input[type="text"]:focus {
+    outline: none;
+  border-color: #2994f1;
+  box-shadow: 0 0 0 2px #2994f133;
+}
+
+.custom-google-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.85rem;
+  background: #fff;
+  color: #222;
+  font-size: 1.09rem;
+  font-weight: 600;
+  border: 1.6px solid #e5e7eb;
+  border-radius: 9px;
+  box-shadow: 0 2px 10px #3053cb10;
+  padding: 0.85rem 0;
+  cursor: pointer;
+  width: 100%;
+  transition: box-shadow 0.13s;
+}
+.custom-google-btn:hover {
+  box-shadow: 0 5px 16px #3053cb16;
+  border-color: #d6dbe5;
+}
+.custom-google-btn img {
+    width: 3rem;
+    height: 1.5rem;
+  margin-right: 0.2rem;
+}
+
+
+.recaptcha {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  border: 1.5px solid #e0e7ef;
+  border-radius: 8px;
+  background: #fcfcfe;
+  padding: 0.8rem 0.9rem;
+  margin-top: 0.4rem;
+  margin-bottom: 0.4rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+.recaptcha img {
+  height: 30px;
+  margin-left: auto;
+  opacity: 0.7;
+}
+
+.sign-in-btn {
+  background: #2994f1;
+  color: #fff;
+  font-weight: 600;
+  font-size: 1.13rem;
+  border: none;
+  border-radius: 8px;
+  height: 48px;                /* MATCHES GOOGLE BUTTON */
+  margin: 0.3rem 0 0.4rem 0;
+  cursor: pointer;
+  transition: background 0.12s;
+  width: 100%;
+  box-sizing: border-box;
+  display: block;
+}
+.sign-in-btn:hover {
+  background: #1877e8;
+}
+
+.forgot, .signup {
+  text-align: center;
+  margin-top: 0.2rem;
+  font-size: 1.01rem;
+}
+.forgot a {
+  color: #2994f1;
+  text-decoration: none;
+  font-weight: 600;
+}
+.forgot a:hover {
+  text-decoration: underline;
+}
+.signup {
+  color: #2b2b2b;
+}
+.signup a {
+  color: #2994f1;
+  font-weight: 600;
+  text-decoration: none;
+  margin-left: 0.08em;
+}
+.signup a:hover {
+  text-decoration: underline;
+}
