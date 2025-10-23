@@ -1,5 +1,6 @@
 .DS_Store
 .firebaserc
+.idea
 firebase.json
 firestore*
 storage.rules
