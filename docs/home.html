@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>CertQuest Dashboard</title>
+  <title>FBLAZE Dashboard</title>
   <link rel="stylesheet" href="home.css" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <script src="https://unpkg.com/feather-icons"></script>
@@ -33,7 +33,7 @@
   <div class="main-layout">
     <!-- Sidebar -->
       <aside class="sidebar">
-      <div class="logo">CQ</div>
+      <div class="logo">FB</div>
       <ul class="nav-icons">
   <li>
      <a href="/Public/home.html">
@@ -76,7 +76,7 @@
   </a>
 </li>
   <li>
-    <a href="/practice.html">
+    <a href="/Public/practice.html">
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
       <circle cx="12" cy="12" r="9" fill="#3b82f6" fill-opacity="0.3"/>
       <circle cx="12" cy="12" r="6" fill="#3b82f6" fill-opacity="0.2"/>
@@ -122,35 +122,36 @@
     <span class="nav-label">Calendar</span>
      </a>
   </li>
+
+  <!--
    <li>
      <a href="/Public/tools.html">
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <!-- Base building blocks with layered opacity -->
   <rect x="2" y="16" width="6" height="6" rx="1" fill="#3b82f6" fill-opacity="0.3"/>
   <rect x="9" y="12" width="6" height="10" rx="1" fill="#3b82f6" fill-opacity="0.3"/>
   <rect x="16" y="8" width="6" height="14" rx="1" fill="#3b82f6" fill-opacity="0.3"/>
   
-  <!-- Lighter overlay sections -->
+
   <rect x="2" y="16" width="6" height="3" rx="1" fill="#3b82f6" fill-opacity="0.2"/>
   <rect x="9" y="12" width="6" height="4" rx="1" fill="#3b82f6" fill-opacity="0.2"/>
   <rect x="16" y="8" width="6" height="5" rx="1" fill="#3b82f6" fill-opacity="0.2"/>
   
-  <!-- Block outlines -->
+
   <rect x="2" y="16" width="6" height="6" rx="1" stroke="#3b82f6" stroke-width="2" fill="none"/>
   <rect x="9" y="12" width="6" height="10" rx="1" stroke="#3b82f6" stroke-width="2" fill="none"/>
   <rect x="16" y="8" width="6" height="14" rx="1" stroke="#3b82f6" stroke-width="2" fill="none"/>
   
-  <!-- Building block connection dots -->
+
   <circle cx="5" cy="19" r="1" fill="#3b82f6"/>
   <circle cx="12" cy="17" r="1" fill="#3b82f6"/>
   <circle cx="19" cy="15" r="1" fill="#3b82f6"/>
   
-  <!-- Subtle grid lines for construction feel -->
+
   <line x1="2" y1="19" x2="8" y2="19" stroke="#3b82f6" stroke-width="1" opacity="0.3"/>
   <line x1="9" y1="17" x2="15" y2="17" stroke="#3b82f6" stroke-width="1" opacity="0.3"/>
   <line x1="16" y1="15" x2="22" y2="15" stroke="#3b82f6" stroke-width="1" opacity="0.3"/>
   
-  <!-- Additional detail lines -->
+
   <line x1="5" y1="16" x2="5" y2="22" stroke="#3b82f6" stroke-width="1" opacity="0.3"/>
   <line x1="12" y1="12" x2="12" y2="22" stroke="#3b82f6" stroke-width="1" opacity="0.3"/>
   <line x1="19" y1="8" x2="19" y2="22" stroke="#3b82f6" stroke-width="1" opacity="0.3"/>
@@ -158,6 +159,8 @@
     <span class="nav-label">Study Tools</span>
      </a>
   </li>
+
+  -->
  
 </ul>
     </aside>
@@ -170,8 +173,8 @@
     <!-- Main Content -->
     <main class="content">
       <div class="welcome-section">
-        <h2 class="course-title">certquest dashboard</h2>
-        <h1 class="unit-title">Welcome back, <span class="name" id="userName">MASTER >.< !</span></h1>
+        <h2 class="course-title">FBLAZE dashboard</h2>
+        <h1 class="unit-title">Welcome back, <span class="name" id="userName"></span></h1>
         <div class="meta-info">
           <span class="verified"> Personalized for your goals</span>
           <span class="dot">•</span>
@@ -224,11 +227,11 @@
         <div class="accordion">
           <div class="accordion-item">
             <button class="accordion-toggle" onclick="toggleAccordion(this)">
-              <span class="accordion-label">How will CertQuest help me?</span>
+              <span class="accordion-label">How will FBLAZE help me?</span>
               <i data-feather="chevron-down" class="chevron-icon"></i>
             </button>
             <div class="accordion-content hidden">
-              CertQuest provides AI-generated insights, upcoming deadlines, and performance tracking to support your growth.
+              FBLAZE provides personalized insights, upcoming deadlines, and performance tracking to support your growth.
             </div>
           </div>
           
@@ -2100,7 +2103,7 @@ function unlockAndFadeAway() {
         heading.classList.add('success-text');
       }
       if (paragraph) {
-        paragraph.textContent = 'Welcome to CertQuest! Redirecting you now...';
+        paragraph.textContent = 'Welcome to FBLAZE! Redirecting you now...';
         paragraph.classList.add('success-subtext');
       }
       
