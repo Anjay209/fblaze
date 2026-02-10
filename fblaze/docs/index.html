@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Sign In | CertQuest</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="stylesheet" href="login.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <!-- Firebase SDKs (compat) -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics-compat.js"></script>
+</head>
+<body>
+  <div class="login-outer">
+  <form class="login-container" autocomplete="off" id="loginForm">
+    <h1 class="login-title">Sign In</h1>
+
+    <div class="divider-row">
+      <div class="divider"></div>
+      <span class="divider-text">Sign in to access a free FBLA Resource</span>
+      <div class="divider"></div>
+    </div>
+
+    <label for="email" class="label">Email</label>
+    <input id="email" type="email" name="email" placeholder="Type your email address" required>
+    <label for="password" class="label">Password</label>
+    <input id="password" type="password" name="password" placeholder="Your password" required>
+    <button type="submit" class="sign-in-btn" id="signInBtn">Sign In</button>
+    <div class="signup">
+      Need an account?
+      <a href="signup.html">Sign Up</a>
+    </div>
+  </form>
+</div>
+
+  <script>
+    // Firebase Config
+    const firebaseConfig = {
+      apiKey: "AIzaSyDGYp9sBwOWBdu9W46Q6XFp9zfLCrEsaO4",
+      authDomain: "certquest-94959.firebaseapp.com",
+      projectId: "certquest-94959",
+      storageBucket: "certquest-94959.appspot.com",
+      messagingSenderId: "323956529033",
+      appId: "1:323956529033:web:e9c9c6a3c7668b8a72f358",
+      measurementId: "G-F5JHTGGN6K"
+    };
+    // Initialize Firebase
+    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+    if (firebase.analytics) firebase.analytics();
+    const auth = firebase.auth();
+
+    // Email/Password Login
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      auth.signInWithEmailAndPassword(email, password)
+        .then(() => {
+          window.location.href = "/Public/home.html";
+        })
+        .catch((error) => {
+          alert(error.message);
+        });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+.DS_Store
+.firebaserc
+.idea
+firebase.json
+firestore*
+storage.rules
+node_modules/
+package-lock.json
+.env
+*.log
+*.mp4
+*.mov

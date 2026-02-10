@@ -1,0 +1,1325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FBLAZE Dashboard</title>
+  <link rel="stylesheet" href="statistics.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/feather-icons"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+</head>
+<body>
+
+  <!-- Top Nav -->
+  <div class="top-header">
+    <div class="nav-left">🌐</div>
+    <div class="nav-title"><div class="nav-pills">
+    <a class="nav-pill" href="/Competitions/competition.html">Your Journey</a>
+    <a class="nav-pill" href="/Public/practice.html">Practice Hub</a>
+    <a class="nav-pill active" href="/Public/statistics.html">Your Statistics</a>
+  </div></div>
+    <div class="nav-right">
+  <input type="text" id="navbarSearch" placeholder="Search CertQuest..." />
+  <span class="search-icon" id="navbarSearchIcon">🔍</span>
+  <div id="searchDropdown"></div>
+</div>
+  </div>
+
+  <!-- Section Header -->
+  <div class="section-header-background glassmorphic">
+
+    <div class="gradient-blob-1"></div>
+<div class="gradient-blob-2"></div>
+ 
+      <h1 class="unit-title"><span class="name">Your Statistics</span></h1>
+      <button class="competency-button">View Competency Overview</button>
+  </div>
+
+  <div class="main-layout">
+    <!-- Sidebar -->
+     <aside class="sidebar">
+      <div class="logo">FB</div>
+      <ul class="nav-icons">
+  <li>
+     <a href="/Public/home.html">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M12 3L20 9V21H15V15H9V21H4V9L12 3Z" fill="#3b82f6" fill-opacity="0.3"/>
+      <path d="M12 3L4 9V21H9V15H15V21H20V9L12 3Z" stroke="#3b82f6" stroke-width="2" fill="none" stroke-linejoin="round"/>
+      <rect x="10" y="17" width="4" height="4" fill="#3b82f6"/>
+      <rect x="6" y="11" width="2" height="2" fill="#3b82f6"/>
+      <rect x="16" y="11" width="2" height="2" fill="#3b82f6"/>
+    </svg>
+    
+    <span class="nav-label">Home</span>
+     </a>
+  </li>
+  <li>
+ <a href="#" onclick="openNotificationsOnHome(); return false;">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- Bell body main fill -->
+    <path d="M18 8C18 6.4087 17.3679 4.88258 16.2426 3.75736C15.1174 2.63214 13.5913 2 12 2C10.4087 2 8.88258 2.63214 7.75736 3.75736C6.63214 4.88258 6 6.4087 6 8C6 15 3 17 3 17H21C21 17 18 15 18 8Z" fill="#3b82f6" fill-opacity="0.3"/>
+    <!-- Bell body lighter overlay -->
+    <path d="M18 8C18 6.4087 17.3679 4.88258 16.2426 3.75736C15.1174 2.63214 13.5913 2 12 2C10.4087 2 8.88258 2.63214 7.75736 3.75736C6.63214 4.88258 6 6.4087 6 8C6 12 6 15 6 15H18C18 15 18 12 18 8Z" fill="#3b82f6" fill-opacity="0.2"/>
+    <!-- Bell outline -->
+    <path d="M18 8C18 6.4087 17.3679 4.88258 16.2426 3.75736C15.1174 2.63214 13.5913 2 12 2C10.4087 2 8.88258 2.63214 7.75736 3.75736C6.63214 4.88258 6 6.4087 6 8C6 15 3 17 3 17H21C21 17 18 15 18 8Z" stroke="#3b82f6" stroke-width="2" fill="none"/>
+    <!-- Bell clapper -->
+    <circle cx="12" cy="8" r="1" fill="#3b82f6"/>
+    <!-- Sound waves -->
+    <path d="M19 4L20 3" stroke="#3b82f6" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/>
+    <path d="M20.5 6.5L22 6" stroke="#3b82f6" stroke-width="1.5" stroke-linecap="round" opacity="0.3"/>
+    <path d="M5 4L4 3" stroke="#3b82f6" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/>
+    <path d="M3.5 6.5L2 6" stroke="#3b82f6" stroke-width="1.5" stroke-linecap="round" opacity="0.3"/>
+    <!-- Bottom notification indicator -->
+    <path d="M13.73 21C13.5542 21.3031 13.3019 21.5547 12.9982 21.7295C12.6946 21.9044 12.3504 21.9965 12 21.9965C11.6496 21.9965 11.3054 21.9044 11.0018 21.7295C10.6982 21.5547 10.4458 21.3031 10.27 21" stroke="#3b82f6" stroke-width="2" stroke-linecap="round"/>
+  </svg>
+  <span class="nav-label">Notifications</span>
+</a>
+</li>
+  <li>
+   <a href="/Public/practice.html">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="12" cy="12" r="9" fill="#3b82f6" fill-opacity="0.3"/>
+      <circle cx="12" cy="12" r="6" fill="#3b82f6" fill-opacity="0.2"/>
+      <circle cx="12" cy="12" r="9" stroke="#3b82f6" stroke-width="2" fill="none"/>
+      <circle cx="12" cy="12" r="6" stroke="#3b82f6" stroke-width="1.5" fill="none"/>
+      <circle cx="12" cy="12" r="3" stroke="#3b82f6" stroke-width="1.5" fill="none"/>
+      <circle cx="12" cy="12" r="1.5" fill="#3b82f6"/>
+      <path d="M16 8L12 12L16 8Z" fill="#3b82f6"/>
+      <line x1="16" y1="8" x2="19" y2="5" stroke="#3b82f6" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+    <span class="nav-label">Practice</span>
+    </a>
+  </li>
+  <li>
+    <a href="/Public/Forum/forum.html">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M8 6C8 4.89543 8.89543 4 10 4H18C19.1046 4 20 4.89543 20 6V12C20 13.1046 19.1046 14 18 14H12L8 18V6Z" fill="#3b82f6" fill-opacity="0.3"/>
+      <path d="M4 10C4 8.89543 4.89543 8 6 8H8V16L4 20V12C4 11.4477 4.44772 11 5 11C4.44772 11 4 10.5523 4 10Z" fill="#3b82f6" fill-opacity="0.2"/>
+      <path d="M8 6C8 4.89543 8.89543 4 10 4H18C19.1046 4 20 4.89543 20 6V12C20 13.1046 19.1046 14 18 14H12L8 18V6Z" stroke="#3b82f6" stroke-width="2" fill="none"/>
+      <path d="M4 10C4 8.89543 4.89543 8 6 8H8V16L4 20V12C4 11.4477 4.44772 11 5 11C4.44772 11 4 10.5523 4 10Z" stroke="#3b82f6" stroke-width="1.5" fill="none"/>
+      <line x1="11" y1="8" x2="17" y2="8" stroke="#3b82f6" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="11" y1="10" x2="15" y2="10" stroke="#3b82f6" stroke-width="1.5" stroke-linecap="round"/>
+    </svg>
+    <span class="nav-label">Forum</span>
+    </a>
+  </li>
+  <li>
+     <a href="/Public/Calendar/calendar.html">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="3" y="6" width="18" height="15" rx="2" fill="#3b82f6" fill-opacity="0.3"/>
+      <rect x="3" y="6" width="18" height="4" rx="2" fill="#3b82f6" fill-opacity="0.2"/>
+      <rect x="3" y="6" width="18" height="15" rx="2" stroke="#3b82f6" stroke-width="2" fill="none"/>
+      <line x1="7" y1="3" x2="7" y2="7" stroke="#3b82f6" stroke-width="2" stroke-linecap="round"/>
+      <line x1="17" y1="3" x2="17" y2="7" stroke="#3b82f6" stroke-width="2" stroke-linecap="round"/>
+      <line x1="3" y1="10" x2="21" y2="10" stroke="#3b82f6" stroke-width="1" opacity="0.5"/>
+      <line x1="7.5" y1="10" x2="7.5" y2="21" stroke="#3b82f6" stroke-width="1" opacity="0.3"/>
+      <line x1="12" y1="10" x2="12" y2="21" stroke="#3b82f6" stroke-width="1" opacity="0.3"/>
+      <line x1="16.5" y1="10" x2="16.5" y2="21" stroke="#3b82f6" stroke-width="1" opacity="0.3"/>
+      <circle cx="9" cy="13" r="1" fill="#3b82f6"/>
+      <circle cx="15" cy="16" r="1" fill="#3b82f6"/>
+      <circle cx="12" cy="18" r="1" fill="#3b82f6"/>
+    </svg>
+    <span class="nav-label">Calendar</span>
+     </a>
+  </li>
+</ul>
+    </aside>
+
+    <!-- Sub Sidebar -->
+  <!-- <aside class="sub-sidebar">
+      <div class="sidebar-header">
+        <span id="comp"></span>
+        <span class="dots">⋯</span>
+      </div>
+      <div class="sub-nav-wrapper">
+        <ul class="sub-nav"> 
+          <li><a class="link" href="Public/Competitions/competition.html">Your Journey</a></li>
+          <li><a href="/practice.html" class="link">Practice Hub</a></li>
+          <li class="active"><a href="/statistics.html" class="link">Your Statistics</a></li>
+        </ul>
+      </div>
+    </aside> -->
+
+    <!-- Main Content -->
+    <main class="content">
+
+      <div class="ai-summary">
+        <p>Looks like you haven't done any practice yet! Complete assignments to view your statistics.</p>
+      </div>
+
+      <div class="cards">
+        <div class="schoolhouse-card">
+          <div class="card-content">
+            <h3>Competency A</h3>
+            <p class="desc">Connect, ask questions, and share insights with fellow members.</p>
+            <a href="forum/forum.html">Go to FlashDeck →</a>
+          </div>
+        </div><br>
+        <div class="schoolhouse-card">
+          <div class="card-content">
+            <h3>Competency B</h3>
+            <p class="desc">See your next mentor meeting, study group, or bracket match.</p>
+            <a href="Calendar/calendar.html">Go to FlashDeck →</a>
+          </div>
+        </div><br>
+        <div class="schoolhouse-card">
+          <div class="card-content">
+            <h3>Competency C</h3>
+            <p class="desc">Check your XP earned, time trained, and leaderboard rank.</p>
+            <a href="Leaderboard/leaderboard.html">Go to FlashDeck →</a>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Modal Backdrop -->
+  <!-- Modal Backdrop -->
+<div class="modal-backdrop hidden"></div>
+
+<!-- Competency Modal -->
+<div class="competency-modal hidden">
+  <div class="modal-content">
+    <h2>Competency Overview</h2>
+    <p>Your confidence levels across different competencies (1-10 scale)</p>
+    <div class="confidence-legend">
+      <div class="legend-item">
+        <span class="legend-color low-confidence"></span>
+        <span>Low (1-3)</span>
+      </div>
+      <div class="legend-item">
+        <span class="legend-color medium-confidence"></span>
+        <span>Medium (4-6)</span>
+      </div>
+      <div class="legend-item">
+        <span class="legend-color high-confidence"></span>
+        <span>High (7-9)</span>
+      </div>
+      <div class="legend-item">
+        <span class="legend-color mastery"></span>
+        <span>Mastery (10)</span>
+      </div>
+    </div>
+    <!-- This empty div will be populated by JavaScript -->
+    <div id="competency-grid-container"></div>
+    <button class="close-modal">Close</button>
+  </div>
+</div>
+
+<section class="faq-wrapper">
+  <div class="faq-category"><strong>Performance Summary</strong></div>
+  <div class="accordion">
+
+    <div class="accordion-item">
+      <button class="accordion-toggle" onclick="toggleAccordion(this)">
+        <span class="accordion-label">Weakest Competency</span>
+        <i data-feather="chevron-down" class="chevron-icon"></i>
+      </button>
+      <div class="accordion-content hidden">
+        You're currently struggling the most with <strong>Competency F</strong>, scoring only <strong>42%</strong> accuracy on recent attempts.
+  <br><br>
+  <button class="small-action-button">Practice Competency F</button>
+      </div>
+    </div>
+    
+   
+
+    <div class="accordion-item">
+      <button class="accordion-toggle" onclick="toggleAccordion(this)">
+        <span class="accordion-label">Most Improved Competency</span>
+        <i data-feather="chevron-down" class="chevron-icon"></i>
+      </button>
+      <div class="accordion-content hidden">
+        Great work! You've improved the most in <strong>Competency C</strong>, with accuracy jumping from 60% to 84% this week.
+  <br><br>
+  <button class="small-action-button">Review Recent Wins</button>
+      </div>
+    </div>
+
+    <div class="accordion-item">
+      <button class="accordion-toggle" onclick="toggleAccordion(this)">
+        <span class="accordion-label">Retry Opportunity</span>
+        <i data-feather="chevron-down" class="chevron-icon"></i>
+      </button>
+      <div class="accordion-content hidden">
+        You’ve missed these questions more than once: <strong>Q5, Q12, Q19</strong>. Revisiting them now can boost mastery.
+  <br><br>
+  <button class="small-action-button">Retry Missed Questions</button>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/meilisearch@latest/dist/bundles/meilisearch.umd.min.js"></script>
+
+  <!-- JavaScript -->
+  <script>
+
+    const firebaseConfig = {
+  apiKey: "AIzaSyDGYp9sBwOWBdu9W46Q6XFp9zfLCrEsaO4",
+  authDomain: "certquest-94959.firebaseapp.com",
+  projectId: "certquest-94959",
+  storageBucket: "certquest-94959.appspot.com",
+  messagingSenderId: "323956529033",
+  appId: "1:323956529033:web:e9c9c6a3c7668b8a72f358",
+  measurementId: "G-F5JHTGGN6K"
+};
+
+// Initialize Firebase
+const app = firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
+// Add after: const db = firebase.firestore();
+firebase.auth().onAuthStateChanged((user) => {
+  if (user) {
+    console.log('User logged in:', user.uid);
+    loadFlashcardDecks();
+    loadPerformanceData();
+  } else {
+    console.log('No user logged in');
+    // Show mock data or login prompt
+    loadMockFlashcardDecks();
+    updatePerformanceAccordion();
+  }
+});
+
+// Competency icons mapping
+const competencyIcons = {
+  'Business Communication': '💬',
+  'Marketing': '📈',
+  'Accounting': '💰',
+  'Economics': '📊',
+  'Management': '👥',
+  'Parliamentary Procedure': '⚖️',
+  'Business Ethics': '🤝',
+  'Finance': '💳',
+  'Entrepreneurship': '🚀',
+  'General': '📚'
+};
+
+
+
+// Load flashcard decks from missed questions
+// Fixed loadFlashcardDecks function with accurate counting and data structure
+async function loadFlashcardDecks() {
+  try {
+    const user = firebase.auth().currentUser;
+    if (!user) return;
+
+    // Get missed questions from completed assignments
+    const assignmentsSnapshot = await db.collection('assignments')
+      .where('to', '==', user.uid)
+      .where('status', '==', 'complete')
+      .orderBy('completedAt', 'desc')
+      .get();
+
+    if (assignmentsSnapshot.empty) {
+      renderEmptyFlashcards();
+      return;
+    }
+
+    // Process questions by competency with accurate counting
+    const competencyDecks = {};
+    let totalMissed = 0;
+    let totalQuestions = 0;
+    
+    assignmentsSnapshot.forEach(doc => {
+      const assignment = doc.data();
+      
+      // Check multiple possible question data structures
+      let questionsData = null;
+      
+      if (assignment.questions && Array.isArray(assignment.questions)) {
+        questionsData = assignment.questions;
+      } else if (assignment.detailedAnswers && Array.isArray(assignment.detailedAnswers)) {
+        questionsData = assignment.detailedAnswers;
+      } else if (assignment.responses && Array.isArray(assessment.responses)) {
+        questionsData = assignment.responses;
+      }
+      
+      if (questionsData) {
+        questionsData.forEach((question, index) => {
+          totalQuestions++;
+          
+          // Handle different data structures for correctness
+          const isCorrect = question.correct === true || 
+                           question.isCorrect === true || 
+                           (question.userAnswer && question.correctAnswer && 
+                            question.userAnswer === question.correctAnswer);
+          
+          const isMissed = !isCorrect;
+          
+          const competency = question.competency || 'General';
+          
+          // Initialize competency deck if it doesn't exist
+          if (!competencyDecks[competency]) {
+            competencyDecks[competency] = {
+              cards: [],
+              missedCount: 0,
+              totalCount: 0,
+              lastStudied: assignment.completedAt || new Date()
+            };
+          }
+          
+          // Count total questions for this competency
+          competencyDecks[competency].totalCount++;
+          
+          if (isMissed) {
+            totalMissed++;
+            competencyDecks[competency].missedCount++;
+            
+            // Create flashcard for missed question (no limit on cards per competency)
+            competencyDecks[competency].cards.push({
+              id: `${doc.id}_${index}_${Date.now()}`,
+              question: question.text || question.question || `Question ${index + 1}`,
+              answer: question.correctAnswer || question.correct_answer || 'Answer not available',
+              userAnswer: question.userAnswer || question.user_answer || 'No answer provided',
+              explanation: question.explanation || '',
+              competency: competency,
+              difficulty: 'medium',
+              source: 'missed_question'
+            });
+          }
+        });
+      }
+    });
+
+    // Store globally for openFlashcardDeck to access
+    window.currentCompetencyDecks = competencyDecks;
+    
+    console.log('Processed competency decks (showing top 3 competencies):', competencyDecks);
+    renderFlashcardDecks(competencyDecks);
+    updateAISummary(competencyDecks, totalMissed, totalQuestions);
+
+  } catch (error) {
+    console.error("Error loading flashcard decks:", error);
+    renderEmptyFlashcards();
+  }
+}
+
+// Fixed renderFlashcardDecks with accurate calculations
+function renderFlashcardDecks(decks) {
+  const cardsContainer = document.querySelector('.cards');
+  
+  // Clear existing cards
+  cardsContainer.innerHTML = '';
+
+  if (Object.keys(decks).length === 0) {
+    renderEmptyFlashcards();
+    return;
+  }
+
+  // Sort competencies by most missed questions and limit to 3
+  const sortedCompetencies = Object.entries(decks)
+    .filter(([_, data]) => data.cards.length > 0) // Only show competencies with missed questions
+    .sort((a, b) => b[1].missedCount - a[1].missedCount)
+    .slice(0, 3); // 👈 Only show top 3 competencies
+
+  if (sortedCompetencies.length === 0) {
+    renderEmptyFlashcards();
+    return;
+  }
+
+  sortedCompetencies.forEach(([competency, deckData]) => {
+    const icon = competencyIcons[competency] || '📚';
+    const missedCount = deckData.missedCount;
+    const totalCount = deckData.totalCount;
+    const accuracy = totalCount > 0 ? Math.round(((totalCount - missedCount) / totalCount) * 100) : 0;
+    
+    const deckCard = document.createElement('div');
+    deckCard.className = 'schoolhouse-card';
+    deckCard.innerHTML = `
+      <div class="card-content">
+        <h3>${icon} ${competency}</h3>
+        <p class="desc">${missedCount} questions to review • ${accuracy}% accuracy</p>
+        <a href="#" onclick="openFlashcardDeck('${competency}')">Study FlashDeck →</a>
+      </div>
+    `;
+    
+    cardsContainer.appendChild(deckCard);
+    
+    // Add spacing
+    const br = document.createElement('br');
+    cardsContainer.appendChild(br);
+  });
+}
+
+// Render empty state when no flashcards available
+function renderEmptyFlashcards() {
+  const cardsContainer = document.querySelector('.cards');
+  cardsContainer.innerHTML = `
+    <div class="schoolhouse-card">
+      <div class="card-content">
+        <h3>🎉 No Review Needed</h3>
+        <p class="desc">You haven't missed any questions recently. Great work!</p>
+        <a href="practice.html">Take More Practice →</a>
+      </div>
+    </div>
+  `;
+}
+
+// Open flashcard deck (same as practice page)
+function openFlashcardDeck(competency) {
+  try {
+    if (!window.currentCompetencyDecks || !window.currentCompetencyDecks[competency]) {
+      console.error('No deck data found for competency:', competency);
+      alert('No flashcards available for this competency. Please refresh and try again.');
+      return;
+    }
+    
+    const deckData = window.currentCompetencyDecks[competency];
+    
+    const flashcardDeck = {
+      name: competency,
+      cards: deckData.cards,
+      timestamp: Date.now()
+    };
+    
+    // Store in localStorage with competency key
+    localStorage.setItem(`flashcardDeck_${competency}`, JSON.stringify(flashcardDeck));
+    
+    // Redirect with competency parameter
+    window.location.href = `flashcard.html?competency=${encodeURIComponent(competency)}`;
+    
+  } catch (error) {
+    console.error('Error opening flashcard deck:', error);
+    alert('Error loading flashcards. Please try again.');
+  }
+}
+// Update AI summary with dynamic insights
+function updateAISummary(competencyDecks, totalMissed, totalQuestions) {
+  const summaryElement = document.querySelector('.ai-summary p');
+  
+  if (!summaryElement || Object.keys(competencyDecks).length === 0) {
+    return;
+  }
+
+  // Find weakest competencies (most missed questions)
+  const sortedByMissed = Object.entries(competencyDecks)
+    .filter(([_, data]) => data.cards.length > 0)
+    .sort((a, b) => b[1].missedCount - a[1].missedCount);
+
+  const overallAccuracy = totalQuestions > 0 ? Math.round(((totalQuestions - totalMissed) / totalQuestions) * 100) : 100;
+  
+  let summaryText = `Overall, you're performing at ${overallAccuracy}% accuracy across all assignments. `;
+  
+  if (sortedByMissed.length > 0) {
+    const weakest = sortedByMissed[0];
+    const weakestAccuracy = Math.round(((weakest[1].totalCount - weakest[1].missedCount) / weakest[1].totalCount) * 100);
+    
+    summaryText += `You're currently struggling most with ${weakest[0]}, with ${weakestAccuracy}% accuracy. `;
+    
+    if (sortedByMissed.length > 1) {
+      const secondWeakest = sortedByMissed[1];
+      summaryText += `${secondWeakest[0]} also needs attention. `;
+    }
+    
+    summaryText += "Focus on these areas to improve your overall performance!";
+  } else {
+    summaryText += "Keep up the excellent work!";
+  }
+  
+  summaryElement.textContent = summaryText;
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  feather.replace();
+  
+  // Set up modal events
+  const modal = document.querySelector('.competency-modal');
+  const backdrop = document.querySelector('.modal-backdrop');
+  const openBtn = document.querySelector('.competency-button');
+  const closeBtn = document.querySelector('.close-modal');
+
+  if (openBtn) openBtn.addEventListener('click', showCompetencyOverview);
+  if (closeBtn) closeBtn.addEventListener('click', closeModal);
+  if (backdrop) backdrop.addEventListener('click', closeModal);
+  
+  // Initialize data loading when DOM is ready
+  initializeApp();
+});
+
+function initializeApp() {
+  // Check if user is already logged in
+  const user = firebase.auth().currentUser;
+  if (user) {
+    loadFlashcardDecks();
+    loadPerformanceData();
+  }
+}
+
+function closeModal() {
+  const modal = document.querySelector('.competency-modal');
+  const backdrop = document.querySelector('.modal-backdrop');
+  
+  if (modal) modal.classList.add('hidden');
+  if (backdrop) backdrop.classList.add('hidden');
+}
+
+    feather.replace(); // renders all feather icons
+  
+    function toggleAccordion(button) {
+      const content = button.nextElementSibling;
+      const icon = button.querySelector('.chevron-icon');
+  
+      const isActive = button.classList.contains('active');
+  
+      if (isActive) {
+  button.classList.remove('active');
+  content.classList.add('hidden'); // 👈 this was missing
+  content.style.maxHeight = null;
+  if (icon) icon.classList.remove('rotate');
+} else {
+  button.classList.add('active');
+  content.classList.remove('hidden'); // 👈 this was missing
+  content.style.maxHeight = content.scrollHeight + "px";
+  if (icon) icon.classList.add('rotate');
+}
+
+    }
+
+    // ============ MEILISEARCH INTEGRATION ============
+    // Meilisearch client setup (adjust if you use a different host)
+    const client = new MeiliSearch({ host: 'http://127.0.0.1:7700' });
+    const index = client.index('content');
+    const searchBox = document.getElementById('navbarSearch');
+    const searchDropdown = document.getElementById('searchDropdown');
+    const searchIcon = document.getElementById('navbarSearchIcon');
+
+    if (searchBox && searchDropdown) {
+      searchBox.addEventListener('input', async function(e) {
+        const query = e.target.value.trim();
+        if (!query) {
+          searchDropdown.style.display = 'none';
+          searchDropdown.innerHTML = '';
+          return;
+        }
+        try {
+          const result = await index.search(query, { limit: 5 });
+          if (!result.hits.length) {
+            searchDropdown.style.display = 'none';
+            searchDropdown.innerHTML = '';
+            return;
+          }
+          searchDropdown.style.display = 'block';
+          searchDropdown.innerHTML = result.hits.map(doc => `
+            <div class="dropdown-result" tabindex="0" data-url="${doc.url}">
+              <b>${doc.title}</b><br>
+              <span style="font-size:12px;color:#888;">${doc.category || ''}${doc.tags ? ' | ' + doc.tags.join(', ') : ''}</span>
+            </div>
+          `).join('');
+        } catch (err) {
+          searchDropdown.style.display = 'none';
+          searchDropdown.innerHTML = '';
+        }
+      });
+
+      // Handle result click
+      searchDropdown.addEventListener('click', function(e) {
+        const target = e.target.closest('.dropdown-result');
+        if (target && target.dataset.url) {
+          window.location = target.dataset.url;
+        }
+      });
+
+      // Optional: Allow Enter key to open first result
+      searchBox.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' && searchDropdown.innerHTML) {
+          const first = searchDropdown.querySelector('.dropdown-result');
+          if (first && first.dataset.url) {
+            window.location = first.dataset.url;
+          }
+        }
+      });
+
+      // Hide dropdown on outside click
+      document.addEventListener('click', function(e) {
+        if (!searchBox.contains(e.target) && !searchDropdown.contains(e.target)) {
+          searchDropdown.style.display = 'none';
+        }
+      });
+
+      // Click magnifier icon triggers search
+      if (searchIcon) {
+        searchIcon.addEventListener('click', () => {
+          searchBox.dispatchEvent(new Event('input'));
+        });
+      }
+    }
+    // =========== END MEILISEARCH ============
+// Process all assessments to calculate competency averages
+const calculateWeakestCompetency = (assessments) => {
+  const competencyTotals = {};
+  
+  assessments.forEach(assessment => {
+    if (assessment.competencyStats) {
+      Object.entries(assessment.competencyStats).forEach(([comp, stats]) => {
+        if (!competencyTotals[comp]) {
+          competencyTotals[comp] = { correct: 0, total: 0 };
+        }
+        competencyTotals[comp].correct += stats.correct;
+        competencyTotals[comp].total += stats.total;
+      });
+    }
+  });
+  
+  // Find lowest accuracy
+  let weakest = { competency: '', accuracy: 100 };
+  Object.entries(competencyTotals).forEach(([comp, stats]) => {
+    const accuracy = Math.round((stats.correct / stats.total) * 100);
+    if (accuracy < weakest.accuracy) {
+      weakest = { competency: comp, accuracy };
+    }
+  });
+  
+  return weakest;
+};
+
+async function loadCompetitionName() {
+  try {
+    const user = firebase.auth().currentUser;
+    
+    if (!user) {
+      console.log('No user authenticated, waiting...');
+      return;
+    }
+    
+    const userId = user.uid;
+    console.log('🔥 Loading competition for user:', userId);
+    
+    // Get user document
+    const userDoc = await db.collection('users').doc(userId).get();
+    
+    if (!userDoc.exists) {
+      console.log('User document not found');
+      document.getElementById('comp').textContent = 'User not found';
+      return;
+    }
+    
+    const userData = userDoc.data();
+    const competitions = userData.competitions;
+    
+    // DEBUG: Log the entire competitions array
+    console.log('🔍 DEBUG - Full competitions array:', competitions);
+    console.log('🔍 DEBUG - Type of first competition:', typeof competitions[0]);
+    console.log('🔍 DEBUG - First competition value:', competitions[0]);
+    
+    if (!competitions || competitions.length === 0) {
+      document.getElementById('comp').textContent = 'No competition assigned';
+      return;
+    }
+    
+    const competitionValue = competitions[0];
+    
+    // If it looks like a name string, use it directly
+    if (typeof competitionValue === 'string' && competitionValue.length > 0) {
+      console.log('✅ Using competition name directly:', competitionValue);
+      document.getElementById('comp').textContent = competitionValue;
+      return;
+    }
+    
+    // Otherwise try to look it up as a document ID
+    console.log('🔥 Looking for competition as document ID:', competitionValue);
+    const competitionDoc = await db.collection('competitions').doc(competitionValue).get();
+    
+    if (!competitionDoc.exists) {
+      console.log('❌ Competition document not found:', competitionValue);
+      document.getElementById('comp').textContent = 'Competition not found';
+      return;
+    }
+    
+    const competitionData = competitionDoc.data();
+    const competitionName = competitionData.name || 'Unnamed Competition';
+    
+    console.log('✅ Found competition name:', competitionName);
+    document.getElementById('comp').textContent = competitionName;
+    
+  } catch (error) {
+    console.error('❌ Error:', error);
+    document.getElementById('comp').textContent = 'Error loading';
+  }
+}
+
+firebase.auth().onAuthStateChanged(user => {
+  if (user) {
+    loadCompetitionName();
+  }
+});
+
+// Compare recent vs older assessments
+const calculateMostImproved = (assessments) => {
+  console.log('calculateMostImproved - assessments:', assessments.length);
+  
+  if (assessments.length < 4) { // Need at least 4 assessments for meaningful comparison
+    return { competency: 'Not enough data', improvement: 0, current: 0, previous: 0 };
+  }
+
+  // Sort by completion date
+  const sortedAssessments = assessments
+    .filter(a => (a.createdAt || a.completedAt) && a.competencyStats)
+    .sort((a, b) => {
+      const dateA = new Date(a.createdAt || a.completedAt);
+      const dateB = new Date(b.createdAt || b.completedAt);
+      return dateA - dateB;
+    });
+  
+  if (sortedAssessments.length < 4) {
+    return { competency: 'Not enough data', improvement: 0, current: 0, previous: 0 };
+  }
+  
+  // Split into older half vs newer half
+  const midPoint = Math.floor(sortedAssessments.length / 2);
+  const olderAssessments = sortedAssessments.slice(0, midPoint);
+  const recentAssessments = sortedAssessments.slice(midPoint);
+  
+  console.log('Older assessments:', olderAssessments.length, 'Recent assessments:', recentAssessments.length);
+  
+  // Calculate averages for each period
+  const recentStats = calculateCompetencyAverages(recentAssessments);
+  const olderStats = calculateCompetencyAverages(olderAssessments);
+  
+  console.log('Recent stats:', recentStats);
+  console.log('Older stats:', olderStats);
+  
+  // Find biggest improvement (must be present in both periods)
+  let mostImproved = { competency: '', improvement: 0, current: 0, previous: 0 };
+  
+  Object.keys(recentStats).forEach(comp => {
+    if (olderStats[comp] !== undefined) {
+      const improvement = recentStats[comp] - olderStats[comp];
+      console.log(`${comp}: ${olderStats[comp]}% -> ${recentStats[comp]}% (${improvement}% improvement)`);
+      
+      if (improvement > mostImproved.improvement) {
+        mostImproved = {
+          competency: comp,
+          improvement: Math.round(improvement),
+          current: recentStats[comp],
+          previous: olderStats[comp]
+        };
+      }
+    }
+  });
+  
+  console.log('Most improved result:', mostImproved);
+  
+  // If no improvement found, find the best performing competency
+  if (mostImproved.competency === '') {
+    let bestCompetency = { competency: '', accuracy: 0 };
+    Object.entries(recentStats).forEach(([comp, accuracy]) => {
+      if (accuracy > bestCompetency.accuracy) {
+        bestCompetency = { competency: comp, accuracy };
+      }
+    });
+    
+    if (bestCompetency.competency) {
+      mostImproved = {
+        competency: bestCompetency.competency,
+        improvement: 0,
+        current: bestCompetency.accuracy,
+        previous: olderStats[bestCompetency.competency] || bestCompetency.accuracy
+      };
+    }
+  }
+  
+  return mostImproved;
+};
+
+
+function practiceCompetency(competency) {
+  // Redirect to practice page with specific competency
+  window.location.href = `practice.html?competency=${encodeURIComponent(competency)}`;
+}
+
+function reviewCompetency(competency) {
+  // Open competency modal or redirect to review page
+  console.log(`Reviewing competency: ${competency}`);
+  // You can implement this based on your app structure
+}
+
+function retryMissedQuestions() {
+  // Redirect to a retry quiz page
+  window.location.href = 'practice.html?mode=retry';
+}
+
+function takePracticeTest() {
+  // Redirect to general practice
+  window.location.href = 'practice.html';
+}
+
+// Find questions missed multiple times
+const findRetryQuestions = (assessments) => {
+  console.log('findRetryQuestions - assessments:', assessments.length);
+  
+  const questionTracker = {}; // Track questions by their text/content
+  let questionCounter = 1;
+  
+  assessments.forEach((assessment, assessmentIndex) => {
+    console.log(`Processing assessment ${assessmentIndex}`);
+    
+    // Check multiple possible question data structures
+    let questionsData = null;
+    
+    if (assessment.questions && Array.isArray(assessment.questions)) {
+      questionsData = assessment.questions;
+      console.log(`Found ${questionsData.length} questions in 'questions' field`);
+    } else if (assessment.detailedAnswers && Array.isArray(assessment.detailedAnswers)) {
+      questionsData = assessment.detailedAnswers;
+      console.log(`Found ${questionsData.length} questions in 'detailedAnswers' field`);
+    } else if (assessment.responses && Array.isArray(assessment.responses)) {
+      questionsData = assessment.responses;
+      console.log(`Found ${questionsData.length} questions in 'responses' field`);
+    }
+    
+    if (questionsData) {
+      questionsData.forEach((question, qIndex) => {
+        // Handle different question data structures
+        const isIncorrect = question.correct === false || 
+                           question.isCorrect === false || 
+                           (question.userAnswer && question.correctAnswer && 
+                            question.userAnswer !== question.correctAnswer);
+        
+        if (isIncorrect) {
+          // Use question text as key, or fallback to position
+          const questionKey = question.text || question.question || `Question_${qIndex + 1}`;
+          const displayId = `Q${questionCounter}`;
+          
+          if (!questionTracker[questionKey]) {
+            questionTracker[questionKey] = {
+              displayId: displayId,
+              missCount: 0,
+              competency: question.competency || 'General'
+            };
+            questionCounter++;
+          }
+          
+          questionTracker[questionKey].missCount++;
+        }
+      });
+    }
+  });
+  
+  console.log('Question tracker:', questionTracker);
+  
+  // Find questions missed more than once
+  const retryQuestions = Object.entries(questionTracker)
+    .filter(([_, data]) => data.missCount > 1)
+    .sort((a, b) => b[1].missCount - a[1].missCount) // Sort by most missed
+    .slice(0, 3) // Take top 3
+    .map(([_, data]) => data.displayId);
+    
+  console.log('Retry questions:', retryQuestions);
+  return retryQuestions;
+};
+
+function openNotificationsOnHome() {
+    // Set a flag in sessionStorage (gets cleared when browser is closed)
+    sessionStorage.setItem('openNotifications', 'true');
+    // Navigate to home page - CHANGE THIS PATH to match your structure
+    window.location.href = 'public/home.html';
+}
+
+
+
+const calculateCompetencyAverages = (assessments) => {
+  const competencyTotals = {};
+  
+  assessments.forEach(assessment => {
+    if (assessment.competencyStats) {
+      Object.entries(assessment.competencyStats).forEach(([comp, stats]) => {
+        if (!competencyTotals[comp]) {
+          competencyTotals[comp] = { correct: 0, total: 0 };
+        }
+        competencyTotals[comp].correct += stats.correct;
+        competencyTotals[comp].total += stats.total;
+      });
+    }
+  });
+  
+  // Convert to percentages
+  const averages = {};
+  Object.entries(competencyTotals).forEach(([comp, stats]) => {
+    averages[comp] = stats.total > 0 ? Math.round((stats.correct / stats.total) * 100) : 0;
+  });
+  
+  return averages;
+};
+
+// Add this new function to load and update performance data
+async function loadPerformanceData() {
+  try {
+    const user = firebase.auth().currentUser;
+    if (!user) {
+      console.log('No user found for performance data');
+      return;
+    }
+
+    console.log('Loading performance data for user:', user.uid);
+
+    // Get all completed assessments
+    const assessmentsSnapshot = await db.collection('assignments')
+      .where('to', '==', user.uid)
+      .where('status', '==', 'complete')
+      .orderBy('completedAt', 'desc')
+      .get();
+
+    if (assessmentsSnapshot.empty) {
+      console.log('No completed assessments found');
+      // Set default values for empty state
+      updatePerformanceAccordion(
+        { competency: '', accuracy: 0 }, 
+        { competency: '', improvement: 0, current: 0, previous: 0 }, 
+        []
+      );
+      return;
+    }
+
+    const assessments = assessmentsSnapshot.docs.map(doc => {
+      const data = doc.data();
+      console.log('Assessment data structure:', {
+        id: doc.id,
+        hasQuestions: !!data.questions,
+        hasDetailedAnswers: !!data.detailedAnswers,
+        hasResponses: !!data.responses,
+        hasCompetencyStats: !!data.competencyStats,
+        questionsLength: data.questions?.length || 0,
+        detailedAnswersLength: data.detailedAnswers?.length || 0,
+        responsesLength: data.responses?.length || 0
+      });
+      return data;
+    });
+    
+    console.log(`Found ${assessments.length} completed assessments`);
+    
+    // Calculate performance metrics
+    const weakestCompetency = calculateWeakestCompetency(assessments);
+    const mostImproved = calculateMostImproved(assessments);
+    const retryQuestions = findRetryQuestions(assessments);
+    
+    console.log('Performance metrics calculated:', {
+      weakestCompetency,
+      mostImproved,
+      retryQuestions
+    });
+    
+    // Update the accordion content
+    updatePerformanceAccordion(weakestCompetency, mostImproved, retryQuestions);
+
+  } catch (error) {
+    console.error("Error loading performance data:", error);
+    // Set error state
+    updatePerformanceAccordion(
+      { competency: 'Error loading data', accuracy: 0 }, 
+      { competency: 'Error loading data', improvement: 0, current: 0, previous: 0 }, 
+      []
+    );
+  }
+}
+
+
+// Add this function to update the accordion content
+function updatePerformanceAccordion(weakestCompetency, mostImproved, retryQuestions) {
+  // Update Weakest Competency
+  const weakestContent = document.querySelector('.accordion-item:nth-child(1) .accordion-content');
+  if (weakestContent) {
+    if (weakestCompetency.competency && weakestCompetency.competency !== '') {
+      weakestContent.innerHTML = `
+        You're currently struggling the most with <strong>${weakestCompetency.competency}</strong>, scoring only <strong>${weakestCompetency.accuracy}%</strong> accuracy on recent attempts.
+        <br><br>
+        <button class="small-action-button" onclick="practiceCompetency('${weakestCompetency.competency}')"><a href="flashcard.html" class="link">Practice ${weakestCompetency.competency}</a></button>
+      `;
+    } else {
+      weakestContent.innerHTML = `
+        Great job! Your performance is consistent across all competencies.
+        <br><br>
+        <button class="small-action-button" onclick="takePracticeTest()">Take Practice Test</button>
+      `;
+    }
+  }
+
+  // Update Most Improved Competency
+  const improvedContent = document.querySelector('.accordion-item:nth-child(2) .accordion-content');
+  if (improvedContent) {
+    if (mostImproved.competency && mostImproved.competency !== '' && mostImproved.competency !== 'Not enough data') {
+      let improvementText;
+      
+      if (mostImproved.improvement > 0) {
+        improvementText = `Great work! You've improved the most in <strong>${mostImproved.competency}</strong>, with accuracy jumping from ${mostImproved.previous}% to ${mostImproved.current}% recently (+${mostImproved.improvement}%).`;
+      } else if (mostImproved.improvement === 0) {
+        improvementText = `You're maintaining consistent performance in <strong>${mostImproved.competency}</strong> at ${mostImproved.current}% accuracy.`;
+      } else {
+        improvementText = `<strong>${mostImproved.competency}</strong> needs attention. Your accuracy dropped from ${mostImproved.previous}% to ${mostImproved.current}% recently.`;
+      }
+      
+      improvedContent.innerHTML = `
+        ${improvementText}
+        <br><br>
+        <button class="small-action-button" onclick="reviewCompetency('${mostImproved.competency}')"><a href="flashcard.html" class="link">Review ${mostImproved.competency}</a></button>
+      `;
+    } else {
+      improvedContent.innerHTML = `
+        Complete more assessments to track your improvement over time.
+        <br><br>
+        <button class="small-action-button" onclick="takePracticeTest()">Take Practice Test</button>
+      `;
+    }
+  }
+
+  // Update Retry Opportunities
+  const retryContent = document.querySelector('.accordion-item:nth-child(3) .accordion-content');
+  if (retryContent) {
+    if (retryQuestions && retryQuestions.length > 0) {
+      retryContent.innerHTML = `
+        You've missed these questions more than once: <strong>${retryQuestions.join(', ')}</strong>. Revisiting them now can boost mastery.
+        <br><br>
+        <button class="small-action-button" onclick="retryMissedQuestions()"><a href="flashcard.html" class="link">Retry Missed Questions</a></button>
+      `;
+    } else {
+      retryContent.innerHTML = `
+        Great job! You haven't missed any questions multiple times recently. Keep up the excellent work!
+        <br><br>
+        <button class="small-action-button" onclick="takePracticeTest()">Take Practice Test</button>
+      `;
+    }
+  }
+}
+
+// Function to calculate competency ratings from quiz data
+// Function to calculate competency ratings from quiz data
+
+async function calculateCompetencyRatings() {
+  try {
+    const user = firebase.auth().currentUser;
+    if (!user) {
+      console.log("No user logged in");
+      return [];
+    }
+    
+    console.log("Fetching assignments for user:", user.uid);
+    const snapshot = await db.collection('assignments')
+      .where('to', '==', user.uid)
+      .where('status', '==', 'complete')
+      .get();
+
+    if (snapshot.empty) {
+      console.log("No completed assignments found");
+      return [];
+    }
+
+    const competencies = {};
+    
+    snapshot.forEach(doc => {
+      const assignment = doc.data();
+      console.log("Processing assignment:", doc.id, assignment);
+      
+      // Safely get question data from either detailedAnswers or questions
+      let questionData = [];
+      if (Array.isArray(assignment.detailedAnswers)) {
+        questionData = assignment.detailedAnswers;
+      } else if (Array.isArray(assignment.questions)) {
+        questionData = assignment.questions;
+      } else if (assignment.detailedAnswers && typeof assignment.detailedAnswers === 'object') {
+        // If it's an object, convert to array
+        questionData = Object.values(assignment.detailedAnswers);
+      } else if (assignment.questions && typeof assignment.questions === 'object') {
+        questionData = Object.values(assignment.questions);
+      }
+
+      console.log("Question data:", questionData);
+      
+      if (!Array.isArray(questionData)) {
+        console.warn("Invalid question data format, skipping assignment");
+        return;
+      }
+
+      questionData.forEach(answer => {
+        if (!answer) return; // Skip null/undefined answers
+        
+        const compName = answer.competency || 'General';
+        if (!competencies[compName]) {
+          competencies[compName] = { total: 0, correct: 0 };
+        }
+        competencies[compName].total++;
+        
+        // Check correctness in different formats
+        const isCorrect = answer.isCorrect || 
+                         answer.correct === true || 
+                         (answer.userAnswer && answer.correctAnswer && 
+                          answer.userAnswer === answer.correctAnswer);
+        
+        if (isCorrect) {
+          competencies[compName].correct++;
+        }
+      });
+    });
+
+    const results = Object.entries(competencies).map(([name, stats]) => ({
+      id: name.replace(/\s+/g, '-').toLowerCase(),
+      name: name,
+      rating: stats.total > 0 
+        ? Math.min(10, Math.max(1, Math.round((stats.correct / stats.total) * 10)))
+        : 0
+    }));
+    
+    console.log("Calculated competency ratings:", results);
+    return results;
+    
+  } catch (error) {
+    console.error("Error calculating ratings:", error);
+    return [];
+  }
+}
+
+function renderCompetencyOverview(competencyData) {
+  try {
+    const container = document.getElementById('competency-grid-container');
+    if (!container) {
+      console.error('Competency grid container not found');
+      return;
+    }
+
+    // Clear existing content
+    container.innerHTML = '';
+
+    // Create the grid wrapper
+    const gridWrapper = document.createElement('div');
+    gridWrapper.className = 'grid-wrapper';
+    
+    // Add corner element
+    const corner = document.createElement('div');
+    corner.className = 'corner';
+    gridWrapper.appendChild(corner);
+    
+    // Add column labels (1-10)
+    const colLabels = document.createElement('div');
+    colLabels.className = 'col-labels';
+    for (let i = 1; i <= 10; i++) {
+      const label = document.createElement('span');
+      label.textContent = i;
+      colLabels.appendChild(label);
+    }
+    gridWrapper.appendChild(colLabels);
+
+    // Add competency rows
+    competencyData.forEach(comp => {
+      const gridRow = document.createElement('div');
+      gridRow.className = 'grid-row';
+      
+      // Add competency label
+      const rowLabel = document.createElement('div');
+      rowLabel.className = 'row-label';
+      rowLabel.textContent = comp.name;
+      gridRow.appendChild(rowLabel);
+      
+      // Add squares
+      const rowGrid = document.createElement('div');
+      rowGrid.className = 'row-grid';
+      
+      for (let i = 1; i <= 10; i++) {
+        const square = document.createElement('div');
+        square.className = 'square';
+        
+        if (i <= comp.rating) {
+          // Add appropriate color class
+          if (comp.rating <= 3) {
+            square.classList.add('low-confidence');
+          } else if (comp.rating <= 6) {
+            square.classList.add('medium-confidence');
+          } else if (comp.rating <= 9) {
+            square.classList.add('high-confidence');
+          } else {
+            square.classList.add('mastery');
+          }
+        }
+        
+        rowGrid.appendChild(square);
+      }
+      
+      gridRow.appendChild(rowGrid);
+      gridWrapper.appendChild(gridRow);
+    });
+
+    container.appendChild(gridWrapper);
+
+  } catch (error) {
+    console.error('Error rendering competency overview:', error);
+    const container = document.getElementById('competency-grid-container');
+    if (container) {
+      container.innerHTML = '<p>Error loading competency data. Please try again.</p>';
+    }
+  }
+}
+
+
+async function showCompetencyOverview() {
+  const modal = document.querySelector('.competency-modal');
+  const backdrop = document.querySelector('.modal-backdrop');
+  
+  if (!modal || !backdrop) {
+    console.error('Modal elements not found');
+    return;
+  }
+
+  // Show loading state
+  const modalContent = modal.querySelector('.modal-content');
+  if (!modalContent) {
+    console.error('Modal content not found');
+    return;
+  }
+  
+  modalContent.innerHTML = `
+    <h2>Competency Overview</h2>
+    <div class="confidence-legend">
+      <div class="legend-item">
+        <span class="legend-color low-confidence"></span>
+        <span>Low (1-3)</span>
+      </div>
+      <div class="legend-item">
+        <span class="legend-color medium-confidence"></span>
+        <span>Medium (4-6)</span>
+      </div>
+      <div class="legend-item">
+        <span class="legend-color high-confidence"></span>
+        <span>High (7-9)</span>
+      </div>
+      <div class="legend-item">
+        <span class="legend-color mastery"></span>
+        <span>Mastery (10)</span>
+      </div>
+    </div>
+    <div id="competency-grid-container"></div>
+    <button class="close-modal">Close</button>
+  `;
+  
+  modal.classList.remove('hidden');
+  backdrop.classList.remove('hidden');
+  
+  try {
+    const competencyData = await calculateCompetencyRatings();
+    renderCompetencyOverview(competencyData);
+    
+    // Re-attach close button event listener
+    const closeBtn = modal.querySelector('.close-modal');
+    if (closeBtn) {
+      closeBtn.addEventListener('click', () => {
+        modal.classList.add('hidden');
+        backdrop.classList.add('hidden');
+        document.body.classList.remove('modal-open');
+      });
+    }
+  } catch (error) {
+    console.error("Error loading competency overview:", error);
+    modalContent.innerHTML = `
+      <h2>Competency Overview</h2>
+      <p>Error loading performance data. Please try again.</p>
+      <button class="close-modal">Close</button>
+    `;
+  }
+}
+  </script>
+
+</body>
+</html>

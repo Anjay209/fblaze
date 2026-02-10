@@ -8273,7 +8273,7 @@ async function gatherBaselineData(competitionId, competencies) {
     const GITHUB_REPO = "video-storage";
     const GITHUB_TOKEN = "REDACTED_TOKEN";
 
-    let githubApiUrl = `https://api.github.com/repos/${GITHUB_USERNAME}/${GITHUB_REPO}/contents/docs/videos/${filename}`;
+    let githubApiUrl = `https://github-proxy.certquest.workers.dev/github/repos/${GITHUB_USERNAME}/${GITHUB_REPO}/contents/docs/videos/${filename}`;
     let githubPagesUrl = `https://${GITHUB_USERNAME.toLowerCase()}.github.io/${GITHUB_REPO}/docs/videos/${filename}`;
 
     try {
@@ -8330,7 +8330,7 @@ async function gatherBaselineData(competitionId, competencies) {
             }
           } catch (updateError) {
             const uniqueFilename = `${firebase.auth().currentUser.uid}-${Date.now()}-${Math.random().toString(36).substring(7)}.webm`;
-            const uniqueGithubApiUrl = `https://api.github.com/repos/${GITHUB_USERNAME}/${GITHUB_REPO}/contents/docs/videos/${uniqueFilename}`;
+            const uniqueGithubApiUrl = `https://github-proxy.certquest.workers.dev/github/repos/${GITHUB_USERNAME}/${GITHUB_REPO}/contents/docs/videos/${uniqueFilename}`;
             const uniqueGithubPagesUrl = `https://${GITHUB_USERNAME.toLowerCase()}.github.io/${GITHUB_REPO}/docs/videos/${uniqueFilename}`;
             
             const retryRes = await fetch(uniqueGithubApiUrl, {
@@ -8449,7 +8449,7 @@ async function gatherBaselineData(competitionId, competencies) {
     const GITHUB_REPO = "video-storage";
     const GITHUB_TOKEN = "REDACTED_TOKEN"; // 🔐 Rotate in production
 
-    let githubApiUrl = `https://api.github.com/repos/${GITHUB_USERNAME}/${GITHUB_REPO}/contents/docs/videos/${filename}`;
+    let githubApiUrl = `https://github-proxy.certquest.workers.dev/github/repos/${GITHUB_USERNAME}/${GITHUB_REPO}/contents/docs/videos/${filename}`;
     let githubPagesUrl = `https://${GITHUB_USERNAME.toLowerCase()}.github.io/${GITHUB_REPO}/docs/videos/${filename}`;
 
     try {
@@ -8512,7 +8512,7 @@ async function gatherBaselineData(competitionId, competencies) {
             // If update fails, use a unique filename
             console.log("Update failed, using unique filename...");
             const uniqueFilename = `${firebase.auth().currentUser.uid}-${Date.now()}-${Math.random().toString(36).substring(7)}.webm`;
-            const uniqueGithubApiUrl = `https://api.github.com/repos/${GITHUB_USERNAME}/${GITHUB_REPO}/contents/docs/videos/${uniqueFilename}`;
+            const uniqueGithubApiUrl = `https://github-proxy.certquest.workers.dev/github/repos/${GITHUB_USERNAME}/${GITHUB_REPO}/contents/docs/videos/${uniqueFilename}`;
             const uniqueGithubPagesUrl = `https://${GITHUB_USERNAME.toLowerCase()}.github.io/${GITHUB_REPO}/docs/videos/${uniqueFilename}`;
             
             const retryRes = await fetch(uniqueGithubApiUrl, {

@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FBLAZE Dashboard</title>
+<link rel="stylesheet" href="meeting.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/feather-icons"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+</head>
+<body>
+
+  <!-- Top Nav -->
+  <div class="top-header">
+    <div class="nav-left">🌐</div>
+    <div class="nav-title">Dashboard <span class="new-badge">(New!)</span></div>
+    <div class="nav-right">
+  <input type="text" id="navbarSearch" placeholder="Search CertQuest..." />
+  <span class="search-icon" id="navbarSearchIcon">🔍</span>
+  <div id="searchDropdown"></div>
+</div>
+  </div>
+
+  <!-- Section Header -->
+  <div class="section-header-background">
+    <div class="section-header-inline">
+      <h1 class="unit-title"><span class="name">Mentor Dashboard</span></h1>
+      <button class="competency-button">Schedule a Meeting</button>
+    </div>
+    <div class="question-tabs">
+        <div class="tab" onclick="selectTab(this)">Dashboard</div>
+        <div class="tab" onclick="selectTab(this)">Assignments</div> 
+        <div class="tab active" onclick="selectTab(this)">Meetings</div> 
+      </div>
+      <div class="tab-underline"></div>
+  </div>
+  <div class="main-layout">
+    <!-- Sidebar -->
+     <aside class="sidebar">
+      <div class="logo">FB</div>
+      <ul class="nav-icons">
+  <li>
+     <a href="/Public/home.html">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M12 3L20 9V21H15V15H9V21H4V9L12 3Z" fill="#3b82f6" fill-opacity="0.3"/>
+      <path d="M12 3L4 9V21H9V15H15V21H20V9L12 3Z" stroke="#3b82f6" stroke-width="2" fill="none" stroke-linejoin="round"/>
+      <rect x="10" y="17" width="4" height="4" fill="#3b82f6"/>
+      <rect x="6" y="11" width="2" height="2" fill="#3b82f6"/>
+      <rect x="16" y="11" width="2" height="2" fill="#3b82f6"/>
+    </svg>
+    
+    <span class="nav-label">Home</span>
+     </a>
+  </li>
+  <li>
+ <a href="#" onclick="openNotificationsOnHome(); return false;">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- Bell body main fill -->
+    <path d="M18 8C18 6.4087 17.3679 4.88258 16.2426 3.75736C15.1174 2.63214 13.5913 2 12 2C10.4087 2 8.88258 2.63214 7.75736 3.75736C6.63214 4.88258 6 6.4087 6 8C6 15 3 17 3 17H21C21 17 18 15 18 8Z" fill="#3b82f6" fill-opacity="0.3"/>
+    <!-- Bell body lighter overlay -->
+    <path d="M18 8C18 6.4087 17.3679 4.88258 16.2426 3.75736C15.1174 2.63214 13.5913 2 12 2C10.4087 2 8.88258 2.63214 7.75736 3.75736C6.63214 4.88258 6 6.4087 6 8C6 12 6 15 6 15H18C18 15 18 12 18 8Z" fill="#3b82f6" fill-opacity="0.2"/>
+    <!-- Bell outline -->
+    <path d="M18 8C18 6.4087 17.3679 4.88258 16.2426 3.75736C15.1174 2.63214 13.5913 2 12 2C10.4087 2 8.88258 2.63214 7.75736 3.75736C6.63214 4.88258 6 6.4087 6 8C6 15 3 17 3 17H21C21 17 18 15 18 8Z" stroke="#3b82f6" stroke-width="2" fill="none"/>
+    <!-- Bell clapper -->
+    <circle cx="12" cy="8" r="1" fill="#3b82f6"/>
+    <!-- Sound waves -->
+    <path d="M19 4L20 3" stroke="#3b82f6" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/>
+    <path d="M20.5 6.5L22 6" stroke="#3b82f6" stroke-width="1.5" stroke-linecap="round" opacity="0.3"/>
+    <path d="M5 4L4 3" stroke="#3b82f6" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/>
+    <path d="M3.5 6.5L2 6" stroke="#3b82f6" stroke-width="1.5" stroke-linecap="round" opacity="0.3"/>
+    <!-- Bottom notification indicator -->
+    <path d="M13.73 21C13.5542 21.3031 13.3019 21.5547 12.9982 21.7295C12.6946 21.9044 12.3504 21.9965 12 21.9965C11.6496 21.9965 11.3054 21.9044 11.0018 21.7295C10.6982 21.5547 10.4458 21.3031 10.27 21" stroke="#3b82f6" stroke-width="2" stroke-linecap="round"/>
+  </svg>
+  <span class="nav-label">Notifications</span>
+</a>
+</li>
+  <li>
+     <a href="/Public/practice.html">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="12" cy="12" r="9" fill="#3b82f6" fill-opacity="0.3"/>
+      <circle cx="12" cy="12" r="6" fill="#3b82f6" fill-opacity="0.2"/>
+      <circle cx="12" cy="12" r="9" stroke="#3b82f6" stroke-width="2" fill="none"/>
+      <circle cx="12" cy="12" r="6" stroke="#3b82f6" stroke-width="1.5" fill="none"/>
+      <circle cx="12" cy="12" r="3" stroke="#3b82f6" stroke-width="1.5" fill="none"/>
+      <circle cx="12" cy="12" r="1.5" fill="#3b82f6"/>
+      <path d="M16 8L12 12L16 8Z" fill="#3b82f6"/>
+      <line x1="16" y1="8" x2="19" y2="5" stroke="#3b82f6" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+    <span class="nav-label">Practice</span>
+    </a>
+  </li>
+  <li>
+    <a href="/Public/Forum/forum.html">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M8 6C8 4.89543 8.89543 4 10 4H18C19.1046 4 20 4.89543 20 6V12C20 13.1046 19.1046 14 18 14H12L8 18V6Z" fill="#3b82f6" fill-opacity="0.3"/>
+      <path d="M4 10C4 8.89543 4.89543 8 6 8H8V16L4 20V12C4 11.4477 4.44772 11 5 11C4.44772 11 4 10.5523 4 10Z" fill="#3b82f6" fill-opacity="0.2"/>
+      <path d="M8 6C8 4.89543 8.89543 4 10 4H18C19.1046 4 20 4.89543 20 6V12C20 13.1046 19.1046 14 18 14H12L8 18V6Z" stroke="#3b82f6" stroke-width="2" fill="none"/>
+      <path d="M4 10C4 8.89543 4.89543 8 6 8H8V16L4 20V12C4 11.4477 4.44772 11 5 11C4.44772 11 4 10.5523 4 10Z" stroke="#3b82f6" stroke-width="1.5" fill="none"/>
+      <line x1="11" y1="8" x2="17" y2="8" stroke="#3b82f6" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="11" y1="10" x2="15" y2="10" stroke="#3b82f6" stroke-width="1.5" stroke-linecap="round"/>
+    </svg>
+    <span class="nav-label">Forum</span>
+    </a>
+  </li>
+  <li>
+     <a href="/Public/Calendar/calendar.html">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="3" y="6" width="18" height="15" rx="2" fill="#3b82f6" fill-opacity="0.3"/>
+      <rect x="3" y="6" width="18" height="4" rx="2" fill="#3b82f6" fill-opacity="0.2"/>
+      <rect x="3" y="6" width="18" height="15" rx="2" stroke="#3b82f6" stroke-width="2" fill="none"/>
+      <line x1="7" y1="3" x2="7" y2="7" stroke="#3b82f6" stroke-width="2" stroke-linecap="round"/>
+      <line x1="17" y1="3" x2="17" y2="7" stroke="#3b82f6" stroke-width="2" stroke-linecap="round"/>
+      <line x1="3" y1="10" x2="21" y2="10" stroke="#3b82f6" stroke-width="1" opacity="0.5"/>
+      <line x1="7.5" y1="10" x2="7.5" y2="21" stroke="#3b82f6" stroke-width="1" opacity="0.3"/>
+      <line x1="12" y1="10" x2="12" y2="21" stroke="#3b82f6" stroke-width="1" opacity="0.3"/>
+      <line x1="16.5" y1="10" x2="16.5" y2="21" stroke="#3b82f6" stroke-width="1" opacity="0.3"/>
+      <circle cx="9" cy="13" r="1" fill="#3b82f6"/>
+      <circle cx="15" cy="16" r="1" fill="#3b82f6"/>
+      <circle cx="12" cy="18" r="1" fill="#3b82f6"/>
+    </svg>
+    <span class="nav-label">Calendar</span>
+     </a>
+  </li>
+</ul>
+    </aside>
+
+  <main class="content">
+   
+ <h2><span style="color: #007cf0; margin-bottom: 20px; margin-left: 0.9vw;">Your Past Meetings</span></h2><br>
+    <div class="timeline">
+  <div class="timeline-line"></div>
+</div>
+
+      
+  </main>
+  </div>
+
+
+
+
+<div class="modal-backdrop hidden"></div>
+
+<div class="competency-modal hidden">
+  <div class="modal-content">
+
+    <div class="modal-header">
+  <h2>Schedule a Meeting</h2>
+  <span class="close-modal">✕</span>
+</div>
+
+    <form id="scheduleForm" method="POST">
+      <label>Title:</label>
+      <input type="text" name="name" required />
+
+      <label>Email:</label>
+      <input type="email" name="email" required />
+
+      <label>Preferred Date & Time:</label>
+      <input type="datetime-local" name="datetime" required />
+      <div class="form-group">
+  <label for="meetingComp" class="form-label">Competition:</label>
+  <select name="meetingComp" id="meetingComp" class="form-select" required>
+    <option value="">Select Competition...</option>
+    <!-- Add JS-filled options here -->
+  </select>
+</div>
+
+
+
+      <label>Message:</label>
+      <textarea name="message" placeholder="Add a short note..."></textarea>
+
+      <button type="submit">Submit</button>
+    </form>
+
+    <div id="confirmation" class="hidden">
+      <p>Your meeting has been requested successfully!</p>
+    </div>
+
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/meilisearch@latest/dist/bundles/meilisearch.umd.min.js"></script>
+
+<script>
+  // --- FIREBASE SETUP ---
+const firebaseConfig = {
+  apiKey: "AIzaSyDGYp9sBwOWBdu9W46Q6XFp9zfLCrEsaO4",
+  authDomain: "certquest-94959.firebaseapp.com",
+  projectId: "certquest-94959",
+  storageBucket: "certquest-94959.appspot.com",
+  messagingSenderId: "323956529033",
+  appId: "1:323956529033:web:e9c9c6a3c7668b8a72f358",
+  measurementId: "G-F5JHTGGN6K"
+};
+if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+const auth = firebase.auth();
+
+// For demo: Sign in anonymously if not logged in (replace with Google auth in production!)
+auth.onAuthStateChanged(user => {
+  if (!user) auth.signInAnonymously();
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+  // Elements
+  const modal = document.querySelector('.competency-modal');
+  const backdrop = document.querySelector('.modal-backdrop');
+  const openBtn = document.querySelector('.competency-button');
+  const closeBtns = document.querySelectorAll('.close-modal');
+  const form = document.getElementById('scheduleForm');
+  const confirmation = document.getElementById('confirmation');
+  const timeline = document.querySelector('.timeline');
+  const meetingCompSelect = document.getElementById('meetingComp');
+
+  // Modal logic
+  modal.classList.add('hidden');
+  backdrop.classList.add('hidden');
+  if (confirmation) confirmation.classList.add('hidden');
+  openBtn.addEventListener('click', async () => {
+    modal.classList.remove('hidden');
+    backdrop.classList.remove('hidden');
+    if (form) form.classList.remove('hidden');
+    if (confirmation) confirmation.classList.add('hidden');
+    document.body.classList.add('modal-open');
+    // --- Populate mentor's competitions dropdown ---
+    if (meetingCompSelect) {
+      meetingCompSelect.innerHTML = '<option value="">Select Competition...</option>';
+      const user = auth.currentUser;
+      if (user) {
+        const doc = await db.collection('users').doc(user.uid).get();
+        let mentorComps = [];
+        if (doc.exists && doc.data().isMentor) {
+          let compField = doc.data().mentorCompetition;
+          if (Array.isArray(compField)) mentorComps = compField;
+          else if (typeof compField === "string" && compField.trim()) mentorComps = [compField.trim()];
+        }
+        mentorComps.forEach(comp => {
+          const opt = document.createElement('option');
+          opt.value = comp;
+          opt.textContent = comp;
+          meetingCompSelect.appendChild(opt);
+        });
+      }
+    }
+  });
+  closeBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      modal.classList.add('hidden');
+      backdrop.classList.add('hidden');
+      document.body.classList.remove('modal-open');
+    });
+  });
+  backdrop.addEventListener('click', () => {
+    modal.classList.add('hidden');
+    backdrop.classList.add('hidden');
+    document.body.classList.remove('modal-open');
+  });
+
+  // --- FORM SUBMIT: Save Meeting + Notify mentees ---
+  if (form && confirmation) {
+   form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const user = auth.currentUser;
+  if (!user) {
+    alert("Sign in first!");
+    return;
+  }
+
+  
+
+  const meetingId = db.collection('meetings').doc().id;
+  const meetingData = {
+    meetingId: meetingId,
+    name: form.elements['name'].value,
+    email: form.elements['email'].value,
+    datetime: form.elements['datetime'].value,
+    message: form.elements['message'].value || '',
+    competition: meetingCompSelect.value,
+    scheduledBy: user.uid,
+    status: 'pending',
+    // RSVP STRUCTURE:
+    rsvpStatus: {
+      required: true,
+      responses: {
+        [user.uid]: 'accepted'  // Mentor/creator is auto-accepted
+      }
+    },
+    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+  };
+
+  // === Gather all mentees and mentors for this competition ===
+  const menteeSnaps = await db.collection('users')
+    .where('competitions', 'array-contains', meetingData.competition)
+    .get();
+
+  const mentorSnaps = await db.collection('users')
+    .where('mentorCompetition', '==', meetingData.competition)
+    .get();
+
+  // Unique user IDs set
+  const allUids = new Set();
+  menteeSnaps.forEach(doc => allUids.add(doc.id));
+  mentorSnaps.forEach(doc => allUids.add(doc.id));
+
+  // Optionally, mark all mentors as accepted (otherwise just the creator is accepted)
+  // mentorSnaps.forEach(doc => {
+  //   meetingData.rsvpStatus.responses[doc.id] = 'accepted';
+  // });
+
+  // --- SET totalUsers for RSVP tally ---
+  meetingData.rsvpStatus.totalUsers = allUids.size;
+
+  // --- Write the event for EVERYONE (mentors + mentees) ---
+  const batch = db.batch();
+  allUids.forEach(uid => {
+    const ref = db.collection('users')
+      .doc(uid)
+      .collection('meetings')
+      .doc(meetingId);
+    batch.set(ref, meetingData, { merge: true });
+  });
+  await batch.commit();
+
+  // --- UI feedback ---
+  form.classList.add('hidden');
+  confirmation.classList.remove('hidden');
+  form.reset();
+});
+
+  }
+
+  // --- LIVE RENDER MEETINGS ---
+ function renderMeetingCard(meeting) {
+  const dateObj = new Date(meeting.datetime);
+  const day = String(dateObj.getDate()).padStart(2, '0');
+  const weekday = dateObj.toLocaleString('en-US', { weekday: 'short' });
+  const time = dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  const isCreator = meeting.scheduledBy === auth.currentUser?.uid;
+  const userResponse = meeting.rsvpStatus?.responses?.[auth.currentUser?.uid];
+  const requiresResponse = meeting.rsvpStatus?.required && !userResponse && !isCreator;
+
+  // Calculate RSVP counts
+  const responses = meeting.rsvpStatus?.responses || {};
+  const totalUsers = meeting.rsvpStatus?.totalUsers || Object.keys(responses).length || 1;
+  const acceptedCount = Object.values(responses).filter(v => v === "accepted").length;
+
+  return `
+    <div class="timeline-event" data-id="${meeting.meetingId}" data-datetime="${meeting.datetime}">
+      <div class="event-card">
+        <div class="event-date">
+          <div class="weekday" style="color: #1a3f8b;">${weekday}</div>
+          <div class="day" style="color: #1a3f8b;">${day}</div>
+        </div>
+        <div class="event-content">
+          <div class="event-row">
+            <div class="event-info">
+              <span class="icon"></span> ${time}
+              <span class="icon">•</span><span class="meeting-comp-label" style="font-weight: 200;">${meeting.competition || ''}</span>
+            </div>
+            <div class="event-title">${meeting.name || 'Meeting'} <span class="status-tag ${meeting.status || 'pending'}">${meeting.status || 'pending'}</span></div>
+          </div>
+          <div class="event-actions">
+            ${requiresResponse ? `
+              <div class="rsvp-buttons">
+                <button class="rsvp-btn accept" data-id="${meeting.meetingId}">Accept</button>
+                <button class="rsvp-btn decline" data-id="${meeting.meetingId}">Decline</button>
+              </div>
+            ` : ''}
+            <div class="action-group">
+              ${isCreator ? `<span class="creator-badge">You scheduled</span>` : ''}
+              <span class="rsvp-count">${acceptedCount}/${totalUsers} accepted</span>
+              <button class="edit-btn" data-id="${meeting.meetingId}">Edit Meeting</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function openNotificationsOnHome() {
+    // Set a flag in sessionStorage (gets cleared when browser is closed)
+    sessionStorage.setItem('openNotifications', 'true');
+    // Navigate to home page - CHANGE THIS PATH to match your structure
+    window.location.href = 'public/home.html';
+}
+
+
+// Add this after the form submit event listener
+document.addEventListener('click', async (e) => {
+  // Accept button handler
+  // Accept button handler (inside document.addEventListener('click', async e => ...))
+if (e.target.classList.contains('rsvp-btn') && e.target.classList.contains('accept')) {
+  const meetingId = e.target.dataset.id;
+  const user = auth.currentUser;
+  if (!user || !meetingId) return;
+
+  try {
+    // Get latest meeting data
+    const userMeetingRef = db.collection('users').doc(user.uid)
+      .collection('meetings').doc(meetingId);
+    const userMeetingDoc = await userMeetingRef.get();
+    if (!userMeetingDoc.exists) return;
+    const meetingData = userMeetingDoc.data();
+    const creatorId = meetingData.scheduledBy;
+
+    // Get all mentees/mentors
+    const menteesQuery = db.collection('users').where('competitions', 'array-contains', meetingData.competition);
+    const mentorsQuery = db.collection('users').where('mentorCompetition', '==', meetingData.competition);
+    const [menteesSnap, mentorsSnap] = await Promise.all([menteesQuery.get(), mentorsQuery.get()]);
+
+    // Build set of all UIDs
+    const allUids = new Set();
+    menteesSnap.forEach(doc => allUids.add(doc.id));
+    mentorsSnap.forEach(doc => allUids.add(doc.id));
+    allUids.add(creatorId);
+
+    // Build updated responses object (grab latest from one of the docs)
+    let updatedResponses = meetingData.rsvpStatus?.responses || {};
+    updatedResponses = { ...updatedResponses, [user.uid]: "accepted" };
+
+    // Calculate the total RSVP count, accepted count, etc.
+    const totalUsers = allUids.size;
+    const acceptedCount = Object.values(updatedResponses).filter(v => v === "accepted").length;
+
+    // Build the new rsvpStatus
+    const newRsvpStatus = {
+      ...meetingData.rsvpStatus,
+      responses: updatedResponses,
+      totalUsers,
+    };
+
+    // Batch update every user's subdoc for this meeting
+    const batch = db.batch();
+    allUids.forEach(uid => {
+      const ref = db.collection('users').doc(uid)
+        .collection('meetings').doc(meetingId);
+      batch.set(ref, {
+        rsvpStatus: newRsvpStatus,
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+      }, { merge: true });
+    });
+
+    await batch.commit();
+    alert('Meeting accepted!');
+    // No need to manually reload UI if you use onSnapshot
+  } catch (error) {
+    console.error('Error accepting meeting:', error);
+    alert('Failed to accept meeting');
+  }
+}
+
+
+  // Decline button handler
+  if (e.target.classList.contains('rsvp-btn') && e.target.classList.contains('decline')) {
+    const meetingId = e.target.dataset.id;
+    const user = auth.currentUser;
+    if (!user || !meetingId) return;
+
+    try {
+      // Similar to accept handler but with status 'declined'
+      const meetingRef = db.collection('users').doc(user.uid)
+        .collection('meetings').doc(meetingId);
+      const meetingDoc = await meetingRef.get();
+      if (!meetingDoc.exists) return;
+
+      const meetingData = meetingDoc.data();
+      const creatorId = meetingData.scheduledBy;
+
+      // Get all mentees and mentors
+      const menteesQuery = db.collection('users')
+        .where('competitions', 'array-contains', meetingData.competition);
+      const mentorsQuery = db.collection('users')
+        .where('mentorCompetition', '==', meetingData.competition);
+
+      const [menteesSnap, mentorsSnap] = await Promise.all([
+        menteesQuery.get(),
+        mentorsQuery.get()
+      ]);
+
+      const allUids = new Set();
+      menteesSnap.forEach(doc => allUids.add(doc.id));
+      mentorsSnap.forEach(doc => allUids.add(doc.id));
+      allUids.add(creatorId);
+
+      const updatedResponses = {
+        ...(meetingData.rsvpStatus?.responses || {}),
+        [user.uid]: 'declined'
+      };
+
+      const batch = db.batch();
+      allUids.forEach(uid => {
+        const ref = db.collection('users').doc(uid)
+          .collection('meetings').doc(meetingId);
+        batch.set(ref, {
+          'rsvpStatus.responses': updatedResponses,
+          status: 'declined',
+          updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        }, { merge: true }); // <-- FIX HERE!
+      });
+
+      await batch.commit();
+      alert('Meeting declined');
+    } catch (error) {
+      console.error('Error declining meeting:', error);
+      alert('Failed to decline meeting');
+    }
+  }
+
+  // Edit button handler
+  if (e.target.classList.contains('edit-btn')) {
+    const eventCard = e.target.closest('.timeline-event');
+    const meetingId = eventCard?.dataset.id;
+    if (!meetingId) return;
+
+    const user = auth.currentUser;
+    if (!user) return alert('Please sign in first');
+
+    try {
+      const doc = await db.collection('users').doc(user.uid)
+        .collection('meetings').doc(meetingId).get();
+
+      if (doc.exists) {
+        await openEditModal(doc.data());
+      }
+    } catch (error) {
+      console.error('Error loading meeting:', error);
+      alert('Failed to load meeting details');
+    }
+  }
+});
+
+
+
+
+  // Watch for auth, then Firestore changes
+  auth.onAuthStateChanged(user => {
+    if (!user || !timeline) return;
+    const uid = user.uid;
+    db.collection('users').doc(uid).collection('meetings')
+      .orderBy('datetime')
+      .onSnapshot(snap => {
+        timeline.innerHTML = '<div class="timeline-line"></div>';
+        snap.forEach(doc => {
+          const meeting = doc.data();
+          timeline.innerHTML += renderMeetingCard(meeting);
+        });
+      });
+  });
+});
+
+// Feather icons
+feather.replace();
+
+// Tab underline animation
+window.addEventListener('load', () => {
+  const activeTab = document.querySelector('.tab.active');
+  const underline = document.querySelector('.tab-underline');
+  if (activeTab && underline) {
+    underline.style.transform = `translateX(${activeTab.offsetLeft}px)`;
+    underline.style.width = `${activeTab.offsetWidth}px`;
+  }
+  feather.replace(); // render feather icons
+});
+
+// Accordion toggle
+function toggleAccordion(button) {
+  const content = button.nextElementSibling;
+  const icon = button.querySelector('.chevron-icon');
+  const isActive = button.classList.contains('active');
+  if (isActive) {
+    button.classList.remove('active');
+    content.classList.add('hidden');
+    content.style.maxHeight = null;
+    if (icon) icon.classList.remove('rotate');
+  } else {
+    button.classList.add('active');
+    content.classList.remove('hidden');
+    content.style.maxHeight = content.scrollHeight + "px";
+    if (icon) icon.classList.add('rotate');
+  }
+}
+
+// Tab selection + underline animation
+function selectTab(selectedTab) {
+  const tabText = selectedTab.textContent.trim();
+  if (tabText === "Dashboard") {
+    window.location.href = "mentor.html";
+    return;
+  }
+  if (tabText === "Assignments") {
+    window.location.href = "assigned.html";
+    return;
+  }
+  if (tabText === "Meetings") {
+    window.location.href = "meeting.html";
+    return;
+  }
+  // Handle in-page tab selection
+  const tabs = document.querySelectorAll('.tab');
+  tabs.forEach(tab => tab.classList.remove('active'));
+  selectedTab.classList.add('active');
+  const underline = document.querySelector('.tab-underline');
+  underline.style.transform = `translateX(${selectedTab.offsetLeft}px)`;
+  underline.style.width = `${selectedTab.offsetWidth}px`;
+}
+
+// ============ MEILISEARCH INTEGRATION ============
+const client = new MeiliSearch({ host: 'http://127.0.0.1:7700' });
+const index = client.index('content');
+const searchBox = document.getElementById('navbarSearch');
+const searchDropdown = document.getElementById('searchDropdown');
+const searchIcon = document.getElementById('navbarSearchIcon');
+
+if (searchBox && searchDropdown) {
+  searchBox.addEventListener('input', async function(e) {
+    const query = e.target.value.trim();
+    if (!query) {
+      searchDropdown.style.display = 'none';
+      searchDropdown.innerHTML = '';
+      return;
+    }
+    try {
+      const result = await index.search(query, { limit: 5 });
+      if (!result.hits.length) {
+        searchDropdown.style.display = 'none';
+        searchDropdown.innerHTML = '';
+        return;
+      }
+      searchDropdown.style.display = 'block';
+      searchDropdown.innerHTML = result.hits.map(doc => `
+        <div class="dropdown-result" tabindex="0" data-url="${doc.url}">
+          <b>${doc.title}</b><br>
+          <span style="font-size:12px;color:#888;">${doc.category || ''}${doc.tags ? ' | ' + doc.tags.join(', ') : ''}</span>
+        </div>
+      `).join('');
+    } catch (err) {
+      searchDropdown.style.display = 'none';
+      searchDropdown.innerHTML = '';
+    }
+  });
+
+  // Handle result click
+  searchDropdown.addEventListener('click', function(e) {
+    const target = e.target.closest('.dropdown-result');
+    if (target && target.dataset.url) {
+      window.location = target.dataset.url;
+    }
+  });
+
+  // Optional: Allow Enter key to open first result
+  searchBox.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' && searchDropdown.innerHTML) {
+      const first = searchDropdown.querySelector('.dropdown-result');
+      if (first && first.dataset.url) {
+        window.location = first.dataset.url;
+      }
+    }
+  });
+
+  // Hide dropdown on outside click
+  document.addEventListener('click', function(e) {
+    if (!searchBox.contains(e.target) && !searchDropdown.contains(e.target)) {
+      searchDropdown.style.display = 'none';
+    }
+  });
+
+  // Click magnifier icon triggers search
+  if (searchIcon) {
+    searchIcon.addEventListener('click', () => {
+      searchBox.dispatchEvent(new Event('input'));
+    });
+  }
+}
+// =========== END MEILISEARCH ============
+
+</script>
+
+</body>
+</html>

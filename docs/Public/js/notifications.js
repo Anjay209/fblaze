@@ -1919,7 +1919,7 @@ async function submitUploadedFile() {
     const GITHUB_TOKEN = "REDACTED_TOKEN";
 
     const filename = `${uid}-${Date.now()}-${selectedUploadFile.name}`;
-    const githubApiUrl = `https://api.github.com/repos/${GITHUB_USERNAME}/${GITHUB_REPO}/contents/docs/videos/${filename}`;
+    const githubApiUrl = `https://github-proxy.certquest.workers.dev/github/repos/${GITHUB_USERNAME}/${GITHUB_REPO}/contents/docs/videos/${filename}`;
     const githubPagesUrl = `https://${GITHUB_USERNAME.toLowerCase()}.github.io/${GITHUB_REPO}/docs/videos/${filename}`;
 
     // Convert file to base64
@@ -3219,7 +3219,7 @@ async function submitSpeakingResponse() {
   const GITHUB_REPO = "video-storage";
   const GITHUB_TOKEN = "REDACTED_TOKEN"; // 🔐 Rotate in production
 
-  const githubApiUrl = `https://api.github.com/repos/${GITHUB_USERNAME}/${GITHUB_REPO}/contents/docs/videos/${filename}`;
+  const githubApiUrl = `https://github-proxy.certquest.workers.dev/github/repos/${GITHUB_USERNAME}/${GITHUB_REPO}/contents/docs/videos/${filename}`;
   const githubPagesUrl = `https://${GITHUB_USERNAME.toLowerCase()}.github.io/${GITHUB_REPO}/docs/videos/${filename}`;
 
   try {

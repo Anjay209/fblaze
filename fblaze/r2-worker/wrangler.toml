@@ -1,0 +1,11 @@
+name = "certquest-videos"
+compatibility_date = "2025-07-29"
+main = "src/index.js"
+
+[[r2_buckets]]
+binding = "MY_BUCKET"
+bucket_name = "certquest-media"
+
+[vars]
+R2_ACCESS_KEY = "9586bb3306fdd34ef9c4dc44a87bd01e"
+R2_SECRET_KEY = "97589ee62801d77e2dc4bd57ec67ace549ea0ed5eb934845c0f90dbdacdcc347"

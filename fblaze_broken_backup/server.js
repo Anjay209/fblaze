@@ -21,7 +21,7 @@ app.get(/^\/api\/github-proxy\/(.+)/, async (req, res) => {
   try {
     const githubPath = req.params[0];
 
-    const r = await fetch(`https://api.github.com/${githubPath}`, {
+    const r = await fetch(`https://github-proxy.certquest.workers.dev/github/${githubPath}`, {
       headers: {
         Authorization: `Bearer ${process.env.GITHUB_READ_TOKEN}`,
         Accept: "application/vnd.github+json"
