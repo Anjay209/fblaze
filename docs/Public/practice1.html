@@ -1,0 +1,5254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FBLAZE Dashboard</title>
+  <link rel="stylesheet" href="practice1.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/feather-icons"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+</head>
+<body>
+  <div class="min-h-screen text-white overflow-hidden">
+    <!-- Galaxy Background -->
+    <div class="galaxy-background">
+      <div class="galaxy-gradient"></div>
+      <div class="stars-container" id="starsContainer"></div>
+      <div class="nebula nebula-1"></div>
+      <div class="nebula nebula-2"></div>
+      <div class="nebula nebula-3"></div>
+    </div>
+
+    <!-- Header -->
+    <div class="blaze-header">
+      <div class="blaze-header-content">
+        <h1 class="blaze-logo">BLAZE</h1>
+        
+        <!-- Nav Links -->
+        <nav class="blaze-nav">
+          <a href="home3.html" class="blaze-nav-link">Home</a>
+          <a href="javascript:void(0)" onclick="toggleNotificationPanel()" class="blaze-nav-link">Notifications</a>
+          <a href="practice1.html" class="blaze-nav-link active">Practice</a>
+          <a href="Forum/forum.html" class="blaze-nav-link">Forum</a>
+          <a href="Calendar/calendar1.html" class="blaze-nav-link">Calendar</a>
+          <a href="mentor1.html" class="blaze-nav-link" id="mentorNavLink" style="display: none;">Mentor</a>
+        </nav>
+
+        <input 
+          type="text" 
+          id="navbarSearch"
+          placeholder="Search..." 
+          class="blaze-search"
+        />
+        <div id="searchDropdown" class="search-dropdown"></div>
+      </div>
+      
+      <!-- Sub-Navigation Tabs -->
+      <div class="create-sub-nav">
+        <div class="create-sub-nav-content">
+          <a href="Competitions/competition1.html" class="create-sub-nav-link">Your Journey</a>
+          <a href="practice1.html" class="create-sub-nav-link active">Practice Hub</a>
+          <a href="statistics.html" class="create-sub-nav-link">Your Statistics</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="practice-container">
+      <!-- Hero Section -->
+      <div class="practice-hero">
+        <h1 class="practice-hero-title">
+          What will you
+          <br />
+          <span class="practice-hero-gradient">practice today?</span>
+        </h1>
+
+        <!-- Search Section -->
+        <div class="practice-search-section">
+          <div class="practice-search-container">
+            <input 
+              type="text" 
+              id="practiceSearch"
+              placeholder="Search practice materials, topics and more..." 
+              class="practice-search-input"
+            />
+            <button class="practice-search-icon">🔍</button>
+          </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="practice-tabs">
+          <button class="practice-tab active" id="resourcesTab" onclick="selectTab(this)">Resources</button>
+          <button class="practice-tab" id="createTab" onclick="selectTab(this)">Create</button>
+        </div>
+      </div>
+
+      <!-- Featured Challenge -->
+      <div class="featured-challenge">
+        <div class="challenge-content">
+          <div class="challenge-text">
+            <h3 class="challenge-title">FBLA Competitions Challenge</h3>
+            <p class="challenge-desc">Compete against other competitions in a bracket style tournament match to see who is the best competition is!</p>
+            <button class="challenge-button" onclick="toggleCompete()">Compete</button>
+          </div>
+          <div class="challenge-emoji">🎯</div>
+        </div>
+      </div>
+
+      <!-- Recently Studied Section -->
+      <div class="recently-studied-section">
+        <div class="recently-studied-header">
+          <h2 class="recently-studied-title">Recently Studied</h2>
+          <a href="flashcard.html" class="recently-studied-link">See all studied →</a>
+        </div>
+
+        <!-- Learning Zone -->
+        <div class="learning-zone">
+          <h3 class="learning-zone-title">Learning Zone</h3>
+          
+          <div class="learning-zone-content">
+            <!-- Incomplete Assignments -->
+            <div class="learning-zone-item incomplete-item">
+              <button class="learning-zone-toggle" onclick="toggleLearningZone('incomplete')">
+                <span class="learning-zone-label">Your Incomplete Assignments</span>
+                <span class="learning-zone-chevron" id="incompleteChevron">▼</span>
+              </button>
+              <div class="learning-zone-content-panel hidden" id="incompleteContent">
+                <div id="incompleteAssignments" class="learning-zone-list">
+                  <p class="empty-msg">Loading assignments...</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Speaking Practice -->
+            <div class="learning-zone-item speaking-item">
+              <button class="learning-zone-toggle" onclick="toggleLearningZone('speaking')">
+                <span class="learning-zone-label">Speaking Practice</span>
+                <span class="learning-zone-chevron" id="speakingChevron">▼</span>
+              </button>
+              <div class="learning-zone-content-panel hidden" id="speakingContent">
+                <div class="learning-zone-list">
+                  <div class="learning-zone-list-item">Coming Soon!</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Case Study Practice -->
+            <div class="learning-zone-item case-item">
+              <button class="learning-zone-toggle" onclick="toggleLearningZone('case')">
+                <span class="learning-zone-label">Case Study Practice</span>
+                <span class="learning-zone-chevron" id="caseChevron">▼</span>
+              </button>
+              <div class="learning-zone-content-panel hidden" id="caseContent">
+                <div class="learning-zone-list">
+                  <div class="learning-zone-list-item">Coming Soon!</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CTA -->
+      <div class="practice-cta">
+        <p class="cta-label">Ready to Dominate</p>
+        <h2 class="cta-title">Keep grinding. Your success is our mission.</h2>
+        <p class="cta-desc">Complete assignments, master topics, and unlock your full potential. One practice session at a time.</p>
+        <button class="cta-button" onclick="window.location.href='create.html'">Start Practicing</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Notification Panel -->
+  <div id="notificationPanel" class="notification-panel hidden">
+    <div class="notification-panel-header">
+      <h3 class="notification-panel-title">NOTIFICATIONS</h3>
+      <button onclick="toggleNotificationPanel()" class="close-notifications">✕</button>
+    </div>
+    <div id="notificationList" class="notification-list"></div>
+  </div>
+
+<!-- Flashcard Modal -->
+<div id="flashcardModal" class="modal" style="display:none;">
+  <div class="modal-content">
+    <span class="close" onclick="closeFlashcardModal()">&times;</span>
+    <div class="modal-header">
+      <h2>Your Flashcard Decks</h2>
+      <div class="competency-filter" id="competencyFilter"></div>
+    </div>
+    <div class="flashcard-view">
+      <div class="flashcard-controls">
+        <button id="prevCard">← Previous</button>
+        <span id="cardCounter">1/10</span>
+        <button id="nextCard">Next →</button>
+      </div>
+      <div class="flashcard" id="currentFlashcard">
+        <div class="flashcard-front">
+          <h3>Loading flashcards...</h3>
+        </div>
+        <div class="flashcard-back hidden">
+          <p>Answer will appear here</p>
+        </div>
+      </div>
+      <div class="flashcard-actions">
+        <button class="difficulty-btn easy" onclick="rateDifficulty('easy')">Easy</button>
+        <button class="difficulty-btn medium" onclick="rateDifficulty('medium')">Medium</button>
+        <button class="difficulty-btn hard" onclick="rateDifficulty('hard')">Hard</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/meilisearch@latest/dist/bundles/meilisearch.umd.min.js"></script>
+
+<script>
+
+    const firebaseConfig = {
+    apiKey: "AIzaSyDGYp9sBwOWBdu9W46Q6XFp9zfLCrEsaO4",
+    authDomain: "certquest-94959.firebaseapp.com",
+    projectId: "certquest-94959",
+    storageBucket: "certquest-94959.appspot.com",
+    messagingSenderId: "323956529033",
+    appId: "1:323956529033:web:e9c9c6a3c7668b8a72f358",
+    measurementId: "G-F5JHTGGN6K"
+  };
+
+ const competencyIcons = {
+  'Business Communication': '💬',
+  'Marketing': '📈',
+  'Accounting': '💰',
+  'Economics': '📊',
+  'Management': '👥',
+  'Parliamentary Procedure': '⚖️',
+  'Business Ethics': '🤝',
+  'Finance': '💳',
+  'Entrepreneurship': '🚀',
+  'General': '📚'
+};
+
+const competitionTypes = {
+  'written': '📝',
+  'speaking': '🎤', 
+  'case': '💼'
+};
+
+
+
+  // Initialize Firebase
+  const app = firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+let recentlyStudiedDecks = [];
+let currentDeck = null;
+let currentCardIndex = 0;
+let isFlipped = false;
+let timer; // For quiz timer
+
+
+
+// Close flashcard modal
+function closeFlashcardModal() {
+  document.getElementById('flashcardModal').style.display = 'none';
+  currentDeck = null;
+  currentCardIndex = 0;
+  isFlipped = false;
+}
+
+function openNotificationsOnHome() {
+    // Set a flag in sessionStorage (gets cleared when browser is closed)
+    sessionStorage.setItem('openNotifications', 'true');
+    // Navigate to home page - CHANGE THIS PATH to match your structure
+    window.location.href = 'public/home.html';
+}
+
+// Show current flashcard
+function showCurrentFlashcard() {
+  if (!currentDeck || !currentDeck.cards.length) return;
+  
+  const card = currentDeck.cards[currentCardIndex];
+  const flashcardElement = document.getElementById('currentFlashcard');
+  const counterElement = document.getElementById('cardCounter');
+  
+  // Update counter
+  counterElement.textContent = `${currentCardIndex + 1}/${currentDeck.cards.length}`;
+  
+  // Reset flip state
+  isFlipped = false;
+  flashcardElement.classList.remove('flipped');
+  
+  // Update card content
+  flashcardElement.querySelector('.flashcard-front h3').textContent = card.question;
+  flashcardElement.querySelector('.flashcard-back p').innerHTML = `
+    <strong>Correct Answer:</strong> ${card.answer}<br>
+    ${card.userAnswer ? `<strong>Your Answer:</strong> ${card.userAnswer}` : ''}
+  `;
+  
+  // Add click to flip
+  flashcardElement.onclick = () => {
+    isFlipped = !isFlipped;
+    flashcardElement.classList.toggle('flipped');
+  };
+}
+
+async function loadCompetitionName() {
+  try {
+    const user = firebase.auth().currentUser;
+    
+    if (!user) {
+      console.log('No user authenticated, waiting...');
+      return;
+    }
+    
+    const userId = user.uid;
+    console.log('🔥 Loading competition for user:', userId);
+    
+    // Get user document
+    const userDoc = await db.collection('users').doc(userId).get();
+    
+    if (!userDoc.exists) {
+      console.log('User document not found');
+      const compElement = document.getElementById('comp');
+      if (compElement) compElement.textContent = 'User not found';
+      return;
+    }
+    
+    const userData = userDoc.data();
+    const competitions = userData.competitions;
+    
+    // DEBUG: Log the entire competitions array
+    console.log('🔍 DEBUG - Full competitions array:', competitions);
+    console.log('🔍 DEBUG - Type of first competition:', typeof competitions[0]);
+    console.log('🔍 DEBUG - First competition value:', competitions[0]);
+    
+    if (!competitions || competitions.length === 0) {
+      const compElement = document.getElementById('comp');
+      if (compElement) compElement.textContent = 'No competition assigned';
+      return;
+    }
+    
+    const competitionValue = competitions[0];
+    
+    // If it looks like a name string, use it directly
+    if (typeof competitionValue === 'string' && competitionValue.length > 0) {
+      console.log('✅ Using competition name directly:', competitionValue);
+      const compElement = document.getElementById('comp');
+      if (compElement) compElement.textContent = competitionValue;
+      return;
+    }
+    
+    // Otherwise try to look it up as a document ID
+    console.log('🔥 Looking for competition as document ID:', competitionValue);
+    const competitionDoc = await db.collection('competitions').doc(competitionValue).get();
+    
+    if (!competitionDoc.exists) {
+      console.log('❌ Competition document not found:', competitionValue);
+      const compElement = document.getElementById('comp');
+      if (compElement) compElement.textContent = 'Competition not found';
+      return;
+    }
+    
+    const competitionData = competitionDoc.data();
+    const competitionName = competitionData.name || 'Unnamed Competition';
+    
+    console.log('✅ Found competition name:', competitionName);
+    const compElement = document.getElementById('comp');
+    if (compElement) {
+      compElement.textContent = competitionName;
+    }
+    
+  } catch (error) {
+    console.error('❌ Error:', error);
+    const compElement = document.getElementById('comp');
+    if (compElement) {
+      compElement.textContent = 'Error loading';
+    }
+  }
+}
+
+// Make sure this runs AFTER authentication
+firebase.auth().onAuthStateChanged(user => {
+  if (user) {
+    console.log('🔥 User authenticated, loading competition...');
+    // Check mentor status and show/hide mentor link
+    db.collection('users').doc(user.uid).get().then((doc) => {
+      const mentorNavLink = document.getElementById('mentorNavLink');
+      if (mentorNavLink) {
+        const isMentor = doc.exists && doc.data().isMentor === true;
+        mentorNavLink.style.display = isMentor ? 'block' : 'none';
+      }
+    }).catch((error) => {
+      console.error('Error checking mentor status:', error);
+    });
+    loadCompetitionName();
+    loadIncompleteAssignments();
+    loadRecentlyStudiedDecks();
+  }
+});
+// Call when auth state changes
+firebase.auth().onAuthStateChanged(user => {
+  if (user) {
+    loadCompetitionName();
+  }
+});
+
+
+    // Tab selection + underline animation
+    function selectTab(selectedTab) {
+      const tabText = selectedTab.textContent.trim();
+      
+      // Remove active class from all tabs
+      document.querySelectorAll('.practice-tab').forEach(tab => {
+        tab.classList.remove('active');
+      });
+      
+      // Add active class to selected tab
+      selectedTab.classList.add('active');
+  
+      // Redirect if "Create" is clicked
+      if (tabText === "Create") {
+        window.location.href = "create.html";
+        return;
+      }
+
+      // Resources tab - stay on page, just update UI
+      if (tabText === "Resources") {
+        // Already on resources page, just ensure it's active
+        return;
+      }
+
+      if (tabText === "Judging") {
+        window.location.href = "judging.html"; // replace with your correct path
+        return;
+      }
+  
+      // Handle in-page tab selection
+      const tabs = document.querySelectorAll('.tab');
+      tabs.forEach(tab => tab.classList.remove('active'));
+      selectedTab.classList.add('active');
+  
+      const underline = document.querySelector('.tab-underline');
+      underline.style.transform = `translateX(${selectedTab.offsetLeft}px)`;
+      underline.style.width = `${selectedTab.offsetWidth}px`;
+    }
+  
+    // On page load: position underline
+    window.addEventListener('load', () => {
+      const activeTab = document.querySelector('.tab.active');
+      const underline = document.querySelector('.tab-underline');
+      if (activeTab && underline) {
+        underline.style.transform = `translateX(${activeTab.offsetLeft}px)`;
+        underline.style.width = `${activeTab.offsetWidth}px`;
+      }
+  
+      feather.replace(); // renders all feather icons
+    });
+  
+    // Accordion toggle logic
+  // ============ MEILISEARCH INTEGRATION ============
+    // Meilisearch client setup (adjust if you use a different host)
+    const client = new MeiliSearch({ host: 'http://127.0.0.1:7700' });
+    const index = client.index('content');
+    const searchBox = document.getElementById('navbarSearch');
+    const searchDropdown = document.getElementById('searchDropdown');
+    const searchIcon = document.getElementById('navbarSearchIcon');
+
+    if (searchBox && searchDropdown) {
+      searchBox.addEventListener('input', async function(e) {
+        const query = e.target.value.trim();
+        if (!query) {
+          searchDropdown.style.display = 'none';
+          searchDropdown.innerHTML = '';
+          return;
+        }
+        try {
+          const result = await index.search(query, { limit: 5 });
+          if (!result.hits.length) {
+            searchDropdown.style.display = 'none';
+            searchDropdown.innerHTML = '';
+            return;
+          }
+          searchDropdown.style.display = 'block';
+          searchDropdown.innerHTML = result.hits.map(doc => `
+            <div class="dropdown-result" tabindex="0" data-url="${doc.url}">
+              <b>${doc.title}</b><br>
+              <span style="font-size:12px;color:#888;">${doc.category || ''}${doc.tags ? ' | ' + doc.tags.join(', ') : ''}</span>
+            </div>
+          `).join('');
+        } catch (err) {
+          searchDropdown.style.display = 'none';
+          searchDropdown.innerHTML = '';
+        }
+      });
+
+      // Handle result click
+      searchDropdown.addEventListener('click', function(e) {
+        const target = e.target.closest('.dropdown-result');
+        if (target && target.dataset.url) {
+          window.location = target.dataset.url;
+        }
+      });
+
+      // Optional: Allow Enter key to open first result
+      searchBox.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' && searchDropdown.innerHTML) {
+          const first = searchDropdown.querySelector('.dropdown-result');
+          if (first && first.dataset.url) {
+            window.location = first.dataset.url;
+          }
+        }
+      });
+
+      // Hide dropdown on outside click
+      document.addEventListener('click', function(e) {
+        if (!searchBox.contains(e.target) && !searchDropdown.contains(e.target)) {
+          searchDropdown.style.display = 'none';
+        }
+      });
+
+      // Click magnifier icon triggers search
+      if (searchIcon) {
+        searchIcon.addEventListener('click', () => {
+          searchBox.dispatchEvent(new Event('input'));
+        });
+      }
+    }
+    // =========== END MEILISEARCH ============
+function capitalize(word) {
+      return word.charAt(0).toUpperCase() + word.slice(1);
+    }
+
+async function loadRecentlyStudiedDecks() {
+  console.log('=== Starting loadRecentlyStudiedDecks ===');
+  try {
+    const user = firebase.auth().currentUser;
+    
+    if (!user) {
+      renderEmptyRecentlyStudied();
+      return;
+    }
+
+    // Simple query to avoid index issues
+    const assignmentsSnapshot = await db.collection('assignments')
+      .where('to', '==', user.uid)
+      .where('status', '==', 'complete')
+      .limit(10)
+      .get();
+
+    console.log('Completed assignments found:', assignmentsSnapshot.size);
+
+    if (assignmentsSnapshot.empty) {
+      renderEmptyRecentlyStudied();
+      return;
+    }
+
+    // Process assignments to create flashcard decks from missed questions
+    const decksByCompetency = {};
+    
+    assignmentsSnapshot.forEach(doc => {
+      const assignment = doc.data();
+      
+      // Only process written assignments
+      if (assignment.type !== 'written' || !assignment.detailedAnswers) {
+        return;
+      }
+      
+      console.log('Processing written assignment:', assignment.title);
+      
+      // Process detailedAnswers array to find incorrect answers
+      assignment.detailedAnswers.forEach((answer) => {
+        // Only add incorrect answers to flashcards
+        if (answer.isCorrect === false) {
+          const competency = answer.competency || 'General';
+          
+          if (!decksByCompetency[competency]) {
+            decksByCompetency[competency] = {
+              cards: [],
+              lastStudied: assignment.completedAt || new Date()
+            };
+          }
+          
+          decksByCompetency[competency].cards.push({
+            question: answer.question,
+            answer: answer.correctAnswer,
+            userAnswer: answer.userAnswer,
+            competency: competency,
+            source: assignment.title || 'Written Practice',
+            difficulty: assignment.difficulty || 'medium'
+          });
+        }
+      });
+    });
+
+    console.log('Final decks created:', Object.keys(decksByCompetency));
+    
+    // Store the decks
+    recentlyStudiedDecks = decksByCompetency;
+    
+    // Render the decks
+    renderRecentlyStudiedDecks(decksByCompetency);
+    
+  } catch (error) {
+    console.error("Error in loadRecentlyStudiedDecks:", error);
+    renderEmptyRecentlyStudied();
+  }
+}
+
+// Updated renderRecentlyStudiedDecks function - kept for flashcard functionality
+function renderRecentlyStudiedDecks(decks) {
+  // This function is kept for flashcard functionality but not displayed in new design
+  // Flashcard decks can still be accessed via the "See all studied" link
+  console.log('Recently studied decks loaded:', Object.keys(decks).length, 'topics');
+}
+
+// Render empty state for recently studied
+function renderEmptyRecentlyStudied() {
+  // No longer needed in new design, but kept for compatibility
+}
+
+// Open flashcard modal
+function openFlashcardModal(competency, cards) {
+  try {
+    // Parse cards if they're a string
+    if (typeof cards === 'string') {
+      cards = JSON.parse(cards);
+    }
+    
+    // Validate cards array
+    if (!Array.isArray(cards) || cards.length === 0) {
+      console.error('Invalid cards data:', cards);
+      alert('No flashcards available for this competency.');
+      return;
+    }
+    
+    // Store the deck data in localStorage for flashcard.html to retrieve
+    const deckData = {
+      name: competency,
+      cards: cards,
+      source: 'missed_questions',
+      timestamp: Date.now()
+    };
+    
+    localStorage.setItem('currentFlashcardDeck', JSON.stringify(deckData));
+    
+    // Redirect to flashcard.html with competency parameter
+    window.location.href = `flashcard.html?deck=${encodeURIComponent(competency)}&source=missed`;
+    
+  } catch (error) {
+    console.error('Error opening flashcard deck:', error);
+    alert('Error loading flashcards. Please try again.');
+  }
+}
+
+// Learning Zone Toggle Function
+function toggleLearningZone(section) {
+  const contentPanel = document.getElementById(section + 'Content');
+  const chevron = document.getElementById(section + 'Chevron');
+  
+  if (!contentPanel || !chevron) return;
+  
+  if (contentPanel.classList.contains('hidden')) {
+    contentPanel.classList.remove('hidden');
+    chevron.style.transform = 'rotate(180deg)';
+  } else {
+    contentPanel.classList.add('hidden');
+    chevron.style.transform = 'rotate(0deg)';
+  }
+}
+
+// Keep old function for compatibility
+function toggleAccordion(button) {
+  const content = button.nextElementSibling;
+  const icon = button.querySelector('.chevron-icon');
+  
+  const isHidden = content.classList.contains('hidden');
+  
+  if (isHidden) {
+    // Open accordion
+    button.classList.add('active');
+    content.classList.remove('hidden');
+    content.style.maxHeight = content.scrollHeight + "px";
+    if (icon) icon.classList.add('rotate');
+  } else {
+    // Close accordion
+    button.classList.remove('active');
+    content.classList.add('hidden');
+    content.style.maxHeight = "0px";
+    if (icon) icon.classList.remove('rotate');
+  }
+  
+  feather.replace();
+}
+
+    function startAssignment(id, type) {
+      alert(`Starting ${type} assignment with ID: ${id}`);
+      // You can redirect or load another modal here
+    }
+
+function toggleCompete() {
+  // Create modal overlay with more blur
+  const overlay = document.createElement('div');
+  overlay.style.cssText = `
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+  `;
+
+  // Create modal content with black/red/orange theme
+  const modal = document.createElement('div');
+  modal.style.cssText = `
+    background: linear-gradient(to bottom right, rgba(0, 0, 0, 0.95), rgba(30, 0, 0, 0.95));
+    border: 2px solid rgba(239, 68, 68, 0.5);
+    border-radius: 16px;
+    padding: 32px;
+    max-width: 500px;
+    width: 90%;
+    position: relative;
+    box-shadow: 0 20px 25px -5px rgba(239, 68, 68, 0.3), 0 0 50px rgba(239, 68, 68, 0.2);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  `;
+
+  modal.innerHTML = `
+    <button style="
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: none;
+      border: none;
+      font-size: 24px;
+      color: #f87171;
+      cursor: pointer;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: color 0.2s;
+    " onmouseover="this.style.color='#ef4444'" onmouseout="this.style.color='#f87171'" onclick="this.closest('.modal-overlay').remove()">×</button>
+    
+    <h2 style="
+      font-size: 24px;
+      font-weight: 900;
+      background: linear-gradient(to right, #ef4444, #f97316);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin: 0 0 16px 0;
+    ">Challenge</h2>
+    
+    <p style="
+      font-size: 16px;
+      color: #cbd5e1;
+      margin: 0 0 24px 0;
+      line-height: 1.5;
+    ">Choose your competition type and get ready to compete!</p>
+    
+    <div style="
+      margin-bottom: 32px;
+    ">
+      <label style="
+        font-size: 14px;
+        font-weight: 700;
+        color: #f87171;
+        margin-bottom: 12px;
+        display: block;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      ">Competition Type</label>
+      
+      <div style="
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      ">
+        <label style="
+          display: flex;
+          align-items: center;
+          padding: 16px;
+          border: 2px solid rgba(185, 28, 28, 0.3);
+          border-radius: 12px;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          background: rgba(15, 23, 42, 0.3);
+        " onmouseover="this.style.borderColor='rgba(239, 68, 68, 0.6)'; this.style.backgroundColor='rgba(127, 29, 29, 0.2)';" 
+           onmouseout="updateBorderColor(this);" 
+           onclick="selectCompetitionType(this, 'written')">
+          <input type="radio" name="competitionType" value="written" style="
+            margin-right: 12px;
+            width: 16px;
+            height: 16px;
+            accent-color: #ef4444;
+          " />
+          <div>
+            <div style="
+              display: flex;
+              align-items: center;
+              margin-bottom: 4px;
+            ">
+              <span style="font-size: 18px; margin-right: 8px;">📝</span>
+              <span style="font-weight: 700; color: #fff;">Written</span>
+            </div>
+            <div style="
+              font-size: 13px;
+              color: #cbd5e1;
+            ">Test your knowledge with written questions and problems</div>
+          </div>
+        </label>
+        
+        <label style="
+          display: flex;
+          align-items: center;
+          padding: 16px;
+          border: 2px solid rgba(234, 88, 12, 0.3);
+          border-radius: 12px;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          background: rgba(15, 23, 42, 0.3);
+        " onmouseover="this.style.borderColor='rgba(251, 146, 60, 0.6)'; this.style.backgroundColor='rgba(154, 52, 18, 0.2)';" 
+           onmouseout="updateBorderColor(this);" 
+           onclick="selectCompetitionType(this, 'speaking')">
+          <input type="radio" name="competitionType" value="speaking" style="
+            margin-right: 12px;
+            width: 16px;
+            height: 16px;
+            accent-color: #f97316;
+          " />
+          <div>
+            <div style="
+              display: flex;
+              align-items: center;
+              margin-bottom: 4px;
+            ">
+              <span style="font-size: 18px; margin-right: 8px;">🎤</span>
+              <span style="font-weight: 700; color: #fff;">Speaking</span>
+            </div>
+            <div style="
+              font-size: 13px;
+              color: #cbd5e1;
+            ">Demonstrate your presentation and communication skills</div>
+          </div>
+        </label>
+        
+        <label style="
+          display: flex;
+          align-items: center;
+          padding: 16px;
+          border: 2px solid rgba(234, 179, 8, 0.3);
+          border-radius: 12px;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          background: rgba(15, 23, 42, 0.3);
+        " onmouseover="this.style.borderColor='rgba(250, 204, 21, 0.6)'; this.style.backgroundColor='rgba(161, 98, 7, 0.2)';" 
+           onmouseout="updateBorderColor(this);" 
+           onclick="selectCompetitionType(this, 'case')">
+          <input type="radio" name="competitionType" value="case" style="
+            margin-right: 12px;
+            width: 16px;
+            height: 16px;
+            accent-color: #facc15;
+          " />
+          <div>
+            <div style="
+              display: flex;
+              align-items: center;
+              margin-bottom: 4px;
+            ">
+              <span style="font-size: 18px; margin-right: 8px;">💼</span>
+              <span style="font-weight: 700; color: #fff;">Case Study</span>
+            </div>
+            <div style="
+              font-size: 13px;
+              color: #cbd5e1;
+            ">Analyze business scenarios and provide strategic solutions</div>
+          </div>
+        </label>
+      </div>
+    </div>
+    
+    <div style="
+      display: flex;
+      gap: 12px;
+      justify-content: flex-end;
+    ">
+      <button style="
+        padding: 8px 16px;
+        border: 1px solid rgba(185, 28, 28, 0.5);
+        background: rgba(15, 23, 42, 0.3);
+        color: #cbd5e1;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 500;
+        transition: all 0.2s;
+      " onmouseover="this.style.borderColor='rgba(239, 68, 68, 0.7)'; this.style.backgroundColor='rgba(127, 29, 29, 0.2)';" 
+         onmouseout="this.style.borderColor='rgba(185, 28, 28, 0.5)'; this.style.backgroundColor='rgba(15, 23, 42, 0.3)';"
+         onclick="this.closest('.modal-overlay').remove()">Cancel</button>
+      
+      <button id="startChallengeBtn" style="
+        padding: 8px 16px;
+        background: linear-gradient(to right, #dc2626, #f97316);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: not-allowed;
+        font-size: 14px;
+        font-weight: 700;
+        opacity: 0.6;
+        transition: all 0.2s;
+      " disabled onclick="startChallengeWithType()">Start Challenge</button>
+    </div>
+  `;
+
+  overlay.appendChild(modal);
+  overlay.className = 'modal-overlay';
+  
+  // Close on overlay click
+  overlay.addEventListener('click', (e) => {
+    if (e.target === overlay) {
+      overlay.remove();
+    }
+  });
+
+  document.body.appendChild(overlay);
+}
+
+function updateBorderColor(element) {
+  const radio = element.querySelector('input[type="radio"]');
+  if (radio && radio.checked) {
+    // Keep selected state with red/orange theme
+    if (element.getAttribute('onclick').includes('written')) {
+      element.style.borderColor = 'rgba(239, 68, 68, 0.8)';
+      element.style.backgroundColor = 'rgba(127, 29, 29, 0.3)';
+    } else if (element.getAttribute('onclick').includes('speaking')) {
+      element.style.borderColor = 'rgba(251, 146, 60, 0.8)';
+      element.style.backgroundColor = 'rgba(154, 52, 18, 0.3)';
+    } else if (element.getAttribute('onclick').includes('case')) {
+      element.style.borderColor = 'rgba(250, 204, 21, 0.8)';
+      element.style.backgroundColor = 'rgba(161, 98, 7, 0.3)';
+    }
+  } else {
+    // Reset to default based on type
+    if (element.getAttribute('onclick').includes('written')) {
+      element.style.borderColor = 'rgba(185, 28, 28, 0.3)';
+      element.style.backgroundColor = 'rgba(15, 23, 42, 0.3)';
+    } else if (element.getAttribute('onclick').includes('speaking')) {
+      element.style.borderColor = 'rgba(234, 88, 12, 0.3)';
+      element.style.backgroundColor = 'rgba(15, 23, 42, 0.3)';
+    } else if (element.getAttribute('onclick').includes('case')) {
+      element.style.borderColor = 'rgba(234, 179, 8, 0.3)';
+      element.style.backgroundColor = 'rgba(15, 23, 42, 0.3)';
+    }
+  }
+}
+
+function selectCompetitionType(labelElement, type) {
+  // Update all labels to default state
+  const allLabels = document.querySelectorAll('label[onclick*="selectCompetitionType"]');
+  allLabels.forEach(label => {
+    const labelType = label.getAttribute('onclick').match(/'(\w+)'/)?.[1];
+    if (labelType === 'written') {
+      label.style.borderColor = 'rgba(185, 28, 28, 0.3)';
+      label.style.backgroundColor = 'rgba(15, 23, 42, 0.3)';
+    } else if (labelType === 'speaking') {
+      label.style.borderColor = 'rgba(234, 88, 12, 0.3)';
+      label.style.backgroundColor = 'rgba(15, 23, 42, 0.3)';
+    } else if (labelType === 'case') {
+      label.style.borderColor = 'rgba(234, 179, 8, 0.3)';
+      label.style.backgroundColor = 'rgba(15, 23, 42, 0.3)';
+    }
+    const radio = label.querySelector('input[type="radio"]');
+    if (radio) radio.checked = false;
+  });
+  
+  // Highlight selected label based on type
+  if (type === 'written') {
+    labelElement.style.borderColor = 'rgba(239, 68, 68, 0.8)';
+    labelElement.style.backgroundColor = 'rgba(127, 29, 29, 0.3)';
+  } else if (type === 'speaking') {
+    labelElement.style.borderColor = 'rgba(251, 146, 60, 0.8)';
+    labelElement.style.backgroundColor = 'rgba(154, 52, 18, 0.3)';
+  } else if (type === 'case') {
+    labelElement.style.borderColor = 'rgba(250, 204, 21, 0.8)';
+    labelElement.style.backgroundColor = 'rgba(161, 98, 7, 0.3)';
+  }
+  
+  // Check the radio button
+  const radio = labelElement.querySelector('input[type="radio"]');
+  if (radio) radio.checked = true;
+  
+  // Enable the start button
+  const startBtn = document.getElementById('startChallengeBtn');
+  startBtn.style.background = 'linear-gradient(to right, #dc2626, #f97316)';
+  startBtn.style.cursor = 'pointer';
+  startBtn.style.opacity = '1';
+  startBtn.disabled = false;
+  
+  // Store selected type
+  window.selectedCompetitionType = type;
+}
+
+// Updated start challenge function
+async function startChallengeWithType() {
+  const selectedType = window.selectedCompetitionType;
+  
+  if (!selectedType) {
+    alert('Please select a competition type');
+    return;
+  }
+  
+  // Remove modal
+  document.querySelector('.modal-overlay').remove();
+  
+  // Show loading state
+  showLoadingScreen();
+  
+  try {
+    // Get current user's team and find opponent
+    const { currentTeam, opponentTeam, hasAvailableOpponents } = await findTeamsForCompetition();
+    
+    // Create fullscreen competition page with selected type
+    createCompetitionPage(currentTeam, opponentTeam, hasAvailableOpponents, selectedType);
+  } catch (error) {
+    console.error('Error starting challenge:', error);
+    // Show error state or fallback
+    createCompetitionPage('Your Team', 'Loading...', false, selectedType);
+  }
+}
+
+
+async function startChallenge() {
+  // Remove modal
+  document.querySelector('.modal-overlay').remove();
+  
+  // Show loading state
+  showLoadingScreen();
+  
+  try {
+    // Get current user's team and find opponent
+    const { currentTeam, opponentTeam, hasAvailableOpponents } = await findTeamsForCompetition();
+    
+    // Create fullscreen competition page
+    createCompetitionPage(currentTeam, opponentTeam, hasAvailableOpponents);
+  } catch (error) {
+    console.error('Error starting challenge:', error);
+    // Show error state or fallback
+    createCompetitionPage('Your Team', 'Loading...', false);
+  }
+}
+
+
+
+function showLoadingScreen() {
+  const loadingPage = document.createElement('div');
+  loadingPage.style.cssText = `
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  `;
+  
+  loadingPage.innerHTML = `
+    <div style="text-align: center;">
+      <div style="
+        font-size: 24px;
+        color: #00d4ff;
+        margin-bottom: 20px;
+        animation: pulse 1.5s ease-in-out infinite;
+      ">Finding opponents...</div>
+      <div style="
+        width: 40px;
+        height: 40px;
+        border: 3px solid rgba(0, 212, 255, 0.3);
+        border-top: 3px solid #00d4ff;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin: 0 auto;
+      "></div>
+    </div>
+    <style>
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+      @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.5; }
+      }
+    </style>
+  `;
+  
+  loadingPage.id = 'loading-page';
+  document.body.appendChild(loadingPage);
+}
+
+async function findTeamsForCompetition() {
+  // Get current user ID (you'll need to implement this based on your auth system)
+  const currentUserId = getCurrentUserId(); // You need to implement this
+  
+  if (!currentUserId) {
+    throw new Error('User not authenticated');
+  }
+  
+  // Get current user's data
+  const currentUserRef = db.collection('users').doc(currentUserId);
+  const currentUserDoc = await currentUserRef.get();
+  
+  if (!currentUserDoc.exists) {
+    throw new Error('User not found');
+  }
+  
+  const currentUserData = currentUserDoc.data();
+  const currentUserCompetitions = currentUserData.competitions;
+  
+  // Check if competitions exists and is an array
+  if (!Array.isArray(currentUserCompetitions)) {
+    throw new Error('User has no competitions or competitions is not an array');
+  }
+  
+  // Filter out mentorCompetition entries and get regular competitions
+  const regularCompetitions = currentUserCompetitions.filter(comp => 
+    typeof comp === 'string' && comp !== 'mentorCompetition'
+  );
+  
+  if (regularCompetitions.length === 0) {
+    throw new Error('User has no regular competitions');
+  }
+  
+  // Use the first competition as current team
+  const currentTeam = regularCompetitions[0];
+  
+  console.log('Current user team:', currentTeam);
+  console.log('Current user competitions:', regularCompetitions);
+  
+  // Get all users to find potential opponents
+  const usersSnapshot = await db.collection('users').get();
+  const availableOpponents = [];
+  
+  usersSnapshot.forEach(doc => {
+    const userData = doc.data();
+    const userId = doc.id;
+    
+    // Skip current user
+    if (userId === currentUserId) return;
+    
+    // Check if user has competitions and it's an array
+    const userCompetitions = userData.competitions;
+    if (!Array.isArray(userCompetitions)) {
+      console.log(`User ${userId} has no competitions array`);
+      return;
+    }
+    
+    const userRegularCompetitions = userCompetitions.filter(comp => 
+      typeof comp === 'string' && comp !== 'mentorCompetition'
+    );
+    
+    // Check if user has competitions, is not currently competing, AND is not in the same competition
+    if (userRegularCompetitions.length > 0 && !userData.isActivelyCompeting) {
+      // Case-insensitive check to ensure not same competition
+      const isSameCompetition = regularCompetitions.some(currentComp => 
+        userRegularCompetitions.some(userComp => 
+          currentComp.toLowerCase() === userComp.toLowerCase()
+        )
+      );
+      
+      if (!isSameCompetition) {
+        const opponentTeamName = userRegularCompetitions[0];
+        console.log(`Adding opponent: ${userId} with team: ${opponentTeamName}`);
+        availableOpponents.push({
+          userId: userId,
+          teamName: opponentTeamName,
+          userData: userData
+        });
+      } else {
+        console.log(`Skipping user ${userId} - same competition`);
+      }
+    }
+  });
+  
+  console.log('Available opponents found:', availableOpponents.length);
+  console.log('Opponents:', availableOpponents);
+  
+  let opponentTeam = 'Waiting for opponents...';
+  let hasAvailableOpponents = availableOpponents.length > 0;
+  
+  if (hasAvailableOpponents) {
+    // Select random opponent
+    const randomOpponent = availableOpponents[Math.floor(Math.random() * availableOpponents.length)];
+    opponentTeam = randomOpponent.teamName;
+    
+    // Optional: Mark both users as actively competing
+    await Promise.all([
+      currentUserRef.update({ isActivelyCompeting: true }),
+      db.collection('users').doc(randomOpponent.userId).update({ isActivelyCompeting: true })
+    ]);
+  }
+  
+  return {
+    currentTeam,
+    opponentTeam,
+    hasAvailableOpponents
+  };
+}
+
+function getCurrentUserId() {
+  // Using Firebase Auth to get current user
+  return firebase.auth().currentUser?.uid;
+}
+
+async function notifyTeamsReady() {
+  // This function will notify other teams that someone is ready to compete
+  try {
+    // You can implement this by:
+    // 1. Adding a notification to a global notifications collection
+    // 2. Updating a "seeking opponents" status
+    // 3. Sending push notifications to other users
+    
+    const currentUserId = getCurrentUserId();
+    const currentUserRef = db.collection('users').doc(currentUserId);
+    
+    // Mark user as seeking opponents
+    await currentUserRef.update({
+      seekingOpponents: true,
+      lastSeekingTime: new Date()
+    });
+    
+    // Add to a global ready queue (optional)
+    await db.collection('readyToCompete').add({
+      userId: currentUserId,
+      timestamp: new Date(),
+      status: 'seeking'
+    });
+    
+    alert('Other teams have been notified that you\'re ready to compete!');
+    
+  } catch (error) {
+    console.error('Error notifying teams:', error);
+    alert('Failed to notify other teams. Please try again.');
+  }
+}
+
+function createCompetitionPage(currentTeam, opponentTeam, hasAvailableOpponents) {
+  // Remove loading screen
+  const loadingPage = document.getElementById('loading-page');
+  if (loadingPage) loadingPage.remove();
+  
+  // Create fullscreen competition page
+  const competePage = document.createElement('div');
+  competePage.style.cssText = `
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    overflow: hidden;
+  `;
+
+  competePage.innerHTML = `
+    <div style="
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at 20% 80%, #0066ff33 0%, transparent 50%),
+                  radial-gradient(circle at 80% 20%, #ff006633 0%, transparent 50%);
+      opacity: 0.7;
+    "></div>
+    
+    <div style="
+      text-align: center;
+      z-index: 1;
+      max-width: 800px;
+      padding: 0 20px;
+    ">
+      <div style="
+        font-size: 64px;
+        font-weight: 800;
+        background: linear-gradient(45deg, #00d4ff, #ff0080);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 40px;
+        text-transform: uppercase;
+        letter-spacing: 3px;
+        animation: glow 2s ease-in-out infinite alternate;
+      ">COMPETING</div>
+      
+      <div style="
+        font-size: 24px;
+        color: #ffffff;
+        margin-bottom: 20px;
+        opacity: 0;
+        animation: fadeInUp 1s ease-out 0.5s forwards;
+      ">You are competing against</div>
+      
+      <div id="team1" style="
+        font-size: 36px;
+        font-weight: 700;
+        color: #00d4ff;
+        margin-bottom: 30px;
+        opacity: 0;
+        animation: fadeInUp 1s ease-out 1s forwards;
+        text-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+      ">${currentTeam.toUpperCase()}</div>
+      
+      <div style="
+        font-size: 48px;
+        color: #ff0080;
+        margin: 20px 0;
+        opacity: 0;
+        animation: fadeInUp 1s ease-out 1.5s forwards;
+      ">VS</div>
+      
+      <div id="team2" style="
+        font-size: 36px;
+        font-weight: 700;
+        color: #ff0080;
+        margin-bottom: 60px;
+        opacity: 0;
+        animation: fadeInUp 1s ease-out 2s forwards;
+        text-shadow: 0 0 20px rgba(255, 0, 128, 0.5);
+      ">${opponentTeam.toUpperCase()}</div>
+      
+      ${!hasAvailableOpponents ? `
+        <div style="
+          background: rgba(255, 165, 0, 0.1);
+          border: 1px solid rgba(255, 165, 0, 0.3);
+          border-radius: 12px;
+          padding: 20px;
+          margin-bottom: 30px;
+          opacity: 0;
+          animation: fadeInUp 1s ease-out 2.2s forwards;
+        ">
+          <div style="color: #ffa500; font-size: 18px; margin-bottom: 10px;">⚠️ No opponents available</div>
+          <div style="color: #ffffff; font-size: 14px; margin-bottom: 15px;">
+            There are currently no teams available to compete against.
+          </div>
+          <button onclick="notifyTeamsReady()" style="
+            padding: 10px 20px;
+            background: linear-gradient(45deg, #ffa500, #ff8c00);
+            border: none;
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+          ">Notify Other Teams</button>
+        </div>
+      ` : ''}
+      
+      <div style="
+        display: flex;
+        gap: 20px;
+        justify-content: center;
+        flex-wrap: wrap;
+        opacity: 0;
+        animation: fadeInUp 1s ease-out 2.5s forwards;
+      ">
+        <button onclick="closeCompetePage()" style="
+          padding: 15px 30px;
+          background: rgba(255, 255, 255, 0.1);
+          border: 2px solid rgba(255, 255, 255, 0.3);
+          color: white;
+          border-radius: 12px;
+          cursor: pointer;
+          font-size: 16px;
+          font-weight: 600;
+          backdrop-filter: blur(10px);
+          transition: all 0.3s ease;
+        " onmouseover="this.style.background='rgba(255,255,255,0.2)'" 
+           onmouseout="this.style.background='rgba(255,255,255,0.1)'">← Back</button>
+        
+        <button onclick="viewBracket()" style="
+          padding: 15px 30px;
+          background: rgba(0, 212, 255, 0.2);
+          border: 2px solid #00d4ff;
+          color: #00d4ff;
+          border-radius: 12px;
+          cursor: pointer;
+          font-size: 16px;
+          font-weight: 600;
+          backdrop-filter: blur(10px);
+          transition: all 0.3s ease;
+        " onmouseover="this.style.background='rgba(0,212,255,0.3)'" 
+           onmouseout="this.style.background='rgba(0,212,255,0.2)'">View Bracket</button>
+        
+        <button style="
+          padding: 15px 30px;
+          background: linear-gradient(45deg, #00d4ff, #ff0080);
+          border: none;
+          color: white;
+          border-radius: 12px;
+          cursor: pointer;
+          font-size: 16px;
+          font-weight: 600;
+          text-transform: uppercase;
+          letter-spacing: 1px;
+          box-shadow: 0 0 30px rgba(0, 212, 255, 0.3);
+          transition: all 0.3s ease;
+          ${!hasAvailableOpponents ? 'opacity: 0.5; cursor: not-allowed;' : ''}
+        " ${hasAvailableOpponents ? `onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'"` : 'disabled'}>
+          ${hasAvailableOpponents ? 'Compete Now' : 'Waiting for Opponents'}
+        </button>
+      </div>
+    </div>
+    
+    <style>
+      @keyframes glow {
+        from { text-shadow: 0 0 20px rgba(0, 212, 255, 0.5), 0 0 30px rgba(255, 0, 128, 0.3); }
+        to { text-shadow: 0 0 30px rgba(0, 212, 255, 0.8), 0 0 40px rgba(255, 0, 128, 0.6); }
+      }
+      
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+    </style>
+  `;
+
+  competePage.id = 'compete-page';
+  document.body.appendChild(competePage);
+}
+
+
+function createCompetitionPage(currentTeam, opponentTeam, hasAvailableOpponents, competitionType = 'written') {
+   const typeIcon = competitionTypes[competitionType] || '📚';
+  const typeName = competitionType.charAt(0).toUpperCase() + competitionType.slice(1);
+  
+  // Remove loading screen
+  const loadingPage = document.getElementById('loading-page');
+  if (loadingPage) loadingPage.remove();
+  
+  // Create fullscreen competition page
+  const competePage = document.createElement('div');
+  competePage.style.cssText = `
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    overflow: hidden;
+  `;
+
+  competePage.innerHTML = `
+    <div style="
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at 20% 80%, #0066ff33 0%, transparent 50%),
+                  radial-gradient(circle at 80% 20%, #ff006633 0%, transparent 50%);
+      opacity: 0.7;
+    "></div>
+    
+    <div style="
+      text-align: center;
+      z-index: 1;
+      max-width: 800px;
+      padding: 0 20px;
+    ">
+      <div style="
+        font-size: 64px;
+        font-weight: 800;
+        background: linear-gradient(45deg, #00d4ff, #ff0080);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 20px;
+        text-transform: uppercase;
+        letter-spacing: 3px;
+        animation: glow 2s ease-in-out infinite alternate;
+      ">COMPETING</div>
+      
+      <div style="
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 40px;
+        opacity: 0;
+        animation: fadeInUp 1s ease-out 0.3s forwards;
+      ">
+        <span style="font-size: 32px; margin-right: 12px;">${typeIcon}</span>
+        <span style="
+          font-size: 24px;
+          color: #ffffff;
+          font-weight: 600;
+          text-transform: uppercase;
+          letter-spacing: 1px;
+        ">${typeName} Competition</span>
+      </div>
+      
+      <div style="
+        font-size: 24px;
+        color: #ffffff;
+        margin-bottom: 20px;
+        opacity: 0;
+        animation: fadeInUp 1s ease-out 0.5s forwards;
+      ">You are competing against</div>
+      
+      <div id="team1" style="
+        font-size: 36px;
+        font-weight: 700;
+        color: #00d4ff;
+        margin-bottom: 30px;
+        opacity: 0;
+        animation: fadeInUp 1s ease-out 1s forwards;
+        text-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+      ">${currentTeam.toUpperCase()}</div>
+      
+      <div style="
+        font-size: 48px;
+        color: #ff0080;
+        margin: 20px 0;
+        opacity: 0;
+        animation: fadeInUp 1s ease-out 1.5s forwards;
+      ">VS</div>
+      
+      <div id="team2" style="
+        font-size: 36px;
+        font-weight: 700;
+        color: #ff0080;
+        margin-bottom: 60px;
+        opacity: 0;
+        animation: fadeInUp 1s ease-out 2s forwards;
+        text-shadow: 0 0 20px rgba(255, 0, 128, 0.5);
+      ">${opponentTeam.toUpperCase()}</div>
+      
+      ${!hasAvailableOpponents ? `
+        <div style="
+          background: rgba(255, 165, 0, 0.1);
+          border: 1px solid rgba(255, 165, 0, 0.3);
+          border-radius: 12px;
+          padding: 20px;
+          margin-bottom: 30px;
+          opacity: 0;
+          animation: fadeInUp 1s ease-out 2.2s forwards;
+        ">
+          <div style="color: #ffa500; font-size: 18px; margin-bottom: 10px;">⚠️ No opponents available</div>
+          <div style="color: #ffffff; font-size: 14px; margin-bottom: 15px;">
+            There are currently no teams available to compete against.
+          </div>
+          <button onclick="notifyTeamsReady()" style="
+            padding: 10px 20px;
+            background: linear-gradient(45deg, #ffa500, #ff8c00);
+            border: none;
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+          ">Notify Other Teams</button>
+        </div>
+      ` : ''}
+      
+      <div style="
+        display: flex;
+        gap: 20px;
+        justify-content: center;
+        flex-wrap: wrap;
+        opacity: 0;
+        animation: fadeInUp 1s ease-out 2.5s forwards;
+      ">
+        <button onclick="closeCompetePage()" style="
+          padding: 15px 30px;
+          background: rgba(255, 255, 255, 0.1);
+          border: 2px solid rgba(255, 255, 255, 0.3);
+          color: white;
+          border-radius: 12px;
+          cursor: pointer;
+          font-size: 16px;
+          font-weight: 600;
+          backdrop-filter: blur(10px);
+          transition: all 0.3s ease;
+        " onmouseover="this.style.background='rgba(255,255,255,0.2)'" 
+           onmouseout="this.style.background='rgba(255,255,255,0.1)'">← Back</button>
+        
+        <button onclick="viewBracket()" style="
+          padding: 15px 30px;
+          background: rgba(0, 212, 255, 0.2);
+          border: 2px solid #00d4ff;
+          color: #00d4ff;
+          border-radius: 12px;
+          cursor: pointer;
+          font-size: 16px;
+          font-weight: 600;
+          backdrop-filter: blur(10px);
+          transition: all 0.3s ease;
+        " onmouseover="this.style.background='rgba(0,212,255,0.3)'" 
+           onmouseout="this.style.background='rgba(0,212,255,0.2)'">View Bracket</button>
+        
+        <button onclick="startCompetitionWithType('${competitionType}')" style="
+          padding: 15px 30px;
+          background: linear-gradient(45deg, #00d4ff, #ff0080);
+          border: none;
+          color: white;
+          border-radius: 12px;
+          cursor: pointer;
+          font-size: 16px;
+          font-weight: 600;
+          text-transform: uppercase;
+          letter-spacing: 1px;
+          box-shadow: 0 0 30px rgba(0, 212, 255, 0.3);
+          transition: all 0.3s ease;
+          ${!hasAvailableOpponents ? 'opacity: 0.5; cursor: not-allowed;' : ''}
+        " ${hasAvailableOpponents ? `onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'"` : 'disabled'}>
+          ${hasAvailableOpponents ? `Start ${typeName} Competition` : 'Waiting for Opponents'}
+        </button>
+      </div>
+    </div>
+    
+    <style>
+      @keyframes glow {
+        from { text-shadow: 0 0 20px rgba(0, 212, 255, 0.5), 0 0 30px rgba(255, 0, 128, 0.3); }
+        to { text-shadow: 0 0 30px rgba(0, 212, 255, 0.8), 0 0 40px rgba(255, 0, 128, 0.6); }
+      }
+      
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+    </style>
+  `;
+
+  competePage.id = 'compete-page';
+  document.body.appendChild(competePage);
+}
+function closeCompetePage() {
+  const competePage = document.getElementById('compete-page');
+  if (competePage) {
+    competePage.remove();
+  }
+}
+
+async function viewBracket() {
+  // Close competition page
+  closeCompetePage();
+  
+  // Show loading
+  showLoadingScreen();
+  
+  try {
+    // Get all user pairings for the bracket
+    const pairings = await getAllCompetitionPairings();
+    createBracketView(pairings);
+  } catch (error) {
+    console.error('Error loading bracket:', error);
+    // Remove loading and show error
+    const loadingPage = document.getElementById('loading-page');
+    if (loadingPage) loadingPage.remove();
+    alert('Failed to load bracket. Please try again.');
+  }
+}
+
+async function getAllCompetitionPairings() {
+  const usersSnapshot = await db.collection('users').get();
+  const usersByCompetition = {};
+  const pairings = [];
+  
+  // Group users by competition
+  usersSnapshot.forEach(doc => {
+    const userData = doc.data();
+    const userId = doc.id;
+    const userCompetitions = userData.competitions;
+    
+    if (Array.isArray(userCompetitions)) {
+      const regularCompetitions = userCompetitions.filter(comp => 
+        typeof comp === 'string' && comp !== 'mentorCompetition'
+      );
+      
+      if (regularCompetitions.length > 0) {
+        const competition = regularCompetitions[0];
+        if (!usersByCompetition[competition]) {
+          usersByCompetition[competition] = [];
+        }
+        usersByCompetition[competition].push({
+          uid: userId,
+          name: userData.name || `User ${userId.slice(0, 6)}`,
+          competition: competition,
+          isActivelyCompeting: userData.isActivelyCompeting || false
+        });
+      }
+    }
+  });
+  
+  // Create pairings from different competitions
+  const competitions = Object.keys(usersByCompetition);
+  console.log('Competitions found:', competitions);
+  console.log('Users by competition:', usersByCompetition);
+  
+  // Generate all possible matchups between different competitions
+  for (let i = 0; i < competitions.length; i++) {
+    for (let j = i + 1; j < competitions.length; j++) {
+      const comp1 = competitions[i];
+      const comp2 = competitions[j];
+      const users1 = usersByCompetition[comp1];
+      const users2 = usersByCompetition[comp2];
+      
+      // Create pairings between competitions
+      const maxPairs = Math.min(users1.length, users2.length);
+      for (let k = 0; k < maxPairs; k++) {
+        pairings.push({
+          id: `${comp1}-vs-${comp2}-${k}`,
+          team1: {
+            ...users1[k],
+            teamName: comp1
+          },
+          team2: {
+            ...users2[k],
+            teamName: comp2
+          },
+          status: (users1[k].isActivelyCompeting && users2[k].isActivelyCompeting) ? 'active' : 'pending',
+          round: 1
+        });
+      }
+    }
+  }
+  
+  return pairings;
+}
+
+function createBracketView(pairings) {
+  // Remove loading screen
+  const loadingPage = document.getElementById('loading-page');
+  if (loadingPage) loadingPage.remove();
+  
+  const bracketPage = document.createElement('div');
+  bracketPage.style.cssText = `
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+    overflow-y: auto;
+    z-index: 2000;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    padding: 20px;
+  `;
+  
+  bracketPage.innerHTML = `
+    <div style="
+      max-width: 1200px;
+      margin: 0 auto;
+      position: relative;
+    ">
+      <div style="
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 40px;
+      ">
+        <h1 style="
+          font-size: 36px;
+          font-weight: 800;
+          background: linear-gradient(45deg, #00d4ff, #ff0080);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+          margin: 0;
+          text-transform: uppercase;
+          letter-spacing: 2px;
+        ">Tournament Bracket</h1>
+        
+        <button onclick="closeBracketView()" style="
+          padding: 12px 24px;
+          background: rgba(255, 255, 255, 0.1);
+          border: 2px solid rgba(255, 255, 255, 0.3);
+          color: white;
+          border-radius: 12px;
+          cursor: pointer;
+          font-size: 16px;
+          font-weight: 600;
+          backdrop-filter: blur(10px);
+        ">← Back</button>
+      </div>
+      
+      <div style="
+        display: grid;
+        gap: 20px;
+        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+      ">
+        ${pairings.length > 0 ? pairings.map(pairing => `
+          <div style="
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 24px;
+            backdrop-filter: blur(10px);
+            position: relative;
+            ${pairing.status === 'active' ? 'border-color: #00d4ff; box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);' : ''}
+          ">
+            <div style="
+              position: absolute;
+              top: 12px;
+              right: 12px;
+              padding: 4px 12px;
+              border-radius: 20px;
+              font-size: 12px;
+              font-weight: 600;
+              ${pairing.status === 'active' 
+                ? 'background: rgba(0, 212, 255, 0.2); color: #00d4ff; border: 1px solid #00d4ff;' 
+                : 'background: rgba(255, 165, 0, 0.2); color: #ffa500; border: 1px solid #ffa500;'
+              }
+            ">${pairing.status === 'active' ? 'LIVE' : 'PENDING'}</div>
+            
+            <div style="
+              text-align: center;
+              margin-top: 20px;
+            ">
+              <div style="
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 20px;
+              ">
+                <div style="
+                  flex: 1;
+                  text-align: center;
+                ">
+                  <div style="
+                    font-size: 18px;
+                    font-weight: 700;
+                    color: #00d4ff;
+                    margin-bottom: 8px;
+                    text-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+                  ">${pairing.team1.teamName.toUpperCase()}</div>
+                  <div style="
+                    font-size: 14px;
+                    color: #ffffff;
+                    opacity: 0.8;
+                  ">${pairing.team1.name}</div>
+                </div>
+                
+                <div style="
+                  font-size: 24px;
+                  color: #ff0080;
+                  margin: 0 20px;
+                  font-weight: bold;
+                ">VS</div>
+                
+                <div style="
+                  flex: 1;
+                  text-align: center;
+                ">
+                  <div style="
+                    font-size: 18px;
+                    font-weight: 700;
+                    color: #ff0080;
+                    margin-bottom: 8px;
+                    text-shadow: 0 0 10px rgba(255, 0, 128, 0.5);
+                  ">${pairing.team2.teamName.toUpperCase()}</div>
+                  <div style="
+                    font-size: 14px;
+                    color: #ffffff;
+                    opacity: 0.8;
+                  ">${pairing.team2.name}</div>
+                </div>
+              </div>
+              
+              <div style="
+                font-size: 12px;
+                color: #888;
+                margin-top: 16px;
+                padding-top: 16px;
+                border-top: 1px solid rgba(255, 255, 255, 0.1);
+              ">
+                Match ID: ${pairing.id}
+              </div>
+            </div>
+          </div>
+        `).join('') : `
+          <div style="
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 60px 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+          ">
+            <div style="
+              font-size: 48px;
+              margin-bottom: 20px;
+            ">🏆</div>
+            <div style="
+              font-size: 24px;
+              color: #ffffff;
+              margin-bottom: 12px;
+            ">No matches found</div>
+            <div style="
+              font-size: 16px;
+              color: #888;
+            ">Teams need to be in different competitions to create matches</div>
+          </div>
+        `}
+      </div>
+    </div>
+  `;
+  
+  bracketPage.id = 'bracket-page';
+  document.body.appendChild(bracketPage);
+}
+
+function closeBracketView() {
+  const bracketPage = document.getElementById('bracket-page');
+  if (bracketPage) {
+    bracketPage.remove();
+  }
+}
+
+    async function loadIncompleteAssignments() {
+  console.log('Loading incomplete assignments...');
+  const user = firebase.auth().currentUser;
+  const container = document.getElementById('incompleteAssignments');
+  
+  if (!user) {
+    console.log('No user found, waiting for auth...');
+    container.innerHTML = '<p class="empty-msg">Please wait, loading...</p>';
+    return;
+  }
+
+  container.innerHTML = '<p class="empty-msg">Loading assignments...</p>';
+
+  try {
+    const snapshot = await firebase.firestore().collection('assignments')
+      .where('to', '==', user.uid)
+      .where('status', '!=', 'complete')
+      .get();
+
+    console.log('Query returned:', snapshot.size, 'documents');
+
+    if (snapshot.empty) {
+      container.innerHTML = '<p class="empty-msg">No incomplete assignments yet 🎉</p>';
+      return;
+    }
+
+    container.innerHTML = ''; // Clear loading message
+
+    snapshot.forEach(doc => {
+      const data = doc.data();
+      const card = document.createElement('div');
+      card.className = 'learning-zone-list-item';
+      card.innerHTML = `
+        <div style="display: flex; justify-content: space-between; align-items: center; gap: 1rem;">
+          <div style="flex: 1;">
+            <strong>${data.title || 'Untitled Assignment'}</strong>
+            <span style="display: block; margin-top: 0.25rem; font-size: 0.8125rem; color: #cbd5e1;">${data.type || 'N/A'} • ${data.difficulty || 'N/A'} • ${data.time || 'N/A'}</span>
+          </div>
+          <button class="challenge-button" onclick="startAssignment('${doc.id}', '${data.type}'); event.stopPropagation();">
+            Start
+          </button>
+        </div>
+      `;
+      container.appendChild(card);
+    });
+
+    // Content is loaded, no need to recalculate height in new structure
+
+  } catch (err) {
+    console.error('Error loading assignments:', err);
+    container.innerHTML = '<p class="empty-msg" style="color: #dc2626;">Failed to load assignments. Please try again.</p>';
+  }
+}
+
+   function startAssignment(id, type) {
+    // redirect or open modal as needed
+    console.log(`Starting assignment ${id} of type ${type}`);
+  }
+
+  // Initialize when DOM is loaded
+
+  document.addEventListener('DOMContentLoaded', () => {
+  // Previous card button
+  document.getElementById('prevCard')?.addEventListener('click', () => {
+    if (currentDeck && currentCardIndex > 0) {
+      currentCardIndex--;
+      showCurrentFlashcard();
+    }
+  });
+  
+  // Next card button
+  document.getElementById('nextCard')?.addEventListener('click', () => {
+    if (currentDeck && currentCardIndex < currentDeck.cards.length - 1) {
+      currentCardIndex++;
+      showCurrentFlashcard();
+    }
+  });
+});
+
+// Rate difficulty (placeholder for future functionality)
+function rateDifficulty(level) {
+  console.log(`Rated current card as ${level}`);
+  // Could save this rating to Firebase for spaced repetition
+}
+
+// Modified DOMContentLoaded to include flashcard loading
+document.addEventListener('DOMContentLoaded', () => {
+  feather.replace();
+  
+  // Handle authentication state changes
+  firebase.auth().onAuthStateChanged(user => {
+    if (user) {
+      console.log('User authenticated:', user.uid);
+      loadIncompleteAssignments();
+      loadRecentlyStudiedDecks(); // Add this line
+      // Initialize notifications
+      if (typeof setupNotifications === 'function') {
+        setupNotifications();
+      }
+    } else {
+      console.log('No user, signing in anonymously...');
+      firebase.auth().signInAnonymously().catch(err => {
+        console.error('Anonymous sign-in failed:', err);
+      });
+    }
+  });
+});
+
+
+// Function to show competition type selection after clicking "Compete Now"
+function showCompetitionTypeSelection() {
+  const competePage = document.getElementById('compete-page');
+  
+  // Create overlay on top of competition page
+  const selectionOverlay = document.createElement('div');
+  selectionOverlay.style.cssText = `
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 3000;
+    backdrop-filter: blur(10px);
+  `;
+
+  selectionOverlay.innerHTML = `
+    <div style="
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f0f23 100%);
+      border-radius: 20px;
+      padding: 40px;
+      max-width: 600px;
+      width: 90%;
+      position: relative;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    ">
+      <button style="
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: none;
+        border: none;
+        font-size: 24px;
+        color: #9CA3AF;
+        cursor: pointer;
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      " onclick="this.closest('[style*=\"backdrop-filter\"]').remove()">×</button>
+      
+      <h2 style="
+        font-size: 28px;
+        font-weight: 700;
+        background: linear-gradient(45deg, #00d4ff, #ff0080);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin: 0 0 20px 0;
+        text-align: center;
+      ">Choose Competition Type</h2>
+      
+      <p style="
+        font-size: 16px;
+        color: #9CA3AF;
+        margin: 0 0 32px 0;
+        line-height: 1.5;
+        text-align: center;
+      ">Select the type of challenge you want to compete in!</p>
+      
+      <div style="
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        margin-bottom: 32px;
+      ">
+        <label style="
+          display: flex;
+          align-items: center;
+          padding: 20px;
+          border: 2px solid rgba(255, 255, 255, 0.1);
+          border-radius: 16px;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          background: rgba(255, 255, 255, 0.05);
+          backdrop-filter: blur(10px);
+        " onmouseover="this.style.borderColor='#00d4ff'; this.style.backgroundColor='rgba(0, 212, 255, 0.1)';" 
+           onmouseout="updateCompTypeBorderColor(this);" 
+           onclick="selectCompType(this, 'written')">
+          <input type="radio" name="compType" value="written" style="
+            margin-right: 16px;
+            width: 18px;
+            height: 18px;
+            accent-color: #00d4ff;
+          " />
+          <div>
+            <div style="
+              display: flex;
+              align-items: center;
+              margin-bottom: 6px;
+            ">
+              <span style="font-size: 24px; margin-right: 12px;">📝</span>
+              <span style="font-weight: 700; color: #ffffff; font-size: 18px;">Written Competition</span>
+            </div>
+            <div style="
+              font-size: 14px;
+              color: #9CA3AF;
+              line-height: 1.4;
+            ">Kahoot-style quiz with multiple choice questions and live leaderboard</div>
+          </div>
+        </label>
+        
+        <label style="
+          display: flex;
+          align-items: center;
+          padding: 20px;
+          border: 2px solid rgba(255, 255, 255, 0.1);
+          border-radius: 16px;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          background: rgba(255, 255, 255, 0.05);
+          backdrop-filter: blur(10px);
+        " onmouseover="this.style.borderColor='#00d4ff'; this.style.backgroundColor='rgba(0, 212, 255, 0.1)';" 
+           onmouseout="updateCompTypeBorderColor(this);" 
+           onclick="selectCompType(this, 'speaking')">
+          <input type="radio" name="compType" value="speaking" style="
+            margin-right: 16px;
+            width: 18px;
+            height: 18px;
+            accent-color: #00d4ff;
+          " />
+          <div>
+            <div style="
+              display: flex;
+              align-items: center;
+              margin-bottom: 6px;
+            ">
+              <span style="font-size: 24px; margin-right: 12px;">🎤</span>
+              <span style="font-weight: 700; color: #ffffff; font-size: 18px;">Speaking Competition</span>
+            </div>
+            <div style="
+              font-size: 14px;
+              color: #9CA3AF;
+              line-height: 1.4;
+            ">Record a presentation with camera and get scored on delivery</div>
+          </div>
+        </label>
+        
+        <label style="
+          display: flex;
+          align-items: center;
+          padding: 20px;
+          border: 2px solid rgba(255, 255, 255, 0.1);
+          border-radius: 16px;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          background: rgba(255, 255, 255, 0.05);
+          backdrop-filter: blur(10px);
+        " onmouseover="this.style.borderColor='#00d4ff'; this.style.backgroundColor='rgba(0, 212, 255, 0.1)';" 
+           onmouseout="updateCompTypeBorderColor(this);" 
+           onclick="selectCompType(this, 'case')">
+          <input type="radio" name="compType" value="case" style="
+            margin-right: 16px;
+            width: 18px;
+            height: 18px;
+            accent-color: #00d4ff;
+          " />
+          <div>
+            <div style="
+              display: flex;
+              align-items: center;
+              margin-bottom: 6px;
+            ">
+              <span style="font-size: 24px; margin-right: 12px;">💼</span>
+              <span style="font-weight: 700; color: #ffffff; font-size: 18px;">Case Study Competition</span>
+            </div>
+            <div style="
+              font-size: 14px;
+              color: #9CA3AF;
+              line-height: 1.4;
+            ">Analyze business scenarios and present strategic solutions</div>
+          </div>
+        </label>
+      </div>
+      
+      <div style="
+        display: flex;
+        gap: 16px;
+        justify-content: flex-end;
+      ">
+        <button style="
+          padding: 12px 24px;
+          border: 1px solid rgba(255, 255, 255, 0.2);
+          background: rgba(255, 255, 255, 0.1);
+          color: #ffffff;
+          border-radius: 12px;
+          cursor: pointer;
+          font-size: 14px;
+          font-weight: 600;
+          backdrop-filter: blur(10px);
+        " onclick="this.closest('[style*=\"backdrop-filter\"]').remove()">Cancel</button>
+        
+        <button id="startCompBtn" style="
+          padding: 12px 24px;
+          background: #6B7280;
+          color: white;
+          border: none;
+          border-radius: 12px;
+          cursor: not-allowed;
+          font-size: 14px;
+          font-weight: 600;
+          opacity: 0.6;
+        " disabled onclick="startSelectedCompetition()">Start Competition</button>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(selectionOverlay);
+}
+
+function updateCompTypeBorderColor(element) {
+  const radio = element.querySelector('input[type="radio"]');
+  if (radio && radio.checked) {
+    element.style.borderColor = '#00d4ff';
+    element.style.backgroundColor = 'rgba(0, 212, 255, 0.15)';
+  } else {
+    element.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+    element.style.backgroundColor = 'rgba(255, 255, 255, 0.05)';
+  }
+}
+
+function selectCompType(labelElement, type) {
+  // Update all labels to default state
+  const allLabels = document.querySelectorAll('label[onclick*="selectCompType"]');
+  allLabels.forEach(label => {
+    label.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+    label.style.backgroundColor = 'rgba(255, 255, 255, 0.05)';
+  });
+  
+  // Highlight selected label
+  labelElement.style.borderColor = '#00d4ff';
+  labelElement.style.backgroundColor = 'rgba(0, 212, 255, 0.15)';
+  
+  // Enable the start button
+  const startBtn = document.getElementById('startCompBtn');
+  startBtn.style.background = 'linear-gradient(45deg, #00d4ff, #ff0080)';
+  startBtn.style.cursor = 'pointer';
+  startBtn.style.opacity = '1';
+  startBtn.disabled = false;
+  
+  // Store selected type
+  window.selectedCompType = type;
+}
+
+function startSelectedCompetition() {
+  const selectedType = window.selectedCompType;
+  
+  if (!selectedType) {
+    alert('Please select a competition type');
+    return;
+  }
+  
+  // Remove selection overlay
+  document.querySelector('[style*="backdrop-filter"]').remove();
+  
+  // Close the competition page
+  closeCompetePage();
+  
+  // Start the selected competition
+  startCompetitionWithType(selectedType);
+}
+function startCompetitionWithType(type) {
+  // Close the competition page
+  closeCompetePage();
+  
+  switch(type) {
+    case 'written':
+      startWrittenCompetition();
+      break;
+    case 'speaking':
+      startSpeakingCompetition();
+      break;
+    case 'case':
+      startCaseCompetition();
+      break;
+    default:
+      console.error('Unknown competition type:', type);
+  }
+}
+
+// Written Competition - Quiz/Kahoot style
+async function startWrittenCompetition() {
+  const modal = createFullPageModal();
+  
+  // Sample questions - in real app, fetch from Firebase
+  const questions = [
+    {
+      question: "What is the primary purpose of a business plan?",
+      options: [
+        "To secure funding",
+        "To guide business operations", 
+        "To attract customers",
+        "To comply with regulations"
+      ],
+      correct: 1,
+      competency: "Entrepreneurship"
+    },
+    {
+      question: "Which financial statement shows a company's profitability?",
+      options: [
+        "Balance Sheet",
+        "Cash Flow Statement",
+        "Income Statement", 
+        "Statement of Equity"
+      ],
+      correct: 2,
+      competency: "Accounting"
+    },
+    {
+      question: "What does ROI stand for in business?",
+      options: [
+        "Rate of Interest",
+        "Return on Investment",
+        "Risk of Investment", 
+        "Revenue over Income"
+      ],
+      correct: 1,
+      competency: "Finance"
+    }
+  ];
+  
+  let currentQuestionIndex = 0;
+  let score = 0;
+  let timeLeft = 30;
+  let timer;
+  let answers = [];
+  
+  function showQuestion() {
+    const question = questions[currentQuestionIndex];
+    
+    modal.innerHTML = `
+      <div style="
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+        background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+        color: white;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      ">
+        <!-- Header -->
+        <div style="
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 20px 40px;
+          background: rgba(0,0,0,0.1);
+        ">
+          <div style="font-size: 24px; font-weight: bold;">
+            Question ${currentQuestionIndex + 1}/${questions.length}
+          </div>
+          <div id="timer" style="
+            font-size: 32px;
+            font-weight: bold;
+            padding: 10px 20px;
+            background: ${timeLeft <= 10 ? '#ff4757' : '#2ed573'};
+            border-radius: 50%;
+            min-width: 80px;
+            text-align: center;
+          ">${timeLeft}</div>
+          <button onclick="exitCompetition()" style="
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+          ">Exit</button>
+        </div>
+        
+        <!-- Progress Bar -->
+        <div style="
+          height: 4px;
+          background: rgba(255,255,255,0.2);
+          margin: 0 40px 20px 40px;
+        ">
+          <div style="
+            height: 100%;
+            background: #2ed573;
+            width: ${((currentQuestionIndex) / questions.length) * 100}%;
+            transition: width 0.3s ease;
+          "></div>
+        </div>
+        
+        <!-- Question -->
+        <div style="
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          padding: 0 40px;
+          max-width: 800px;
+          margin: 0 auto;
+          width: 100%;
+        ">
+          <div style="
+            font-size: 32px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 60px;
+            line-height: 1.2;
+          ">${question.question}</div>
+          
+          <div style="
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+          ">
+            ${question.options.map((option, index) => `
+              <button onclick="selectAnswer(${index})" style="
+                padding: 20px;
+                font-size: 18px;
+                background: rgba(255,255,255,0.1);
+                border: 2px solid rgba(255,255,255,0.2);
+                color: white;
+                border-radius: 12px;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                text-align: left;
+              " onmouseover="this.style.background='rgba(255,255,255,0.2)'"
+                 onmouseout="this.style.background='rgba(255,255,255,0.1)'">
+                <div style="font-weight: bold; margin-bottom: 5px;">
+                  ${String.fromCharCode(65 + index)}
+                </div>
+                ${option}
+              </button>
+            `).join('')}
+          </div>
+        </div>
+        
+        <!-- Score -->
+        <div style="
+          text-align: center;
+          padding: 20px;
+          font-size: 18px;
+        ">
+          Score: ${score}/${questions.length}
+        </div>
+      </div>
+    `;
+    
+    // Start timer
+    startTimer();
+  }
+  
+  function startTimer() {
+    timer = setInterval(() => {
+      timeLeft--;
+      const timerEl = document.getElementById('timer');
+      if (timerEl) {
+        timerEl.textContent = timeLeft;
+        timerEl.style.background = timeLeft <= 10 ? '#ff4757' : '#2ed573';
+      }
+      
+      if (timeLeft <= 0) {
+        clearInterval(timer);
+        selectAnswer(-1); // Time up, no answer
+      }
+    }, 1000);
+  }
+  
+  window.selectAnswer = function(selectedIndex) {
+    clearInterval(timer);
+    const question = questions[currentQuestionIndex];
+    const isCorrect = selectedIndex === question.correct;
+    
+    if (isCorrect) score++;
+    
+    answers.push({
+      question: question.question,
+      selected: selectedIndex >= 0 ? question.options[selectedIndex] : 'Time Up',
+      correct: question.options[question.correct],
+      isCorrect: isCorrect,
+      timeRemaining: timeLeft
+    });
+    
+    // Show answer feedback
+    showAnswerFeedback(isCorrect, question.options[question.correct]);
+    
+    setTimeout(() => {
+      currentQuestionIndex++;
+      if (currentQuestionIndex < questions.length) {
+        timeLeft = 30;
+        showQuestion();
+      } else {
+        showResults();
+      }
+    }, 2000);
+  };
+  
+  function showAnswerFeedback(isCorrect, correctAnswer) {
+    const feedbackOverlay = document.createElement('div');
+    feedbackOverlay.style.cssText = `
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.8);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 3000;
+    `;
+    
+    feedbackOverlay.innerHTML = `
+      <div style="
+        text-align: center;
+        color: white;
+        font-size: 32px;
+        font-weight: bold;
+      ">
+        <div style="
+          font-size: 64px;
+          margin-bottom: 20px;
+        ">${isCorrect ? '✅' : '❌'}</div>
+        <div style="margin-bottom: 10px;">
+          ${isCorrect ? 'Correct!' : 'Incorrect'}
+        </div>
+        <div style="font-size: 18px; opacity: 0.8;">
+          Answer: ${correctAnswer}
+        </div>
+      </div>
+    `;
+    
+    document.body.appendChild(feedbackOverlay);
+    
+    setTimeout(() => {
+      feedbackOverlay.remove();
+    }, 2000);
+  }
+  
+  async function showResults() {
+    // Save results to Firebase (placeholder)
+    const resultData = {
+      userId: firebase.auth().currentUser?.uid,
+      score: score,
+      totalQuestions: questions.length,
+      answers: answers,
+      timestamp: new Date()
+    };
+    
+    // In real app, save to Firebase here
+    console.log('Competition results:', resultData);
+    
+    modal.innerHTML = `
+      <div style="
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+        background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+        color: white;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        text-align: center;
+        padding: 40px;
+      ">
+        <h1 style="
+          font-size: 48px;
+          margin-bottom: 20px;
+          font-weight: bold;
+        ">🏆 Competition Complete!</h1>
+        
+        <div style="
+          font-size: 72px;
+          font-weight: bold;
+          margin: 40px 0;
+        ">${score}/${questions.length}</div>
+        
+        <div style="
+          font-size: 24px;
+          margin-bottom: 40px;
+          opacity: 0.9;
+        ">
+          ${score === questions.length ? 'Perfect Score!' : 
+            score >= questions.length * 0.8 ? 'Excellent!' :
+            score >= questions.length * 0.6 ? 'Good Job!' :
+            'Keep Practicing!'}
+        </div>
+        
+        <!-- Leaderboard -->
+        <div style="
+          background: rgba(255,255,255,0.1);
+          border-radius: 16px;
+          padding: 30px;
+          margin: 20px auto;
+          max-width: 600px;
+          width: 100%;
+        ">
+          <h3 style="margin-bottom: 20px; font-size: 24px;">🏅 Leaderboard</h3>
+          <div style="text-align: left;">
+            <div style="
+              display: flex;
+              justify-content: space-between;
+              padding: 15px;
+              background: rgba(255,215,0,0.2);
+              border-radius: 8px;
+              margin-bottom: 10px;
+              border-left: 4px solid gold;
+            ">
+              <span>🥇 You</span>
+              <span>${score}/${questions.length}</span>
+            </div>
+            <div style="
+              display: flex;
+              justify-content: space-between;
+              padding: 15px;
+              background: rgba(255,255,255,0.1);
+              border-radius: 8px;
+              margin-bottom: 10px;
+            ">
+              <span>🥈 Team Alpha</span>
+              <span>${Math.max(0, score - 1)}/${questions.length}</span>
+            </div>
+            <div style="
+              display: flex;
+              justify-content: space-between;
+              padding: 15px;
+              background: rgba(255,255,255,0.1);
+              border-radius: 8px;
+            ">
+              <span>🥉 Team Beta</span>
+              <span>${Math.max(0, score - 2)}/${questions.length}</span>
+            </div>
+          </div>
+        </div>
+        
+        <div style="
+          display: flex;
+          gap: 20px;
+          justify-content: center;
+          margin-top: 40px;
+        ">
+          <button onclick="closeModal()" style="
+            padding: 15px 30px;
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+          ">Back to Home</button>
+          <button onclick="startWrittenCompetition()" style="
+            padding: 15px 30px;
+            background: linear-gradient(45deg, #ff6b6b, #ee5a52);
+            border: none;
+            color: white;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+          ">Play Again</button>
+        </div>
+      </div>
+    `;
+  }
+  
+  // Start the quiz
+  showQuestion();
+}
+
+// Speaking Competition
+function startSpeakingCompetition() {
+  const modal = createFullPageModal();
+  
+  modal.innerHTML = `
+    <div style="
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow:auto;
+      background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+      color: white;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    ">
+      <!-- Header -->
+      <div style="
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px 40px;
+        background: rgba(0,0,0,0.1);
+      ">
+        <h1 style="font-size: 28px; margin: 0;">🎤 Speaking Competition</h1>
+        <button onclick="closeModal()" style="
+          background: rgba(255,255,255,0.2);
+          border: none;
+          color: white;
+          padding: 10px 20px;
+          border-radius: 8px;
+          cursor: pointer;
+        ">Exit</button>
+      </div>
+      
+      <!-- Main Content -->
+      <div style="
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 40px;
+        text-align: center;
+      ">
+        <div id="challenge-prompt" style="
+          background: rgba(255,255,255,0.1);
+          border-radius: 16px;
+          padding: 40px;
+          margin-bottom: 40px;
+          max-width: 700px;
+        ">
+          <h2 style="
+            font-size: 32px;
+            margin-bottom: 20px;
+            font-weight: bold;
+          ">Your Challenge</h2>
+          <p style="
+            font-size: 20px;
+            line-height: 1.5;
+            margin-bottom: 20px;
+          ">
+            "Present a 3-minute elevator pitch for a new mobile app that helps students manage their finances. 
+            Include the problem, solution, target market, and monetization strategy."
+          </p>
+          <div style="
+            display: flex;
+            justify-content: space-around;
+            margin-top: 30px;
+            font-size: 16px;
+          ">
+            <div>⏱️ Time Limit: 3 minutes</div>
+            <div>🎯 Points: 100</div>
+            <div>📊 Judged on: Content, Delivery, Clarity</div>
+          </div>
+        </div>
+        
+        <!-- Camera Section -->
+        <div id="camera-section" style="
+          background: rgba(0,0,0,0.3);
+          border-radius: 16px;
+          padding: 30px;
+          margin-bottom: 30px;
+          width: 100%;
+          max-width: 600px;
+        ">
+          <video id="video" autoplay muted style="
+            width: 100%;
+            height: 300px;
+            background: #000;
+            border-radius: 12px;
+            object-fit: cover;
+          "></video>
+          
+          <div style="
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+          ">
+            <button id="start-recording" onclick="startRecording()" style="
+              padding: 15px 30px;
+              background: #ff4757;
+              border: none;
+              color: white;
+              border-radius: 12px;
+              cursor: pointer;
+              font-size: 16px;
+              font-weight: 600;
+              display: flex;
+              align-items: center;
+              gap: 10px;
+            ">
+              🔴 Start Recording
+            </button>
+            
+            <button id="stop-recording" onclick="stopRecording()" style="
+              padding: 15px 30px;
+              background: #2ed573;
+              border: none;
+              color: white;
+              border-radius: 12px;
+              cursor: pointer;
+              font-size: 16px;
+              font-weight: 600;
+              display: none;
+              align-items: center;
+              gap: 10px;
+            ">
+              ⏹️ Stop & Submit
+            </button>
+          </div>
+          
+          <div id="timer-display" style="
+            font-size: 24px;
+            font-weight: bold;
+            margin-top: 20px;
+            display: none;
+          ">Time: <span id="recording-timer">00:00</span></div>
+        </div>
+      </div>
+    </div>
+  `;
+  
+  // Initialize camera
+  initializeCamera();
+}
+
+async function initializeCaseCamera() {
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ 
+      video: true, 
+      audio: true 
+    });
+    const video = document.getElementById('case-video');
+    if (video) {
+      video.srcObject = stream;
+      // Store the stream globally so we can access it later
+      window.caseStream = stream;
+    }
+  } catch (err) {
+    console.error('Error accessing camera:', err);
+    alert('Unable to access camera. Please check permissions.');
+  }
+}
+
+
+// Case Competition
+function startCaseCompetition() {
+  const modal = createFullPageModal();
+  
+  modal.innerHTML = `
+    <div style="
+      display: flex;
+      height: 100vh;
+      flex-direction: column;
+      overflow: auto;
+      background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+      color: white;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    ">
+      <!-- Header -->
+      <div style="
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px 40px;
+        background: rgba(0,0,0,0.1);
+      ">
+        <h1 style="font-size: 28px; margin: 0;">💼 Case Study Competition</h1>
+        <button onclick="closeModal()" style="
+          background: rgba(255,255,255,0.2);
+          border: none;
+          color: white;
+          padding: 10px 20px;
+          border-radius: 8px;
+          cursor: pointer;
+        ">Exit</button>
+      </div>
+      
+      <!-- Main Content -->
+      <div style="
+        flex: 1;
+        display: flex;
+        padding: 20px;
+        gap: 20px;
+      ">
+        <!-- Case Study Document -->
+        <div style="
+          flex: 2;
+          background: rgba(255,255,255,0.1);
+          border-radius: 16px;
+          padding: 30px;
+          overflow-y: auto;
+        ">
+          <h2 style="margin-bottom: 20px; font-size: 24px;">📄 Case Study: TechStart Inc.</h2>
+          
+          <div style="
+            background: rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+            line-height: 1.6;
+          ">
+            <h3 style="color: #ffd700; margin-bottom: 15px;">Background</h3>
+            <p>TechStart Inc. is a 3-year-old software company that developed a project management tool for small businesses. Initially successful with 10,000 users and $2M ARR, they're now facing increased competition from larger tech companies.</p>
+          </div>
+          
+          <div style="
+            background: rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+            line-height: 1.6;
+          ">
+            <h3 style="color: #ffd700; margin-bottom: 15px;">Current Challenges</h3>
+            <ul style="margin: 0; padding-left: 20px;">
+              <li>Customer acquisition cost has increased by 200%</li>
+              <li>Monthly churn rate is 8% (industry average: 5%)</li>
+              <li>Limited development resources (5 engineers)</li>
+              <li>New competitor launched with 50% lower pricing</li>
+            </ul>
+          </div>
+          
+          <div style="
+            background: rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 25px;
+            line-height: 1.6;
+          ">
+            <h3 style="color: #ffd700; margin-bottom: 15px;">Financial Data</h3>
+            <p><strong>Monthly Revenue:</strong> $167K<br>
+            <strong>Operating Costs:</strong> $140K/month<br>
+            <strong>Cash on Hand:</strong> $800K<br>
+            <strong>Runway:</strong> 10 months at current burn rate</p>
+          </div>
+        </div>
+        
+        <!-- Response Section -->
+        <div style="
+          flex: 1;
+          background: rgba(255,255,255,0.1);
+          border-radius: 16px;
+          padding: 30px;
+          display: flex;
+          flex-direction: column;
+        ">
+          <h3 style="margin-bottom: 20px; font-size: 20px;">Your Strategic Response</h3>
+          
+          <div style="
+            background: rgba(0,0,0,0.2);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+          ">
+            <h4 style="margin-bottom: 15px; color: #ffd700;">Question 1</h4>
+            <p style="margin-bottom: 15px; font-size: 14px;">
+              What are the top 3 strategic priorities TechStart should focus on immediately?
+            </p>
+            <textarea placeholder="Enter your response..." style="
+              width: 100%;
+              height: 100px;
+              background: rgba(255,255,255,0.1);
+              border: 1px solid rgba(255,255,255,0.3);
+              border-radius: 8px;
+              padding: 15px;
+              color: white;
+              font-size: 14px;
+              resize: vertical;
+            "></textarea>
+          </div>
+          
+          <div style="
+            background: rgba(0,0,0,0.2);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+          ">
+            <h4 style="margin-bottom: 15px; color: #ffd700;">Question 2</h4>
+            <p style="margin-bottom: 15px; font-size: 14px;">
+              Develop a 6-month action plan to reduce churn and improve unit economics.
+            </p>
+            <textarea placeholder="Enter your response..." style="
+              width: 100%;
+              height: 120px;
+              background: rgba(255,255,255,0.1);
+              border: 1px solid rgba(255,255,255,0.3);
+              border-radius: 8px;
+              padding: 15px;
+              color: white;
+              font-size: 14px;
+              resize: vertical;
+            "></textarea>
+          </div>
+          
+          <!-- Camera Section for Presentation -->
+          <div style="
+            background: rgba(0,0,0,0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+          ">
+            <h4 style="margin-bottom: 15px; text-align: center;">📹 Present Your Solution</h4>
+            <video id="case-video" autoplay muted style="
+              width: 100%;
+              height: 150px;
+              background: #000;
+              border-radius: 8px;
+              object-fit: cover;
+              margin-bottom: 15px;
+            "></video>
+            
+            <div style="
+              display: flex;
+              justify-content: center;
+              gap: 10px;
+              margin-bottom: 15px;
+            ">
+              <button id="start-recording" onclick="startRecording()" style="
+                padding: 10px 20px;
+                background: #ff4757;
+                border: none;
+                color: white;
+                border-radius: 8px;
+                cursor: pointer;
+                font-size: 14px;
+                font-weight: 600;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+              ">
+                🔴 Start Recording
+              </button>
+              
+              <button id="stop-recording" onclick="stopRecording()" style="
+                padding: 10px 20px;
+                background: #2ed573;
+                border: none;
+                color: white;
+                border-radius: 8px;
+                cursor: pointer;
+                font-size: 14px;
+                font-weight: 600;
+                display: none;
+                align-items: center;
+                gap: 8px;
+              ">
+                ⏹️ Stop & Submit
+              </button>
+            </div>
+            
+            <div id="timer-display" style="
+              text-align: center;
+              font-size: 16px;
+              font-weight: bold;
+              display: none;
+            ">Recording: <span id="recording-timer">00:00</span></div>
+            
+            <div style="
+              text-align: center;
+              margin-top: 15px;
+              font-size: 12px;
+              opacity: 0.7;
+            ">⏱️ Time Remaining: 45:00</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+  
+  // Initialize camera for case study
+  initializeCaseCamera();
+}
+// Helper function to create full page modal
+function createFullPageModal() {
+  const modal = document.createElement('div');
+  modal.style.cssText = `
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2000;
+  `;
+  modal.id = 'competition-modal';
+  document.body.appendChild(modal);
+  return modal;
+}
+
+// Camera functions
+async function initializeCamera() {
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ 
+      video: true, 
+      audio: true 
+    });
+    const video = document.getElementById('video');
+    if (video) {
+      video.srcObject = stream;
+    }
+  } catch (err) {
+    console.error('Error accessing camera:', err);
+    alert('Unable to access camera. Please check permissions.');
+  }
+}
+
+
+
+let mediaRecorder;
+let recordedChunks = [];
+let recordingTimer;
+let recordingTime = 0;
+let caseStream = null;
+
+function startRecording() {
+  // Check which video element exists
+  const video = document.getElementById('video') || document.getElementById('case-video');
+  const startBtn = document.getElementById('start-recording');
+  const stopBtn = document.getElementById('stop-recording');
+  const timerDisplay = document.getElementById('timer-display');
+  const recordingTimerEl = document.getElementById('recording-timer');
+  
+  if (!video || !video.srcObject) {
+    alert('Camera not initialized. Please refresh and try again.');
+    return;
+  }
+  
+  const stream = video.srcObject;
+  
+  recordedChunks = [];
+  mediaRecorder = new MediaRecorder(stream);
+  
+  mediaRecorder.ondataavailable = function(event) {
+    if (event.data.size > 0) {
+      recordedChunks.push(event.data);
+    }
+  };
+  
+  mediaRecorder.onstop = function() {
+    const blob = new Blob(recordedChunks, { type: 'video/webm' });
+    // Here you would upload to Firebase or process the recording
+    console.log('Recording completed:', blob);
+    
+    // Show different completion screens based on competition type
+    if (document.getElementById('case-video')) {
+      showCaseRecordingComplete();
+    } else {
+      showRecordingComplete();
+    }
+  };
+  
+  mediaRecorder.start();
+  
+  // Update UI
+  if (startBtn) startBtn.style.display = 'none';
+  if (stopBtn) stopBtn.style.display = 'flex';
+  if (timerDisplay) timerDisplay.style.display = 'block';
+  
+  // Start timer
+  recordingTime = 0;
+  recordingTimer = setInterval(() => {
+    recordingTime++;
+    const minutes = Math.floor(recordingTime / 60);
+    const seconds = recordingTime % 60;
+    const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    
+    if (recordingTimerEl) {
+      recordingTimerEl.textContent = timeString;
+    }
+    
+    // Auto-stop at 3 minutes for speaking, 10 minutes for case study
+    const maxTime = document.getElementById('case-video') ? 600 : 180;
+    if (recordingTime >= maxTime) {
+      stopRecording();
+    }
+  }, 1000);
+}
+
+function stopRecording() {
+  if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+    mediaRecorder.stop();
+  }
+  if (recordingTimer) {
+    clearInterval(recordingTimer);
+  }
+  
+  // Reset UI
+  const startBtn = document.getElementById('start-recording');
+  const stopBtn = document.getElementById('stop-recording');
+  
+  if (startBtn) startBtn.style.display = 'flex';
+  if (stopBtn) stopBtn.style.display = 'none';
+}
+
+// New function specifically for case study recording completion
+function showCaseRecordingComplete() {
+  // Collect all text responses
+  const responses = document.querySelectorAll('textarea');
+  const answers = Array.from(responses).map(textarea => textarea.value);
+  
+  console.log('Case study responses:', answers);
+  
+  const modal = document.getElementById('competition-modal');
+  modal.innerHTML = `
+    <div style="
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+      color: white;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      text-align: center;
+      padding: 40px;
+      justify-content: center;
+      align-items: center;
+    ">
+      <h1 style="font-size: 48px; margin-bottom: 20px;">💼 Case Study Complete!</h1>
+      <p style="font-size: 24px; margin-bottom: 40px;">
+        Your strategic analysis and presentation have been successfully submitted.
+      </p>
+      
+      <!-- Mock Scoring for Case Study -->
+      <div style="
+        background: rgba(255,255,255,0.1);
+        border-radius: 16px;
+        padding: 30px;
+        margin: 20px 0;
+        max-width: 500px;
+        width: 100%;
+      ">
+        <h3 style="margin-bottom: 20px; font-size: 24px;">📊 Preliminary Assessment</h3>
+        <div style="text-align: left; margin-bottom: 20px;">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+            <span>Strategic Analysis</span>
+            <span style="color: #2ed573; font-weight: bold;">88/100</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+            <span>Financial Understanding</span>
+            <span style="color: #2ed573; font-weight: bold;">82/100</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+            <span>Presentation Quality</span>
+            <span style="color: #ffa500; font-weight: bold;">91/100</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+            <span>Implementation Plan</span>
+            <span style="color: #2ed573; font-weight: bold;">85/100</span>
+          </div>
+          <hr style="border: 1px solid rgba(255,255,255,0.3); margin: 15px 0;">
+          <div style="display: flex; justify-content: space-between; font-size: 18px; font-weight: bold;">
+            <span>Overall Score</span>
+            <span style="color: #ffd700;">346/400</span>
+          </div>
+        </div>
+      </div>
+      
+      <p style="font-size: 16px; margin-bottom: 40px; opacity: 0.9;">
+        Detailed feedback from industry experts will be available within 48 hours.
+      </p>
+      
+      <div style="display: flex; gap: 20px;">
+        <button onclick="closeModal()" style="
+          padding: 15px 30px;
+          background: rgba(255,255,255,0.2);
+          border: none;
+          color: white;
+          border-radius: 12px;
+          cursor: pointer;
+          font-size: 16px;
+          font-weight: 600;
+        ">Back to Home</button>
+        <button onclick="startCaseCompetition()" style="
+          padding: 15px 30px;
+          background: linear-gradient(45deg, #ff6b6b, #ee5a52);
+          border: none;
+          color: white;
+          border-radius: 12px;
+          cursor: pointer;
+          font-size: 16px;
+          font-weight: 600;
+        ">Try Another Case</button>
+      </div>
+    </div>
+  `;
+}
+
+function startCaseRecording() {
+  // Similar to startRecording but for case study
+  console.log('Starting case study recording...');
+}
+
+function submitCaseStudy() {
+  // Collect all responses and submit
+  const responses = document.querySelectorAll('textarea');
+  const answers = Array.from(responses).map(textarea => textarea.value);
+  
+  console.log('Case study responses:', answers);
+  
+  // Show completion screen
+  const modal = document.getElementById('competition-modal');
+  modal.innerHTML = `
+    <div style="
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+      color: white;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      text-align: center;
+      padding: 40px;
+      justify-content: center;
+      align-items: center;
+    ">
+      <h1 style="font-size: 48px; margin-bottom: 20px;">✅ Case Study Submitted!</h1>
+      <p style="font-size: 24px; margin-bottom: 40px;">
+        Your strategic analysis has been submitted for review.
+      </p>
+      <p style="font-size: 18px; margin-bottom: 40px; opacity: 0.9;">
+        You'll receive feedback and scores within 24 hours.
+      </p>
+      <button onclick="closeModal()" style="
+        padding: 15px 30px;
+        background: rgba(255,255,255,0.2);
+        border: none;
+        color: white;
+        border-radius: 12px;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: 600;
+      ">Back to Home</button>
+    </div>
+  `;
+}
+
+function showRecordingComplete() {
+  const modal = document.getElementById('competition-modal');
+  modal.innerHTML = `
+    <div style="
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+      color: white;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      text-align: center;
+      padding: 40px;
+      justify-content: center;
+      align-items: center;
+    ">
+      <h1 style="font-size: 48px; margin-bottom: 20px;">🎤 Presentation Recorded!</h1>
+      <p style="font-size: 24px; margin-bottom: 40px;">
+        Your speaking presentation has been successfully recorded and submitted.
+      </p>
+      
+      <!-- Mock Scoring -->
+      <div style="
+        background: rgba(255,255,255,0.1);
+        border-radius: 16px;
+        padding: 30px;
+        margin: 20px 0;
+        max-width: 500px;
+        width: 100%;
+      ">
+        <h3 style="margin-bottom: 20px; font-size: 24px;">📊 Preliminary Scores</h3>
+        <div style="text-align: left; margin-bottom: 20px;">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+            <span>Content Quality</span>
+            <span style="color: #2ed573; font-weight: bold;">85/100</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+            <span>Delivery & Clarity</span>
+            <span style="color: #2ed573; font-weight: bold;">92/100</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+            <span>Time Management</span>
+            <span style="color: #ffa500; font-weight: bold;">78/100</span>
+          </div>
+          <hr style="border: 1px solid rgba(255,255,255,0.3); margin: 15px 0;">
+          <div style="display: flex; justify-content: space-between; font-size: 18px; font-weight: bold;">
+            <span>Total Score</span>
+            <span style="color: #ffd700;">255/300</span>
+          </div>
+        </div>
+      </div>
+      
+      <p style="font-size: 16px; margin-bottom: 40px; opacity: 0.9;">
+        Final judges' scores will be available after all participants have completed their presentations.
+      </p>
+      
+      <div style="display: flex; gap: 20px;">
+        <button onclick="closeModal()" style="
+          padding: 15px 30px;
+          background: rgba(255,255,255,0.2);
+          border: none;
+          color: white;
+          border-radius: 12px;
+          cursor: pointer;
+          font-size: 16px;
+          font-weight: 600;
+        ">Back to Home</button>
+        <button onclick="startSpeakingCompetition()" style="
+          padding: 15px 30px;
+          background: linear-gradient(45deg, #ff6b6b, #ee5a52);
+          border: none;
+          color: white;
+          border-radius: 12px;
+          cursor: pointer;
+          font-size: 16px;
+          font-weight: 600;
+        ">Try Again</button>
+      </div>
+    </div>
+  `;
+}
+
+// Global exit function
+window.exitCompetition = function() {
+  if (confirm('Are you sure you want to exit the competition? Your progress will be lost.')) {
+    closeModal();
+  }
+};
+
+// Global close modal function
+window.closeModal = function() {
+  const modal = document.getElementById('competition-modal');
+  if (modal) {
+    // Stop any ongoing timers
+    if (timer) clearInterval(timer);
+    if (recordingTimer) clearInterval(recordingTimer);
+    
+    // Stop camera streams
+    const videos = modal.querySelectorAll('video');
+    videos.forEach(video => {
+      if (video.srcObject) {
+        video.srcObject.getTracks().forEach(track => track.stop());
+      }
+    });
+    
+    modal.remove();
+  }
+};
+
+// Additional helper functions for Firebase integration
+
+async function saveCompetitionResult(type, data) {
+  try {
+    const user = firebase.auth().currentUser;
+    if (!user) return;
+    
+    const result = {
+      userId: user.uid,
+      competitionType: type,
+      timestamp: new Date(),
+      ...data
+    };
+    
+    await db.collection('competitionResults').add(result);
+    console.log('Competition result saved:', result);
+  } catch (error) {
+    console.error('Error saving competition result:', error);
+  }
+}
+
+async function getLeaderboard(competitionType) {
+  try {
+    const snapshot = await db.collection('competitionResults')
+      .where('competitionType', '==', competitionType)
+      .orderBy('score', 'desc')
+      .limit(10)
+      .get();
+    
+    const leaderboard = [];
+    snapshot.forEach(doc => {
+      leaderboard.push(doc.data());
+    });
+    
+    return leaderboard;
+  } catch (error) {
+    console.error('Error getting leaderboard:', error);
+    return [];
+  }
+}
+
+// Enhanced written competition with real Firebase leaderboard
+async function showWrittenResults() {
+  // Save results to Firebase
+  const resultData = {
+    score: score,
+    totalQuestions: questions.length,
+    answers: answers,
+    timestamp: new Date()
+  };
+  
+  await saveCompetitionResult('written', resultData);
+  
+  // Get real leaderboard
+  const leaderboard = await getLeaderboard('written');
+  
+  modal.innerHTML = `
+    <div style="
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+      color: white;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      text-align: center;
+      padding: 40px;
+    ">
+      <h1 style="
+        font-size: 48px;
+        margin-bottom: 20px;
+        font-weight: bold;
+      ">🏆 Competition Complete!</h1>
+      
+      <div style="
+        font-size: 72px;
+        font-weight: bold;
+        margin: 40px 0;
+      ">${score}/${questions.length}</div>
+      
+      <div style="
+        font-size: 24px;
+        margin-bottom: 40px;
+        opacity: 0.9;
+      ">
+        ${score === questions.length ? 'Perfect Score!' : 
+          score >= questions.length * 0.8 ? 'Excellent!' :
+          score >= questions.length * 0.6 ? 'Good Job!' :
+          'Keep Practicing!'}
+      </div>
+      
+      <!-- Real Firebase Leaderboard -->
+      <div style="
+        background: rgba(255,255,255,0.1);
+        border-radius: 16px;
+        padding: 30px;
+        margin: 20px auto;
+        max-width: 600px;
+        width: 100%;
+      ">
+        <h3 style="margin-bottom: 20px; font-size: 24px;">🏅 Live Leaderboard</h3>
+        <div style="text-align: left;">
+          ${leaderboard.map((entry, index) => `
+            <div style="
+              display: flex;
+              justify-content: space-between;
+              padding: 15px;
+              background: ${index === 0 ? 'rgba(255,215,0,0.2)' : 'rgba(255,255,255,0.1)'};
+              border-radius: 8px;
+              margin-bottom: 10px;
+              ${index === 0 ? 'border-left: 4px solid gold;' : ''}
+            ">
+              <span>${index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : '🏅'} ${entry.userId === firebase.auth().currentUser?.uid ? 'You' : `Player ${index + 1}`}</span>
+              <span>${entry.score}/${entry.totalQuestions}</span>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+      
+      <div style="
+        display: flex;
+        gap: 20px;
+        justify-content: center;
+        margin-top: 40px;
+      ">
+        <button onclick="closeModal()" style="
+          padding: 15px 30px;
+          background: rgba(255,255,255,0.2);
+          border: none;
+          color: white;
+          border-radius: 12px;
+          cursor: pointer;
+          font-size: 16px;
+          font-weight: 600;
+        ">Back to Home</button>
+        <button onclick="startWrittenCompetition()" style="
+          padding: 15px 30px;
+          background: linear-gradient(45deg, #ff6b6b, #ee5a52);
+          border: none;
+          color: white;
+          border-radius: 12px;
+          cursor: pointer;
+          font-size: 16px;
+          font-weight: 600;
+        ">Play Again</button>
+      </div>
+    </div>
+  `;
+}
+
+window.backToHome = function() {
+  closeModal();
+  // If you're in a subdirectory, adjust the path accordingly
+  // For example, if you're in /public/home.html, use '../index.html' or the correct path
+  window.location.href = 'home.html'; // Adjust this path as needed
+};
+
+  // Create stars for background
+  function createStars() {
+    const starsContainer = document.getElementById("starsContainer");
+    if (!starsContainer) return;
+    
+    for (let i = 0; i < 200; i++) {
+      const star = document.createElement("div");
+      star.className = "star";
+      const size = Math.random() * 3 + 0.5;
+      const duration = Math.random() * 4 + 2;
+      const delay = Math.random() * 2;
+      const randomLeft = Math.random() * 100;
+      const randomTop = Math.random() * 100;
+      const randomOpacity = Math.random() * 0.9 + 0.3;
+      
+      star.style.width = size + 'px';
+      star.style.height = size + 'px';
+      star.style.left = randomLeft + '%';
+      star.style.top = randomTop + '%';
+      star.style.opacity = randomOpacity;
+      star.style.animation = `twinkle ${duration}s ease-in-out infinite`;
+      star.style.animationDelay = delay + 's';
+      star.style.boxShadow = `0 0 ${size * 2}px rgba(255, 255, 255, 0.8)`;
+      
+      starsContainer.appendChild(star);
+    }
+  }
+
+  // Initialize stars on page load
+  document.addEventListener('DOMContentLoaded', function() {
+    createStars();
+  });
+
+
+  // ========== STATE VARIABLES ==========
+  let writtenQuestions = [];
+  let currentQuestionIndex = 0;
+  let writtenAnswers = {};
+  let writtenTimer = null;
+  let writtenTimeRemaining = 0;
+  window.writtenQuestions = null;
+  window.writtenAnswers = null;
+  window.latestAssignmentId = null;
+  window.currentAssignment = null;
+
+  // ========== NOTIFICATION HANDLING ==========
+  function toggleNotificationPanel() {
+    const panel = document.getElementById("notificationPanel");
+    if (!panel) return;
+    
+    if (panel.classList.contains("hidden")) {
+      panel.classList.remove("hidden");
+      panel.classList.add("active");
+      loadNotifications();
+    } else {
+      panel.classList.remove("active");
+      setTimeout(() => panel.classList.add("hidden"), 300);
+    }
+  }
+
+  function updateNotificationBadge(count) {
+    const notificationLink = document.querySelector('a[onclick="toggleNotificationPanel()"]');
+    if (notificationLink) {
+      let notificationBadge = notificationLink.querySelector('.notification-badge');
+      if (!notificationBadge && count > 0) {
+        notificationBadge = document.createElement('span');
+        notificationBadge.className = 'notification-badge';
+        notificationBadge.textContent = count;
+        notificationLink.style.position = 'relative';
+        notificationLink.appendChild(notificationBadge);
+      } else if (notificationBadge) {
+        if (count > 0) {
+          notificationBadge.style.display = 'inline-flex';
+          notificationBadge.textContent = count;
+        } else {
+          notificationBadge.style.display = 'none';
+        }
+      }
+    }
+  }
+
+  function loadNotifications() {
+    setupNotifications();
+  }
+
+  function setupNotifications() {
+    console.log("🔔 setupNotifications called");
+    const user = auth.currentUser;
+    if (!user) {
+      console.log("❌ No user found in setupNotifications");
+      return;
+    }
+
+    const notificationList = document.getElementById("notificationList");
+    if (!notificationList) {
+      console.log("❌ notificationList element not found");
+      return;
+    }
+    
+    console.log("✅ Setting up notifications for user:", user.uid);
+
+    // Real-time listener for notifications
+    // Fetch without orderBy first to avoid index requirement, then sort in memory
+    db.collection("notifications")
+      .where("userId", "==", user.uid)
+      .onSnapshot((snapshot) => {
+        notificationList.innerHTML = ''; // Clear existing
+
+        if (snapshot.empty) {
+          notificationList.innerHTML = '<div class="notification-empty">No notifications</div>';
+          updateNotificationBadge(0);
+          return;
+        }
+
+        // Collect all notifications and sort in memory
+        const notifications = [];
+        snapshot.forEach((doc) => {
+          notifications.push({ id: doc.id, ...doc.data() });
+        });
+        
+        // Sort by createdAt descending
+        notifications.sort((a, b) => {
+          const aTime = a.createdAt?.toDate ? a.createdAt.toDate().getTime() : 0;
+          const bTime = b.createdAt?.toDate ? b.createdAt.toDate().getTime() : 0;
+          return bTime - aTime; // Descending order
+        });
+        
+        // Limit to 50
+        const limitedNotifications = notifications.slice(0, 50);
+
+        let unreadCount = 0;
+        limitedNotifications.forEach((notif) => {
+          if (!notif.read) unreadCount++;
+
+          const item = document.createElement("div");
+          item.className = `notification-item ${notif.read ? 'read' : 'unread'}`;
+
+          // Format time
+          const timeText = notif.createdAt?.toDate 
+            ? formatTimeAgo(notif.createdAt.toDate())
+            : 'Just now';
+
+          // Different content based on notification type
+          let bodyContent = '';
+          if (notif.type === 'assignment') {
+            bodyContent = `
+              <div class="notification-body">
+                ${notif.message || 'You have a new assignment'}
+              </div>
+            `;
+          } else if (notif.type === 'comment') {
+            bodyContent = `
+              <div class="notification-body">
+                ${notif.message || 'You have a new comment'}
+              </div>
+            `;
+          } else {
+            bodyContent = `
+              <div class="notification-body">
+                ${notif.message || notif.title || 'Notification'}
+              </div>
+            `;
+          }
+
+          item.innerHTML = `
+            <div class="notification-header">
+              <strong class="notification-title">${notif.message || notif.title || 'Notification'}</strong>
+              <span class="notification-time">${timeText}</span>
+            </div>
+            ${bodyContent}
+          `;
+
+          // Add click handler based on notification type
+          if (notif.type === 'assignment' && notif.assignmentId) {
+            item.addEventListener('click', async () => {
+              try {
+                const assignmentDoc = await db.collection('assignments').doc(notif.assignmentId).get();
+                if (assignmentDoc.exists) {
+                  const assignment = { id: assignmentDoc.id, ...assignmentDoc.data() };
+                  openFullAssignmentModal(assignment);
+                  // Mark as read
+                  db.collection('notifications').doc(notif.id).update({ read: true });
+                  // Close notification panel
+                  toggleNotificationPanel();
+                }
+              } catch (error) {
+                console.error('Error opening assignment:', error);
+              }
+            });
+          } else {
+            // Regular notification click handler
+            item.addEventListener('click', () => {
+              if (!notif.read) {
+                db.collection('notifications').doc(notif.id).update({ read: true });
+              }
+            });
+          }
+
+          notificationList.appendChild(item);
+        });
+
+        // Update notification badge count
+        updateNotificationBadge(unreadCount);
+      }, (error) => {
+        console.error("Error loading notifications:", error);
+        // If index error, try fetching without orderBy and sort in memory
+        if (error.code === 'failed-precondition' || error.message.includes('index')) {
+          console.log("Index not ready, fetching without orderBy and sorting in memory...");
+          db.collection("notifications")
+            .where("userId", "==", user.uid)
+            .get()
+            .then((snapshot) => {
+              notificationList.innerHTML = '';
+              
+              if (snapshot.empty) {
+                notificationList.innerHTML = '<div class="notification-empty">No notifications</div>';
+                updateNotificationBadge(0);
+                return;
+              }
+              
+              // Sort in memory by createdAt
+              const notifications = [];
+              snapshot.forEach((doc) => {
+                notifications.push({ id: doc.id, ...doc.data() });
+              });
+              
+              notifications.sort((a, b) => {
+                const aTime = a.createdAt?.toDate ? a.createdAt.toDate().getTime() : 0;
+                const bTime = b.createdAt?.toDate ? b.createdAt.toDate().getTime() : 0;
+                return bTime - aTime; // Descending order
+              });
+              
+              // Limit to 50
+              const limitedNotifications = notifications.slice(0, 50);
+              
+              let unreadCount = 0;
+              limitedNotifications.forEach((notif) => {
+                if (!notif.read) unreadCount++;
+                
+                const item = document.createElement("div");
+                item.className = `notification-item ${notif.read ? 'read' : 'unread'}`;
+                
+                const timeText = notif.createdAt?.toDate 
+                  ? formatTimeAgo(notif.createdAt.toDate())
+                  : 'Just now';
+                
+                let bodyContent = '';
+                if (notif.type === 'assignment') {
+                  bodyContent = `
+                    <div class="notification-body">
+                      ${notif.message || 'You have a new assignment'}
+                    </div>
+                  `;
+                } else if (notif.type === 'comment') {
+                  bodyContent = `
+                    <div class="notification-body">
+                      ${notif.message || 'You have a new comment'}
+                    </div>
+                  `;
+                } else {
+                  bodyContent = `
+                    <div class="notification-body">
+                      ${notif.message || notif.title || 'Notification'}
+                    </div>
+                  `;
+                }
+                
+                item.innerHTML = `
+                  <div class="notification-header">
+                    <strong class="notification-title">${notif.message || notif.title || 'Notification'}</strong>
+                    <span class="notification-time">${timeText}</span>
+                  </div>
+                  ${bodyContent}
+                `;
+                
+                if (notif.type === 'assignment' && notif.assignmentId) {
+                  item.addEventListener('click', async () => {
+                    try {
+                      const assignmentDoc = await db.collection('assignments').doc(notif.assignmentId).get();
+                      if (assignmentDoc.exists) {
+                        const assignment = { id: assignmentDoc.id, ...assignmentDoc.data() };
+                        openFullAssignmentModal(assignment);
+                        db.collection('notifications').doc(notif.id).update({ read: true });
+                        toggleNotificationPanel();
+                      }
+                    } catch (error) {
+                      console.error('Error opening assignment:', error);
+                    }
+                  });
+                } else {
+                  item.addEventListener('click', () => {
+                    if (!notif.read) {
+                      db.collection('notifications').doc(notif.id).update({ read: true });
+                    }
+                  });
+                }
+                
+                notificationList.appendChild(item);
+              });
+              
+              updateNotificationBadge(unreadCount);
+            })
+            .catch((fallbackError) => {
+              console.error("Error in fallback notification fetch:", fallbackError);
+              notificationList.innerHTML = '<div class="notification-error">Error loading notifications</div>';
+            });
+        } else {
+          notificationList.innerHTML = '<div class="notification-error">Error loading notifications</div>';
+        }
+      });
+  }
+
+  function formatTimeAgo(date) {
+    const now = new Date();
+    const diff = now - date;
+    const seconds = Math.floor(diff / 1000);
+    const minutes = Math.floor(seconds / 60);
+    const hours = Math.floor(minutes / 60);
+    const days = Math.floor(hours / 24);
+
+    if (days > 0) return `${days}d ago`;
+    if (hours > 0) return `${hours}h ago`;
+    if (minutes > 0) return `${minutes}m ago`;
+    return 'Just now';
+  }
+
+  // ========== ASSIGNMENT MODAL ==========
+  function openFullAssignmentModal(assignment) {
+    console.log("Opening full assignment modal:", assignment);
+    window.currentAssignment = assignment;
+    window.latestAssignmentId = assignment.id;
+
+    const modal = document.getElementById('cq-assignment-modal');
+    const titleEl = document.getElementById('cq-assignment-title');
+    const fieldsEl = document.getElementById('cq-assignment-fields');
+
+    if (!modal || !titleEl || !fieldsEl) {
+      console.error("Assignment modal elements not found");
+      return;
+    }
+
+    titleEl.textContent = assignment.title || 'New Assignment';
+    
+    let fieldsHTML = '';
+    if (assignment.description) {
+      fieldsHTML += `<p><strong>Description:</strong> ${assignment.description}</p>`;
+    }
+    if (assignment.competencies && assignment.competencies.length > 0) {
+      fieldsHTML += `<p><strong>Competencies:</strong> ${assignment.competencies.join(', ')}</p>`;
+    }
+    if (assignment.difficulty) {
+      fieldsHTML += `<p><strong>Difficulty:</strong> ${assignment.difficulty}</p>`;
+    }
+    if (assignment.time) {
+      fieldsHTML += `<p><strong>Time:</strong> ${assignment.time}</p>`;
+    }
+    if (assignment.type) {
+      fieldsHTML += `<p><strong>Type:</strong> ${assignment.type}</p>`;
+    }
+
+    fieldsEl.innerHTML = fieldsHTML;
+    modal.style.display = 'block';
+  }
+
+  function closeAssignmentModal() {
+    const modal = document.getElementById('cq-assignment-modal');
+    if (modal) {
+      modal.style.display = 'none';
+    }
+  }
+
+  function snoozeAssignment() {
+    if (window.latestAssignmentId) {
+      db.collection('assignments').doc(window.latestAssignmentId).update({
+        status: "in_progress"
+      }).catch(error => {
+        console.error("Error updating assignment status:", error);
+      });
+    }
+    closeAssignmentModal();
+  }
+
+  async function acceptAssignmentNow() {
+    console.log("🚀 acceptAssignmentNow() called");
+    showLoader();
+
+    const assignment = window.currentAssignment;
+    console.log("📋 Current assignment:", assignment);
+
+    if (!assignment) {
+      console.error("❌ No current assignment found");
+      hideLoader();
+      return;
+    }
+
+    if (window.latestAssignmentId) {
+      console.log("✅ Marking assignment as seen");
+
+      const updateData = {
+        status: "seen",
+        completedAt: firebase.firestore.FieldValue.serverTimestamp(),
+        acceptedAt: firebase.firestore.FieldValue.serverTimestamp()
+      };
+
+      if (assignment.type === 'written') {
+        updateData.score = 0;
+        updateData.maxScore = assignment.writtenQuestions?.length || 10;
+      }
+
+      try {
+        await db.collection('assignments').doc(window.latestAssignmentId).update(updateData);
+        console.log("✅ Assignment marked as seen successfully");
+      } catch (error) {
+        console.error("❌ Error marking assignment as seen:", error);
+      }
+    }
+
+    // Handle assignment types
+    if (assignment.type === 'speaking' || assignment.type === 'case') {
+      console.log("🎤 Opening camera modal for speaking/case assignment");
+      document.getElementById('cq-assignment-modal').style.display = 'none';
+      hideLoader();
+      return;
+    }
+
+    if (assignment.type === 'written') {
+      console.log("✍️ Opening written assignment (with GPT if needed)");
+      document.getElementById('cq-assignment-modal').style.display = 'none';
+      await openWrittenPracticeModal(assignment); 
+      return;
+    }
+
+    hideLoader();
+  }
+
+  // ========== LOADER ==========
+  function showLoader() {
+    const loader = document.getElementById("assignmentLoader");
+    if (loader) {
+      loader.style.display = "flex";
+      startCircularProgress();
+    }
+  }
+
+  function hideLoader() {
+    const loader = document.getElementById("assignmentLoader");
+    if (loader) {
+      loader.style.display = "none";
+      stopCircularProgress();
+    }
+  }
+
+  // Circular progress loader
+  let progressInterval = null;
+  let currentProgress = 0;
+
+  function updateCircularProgress(progress) {
+    const fill = document.getElementById('circularProgressFill');
+    const text = document.getElementById('circularProgressText');
+    
+    if (fill && text) {
+      const circumference = 2 * Math.PI * 45;
+      const offset = circumference - (progress / 100) * circumference;
+      fill.style.strokeDashoffset = offset;
+      text.textContent = Math.round(progress) + '%';
+    }
+  }
+
+  function startCircularProgress() {
+    currentProgress = 0;
+    updateCircularProgress(0);
+    
+    if (progressInterval) clearInterval(progressInterval);
+    
+    progressInterval = setInterval(() => {
+      currentProgress += 2;
+      if (currentProgress >= 100) {
+        currentProgress = 100;
+        clearInterval(progressInterval);
+      }
+      updateCircularProgress(currentProgress);
+    }, 100);
+  }
+
+  function stopCircularProgress() {
+    if (progressInterval) {
+      clearInterval(progressInterval);
+      progressInterval = null;
+    }
+    currentProgress = 0;
+    updateCircularProgress(0);
+  }
+
+  // ========== WRITTEN PRACTICE MODAL ==========
+  async function openWrittenPracticeModal(assignment) {
+    console.log("Opening written practice modal with assignment:", assignment);
+
+    try {
+      currentQuestionIndex = 0;
+      writtenAnswers = {};
+      if (!window.writtenAnswers) {
+        window.writtenAnswers = {};
+      }
+
+      const timeInMinutes = parseInt(assignment.time) || 15;
+      writtenTimeRemaining = timeInMinutes * 60;
+
+      // Check if window.writtenQuestions exists (from "create your own" flow)
+      if (window.writtenQuestions && window.writtenQuestions.length > 0) {
+        console.log("✅ Using window.writtenQuestions from create your own flow");
+        writtenQuestions = window.writtenQuestions;
+      } else if (assignment.writtenQuestions && assignment.writtenQuestions.length > 0) {
+        // Use assignment's preloaded questions
+        writtenQuestions = assignment.writtenQuestions;
+        window.writtenQuestions = assignment.writtenQuestions;
+      } else {
+        // Generate new questions via GPT
+        console.log("⚡ No preloaded questions, generating via GPT...");
+        assignment.writtenQuestions = await generatePersonalizedQuestionsWithGPT({
+          time: assignment.time || "15 mins",
+          difficulty: assignment.difficulty || "Medium",
+          competencies: assignment.competencies || ["General"],
+          type: "written"
+        });
+        writtenQuestions = assignment.writtenQuestions;
+        window.writtenQuestions = assignment.writtenQuestions;
+      }
+
+      console.log("✅ Written questions ready:", writtenQuestions);
+
+      // Show modal and create stars
+      const modal = document.getElementById('quizModal');
+      modal.style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+      createQuizStars();
+      loadWrittenQuestion();
+      startWrittenTimer();
+
+    } catch (err) {
+      console.error("❌ Error in openWrittenPracticeModal:", err);
+      alert("Could not load written practice. Please try again.");
+    } finally {
+      hideLoader();
+      console.log("🛑 Loader hidden inside openWrittenPracticeModal");
+    }
+  }
+
+  function getQuestionCount(timeStr) {
+    if (!timeStr) return 5;
+    const normalized = timeStr.toString().toLowerCase();
+    if (normalized.includes("15")) return 10;
+    if (normalized.includes("10")) return 7;
+    if (normalized.includes("5")) return 5;
+    return 5;
+  }
+
+  async function generatePersonalizedQuestionsWithGPT(formData) {
+    const questionCount = getQuestionCount(formData.time);
+    const competenciesText = formData.competencies.join(', ');
+
+    let prompt = `Generate ${questionCount} FBLA-style multiple choice questions.
+- Difficulty: ${formData.difficulty}
+- Competencies to cover: ${competenciesText}
+- Each question must have exactly 4 options and 1 correct answer
+- Questions must be standalone, realistic for FBLA, and never reference "the document", "the text", "as stated", etc.
+- Use business, finance, marketing, management, economics, law, and related topics depending on the competencies.`
+
+    prompt += `\n\nReturn ONLY valid JSON array in format:
+[
+  {
+    "text": "Question text?",
+    "competency": "Marketing",
+    "correctAnswer": "Correct option text",
+    "options": ["A", "B", "C", "D"],
+    "difficulty": "${formData.difficulty}",
+    "source": "gpt_generated"
+  }
+]`;
+
+    try {
+      const response = await firebase.functions().httpsCallable("generateQuestionsWithAI")({
+        messages: [
+          { role: "system", content: `You are an expert FBLA written-competition exam designer.
+
+Your role is to generate ORIGINAL, competition-accurate FBLA-style multiple-choice questions that match the structure, rigor, tone, and professional standards of official FBLA written tests.
+
+You must follow ALL rules below.
+
+────────────────────────────────
+CORE FBLA PHILOSOPHY
+────────────────────────────────
+FBLA written tests assess professional correctness, precision, and applied business literacy.
+
+They do NOT assess creativity, opinion, or open-ended reasoning.
+
+Each question must test exactly ONE concept.
+
+Questions must be concise, objective, and professionally worded.
+
+Avoid unnecessary narrative unless the question type explicitly requires a scenario.
+
+────────────────────────────────
+APPROVED FBLA QUESTION ARCHETYPES
+────────────────────────────────
+Every question MUST clearly belong to ONE of the following archetypes:
+
+1. Definition / Term Identification  
+   - Identifying the correct term based on a definition  
+   - Selecting the correct meaning of a professional word or concept  
+
+2. Classification / Category Recognition  
+   - Determining where an item belongs within a professional category system  
+   - Examples include document types, account categories, system types, business forms, or classifications  
+
+3. Procedural / Workflow Knowledge  
+   - Understanding the stages of a professional workflow specific to the competition area  
+   - Identifying where information originates within that workflow  
+   - Determining which document, tool, or action is appropriate at a given stage  
+   - Recognizing correct sequencing of professional tasks within the domain  
+
+4. Tool-to-Function Matching  
+   - Matching software features, commands, utilities, or tools to their correct purpose  
+   - Selecting the correct function used to accomplish a professional task  
+
+5. Quantitative / Calculation Application  
+   - Performing single-step or limited multi-step calculations  
+   - Selecting the correct numeric result based on provided data  
+   - Avoid unnecessary complexity or advanced math  
+
+6. Language Precision & Usage  
+   - Correct use of professional vocabulary  
+   - Distinguishing homophones, word meanings, spelling, grammar, and standard usage  
+
+7. Error Detection / Exception Identification  
+   - Identifying what is incorrect, misspelled, or does NOT belong  
+   - Using negation ("NOT") carefully and intentionally  
+
+────────────────────────────────
+QUESTION STRUCTURE RULES
+────────────────────────────────
+• Each question must assess ONE idea only.  
+• Do not combine multiple concepts in one question.  
+• Avoid ambiguous wording.  
+• Use professional, neutral language.
+
+Acceptable stem styles include:
+- "Which of the following…"
+- "What term best describes…"
+- "The document used to…"
+- "Which action should be taken…"
+- "Which of the following is NOT…"
+
+────────────────────────────────
+ANSWER CHOICE DESIGN (CRITICAL)
+────────────────────────────────
+Each question MUST include exactly FOUR answer choices.
+
+Answer choices must:
+• Be the same grammatical form  
+• Be similar in length  
+• Belong to the same conceptual family  
+
+Wrong answer choices (distractors) must be plausible and realistic.
+
+Allowed distractor strategies include:
+• Closely related terms within the same category  
+• Common student misconceptions  
+• Incorrect step within a workflow  
+• Reversed or misapplied professional rules  
+• Visually or linguistically similar words  
+• Typical calculation or classification errors  
+
+Never include joke answers or obviously incorrect options.
+
+────────────────────────────────
+DIFFICULTY CALIBRATION
+────────────────────────────────
+Easy:
+• Direct recall or recognition  
+• Minimal traps  
+
+Medium:
+• Requires discrimination between similar concepts  
+• Includes common misconceptions  
+
+Hard:
+• Includes negation ("NOT")  
+• Requires precise rule awareness  
+• Uses subtle wording differences  
+• Penalizes shallow memorization  
+
+────────────────────────────────
+CONTENT INTEGRITY RULES
+────────────────────────────────
+• All questions must be ORIGINAL.  
+• Do NOT copy real FBLA questions.  
+• Do NOT closely paraphrase known questions.  
+• Use authentic structure only, not replicated wording.
+
+Questions must feel realistic for competitive FBLA written events at the regional, state, or national level.
+
+When study materials are provided, extract concepts, facts, names, dates, laws, and details from them. Present this information as established business knowledge. NEVER mention "the study guide", "the document", "the material", or use phrases like "according to", "as stated in", or "mentioned in".
+
+────────────────────────────────
+OUTPUT REQUIREMENTS
+────────────────────────────────
+• Generate ONLY the requested number of questions.  
+• Each question must have exactly four answer options.  
+• Only ONE option may be correct.  
+• Output valid JSON only.  
+• Do not include explanations, commentary, or headings.  
+
+You are writing as a professional exam author — not as a tutor or teacher.` },
+          { role: "user", content: (window.__CERTQUEST_CONTEXT__ || "") + "\n\n" + prompt }
+        ]
+      });
+
+      const data = response.data;
+      let content = data.content || data.choices?.[0]?.message?.content || data;
+      
+      if (typeof content !== 'string') {
+        content = JSON.stringify(content);
+      }
+      
+      content = content.trim();
+      content = content.replace(/```json|```/g, "");
+      const jsonStart = content.indexOf('[');
+      const jsonEnd = content.lastIndexOf(']') + 1;
+      
+      if (jsonStart !== -1 && jsonEnd > jsonStart) {
+        content = content.slice(jsonStart, jsonEnd);
+      }
+      
+      const generated = JSON.parse(content);
+      console.log(`✅ Generated ${generated.length} GPT questions`);
+      return generated;
+
+    } catch (err) {
+      console.error("❌ GPT error:", err);
+      return getFallbackQuestions(questionCount, formData.competencies);
+    }
+  }
+
+  function getFallbackQuestions(count, competencies) {
+    const fallbackQuestions = [
+      {
+        text: "What is the primary purpose of parliamentary procedure?",
+        competency: "Parliamentary Procedure",
+        correctAnswer: "To make meetings more efficient",
+        options: [
+          "To make meetings more efficient",
+          "To give the president more power",
+          "To eliminate debate",
+          "To make meetings longer"
+        ]
+      },
+      {
+        text: "Which motion is used to end a meeting?",
+        competency: "Parliamentary Procedure",
+        correctAnswer: "Adjourn",
+        options: ["Adjourn", "Recess", "Postpone", "Table"]
+      },
+      {
+        text: "What is the most effective way to communicate in business?",
+        competency: "Business Communication",
+        correctAnswer: "Clear and concise messaging",
+        options: [
+          "Clear and concise messaging",
+          "Using complex terminology",
+          "Lengthy detailed explanations",
+          "Informal casual language"
+        ]
+      }
+    ];
+    
+    const result = [];
+    for (let i = 0; i < count; i++) {
+      result.push(fallbackQuestions[i % fallbackQuestions.length]);
+    }
+    return result;
+  }
+
+  function loadWrittenQuestion() {
+    const questions = window.writtenQuestions || writtenQuestions;
+    if (!questions || questions.length === 0) {
+      console.error("No questions available");
+      return;
+    }
+
+    const question = questions[currentQuestionIndex];
+    if (!question) {
+      console.error("Question not found at index:", currentQuestionIndex);
+      return;
+    }
+
+    const questionTextEl = document.getElementById('questionText');
+    const competencyEl = document.getElementById('questionCompetency');
+    const optionsContainer = document.getElementById('optionsContainer');
+    const progressEl = document.getElementById('quizProgress');
+
+    if (questionTextEl) {
+      questionTextEl.textContent = question.text || question.question || 'Question not available';
+      questionTextEl.style.color = '#fff';
+    }
+
+    if (competencyEl) {
+      competencyEl.textContent = question.competency || 'General';
+    }
+
+    if (progressEl) {
+      progressEl.textContent = `Question ${currentQuestionIndex + 1} of ${questions.length}`;
+    }
+
+    if (optionsContainer) {
+      optionsContainer.innerHTML = '';
+      const options = question.options || [];
+      
+      options.forEach((option, index) => {
+        const optionBtn = document.createElement('button');
+        optionBtn.className = 'practice-quiz-option-btn';
+        if (writtenAnswers[currentQuestionIndex] === option) {
+          optionBtn.classList.add('selected');
+        }
+
+        optionBtn.innerHTML = `
+          <div class="practice-quiz-option-radio">
+            <div class="practice-quiz-option-dot"></div>
+          </div>
+          <span class="practice-quiz-option-text">${option}</span>
+        `;
+
+        optionBtn.addEventListener('click', () => {
+          document.querySelectorAll('.practice-quiz-option-btn').forEach(btn => btn.classList.remove('selected'));
+          optionBtn.classList.add('selected');
+          writtenAnswers[currentQuestionIndex] = option;
+          if (window.writtenAnswers) {
+            window.writtenAnswers[currentQuestionIndex] = option;
+          }
+        });
+
+        optionsContainer.appendChild(optionBtn);
+      });
+    }
+
+    updateWrittenProgress();
+    updateWrittenNavButtons();
+  }
+
+  function updateWrittenProgress() {
+    const questions = window.writtenQuestions || writtenQuestions;
+    if (!questions || questions.length === 0) return;
+
+    const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
+    const progressFill = document.getElementById('progressFill');
+    const progressPercent = document.getElementById('progressPercent');
+    
+    if (progressFill) {
+      progressFill.style.width = progress + '%';
+    }
+    if (progressPercent) {
+      progressPercent.textContent = Math.round(progress);
+    }
+  }
+
+  function updateWrittenNavButtons() {
+    const questions = window.writtenQuestions || writtenQuestions;
+    if (!questions || questions.length === 0) return;
+
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const submitBtn = document.getElementById('submitBtn');
+
+    if (prevBtn) {
+      prevBtn.disabled = currentQuestionIndex === 0;
+    }
+
+    if (nextBtn && submitBtn) {
+      if (currentQuestionIndex === questions.length - 1) {
+        nextBtn.style.display = 'none';
+        submitBtn.style.display = 'block';
+      } else {
+        nextBtn.style.display = 'block';
+        submitBtn.style.display = 'none';
+      }
+    }
+  }
+
+  function previousQuestion() {
+    const questions = window.writtenQuestions || writtenQuestions;
+    if (currentQuestionIndex > 0 && questions && questions.length > 0) {
+      currentQuestionIndex--;
+      loadWrittenQuestion();
+    }
+  }
+
+  function nextQuestion() {
+    const questions = window.writtenQuestions || writtenQuestions;
+    if (currentQuestionIndex < questions.length - 1 && questions && questions.length > 0) {
+      currentQuestionIndex++;
+      loadWrittenQuestion();
+    }
+  }
+
+  function startWrittenTimer() {
+    updateTimerDisplay();
+    if (writtenTimer) clearInterval(writtenTimer);
+    
+    writtenTimer = setInterval(() => {
+      writtenTimeRemaining--;
+      updateTimerDisplay();
+      
+      if (writtenTimeRemaining <= 0) {
+        console.log("Time's up! Auto-submitting...");
+        clearInterval(writtenTimer);
+        submitWrittenPractice();
+      }
+    }, 1000);
+  }
+
+  function updateTimerDisplay() {
+    const minutes = Math.floor(writtenTimeRemaining / 60);
+    const seconds = writtenTimeRemaining % 60;
+    const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    
+    const timerElement = document.getElementById('quizTimer');
+    if (timerElement) {
+      timerElement.textContent = timeString;
+      
+      if (writtenTimeRemaining <= 60) {
+        timerElement.style.color = '#ef4444';
+      } else if (writtenTimeRemaining <= 300) {
+        timerElement.style.color = '#f97316';
+      } else {
+        timerElement.style.color = '#fb923c';
+      }
+    }
+  }
+
+  function createQuizStars() {
+    const starsContainer = document.getElementById('quizStarsContainer');
+    if (!starsContainer) return;
+    
+    starsContainer.innerHTML = '';
+    
+    for (let i = 0; i < 200; i++) {
+      const star = document.createElement('div');
+      star.className = 'practice-quiz-star';
+      
+      const size = Math.random() * 3 + 0.5;
+      const duration = Math.random() * 4 + 2;
+      const delay = Math.random() * 2;
+      const randomLeft = Math.random() * 100;
+      const randomTop = Math.random() * 100;
+      const randomOpacity = Math.random() * 0.9 + 0.3;
+      
+      star.style.width = size + 'px';
+      star.style.height = size + 'px';
+      star.style.left = randomLeft + '%';
+      star.style.top = randomTop + '%';
+      star.style.opacity = randomOpacity;
+      star.style.animation = `practice-quiz-twinkle ${duration}s ease-in-out infinite`;
+      star.style.animationDelay = delay + 's';
+      star.style.boxShadow = `0 0 ${size * 2}px rgba(255, 255, 255, 0.8)`;
+      
+      starsContainer.appendChild(star);
+    }
+  }
+
+  function closeQuizModal() {
+    const modal = document.getElementById('quizModal');
+    if (modal) {
+      modal.style.display = 'none';
+    }
+    document.body.style.overflow = 'auto';
+    clearInterval(writtenTimer);
+    writtenQuestions = [];
+    currentQuestionIndex = 0;
+    writtenAnswers = {};
+    writtenTimeRemaining = 0;
+    writtenTimer = null;
+  }
+
+  // ========== QUIZ SUBMISSION ==========
+  async function submitQuiz() {
+    // Check if this is a written practice test
+    if (window.writtenQuestions && window.writtenQuestions.length > 0) {
+      if (window.latestAssignmentId) {
+        // Assignment-based written test
+        await submitWrittenPractice();
+      } else {
+        // "Create your own" written test
+        await submitWrittenPracticeForCreateYourOwn();
+      }
+      return;
+    }
+
+    // Other quiz types can be handled here
+    console.log("No written questions found");
+  }
+
+  async function submitWrittenPractice() {
+    try {
+      console.log("=== SUBMITTING WRITTEN PRACTICE ===");
+      clearInterval(writtenTimer);
+      
+      if (!window.latestAssignmentId) {
+        console.error("❌ CRITICAL ERROR: No assignment ID found!");
+        alert("Error: No assignment ID found. Cannot submit written practice.");
+        closeQuizModal();
+        return;
+      }
+      
+      // Use local writtenQuestions for assignment-based tests
+      const questions = writtenQuestions;
+      const answers = writtenAnswers;
+      
+      let score = 0;
+      const competencyStats = {};
+      const detailedAnswers = [];
+      const totalQuestions = questions.length;
+      
+      questions.forEach((question, index) => {
+        const userAnswer = answers[index];
+        const correctAnswer = question.correctAnswer;
+        const isCorrect = userAnswer === correctAnswer;
+        
+        if (isCorrect) score++;
+        
+        const competency = question.competency || 'General';
+        if (!competencyStats[competency]) {
+          competencyStats[competency] = { correct: 0, total: 0 };
+        }
+        competencyStats[competency].total++;
+        if (isCorrect) competencyStats[competency].correct++;
+        
+        detailedAnswers.push({
+          questionIndex: index,
+          question: question.text || question.question,
+          userAnswer: userAnswer || 'Not answered',
+          correctAnswer: correctAnswer,
+          isCorrect: isCorrect,
+          competency: competency
+        });
+      });
+
+      const percentage = Math.round((score / totalQuestions) * 100);
+      
+      const quizResult = {
+        userId: auth.currentUser.uid,
+        assignmentId: window.latestAssignmentId,
+        type: 'written',
+        status: 'complete',
+        score: score,
+        maxScore: totalQuestions,
+        percentage: percentage,
+        competencyStats: competencyStats,
+        questions: questions.map((q, index) => ({
+          text: q.text || q.question,
+          competency: q.competency || 'General',
+          correctAnswer: q.correctAnswer,
+          userAnswer: answers[index] || null,
+          isCorrect: (answers[index] === q.correctAnswer),
+          options: q.options || []
+        })),
+        detailedAnswers: detailedAnswers,
+        completedAt: firebase.firestore.FieldValue.serverTimestamp(),
+        timeSpent: (parseInt(window.currentAssignment?.time) || 15) * 60 - writtenTimeRemaining
+      };
+
+      // Save as new test result document
+      await saveQuizResultsToFirebase(quizResult);
+      
+      // Update original assignment document
+      await db.collection('assignments').doc(window.latestAssignmentId).update({
+        score: score,
+        maxScore: totalQuestions,
+        percentage: percentage,
+        competencyStats: competencyStats,
+        completedAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+
+      closeQuizModal();
+      showCongratsModal({
+        score: score,
+        totalQuestions: totalQuestions,
+        percentage: percentage,
+        competencyStats: competencyStats,
+        assignmentName: window.currentAssignment?.title || 'Written Practice'
+      });
+
+    } catch (error) {
+      console.error("❌ Written practice submission error:", error);
+      alert("Failed to submit practice: " + error.message);
+    }
+  }
+
+  async function submitWrittenPracticeForCreateYourOwn() {
+    try {
+      console.log("=== SUBMITTING CREATE YOUR OWN WRITTEN PRACTICE ===");
+      clearInterval(writtenTimer);
+      
+      const questions = window.writtenQuestions || writtenQuestions;
+      const answers = window.writtenAnswers || writtenAnswers;
+      
+      if (!questions || questions.length === 0) {
+        console.error("❌ CRITICAL ERROR: No questions found!");
+        alert("Error: No questions found. Cannot submit written practice.");
+        closeQuizModal();
+        return;
+      }
+      
+      let score = 0;
+      const competencyStats = {};
+      const detailedAnswers = [];
+      const totalQuestions = questions.length;
+      
+      questions.forEach((question, index) => {
+        const userAnswer = answers[index];
+        const correctAnswer = question.correctAnswer;
+        const isCorrect = userAnswer === correctAnswer;
+        
+        if (isCorrect) score++;
+        
+        const competency = question.competency || 'General';
+        if (!competencyStats[competency]) {
+          competencyStats[competency] = { correct: 0, total: 0 };
+        }
+        competencyStats[competency].total++;
+        if (isCorrect) competencyStats[competency].correct++;
+        
+        detailedAnswers.push({
+          questionIndex: index,
+          question: question.text || question.question,
+          userAnswer: userAnswer || 'Not answered',
+          correctAnswer: correctAnswer,
+          isCorrect: isCorrect,
+          competency: competency
+        });
+      });
+
+      const percentage = Math.round((score / totalQuestions) * 100);
+      
+      const quizResult = {
+        userId: auth.currentUser.uid,
+        type: 'written',
+        status: 'complete',
+        score: score,
+        maxScore: totalQuestions,
+        percentage: percentage,
+        competencyStats: competencyStats,
+        questions: questions.map((q, index) => ({
+          text: q.text || q.question,
+          competency: q.competency || 'General',
+          correctAnswer: q.correctAnswer,
+          userAnswer: answers[index] || null,
+          isCorrect: (answers[index] === q.correctAnswer),
+          options: q.options || []
+        })),
+        detailedAnswers: detailedAnswers,
+        completedAt: firebase.firestore.FieldValue.serverTimestamp()
+      };
+
+      // Save as new test result document
+      await saveQuizResultsToFirebase(quizResult);
+      
+      closeQuizModal();
+      showCongratsModal({
+        score: score,
+        totalQuestions: totalQuestions,
+        percentage: percentage,
+        competencyStats: competencyStats,
+        assignmentName: 'Written Practice'
+      });
+
+      // Clear global variables
+      window.writtenQuestions = null;
+      window.writtenAnswers = null;
+      
+    } catch (error) {
+      console.error("❌ Create your own written practice submission error:", error);
+      alert("Failed to submit practice: " + error.message);
+    }
+  }
+
+  async function saveQuizResultsToFirebase(quizResult) {
+    try {
+      console.log("=== SAVING NEW TEST RESULT DOCUMENT ===");
+      
+      // Ensure questions array has options property
+      const questionsWithOptions = quizResult.questions.map((q, index) => {
+        const questionResult = quizResult.detailedAnswers?.[index];
+        const options = questionResult?.options || q.options || [];
+        
+        return {
+          ...q,
+          options: options
+        };
+      });
+
+      const resultToSave = {
+        ...quizResult,
+        questions: questionsWithOptions
+      };
+
+      const docRef = await db.collection('assignments').add(resultToSave);
+      console.log("✅ Test result saved with ID:", docRef.id);
+      return docRef.id;
+    } catch (error) {
+      console.error("Error saving quiz results to Firebase:", error);
+      throw error;
+    }
+  }
+
+  // ========== CONGRATULATIONS MODAL ==========
+  function showCongratsModal(results) {
+    const modal = document.getElementById('congratsModal');
+    
+    const percentage = results.percentage || Math.round((results.score / results.totalQuestions) * 100);
+    
+    document.getElementById('congratsTitle').textContent = 'Congratulations!';
+    document.getElementById('congratsScore').textContent = `${results.score}/${results.totalQuestions}`;
+    document.getElementById('congratsSubtitle').innerHTML = 
+      `Excellent work! You scored <span id="congratsScoreSpan" style="background: linear-gradient(to right, #ef4444, #f97316, #eab308); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; font-weight: 900; font-size: 1.75rem;">${results.score}/${results.totalQuestions}</span>`;
+    
+    document.getElementById('congratsAssignmentName').textContent = results.assignmentName || 'Written Practice';
+    
+    const competenciesContainer = document.getElementById('congratsCompetencies');
+    if (results.competencyStats && Object.keys(results.competencyStats).length > 0) {
+      competenciesContainer.innerHTML = Object.entries(results.competencyStats).map(([comp, stats]) => {
+        const percentage = Math.round((stats.correct / stats.total) * 100);
+        const isFull = stats.correct === stats.total;
+        return `
+          <div class="congrats-competency-item">
+            <div class="congrats-competency-header">
+              <span class="congrats-competency-name">${comp}</span>
+              <span class="congrats-competency-score">${stats.correct}/${stats.total} correct</span>
+            </div>
+            <div class="congrats-competency-progress-bar">
+              <div class="congrats-competency-progress-fill ${isFull ? 'full' : ''}" style="width: ${percentage}%"></div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    } else {
+      competenciesContainer.innerHTML = '<p style="color: #94a3b8; text-align: center;">No competency breakdown available</p>';
+    }
+    
+    modal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+    createCongratsStars();
+    
+    if (typeof confetti !== 'undefined') {
+      confetti({
+        particleCount: 200,
+        spread: 80,
+        origin: { y: 0.6 },
+        colors: ['#ef4444', '#f97316', '#eab308', '#dc2626']
+      });
+    }
+  }
+
+  function createCongratsStars() {
+    const starsContainer = document.getElementById('congratsStarsContainer');
+    if (!starsContainer) return;
+    
+    starsContainer.innerHTML = '';
+    
+    for (let i = 0; i < 200; i++) {
+      const star = document.createElement('div');
+      star.className = 'practice-quiz-star';
+      
+      const size = Math.random() * 3 + 0.5;
+      const duration = Math.random() * 4 + 2;
+      const delay = Math.random() * 2;
+      const randomLeft = Math.random() * 100;
+      const randomTop = Math.random() * 100;
+      const randomOpacity = Math.random() * 0.9 + 0.3;
+      
+      star.style.width = size + 'px';
+      star.style.height = size + 'px';
+      star.style.left = randomLeft + '%';
+      star.style.top = randomTop + '%';
+      star.style.opacity = randomOpacity;
+      star.style.animation = `practice-quiz-twinkle ${duration}s ease-in-out infinite`;
+      star.style.animationDelay = delay + 's';
+      star.style.boxShadow = `0 0 ${size * 2}px rgba(255, 255, 255, 0.8)`;
+      
+      starsContainer.appendChild(star);
+    }
+  }
+
+  function closeCongratsModal() {
+    const modal = document.getElementById('congratsModal');
+    if (modal) {
+      modal.style.display = 'none';
+    }
+    document.body.style.overflow = 'auto';
+  }
+
+  window.toggleNotificationPanel = toggleNotificationPanel;
+  </script>
+
+  <!-- Quiz Modal - Fullscreen -->
+  <div id="quizModal" style="display: none;" class="practice-quiz-fullscreen">
+    <!-- Galaxy Background -->
+    <div class="practice-quiz-galaxy-bg">
+      <div class="practice-quiz-galaxy-gradient"></div>
+      <div class="practice-quiz-stars-container" id="quizStarsContainer"></div>
+      <div class="practice-quiz-nebula practice-quiz-nebula-1"></div>
+      <div class="practice-quiz-nebula practice-quiz-nebula-2"></div>
+      <div class="practice-quiz-nebula practice-quiz-nebula-3"></div>
+    </div>
+
+    <!-- Top Bar -->
+    <div class="practice-quiz-topbar">
+      <div class="practice-quiz-topbar-content">
+        <div>
+          <h1 id="quizTitle" class="practice-quiz-topbar-title">Easy Written Practice</h1>
+          <p class="practice-quiz-topbar-subtitle">
+            <span id="quizProgress">Question 1 of 14</span>
+          </p>
+        </div>
+        
+        <div class="practice-quiz-topbar-right">
+          <div class="practice-quiz-timer-section">
+            <p class="practice-quiz-timer-label">Time Remaining</p>
+            <p id="quizTimer" class="practice-quiz-timer-value">14:53</p>
+          </div>
+          
+          <button class="practice-quiz-close-btn" onclick="closeQuizModal()">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="practice-quiz-main">
+      <!-- Competency Badge -->
+      <div class="practice-quiz-competency-badge">
+        <span id="questionCompetency" class="practice-quiz-competency-text">Business Communication</span>
+      </div>
+
+      <!-- Question -->
+      <div class="practice-quiz-question-section">
+        <h2 id="questionText" class="practice-quiz-question">Loading question...</h2>
+        <p class="practice-quiz-question-hint">Select the best answer from the options below</p>
+      </div>
+
+      <!-- Answer Options -->
+      <div id="optionsContainer" class="practice-quiz-options">
+        <!-- Options will be populated dynamically -->
+      </div>
+
+      <!-- Progress Section -->
+      <div class="practice-quiz-progress-section">
+        <div class="practice-quiz-progress-header">
+          <p class="practice-quiz-progress-label">Overall Progress</p>
+          <p class="practice-quiz-progress-value"><span id="progressPercent">0</span>/100</p>
+        </div>
+        <div class="practice-quiz-progress-bar">
+          <div class="practice-quiz-progress-fill" id="progressFill"></div>
+        </div>
+      </div>
+
+      <!-- Navigation Buttons -->
+      <div class="practice-quiz-actions">
+        <button id="prevBtn" class="practice-quiz-prev-btn" onclick="previousQuestion()" disabled>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="15 18 9 12 15 6"></polyline>
+          </svg>
+          Previous Question
+        </button>
+        <button id="nextBtn" class="practice-quiz-next-btn" onclick="nextQuestion()">Next Question</button>
+        <button id="submitBtn" class="practice-quiz-submit-btn" onclick="submitQuiz()" style="display: none;">Submit Quiz</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Congratulations Modal - Fullscreen -->
+  <div id="congratsModal" class="practice-quiz-fullscreen" style="display:none;">
+    <!-- Galaxy Background -->
+    <div class="practice-quiz-galaxy-bg">
+      <div class="practice-quiz-galaxy-gradient"></div>
+      <div class="practice-quiz-stars-container" id="congratsStarsContainer"></div>
+      <div class="practice-quiz-nebula practice-quiz-nebula-1"></div>
+      <div class="practice-quiz-nebula practice-quiz-nebula-2"></div>
+      <div class="practice-quiz-nebula practice-quiz-nebula-3"></div>
+    </div>
+
+    <!-- Main Content - Centered -->
+    <div class="practice-quiz-main" style="display: flex; align-items: center; justify-content: center; min-height: calc(100vh - 80px);">
+      <div class="congrats-content">
+        <!-- Congratulations Header - Centered -->
+        <div class="congrats-header">
+          <h1 id="congratsTitle" class="congrats-title">Congratulations!</h1>
+          <p class="congrats-subtitle" id="congratsSubtitle">
+            Excellent work! You scored <span id="congratsScore">0/0</span>
+          </p>
+        </div>
+
+        <!-- Assignment Info - Centered -->
+        <div class="congrats-assignment-info">
+          <p class="congrats-assignment-label">For completing:</p>
+          <h2 id="congratsAssignmentName" class="congrats-assignment-name">Written Practice</h2>
+        </div>
+
+        <!-- Competency Breakdown - Grid Layout -->
+        <div class="congrats-competencies-grid" id="congratsCompetencies">
+          <!-- Competencies will be populated here -->
+        </div>
+
+        <!-- Action Button -->
+        <div class="congrats-actions">
+          <button class="practice-quiz-next-btn" onclick="closeCongratsModal()">Got it!</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Assignment Loader - Fullscreen Blurred -->
+  <div id="assignmentLoader" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); z-index: 10000; justify-content: center; align-items: center; flex-direction: column;">
+    <div class="circular-progress-loader">
+      <svg class="circular-progress-svg" viewBox="0 0 100 100">
+        <defs>
+          <linearGradient id="progressGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" style="stop-color:#ef4444;stop-opacity:1" />
+            <stop offset="50%" style="stop-color:#f97316;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#eab308;stop-opacity:1" />
+          </linearGradient>
+        </defs>
+        <circle class="circular-progress-bg" cx="50" cy="50" r="45"></circle>
+        <circle class="circular-progress-fill" cx="50" cy="50" r="45" id="circularProgressFill"></circle>
+      </svg>
+      <div class="circular-progress-text" id="circularProgressText">0%</div>
+    </div>
+  </div>
+
+  <style>
+    .circular-progress-loader {
+      position: relative;
+      width: 120px;
+      height: 120px;
+    }
+
+    .circular-progress-svg {
+      width: 100%;
+      height: 100%;
+      transform: rotate(-90deg);
+    }
+
+    .circular-progress-bg {
+      fill: none;
+      stroke: rgba(255, 255, 255, 0.2);
+      stroke-width: 8;
+    }
+
+    .circular-progress-fill {
+      fill: none;
+      stroke: url(#progressGradient);
+      stroke-width: 8;
+      stroke-linecap: round;
+      stroke-dasharray: 283;
+      stroke-dashoffset: 283;
+      transition: stroke-dashoffset 0.3s ease;
+    }
+
+    .circular-progress-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: #fff;
+      font-size: 1.5rem;
+      font-weight: 700;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .congrats-content {
+      max-width: 80rem;
+      margin: 0 auto;
+      width: 100%;
+      text-align: center;
+    }
+
+    .congrats-header {
+      margin-bottom: 3rem;
+    }
+
+    .congrats-title {
+      font-size: 3.5rem;
+      font-weight: 900;
+      background: linear-gradient(to right, #ef4444, #f97316, #eab308);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin: 0 0 1rem 0;
+      line-height: 1.2;
+    }
+
+    .congrats-subtitle {
+      font-size: 1.5rem;
+      color: #fff;
+      margin: 0;
+      font-weight: 500;
+    }
+
+    .congrats-subtitle span {
+      background: linear-gradient(to right, #ef4444, #f97316, #eab308);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-weight: 900;
+    }
+
+    .congrats-assignment-info {
+      text-align: center;
+      margin-bottom: 4rem;
+    }
+
+    .congrats-assignment-label {
+      color: #94a3b8;
+      font-size: 0.875rem;
+      margin-bottom: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-weight: 700;
+    }
+
+    .congrats-assignment-name {
+      font-size: 2.5rem;
+      font-weight: 900;
+      background: linear-gradient(to right, #ef4444, #f97316, #eab308);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin: 0;
+    }
+
+    .congrats-competencies-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 4rem;
+      max-width: 1000px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .congrats-competency-item {
+      background: rgba(30, 41, 59, 0.3);
+      border: 2px solid rgba(71, 85, 105, 0.5);
+      border-radius: 1rem;
+      padding: 1.5rem;
+      transition: all 0.2s;
+      text-align: left;
+    }
+
+    .congrats-competency-item:hover {
+      border-color: rgba(251, 146, 60, 0.5);
+      background: rgba(251, 146, 60, 0.1);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 16px rgba(251, 146, 60, 0.2);
+    }
+
+    .congrats-competency-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    .congrats-competency-name {
+      font-size: 1rem;
+      font-weight: 900;
+      color: #fff;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .congrats-competency-score {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #94a3b8;
+    }
+
+    .congrats-competency-progress-bar {
+      width: 100%;
+      height: 0.75rem;
+      background: rgba(30, 41, 59, 0.5);
+      border-radius: 9999px;
+      overflow: hidden;
+      border: 1px solid rgba(71, 85, 105, 0.5);
+    }
+
+    .congrats-competency-progress-fill {
+      height: 100%;
+      background: linear-gradient(to right, #dc2626, #f97316);
+      border-radius: 9999px;
+      transition: width 0.5s;
+    }
+
+    .congrats-competency-progress-fill.full {
+      background: linear-gradient(to right, #16a34a, #22c55e);
+    }
+
+    .congrats-actions {
+      display: flex;
+      justify-content: center;
+      margin-top: 3rem;
+    }
+  </style>
+  
+</body>
+</html>
+

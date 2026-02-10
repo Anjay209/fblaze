@@ -2,68 +2,688 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Sign In | CertQuest</title>
+  <title>FBLAZE - Ignite Your Potential</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <link rel="stylesheet" href="login.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-  <!-- Firebase SDKs (compat) -->
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics-compat.js"></script>
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #000000;
+      color: #fff;
+      overflow-x: hidden;
+      cursor: none;
+    }
+
+    /* Star Animation */
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 0.9; }
+    }
+
+    .star {
+      position: absolute;
+      background: #fff;
+      border-radius: 50%;
+      animation: twinkle linear infinite;
+    }
+
+    /* Fixed Background */
+    .fixed-background {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 0;
+    }
+
+    .stars-container {
+      position: absolute;
+      inset: 0;
+    }
+
+    .nebula {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+    }
+
+    .nebula-1 {
+      top: 80px;
+      left: 40px;
+      width: 384px;
+      height: 384px;
+      background: rgba(249, 115, 22, 0.15);
+    }
+
+    .nebula-2 {
+      bottom: 0;
+      right: 40px;
+      width: 384px;
+      height: 384px;
+      background: rgba(239, 68, 68, 0.15);
+    }
+
+    /* Custom Trophy Cursor */
+    .trophy-cursor {
+      position: fixed;
+      pointer-events: none;
+      z-index: 50;
+      transform: translate(-50%, -50%);
+      transition: left 0.05s ease-out, top 0.05s ease-out;
+    }
+
+    .trophy-cursor svg {
+      width: 32px;
+      height: 32px;
+      color: #fb923c;
+      filter: drop-shadow(0 0 10px rgba(251, 146, 60, 0.8));
+    }
+
+    /* Navigation */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 20;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(60px);
+      -webkit-backdrop-filter: blur(60px);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .nav-container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 1rem 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 1.875rem;
+      font-weight: 700;
+      background: linear-gradient(to right, #fb923c, #ef4444);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .logo-icon {
+      width: 32px;
+      height: 32px;
+      color: #fb923c;
+    }
+
+    .nav-signin-btn {
+      background: linear-gradient(to right, #f97316, #ef4444);
+      padding: 0.5rem 1.5rem;
+      border-radius: 0.5rem;
+      font-weight: 600;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .nav-signin-btn:hover {
+      box-shadow: 0 10px 25px -5px rgba(249, 115, 22, 0.4);
+    }
+
+    /* Hero Section */
+    .hero-section {
+      position: relative;
+      z-index: 10;
+      height: 100vh;
+      width: 100vw;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+
+    .hero-content {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .welcome-badge {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 9999px;
+      padding: 0.75rem 1.5rem;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      margin-bottom: 2rem;
+    }
+
+    .welcome-badge span {
+      color: #fb923c;
+      font-size: 1.125rem;
+      font-weight: 600;
+    }
+
+    .hero-title {
+      font-size: 9rem;
+      font-weight: 700;
+      line-height: 1.2;
+      text-align: center;
+      margin-bottom: 0;
+    }
+
+    .scroll-text-container {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      perspective: 1000px;
+      margin-top: -0.5rem;
+    }
+
+    .scroll-text {
+      font-size: 8rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.25rem;
+    }
+
+    .scroll-letter {
+      display: inline-block;
+      background: linear-gradient(to right, #fb923c, #ef4444, #fb923c);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      transition: all 0.1s ease-out;
+    }
+
+    /* Features Section */
+    .features-section {
+      position: relative;
+      z-index: 10;
+      padding: 3rem 1.5rem;
+    }
+
+    .features-container {
+      max-width: 1152px;
+      margin: 0 auto;
+    }
+
+    .features-title {
+      font-size: 3rem;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 2.5rem;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 2rem;
+    }
+
+    .feature-card {
+      position: relative;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 1rem;
+      padding: 2rem;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      transition: all 0.2s;
+      overflow: hidden;
+    }
+
+    .feature-card:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .feature-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom right, rgba(249, 115, 22, 0), rgba(249, 115, 22, 0));
+      transition: all 0.2s;
+      pointer-events: none;
+    }
+
+    .feature-card:hover::before {
+      background: linear-gradient(to bottom right, rgba(249, 115, 22, 0.05), rgba(239, 68, 68, 0.05));
+    }
+
+    .feature-icon {
+      width: 48px;
+      height: 48px;
+      color: #fb923c;
+      margin-bottom: 1rem;
+    }
+
+    .feature-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+    }
+
+    .feature-desc {
+      color: #94a3b8;
+    }
+
+    /* CTA Section */
+    .cta-section {
+      position: relative;
+      z-index: 10;
+      padding: 4rem 1.5rem;
+    }
+
+    .cta-container {
+      max-width: 896px;
+      margin: 0 auto;
+    }
+
+    .cta-card {
+      position: relative;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 1.5rem;
+      padding: 3rem;
+      backdrop-filter: blur(60px);
+      -webkit-backdrop-filter: blur(60px);
+      box-shadow: 
+        0 0 20px rgba(255, 107, 53, 0.2),
+        inset 0 0 30px rgba(255, 255, 255, 0.03);
+      overflow: hidden;
+    }
+
+    .cta-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom right, rgba(255, 255, 255, 0.1), transparent, rgba(255, 255, 255, 0.05));
+      pointer-events: none;
+    }
+
+    .cta-content {
+      position: relative;
+      text-align: center;
+    }
+
+    .cta-title {
+      font-size: 2.25rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+
+    .cta-desc {
+      color: #cbd5e1;
+      margin-bottom: 2rem;
+    }
+
+    .cta-button {
+      background: linear-gradient(to right, #f97316, #ef4444);
+      padding: 1rem 2rem;
+      border-radius: 0.5rem;
+      font-weight: 700;
+      font-size: 1.125rem;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .cta-button:hover {
+      box-shadow: 0 10px 25px -5px rgba(249, 115, 22, 0.4);
+    }
+
+    /* Footer */
+    footer {
+      position: relative;
+      z-index: 10;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .footer-container {
+      max-width: 1152px;
+      margin: 0 auto;
+      padding: 4rem 5rem;
+    }
+
+    .footer-commitment {
+      margin-bottom: 3rem;
+    }
+
+    .footer-commitment h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+
+    .footer-commitment p {
+      color: #cbd5e1;
+      line-height: 1.75;
+      max-width: 1152px;
+      font-size: 1.125rem;
+    }
+
+    .footer-copyright {
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      padding-top: 2rem;
+      text-align: center;
+      color: #64748b;
+      font-size: 0.875rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .hero-title {
+        font-size: 4rem;
+      }
+
+      .scroll-text {
+        font-size: 4rem;
+      }
+
+      .features-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .features-title {
+        font-size: 2rem;
+      }
+
+      .cta-title {
+        font-size: 1.75rem;
+      }
+
+      .footer-container {
+        padding: 2rem 1.5rem;
+      }
+
+      .nav-container {
+        padding: 0.75rem 1rem;
+      }
+
+      .logo {
+        font-size: 1.5rem;
+      }
+
+      .logo-icon {
+        width: 24px;
+        height: 24px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .hero-title {
+        font-size: 3rem;
+      }
+
+      .scroll-text {
+        font-size: 3rem;
+      }
+
+      .welcome-badge span {
+        font-size: 1rem;
+      }
+    }
+  </style>
 </head>
 <body>
-  <div class="login-outer">
-  <form class="login-container" autocomplete="off" id="loginForm">
-    <h1 class="login-title">Sign In</h1>
+  <!-- Custom Trophy Cursor -->
+  <div class="trophy-cursor" id="trophyCursor" style="display: none;">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path>
+      <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path>
+      <path d="M4 22h16"></path>
+      <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"></path>
+      <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"></path>
+      <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"></path>
+    </svg>
+  </div>
 
-    <div class="divider-row">
-      <div class="divider"></div>
-      <span class="divider-text">Sign in to access a free FBLA Resource</span>
-      <div class="divider"></div>
-    </div>
+  <!-- Fixed Background -->
+  <div class="fixed-background">
+    <div class="stars-container" id="starsContainer"></div>
+    <div class="nebula nebula-1"></div>
+    <div class="nebula nebula-2"></div>
+  </div>
 
-    <label for="email" class="label">Email</label>
-    <input id="email" type="email" name="email" placeholder="Type your email address" required>
-    <label for="password" class="label">Password</label>
-    <input id="password" type="password" name="password" placeholder="Your password" required>
-    <button type="submit" class="sign-in-btn" id="signInBtn">Sign In</button>
-    <div class="signup">
-      Need an account?
-      <a href="signup.html">Sign Up</a>
+  <!-- Navigation -->
+  <nav>
+    <div class="nav-container">
+      <div class="logo">
+        FBLAZE
+      </div>
+      <button class="nav-signin-btn" onclick="window.location.href='Public/landing.html'">Sign In</button>
     </div>
-  </form>
-</div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="hero-content">
+      <div class="welcome-badge">
+        <span>Welcome to FBLAZE</span>
+      </div>
+      <h1 class="hero-title">
+        <span style="display: block; margin-bottom: 0;">Ignite Your</span>
+      </h1>
+      <div class="scroll-text-container">
+        <div class="scroll-text" id="scrollText">
+          <span class="scroll-letter" data-letter="P">P</span>
+          <span class="scroll-letter" data-letter="o">o</span>
+          <span class="scroll-letter" data-letter="t">t</span>
+          <span class="scroll-letter" data-letter="e">e</span>
+          <span class="scroll-letter" data-letter="n">n</span>
+          <span class="scroll-letter" data-letter="t">t</span>
+          <span class="scroll-letter" data-letter="i">i</span>
+          <span class="scroll-letter" data-letter="a">a</span>
+          <span class="scroll-letter" data-letter="l">l</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="features-section">
+    <div class="features-container">
+      <h2 class="features-title">Why Choose FBLAZE</h2>
+
+      <div class="features-grid">
+        <div class="feature-card">
+          <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path>
+            <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path>
+            <path d="M4 22h16"></path>
+            <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"></path>
+            <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"></path>
+            <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"></path>
+          </svg>
+          <h3 class="feature-title">Personalized Resources</h3>
+          <p class="feature-desc">Curated resources from past mistakes and online sources, all in one place.</p>
+        </div>
+
+        <div class="feature-card">
+          <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+            <circle cx="9" cy="7" r="4"></circle>
+            <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+          </svg>
+          <h3 class="feature-title">Community Support</h3>
+          <p class="feature-desc">Connect with thousands of FBLA members, form teams, and collaborate on projects.</p>
+        </div>
+
+        <div class="feature-card">
+          <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline>
+            <polyline points="16 7 22 7 22 13"></polyline>
+          </svg>
+          <h3 class="feature-title">Track Progress</h3>
+          <p class="feature-desc">Monitor your improvement with detailed analytics and personalized learning paths.</p>
+        </div>
+
+        <div class="feature-card">
+          <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+          </svg>
+          <h3 class="feature-title">Mentor Infrastructure</h3>
+          <p class="feature-desc">Connect with experienced mentors and industry experts who guide you towards competition excellence.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="cta-section">
+    <div class="cta-container">
+      <div class="cta-card">
+        <div class="cta-content">
+          <h2 class="cta-title">Blaze Your Way Onto The National Stage</h2>
+          <p class="cta-desc">Join thousands of FBLA members already transforming their competition experience.</p>
+          <button class="cta-button" onclick="window.location.href='Public/landing.html'">Start Your Journey</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-container">
+      <div class="footer-commitment">
+        <h3>Our Commitment</h3>
+        <p>We put our users 1st, so that they can place 1st. At FBLAZE, we're dedicated to empowering FBLA students with the resources, mentorship, and community they need to excel. We believe in removing barriers to competition excellence and creating an environment where every student can reach their full potential and achieve championship success.</p>
+      </div>
+      
+      <div class="footer-copyright">
+        <p>&copy; 2026 FBLAZE. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
 
   <script>
-    // Firebase Config
-    const firebaseConfig = {
-      apiKey: "AIzaSyDGYp9sBwOWBdu9W46Q6XFp9zfLCrEsaO4",
-      authDomain: "certquest-94959.firebaseapp.com",
-      projectId: "certquest-94959",
-      storageBucket: "certquest-94959.appspot.com",
-      messagingSenderId: "323956529033",
-      appId: "1:323956529033:web:e9c9c6a3c7668b8a72f358",
-      measurementId: "G-F5JHTGGN6K"
-    };
-    // Initialize Firebase
-    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
-    if (firebase.analytics) firebase.analytics();
-    const auth = firebase.auth();
+    // Create Stars
+    function createStars() {
+      const container = document.getElementById('starsContainer');
+      if (!container) return;
 
-    // Email/Password Login
-    document.getElementById('loginForm').addEventListener('submit', function(e) {
-      e.preventDefault();
-      const email = document.getElementById('email').value.trim();
-      const password = document.getElementById('password').value;
-      auth.signInWithEmailAndPassword(email, password)
-        .then(() => {
-          window.location.href = "/Public/home.html";
-        })
-        .catch((error) => {
-          alert(error.message);
-        });
-    });
+      for (let i = 0; i < 200; i++) {
+        const star = document.createElement('div');
+        star.className = 'star';
+        star.style.top = Math.random() * 100 + '%';
+        star.style.left = Math.random() * 100 + '%';
+        const size = Math.random() * 2 + 0.5;
+        star.style.width = size + 'px';
+        star.style.height = size + 'px';
+        star.style.opacity = Math.random() * 0.7 + 0.3;
+        star.style.animationDuration = (Math.random() * 3 + 2) + 's';
+        container.appendChild(star);
+      }
+    }
+
+    // Custom Trophy Cursor
+    let cursorPos = { x: 0, y: 0 };
+    let showCursor = false;
+    const trophyCursor = document.getElementById('trophyCursor');
+
+    function handleMouseMove(e) {
+      cursorPos.x = e.clientX;
+      cursorPos.y = e.clientY;
+      showCursor = true;
+      
+      if (trophyCursor) {
+        trophyCursor.style.left = cursorPos.x + 'px';
+        trophyCursor.style.top = cursorPos.y + 'px';
+        trophyCursor.style.display = 'block';
+      }
+    }
+
+    window.addEventListener('mousemove', handleMouseMove);
+
+    // Scroll Text Animation
+    let scrollProgress = 0;
+    const scrollText = document.getElementById('scrollText');
+    const letters = scrollText ? Array.from(scrollText.children) : [];
+
+    function handleScroll() {
+      if (!scrollText) return;
+
+      const rect = scrollText.getBoundingClientRect();
+      const viewportHeight = window.innerHeight;
+
+      // If element is well above viewport, progress is 1 (fully animated)
+      if (rect.bottom < -100) {
+        scrollProgress = 1;
+        updateLetters();
+        return;
+      }
+
+      // If element is well below viewport, progress is 0 (normal position)
+      if (rect.top > viewportHeight + 100) {
+        scrollProgress = 0;
+        updateLetters();
+        return;
+      }
+
+      // Calculate progress based on element's top position
+      // When element top is at viewport top (0), progress starts increasing
+      // Progress goes from 0 (normal) to 1 (fully animated) as element moves up
+      const elementTop = rect.top;
+      const triggerPoint = viewportHeight * 0.5; // Start animating when element reaches middle of viewport
+      
+      if (elementTop > triggerPoint) {
+        // Element is below trigger point, normal position
+        scrollProgress = 0;
+      } else if (elementTop < -rect.height) {
+        // Element is fully above viewport, fully animated
+        scrollProgress = 1;
+      } else {
+        // Element is in animation range
+        // Progress from 0 (at triggerPoint) to 1 (at -elementHeight)
+        const animationRange = triggerPoint + rect.height;
+        const distance = triggerPoint - elementTop;
+        scrollProgress = Math.max(0, Math.min(1, distance / animationRange));
+      }
+      
+      updateLetters();
+    }
+
+    function updateLetters() {
+      const maxOffset = 60;
+      letters.forEach((letter, i) => {
+        // When scrollProgress is 0, letters are in normal position (no transforms)
+        // As scrollProgress increases, letters animate and separate artistically
+        const offset = scrollProgress * maxOffset * (i - 4);
+        const rotation = scrollProgress * 45 * (i % 2 === 0 ? 1 : -1);
+        const opacity = 1 - Math.abs(scrollProgress - 0.5) * 0.5;
+        const translateX = (scrollProgress - 0.5) * 20 * (i - 4);
+
+        letter.style.transform = `translateY(${offset}px) rotateZ(${rotation}deg) translateX(${translateX}px)`;
+        letter.style.opacity = Math.max(0.3, opacity);
+      });
+    }
+
+    // Initialize
+    createStars();
+    window.addEventListener('scroll', handleScroll);
+    handleScroll(); // Initial call
   </script>
 </body>
 </html>

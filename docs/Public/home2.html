@@ -502,22 +502,15 @@ Return ONLY valid JSON array in this format:
 ]`;
 
   try {
-    const res = await fetch("https://api.openai.com/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${apiKey}`,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
+    const res = await firebase.functions().httpsCallable("generateQuestionsWithAI")({messages: {
         model: "gpt-4o-mini",
         messages: [
           { role: "system", content: "You are an expert FBLA test writer." },
-          { role: "user", content: prompt }
+          { role: "user", content: (window.__CERTQUEST_CONTEXT__ || "") + "\n\n" + prompt }
         ],
         temperature: 0.7,
         max_tokens: 3000
-      })
-    });
+      }.messages});
 
     if (!res.ok) throw new Error(await res.text());
     let content = (await res.json()).choices[0].message.content.trim();
@@ -541,22 +534,18 @@ async function generateQuestionsFromCompetencies(competencies, count, difficulty
 - Never reference "the document" or "the text"
 Return JSON only.`;
 
-  const res = await fetch("https://api.openai.com/v1/chat/completions", {
-    method: "POST",
-    headers: { "Authorization": `Bearer ${apiKey}`, "Content-Type": "application/json" },
-    body: JSON.stringify({
+  const res = await firebase.functions().httpsCallable("generateQuestionsWithAI")({messages: {
       model: "gpt-4o-mini",
       messages: [
         { role: "system", content: "You are an expert FBLA exam writer." },
-        { role: "user", content: prompt }
+        { role: "user", content: (window.__CERTQUEST_CONTEXT__ || "") + "\n\n" + prompt }
       ],
       temperature: 0.7,
       max_tokens: 1500
-    })
-  });
+    }.messages});
 
   const data = await res.json();
-  let content = data.choices[0].message.content.trim();
+  let content = data.content.trim();
   content = content.replace(/```json|```/g, "");
   return JSON.parse(content);
 }
@@ -592,22 +581,145 @@ async function generatePersonalizedQuestionsWithGPT(formData) {
 ]`;
 
   try {
-    const res = await fetch("https://api.openai.com/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${apiKey}`,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
+    const res = await firebase.functions().httpsCallable("generateQuestionsWithAI")({messages: {
         model: "gpt-4o-mini",
         messages: [
-          { role: "system", content: "You are an expert FBLA exam writer. Generate valid multiple choice questions that are realistic and challenging. Never reference source documents." },
-          { role: "user", content: prompt }
+          { role: "system", content: `You are an expert FBLA written-competition exam designer.
+
+Your role is to generate ORIGINAL, competition-accurate FBLA-style multiple-choice questions that match the structure, rigor, tone, and professional standards of official FBLA written tests.
+
+You must follow ALL rules below.
+
+────────────────────────────────
+CORE FBLA PHILOSOPHY
+────────────────────────────────
+FBLA written tests assess professional correctness, precision, and applied business literacy.
+
+They do NOT assess creativity, opinion, or open-ended reasoning.
+
+Each question must test exactly ONE concept.
+
+Questions must be concise, objective, and professionally worded.
+
+Avoid unnecessary narrative unless the question type explicitly requires a scenario.
+
+────────────────────────────────
+APPROVED FBLA QUESTION ARCHETYPES
+────────────────────────────────
+Every question MUST clearly belong to ONE of the following archetypes:
+
+1. Definition / Term Identification  
+   - Identifying the correct term based on a definition  
+   - Selecting the correct meaning of a professional word or concept  
+
+2. Classification / Category Recognition  
+   - Determining where an item belongs within a professional category system  
+   - Examples include document types, account categories, system types, business forms, or classifications  
+
+3. Procedural / Workflow Knowledge  
+   - Understanding the stages of a professional workflow specific to the competition area  
+   - Identifying where information originates within that workflow  
+   - Determining which document, tool, or action is appropriate at a given stage  
+   - Recognizing correct sequencing of professional tasks within the domain  
+
+4. Tool-to-Function Matching  
+   - Matching software features, commands, utilities, or tools to their correct purpose  
+   - Selecting the correct function used to accomplish a professional task  
+
+5. Quantitative / Calculation Application  
+   - Performing single-step or limited multi-step calculations  
+   - Selecting the correct numeric result based on provided data  
+   - Avoid unnecessary complexity or advanced math  
+
+6. Language Precision & Usage  
+   - Correct use of professional vocabulary  
+   - Distinguishing homophones, word meanings, spelling, grammar, and standard usage  
+
+7. Error Detection / Exception Identification  
+   - Identifying what is incorrect, misspelled, or does NOT belong  
+   - Using negation ("NOT") carefully and intentionally  
+
+────────────────────────────────
+QUESTION STRUCTURE RULES
+────────────────────────────────
+• Each question must assess ONE idea only.  
+• Do not combine multiple concepts in one question.  
+• Avoid ambiguous wording.  
+• Use professional, neutral language.
+
+Acceptable stem styles include:
+- "Which of the following…"
+- "What term best describes…"
+- "The document used to…"
+- "Which action should be taken…"
+- "Which of the following is NOT…"
+
+────────────────────────────────
+ANSWER CHOICE DESIGN (CRITICAL)
+────────────────────────────────
+Each question MUST include exactly FOUR answer choices.
+
+Answer choices must:
+• Be the same grammatical form  
+• Be similar in length  
+• Belong to the same conceptual family  
+
+Wrong answer choices (distractors) must be plausible and realistic.
+
+Allowed distractor strategies include:
+• Closely related terms within the same category  
+• Common student misconceptions  
+• Incorrect step within a workflow  
+• Reversed or misapplied professional rules  
+• Visually or linguistically similar words  
+• Typical calculation or classification errors  
+
+Never include joke answers or obviously incorrect options.
+
+────────────────────────────────
+DIFFICULTY CALIBRATION
+────────────────────────────────
+Easy:
+• Direct recall or recognition  
+• Minimal traps  
+
+Medium:
+• Requires discrimination between similar concepts  
+• Includes common misconceptions  
+
+Hard:
+• Includes negation ("NOT")  
+• Requires precise rule awareness  
+• Uses subtle wording differences  
+• Penalizes shallow memorization  
+
+────────────────────────────────
+CONTENT INTEGRITY RULES
+────────────────────────────────
+• All questions must be ORIGINAL.  
+• Do NOT copy real FBLA questions.  
+• Do NOT closely paraphrase known questions.  
+• Use authentic structure only, not replicated wording.
+
+Questions must feel realistic for competitive FBLA written events at the regional, state, or national level.
+
+When study materials are provided, extract concepts, facts, names, dates, laws, and details from them. Present this information as established business knowledge. NEVER mention "the study guide", "the document", "the material", or use phrases like "according to", "as stated in", or "mentioned in".
+
+────────────────────────────────
+OUTPUT REQUIREMENTS
+────────────────────────────────
+• Generate ONLY the requested number of questions.  
+• Each question must have exactly four answer options.  
+• Only ONE option may be correct.  
+• Output valid JSON only.  
+• Do not include explanations, commentary, or headings.  
+
+You are writing as a professional exam author — not as a tutor or teacher.` },
+          { role: "user", content: (window.__CERTQUEST_CONTEXT__ || "") + "\n\n" + prompt }
         ],
         temperature: 0.7,
         max_tokens: 2500
-      })
-    });
+      }.messages});
 
     if (!res.ok) throw new Error(await res.text());
     let content = (await res.json()).choices[0].message.content.trim();
@@ -3733,7 +3845,39 @@ const uploadModalCSS = `
 `;
 
 
-// 2. ADD THIS HTML TO YOUR BODY (before closing </body> tag)
+// 2. ADD THIS HTML TO YOUR BODY (before closing <script>
+async function loadCertQuestContext(userId, competition) {
+  const db = firebase.firestore();
+
+  let baselineText = "";
+  if (competition) {
+    const compDoc = await db.collection("competitions").doc(competition).get();
+    if (compDoc.exists && compDoc.data().baseline && compDoc.data().baseline.text) {
+      baselineText = compDoc.data().baseline.text;
+    }
+  }
+
+  let personalText = "";
+  const entriesSnap = await db
+    .collection("userTraining")
+    .doc(userId)
+    .collection("entries")
+    .orderBy("timestamp", "desc")
+    .limit(10)
+    .get();
+
+  entriesSnap.forEach(d => {
+    if (d.data().content) personalText += d.data().content + "\n\n";
+  });
+
+  window.__CERTQUEST_CONTEXT__ =
+    "=== OFFICIAL COMPETITION STUDY GUIDE ===\n" +
+    baselineText +
+    "\n\n=== STUDENT PERSONAL TRAINING DATA ===\n" +
+    personalText;
+}
+</script>
+</body> tag)
 const uploadModalHTML = `
 <div id="uploadModal" class="upload-modal-overlay">
   <div class="upload-modal-container">

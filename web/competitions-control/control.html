@@ -1,0 +1,62 @@
+<html lang="en">
+<head>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
+<script>
+firebase.initializeApp({
+  apiKey: "AIzaSyDGYp9sBwOWBdu9W46Q6XFp9zfLCrEsaO4",
+  authDomain: "certquest-94959.firebaseapp.com",
+  projectId: "certquest-94959",
+  storageBucket: "certquest-94959.appspot.com",
+  messagingSenderId: "323956529033",
+  appId: "1:323956529033:web:e9c9c6a3c7668b8a72f358"
+});
+</script>
+  <meta charset="UTF-8" />
+  <title>Competition Control Center</title>
+  <link rel="stylesheet" href="../assets/css/control.css" />
+  <!-- PDF.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <!-- Mammoth for DOCX extraction -->
+  <script src="https://unpkg.com/mammoth@1.6.0/mammoth.browser.min.js"></script>
+</head>
+<body>
+
+<header class="header">
+  <h1>Competition Control Center</h1>
+</header>
+
+<main class="container">
+  <div id="competition-grid"></div>
+</main>
+
+<div id="upload-modal" class="modal hidden">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2 id="modal-title">Upload Baseline PDF</h2>
+      <button onclick="closeModal()">×</button>
+    </div>
+
+    <div class="upload-box" id="drop-zone">
+      <div class="upload-icon">⬆</div>
+      <p><strong>Drop competition baseline PDF or DOCX here</strong> or click to browse</p>
+      <small>Text will be extracted and stored as baseline memory</small>
+      <input type="file" id="pdf-input" accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document" hidden />
+    </div>
+
+    <label class="notes-label">Baseline Notes (Optional)</label>
+    <textarea
+      id="change-notes"
+      placeholder="Describe changes, clarifications, or updates in this competition version..."
+    ></textarea>
+
+    <button class="save-btn">Save Baseline</button>
+  </div>
+</div>
+
+<!-- App logic -->
+<script src="/web/assets/js/control.js"></script>
+</body>
+</html>

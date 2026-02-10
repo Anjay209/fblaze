@@ -1319,6 +1319,114 @@ function getCompetitionValues() {
     console.log("All media stopped and cleaned up");
   }
 
+  // Define functions before DOMContentLoaded handlers to ensure they're available
+  function updateSaveState() {
+    const roleSelected = document.querySelector('.role-btn.selected');
+    const goalSelected = document.querySelector('.goal-card.selected');
+    
+    // Check if any competition input has value
+    let hasCompetitions = false;
+    
+    // Check main competition input
+    const compsInput = document.getElementById('comps');
+    if (compsInput && compsInput.value.trim()) {
+      hasCompetitions = true;
+    }
+    
+    // Check dynamically added competition inputs
+    if (!hasCompetitions) {
+      const additionalCompInputs = document.querySelectorAll('.comp-input');
+      hasCompetitions = Array.from(additionalCompInputs).some(input => input.value.trim());
+    }
+    
+    // Enable button only if all required elements exist and have values
+    if (goalSubmitBtn) {
+      goalSubmitBtn.disabled = !(roleSelected && goalSelected && hasCompetitions);
+    }
+  }
+
+  // Make updateSaveState globally available
+  window.updateSaveState = updateSaveState;
+
+  // Helper function for blob to base64 conversion
+  function blobToBase64(blob) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result.split(',')[1]);
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
+  }
+
+  async function submitSpeakingResponse() {
+    if (!window.latestAssignmentId || recordedChunks.length === 0) {
+      alert("Recording not found or assignment ID missing.");
+      return;
+    }
+
+    const blob = new Blob(recordedChunks, { type: 'video/webm' });
+    const filename = `${firebase.auth().currentUser.uid}-${Date.now()}.webm`;
+
+    const GITHUB_USERNAME = "Anjay209";
+    const GITHUB_REPO = "video-storage";
+    const GITHUB_TOKEN = "REDACTED_TOKEN"; // 🔐 Rotate in production
+
+    const githubApiUrl = `https://api.github.com/repos/${GITHUB_USERNAME}/${GITHUB_REPO}/contents/docs/videos/${filename}`;
+    const githubPagesUrl = `https://${GITHUB_USERNAME.toLowerCase()}.github.io/${GITHUB_REPO}/docs/videos/${filename}`;
+
+    try {
+      const base64 = await blobToBase64(blob);
+
+      const uploadRes = await fetch(githubApiUrl, {
+        method: 'PUT',
+        headers: {
+          Authorization: `Bearer ${GITHUB_TOKEN}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          message: `Upload ${filename}`,
+          content: base64,
+          branch: 'main'
+        })
+      });
+
+      if (!uploadRes.ok) {
+        const errData = await uploadRes.json();
+        throw new Error(errData?.message || "GitHub upload failed");
+      }
+
+      // Firestore update - setting status to "complete"
+      await firebase.firestore()
+        .collection('assignments')
+        .doc(window.latestAssignmentId)
+        .update({
+          status: "complete", // Changed from "seen" to "complete"
+          completedAt: firebase.firestore.FieldValue.serverTimestamp(),
+          recordingUrl: githubPagesUrl
+        });
+
+      // Optional UI feedback
+      if (typeof showCongratsModal === 'function') {
+        showCongratsModal({
+          message: "Assignment submitted successfully!",
+          assignmentName: window.currentAssignment?.title || "Assignment"
+        });
+      }
+
+      // Close the modal after submission
+      if (typeof closeSpeakingAssignmentModal === 'function') {
+        closeSpeakingAssignmentModal();
+      }
+
+    } catch (err) {
+      console.error("Upload Error:", err);
+      alert("Something went wrong while uploading your recording.");
+    }
+  }
+
+  // Make submitSpeakingResponse globally available
+  window.submitSpeakingResponse = submitSpeakingResponse;
+
   // Add this to your home page JavaScript
 // STEP 2: Add this to your home.html file
 window.addEventListener('DOMContentLoaded', function() {
@@ -1670,29 +1778,6 @@ goalSubmitBtn.addEventListener('click', function() {
     }
   }
 });
-
-function updateSaveState() {
-  const roleSelected = document.querySelector('.role-btn.selected');
-  const goalSelected = document.querySelector('.goal-card.selected');
-  
-  // Check if any competition input has value
-  let hasCompetitions = false;
-  
-  // Check main competition input
-  const compsInput = document.getElementById('comps');
-  if (compsInput && compsInput.value.trim()) {
-    hasCompetitions = true;
-  }
-  
-  // Check dynamically added competition inputs
-  if (!hasCompetitions) {
-    const additionalCompInputs = document.querySelectorAll('.comp-input');
-    hasCompetitions = Array.from(additionalCompInputs).some(input => input.value.trim());
-  }
-  
-  // Enable button only if all required elements exist and have values
-  goalSubmitBtn.disabled = !(roleSelected && goalSelected && hasCompetitions);
-}
 
 // Updated addCompBtn event listener to include input validation
 const addCompBtn = document.getElementById('addCompBtn');
@@ -4255,11 +4340,137 @@ Return JSON only in this format:
                 messages: [
                     { 
                         role: "system", 
-                        content: hasTrainingData ? 
-                            "You are an expert at creating personalized FBLA questions based on student content. Always connect the student's actual uploaded content to business concepts. Be creative in making these connections." :
-                            "You are an expert FBLA exam writer who creates realistic business competition questions."
+                        content: `You are an expert FBLA written-competition exam designer.
+
+Your role is to generate ORIGINAL, competition-accurate FBLA-style multiple-choice questions that match the structure, rigor, tone, and professional standards of official FBLA written tests.
+
+You must follow ALL rules below.
+
+────────────────────────────────
+CORE FBLA PHILOSOPHY
+────────────────────────────────
+FBLA written tests assess professional correctness, precision, and applied business literacy.
+
+They do NOT assess creativity, opinion, or open-ended reasoning.
+
+Each question must test exactly ONE concept.
+
+Questions must be concise, objective, and professionally worded.
+
+Avoid unnecessary narrative unless the question type explicitly requires a scenario.
+
+────────────────────────────────
+APPROVED FBLA QUESTION ARCHETYPES
+────────────────────────────────
+Every question MUST clearly belong to ONE of the following archetypes:
+
+1. Definition / Term Identification  
+   - Identifying the correct term based on a definition  
+   - Selecting the correct meaning of a professional word or concept  
+
+2. Classification / Category Recognition  
+   - Determining where an item belongs within a professional category system  
+   - Examples include document types, account categories, system types, business forms, or classifications  
+
+3. Procedural / Workflow Knowledge  
+   - Understanding the stages of a professional workflow specific to the competition area  
+   - Identifying where information originates within that workflow  
+   - Determining which document, tool, or action is appropriate at a given stage  
+   - Recognizing correct sequencing of professional tasks within the domain  
+
+4. Tool-to-Function Matching  
+   - Matching software features, commands, utilities, or tools to their correct purpose  
+   - Selecting the correct function used to accomplish a professional task  
+
+5. Quantitative / Calculation Application  
+   - Performing single-step or limited multi-step calculations  
+   - Selecting the correct numeric result based on provided data  
+   - Avoid unnecessary complexity or advanced math  
+
+6. Language Precision & Usage  
+   - Correct use of professional vocabulary  
+   - Distinguishing homophones, word meanings, spelling, grammar, and standard usage  
+
+7. Error Detection / Exception Identification  
+   - Identifying what is incorrect, misspelled, or does NOT belong  
+   - Using negation ("NOT") carefully and intentionally  
+
+────────────────────────────────
+QUESTION STRUCTURE RULES
+────────────────────────────────
+• Each question must assess ONE idea only.  
+• Do not combine multiple concepts in one question.  
+• Avoid ambiguous wording.  
+• Use professional, neutral language.
+
+Acceptable stem styles include:
+- "Which of the following…"
+- "What term best describes…"
+- "The document used to…"
+- "Which action should be taken…"
+- "Which of the following is NOT…"
+
+────────────────────────────────
+ANSWER CHOICE DESIGN (CRITICAL)
+────────────────────────────────
+Each question MUST include exactly FOUR answer choices.
+
+Answer choices must:
+• Be the same grammatical form  
+• Be similar in length  
+• Belong to the same conceptual family  
+
+Wrong answer choices (distractors) must be plausible and realistic.
+
+Allowed distractor strategies include:
+• Closely related terms within the same category  
+• Common student misconceptions  
+• Incorrect step within a workflow  
+• Reversed or misapplied professional rules  
+• Visually or linguistically similar words  
+• Typical calculation or classification errors  
+
+Never include joke answers or obviously incorrect options.
+
+────────────────────────────────
+DIFFICULTY CALIBRATION
+────────────────────────────────
+Easy:
+• Direct recall or recognition  
+• Minimal traps  
+
+Medium:
+• Requires discrimination between similar concepts  
+• Includes common misconceptions  
+
+Hard:
+• Includes negation ("NOT")  
+• Requires precise rule awareness  
+• Uses subtle wording differences  
+• Penalizes shallow memorization  
+
+────────────────────────────────
+CONTENT INTEGRITY RULES
+────────────────────────────────
+• All questions must be ORIGINAL.  
+• Do NOT copy real FBLA questions.  
+• Do NOT closely paraphrase known questions.  
+• Use authentic structure only, not replicated wording.
+
+Questions must feel realistic for competitive FBLA written events at the regional, state, or national level.
+
+────────────────────────────────
+OUTPUT REQUIREMENTS
+────────────────────────────────
+• Generate ONLY the requested number of questions.  
+• Each question must have exactly four answer options.  
+• Only ONE option may be correct.  
+• Output valid JSON only.  
+• Do not include explanations, commentary, or headings.  
+
+You are writing as a professional exam author — not as a tutor or teacher.`
                     },
-                    { role: "user", content: prompt }
+                    { role: "user", content: (window.__CERTQUEST_CONTEXT__ || "") + "\n\n" + prompt }
                 ],
                 temperature: 0.8,
                 max_tokens: 2500
@@ -4272,14 +4483,7 @@ Return JSON only in this format:
                 temperature: requestBody.temperature
             });
             
-            const res = await fetch("https://api.openai.com/v1/chat/completions", {
-                method: "POST",
-                headers: { 
-                    "Authorization": `Bearer ${apiKey}`, 
-                    "Content-Type": "application/json" 
-                },
-                body: JSON.stringify(requestBody)
-            });
+            const res = await firebase.functions().httpsCallable("generateQuestionsWithAI")({messages: requestBody.messages});
 
             console.log(`📥 Response status: ${res.status} ${res.statusText}`);
 
@@ -4961,7 +5165,39 @@ const uploadModalCSS = `
 `;
 
 
-// 2. ADD THIS HTML TO YOUR BODY (before closing </body> tag)
+// 2. ADD THIS HTML TO YOUR BODY (before closing <script>
+async function loadCertQuestContext(userId, competition) {
+  const db = firebase.firestore();
+
+  let baselineText = "";
+  if (competition) {
+    const compDoc = await db.collection("competitions").doc(competition).get();
+    if (compDoc.exists && compDoc.data().baseline && compDoc.data().baseline.text) {
+      baselineText = compDoc.data().baseline.text;
+    }
+  }
+
+  let personalText = "";
+  const entriesSnap = await db
+    .collection("userTraining")
+    .doc(userId)
+    .collection("entries")
+    .orderBy("timestamp", "desc")
+    .limit(10)
+    .get();
+
+  entriesSnap.forEach(d => {
+    if (d.data().content) personalText += d.data().content + "\n\n";
+  });
+
+  window.__CERTQUEST_CONTEXT__ =
+    "=== OFFICIAL COMPETITION STUDY GUIDE ===\n" +
+    baselineText +
+    "\n\n=== STUDENT PERSONAL TRAINING DATA ===\n" +
+    personalText;
+}
+</script>
+</body> tag)
 const uploadModalHTML = `
 <div id="uploadModal" class="upload-modal-overlay">
   <div class="upload-modal-container">
@@ -5305,88 +5541,6 @@ function openSpeakingAssignmentModal(q1, q2) {
   }
 
 
-async function submitSpeakingResponse() {
-  if (!window.latestAssignmentId || recordedChunks.length === 0) {
-    alert("Recording not found or assignment ID missing.");
-    return;
-  }
-
-  const blob = new Blob(recordedChunks, { type: 'video/webm' });
-  const filename = `${firebase.auth().currentUser.uid}-${Date.now()}.webm`;
-
-  const GITHUB_USERNAME = "Anjay209";
-  const GITHUB_REPO = "video-storage";
-  const GITHUB_TOKEN = "REDACTED_TOKEN"; // 🔐 Rotate in production
-
-  const githubApiUrl = `https://api.github.com/repos/${GITHUB_USERNAME}/${GITHUB_REPO}/contents/docs/videos/${filename}`;
-  const githubPagesUrl = `https://${GITHUB_USERNAME.toLowerCase()}.github.io/${GITHUB_REPO}/docs/videos/${filename}`;
-
-  try {
-    const base64 = await blobToBase64(blob);
-
-    const uploadRes = await fetch(githubApiUrl, {
-      method: 'PUT',
-      headers: {
-        Authorization: `Bearer ${GITHUB_TOKEN}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        message: `Upload ${filename}`,
-        content: base64,
-        branch: 'main'
-      })
-    });
-
-    if (!uploadRes.ok) {
-      const errData = await uploadRes.json();
-      throw new Error(errData?.message || "GitHub upload failed");
-    }
-
-    // Firestore update - setting status to "complete"
-    await firebase.firestore()
-      .collection('assignments')
-      .doc(window.latestAssignmentId)
-      .update({
-        status: "complete", // Changed from "seen" to "complete"
-        completedAt: firebase.firestore.FieldValue.serverTimestamp(),
-        recordingUrl: githubPagesUrl
-      });
-
-    // Optional UI feedback
-    showCongratsModal({
-      message: "Assignment submitted successfully!",
-      assignmentName: window.currentAssignment?.title || "Assignment"
-    });
-
-    // Close the modal after submission
-    closeSpeakingAssignmentModal();
-
-  } catch (err) {
-    console.error("Upload Error:", err);
-    alert("Something went wrong while uploading your recording.");
-  }
-}
-
-function blobToBase64(blob) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onloadend = () => resolve(reader.result.split(',')[1]);
-    reader.onerror = reject;
-    reader.readAsDataURL(blob);
-  });
-}
-
-
-function blobToBase64(blob) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onloadend = () => resolve(reader.result.split(',')[1]);
-    reader.onerror = reject;
-    reader.readAsDataURL(blob);
-  });
-}
-
-
 
 
   // === NOTIFICATION FUNCTIONS ===
@@ -5579,19 +5733,34 @@ function showCongratsModal(results) {
   // Build competency breakdown HTML
   let competenciesHTML = '';
   if (results.competencyStats) {
-    competenciesHTML = `
-      <div style="margin-top:1.25rem;">
-        <b>Competency Breakdown:</b>
-        ${Object.entries(results.competencyStats).map(([comp, stats]) => `
-          <div style="margin-top:0.5rem;">
-            <div>${comp}: ${stats.correct}/${stats.total} correct</div>
-            <div style="height:6px; background:#e2e8f0; border-radius:3px; margin-top:2px;">
-              <div style="height:100%; width:${(stats.correct/stats.total)*100}%; background:#4ade80; border-radius:3px;"></div>
-            </div>
-          </div>
-        `).join('')}
-      </div>
-    `;
+    const breakdownDiv = document.createElement('div');
+    breakdownDiv.style.marginTop = '1.25rem';
+    
+    const title = document.createElement('b');
+    title.textContent = 'Competency Breakdown:';
+    breakdownDiv.appendChild(title);
+    
+    Object.entries(results.competencyStats).forEach(([comp, stats]) => {
+      const compDiv = document.createElement('div');
+      compDiv.style.marginTop = '0.5rem';
+      
+      const compText = document.createElement('div');
+      compText.textContent = `${comp}: ${stats.correct}/${stats.total} correct`;
+      compDiv.appendChild(compText);
+      
+      const progressContainer = document.createElement('div');
+      progressContainer.style.cssText = 'height:6px; background:#e2e8f0; border-radius:3px; margin-top:2px;';
+      
+      const progressBar = document.createElement('div');
+      const percentage = (stats.correct / stats.total) * 100;
+      progressBar.style.cssText = `height:100%; width:${percentage}%; background:#4ade80; border-radius:3px;`;
+      progressContainer.appendChild(progressBar);
+      
+      compDiv.appendChild(progressContainer);
+      breakdownDiv.appendChild(compDiv);
+    });
+    
+    competenciesHTML = breakdownDiv.outerHTML;
   }
 
   content.innerHTML = `

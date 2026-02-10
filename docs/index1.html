@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Sign In | FBLAZE</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+
+  <!-- Firebase SDKs (compat) -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics-compat.js"></script>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #000000;
+      color: #fff;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Star Animation */
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 0.9; }
+    }
+
+    .star {
+      position: absolute;
+      background: #fff;
+      border-radius: 50%;
+      animation: twinkle linear infinite;
+    }
+
+    /* Container */
+    .signin-page {
+      width: 100vw;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Space Background */
+    .space-background {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 0;
+    }
+
+    .stars-container {
+      position: absolute;
+      inset: 0;
+    }
+
+    .nebula {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      transition: transform 0.1s ease-out;
+    }
+
+    .nebula-1 {
+      top: 80px;
+      left: 40px;
+      width: 384px;
+      height: 384px;
+      background: rgba(249, 115, 22, 0.15);
+    }
+
+    .nebula-2 {
+      bottom: 0;
+      right: 40px;
+      width: 384px;
+      height: 384px;
+      background: rgba(239, 68, 68, 0.15);
+    }
+
+    /* Sign In Card */
+    .signin-card-wrapper {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+      max-width: 448px;
+      padding: 1rem;
+    }
+
+    .signin-card-group {
+      position: relative;
+    }
+
+    .signin-card-group:hover .animated-border-glow {
+      opacity: 1;
+    }
+
+    .animated-border-glow {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to right, rgba(249, 115, 22, 0.3), rgba(249, 115, 22, 0.3), rgba(239, 68, 68, 0.3));
+      border-radius: 1.5rem;
+      filter: blur(20px);
+      opacity: 0;
+      transition: opacity 0.5s;
+      pointer-events: none;
+    }
+
+    .signin-card {
+      position: relative;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 1.5rem;
+      padding: 2.5rem;
+      backdrop-filter: blur(60px);
+      -webkit-backdrop-filter: blur(60px);
+      box-shadow: 
+        0 0 20px rgba(255, 107, 53, 0.2),
+        0 0 40px rgba(255, 107, 53, 0.1),
+        inset 0 0 30px rgba(255, 255, 255, 0.03);
+      transition: all 0.2s;
+      overflow: hidden;
+    }
+
+    .cursor-light {
+      position: absolute;
+      border-radius: 50%;
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, rgba(255, 107, 53, 0.08) 0%, transparent 70%);
+      pointer-events: none;
+      transition: all 0.2s ease-out;
+      transform: translate(-150px, -150px);
+    }
+
+    .glass-layer-1 {
+      position: absolute;
+      inset: 0;
+      border-radius: 1.5rem;
+      background: linear-gradient(to bottom right, rgba(255, 255, 255, 0.1), transparent, rgba(255, 255, 255, 0.05));
+      pointer-events: none;
+    }
+
+    .glass-layer-2 {
+      position: absolute;
+      inset: 0;
+      border-radius: 1.5rem;
+      background: linear-gradient(to top right, rgba(249, 115, 22, 0.05), transparent);
+      pointer-events: none;
+    }
+
+    /* Header */
+    .signin-header {
+      position: relative;
+      z-index: 10;
+      margin-bottom: 2.5rem;
+      text-align: center;
+    }
+
+    .signin-title {
+      font-size: 3rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      color: #fff;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .signin-subtitle {
+      color: #e2e8f0;
+      font-size: 1.125rem;
+    }
+
+    /* Form */
+    .signin-form {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .form-label {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: #f1f5f9;
+      margin-bottom: 0.75rem;
+    }
+
+    .form-input {
+      width: 100%;
+      border-radius: 0.5rem;
+      padding: 0.75rem 1.25rem;
+      color: #fff;
+      font-size: 1rem;
+      font-family: 'Inter', sans-serif;
+      transition: all 0.2s;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .form-input.email-input {
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .form-input.password-input {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .form-input::placeholder {
+      color: rgba(255, 255, 255, 0.4);
+    }
+
+    .form-input.email-input::placeholder {
+      color: rgba(255, 255, 255, 0.4);
+    }
+
+    .form-input.password-input::placeholder {
+      color: #cbd5e1;
+    }
+
+    .form-input:focus {
+      outline: none;
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .form-input.email-input:focus {
+      border-color: rgba(251, 146, 60, 0.7);
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .form-input.password-input:focus {
+      border-color: rgba(103, 232, 249, 0.5);
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    /* Sign In Button */
+    .signin-btn {
+      width: 100%;
+      padding: 0.75rem;
+      background: linear-gradient(to right, rgba(249, 115, 22, 0.8), rgba(239, 68, 68, 0.8));
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 0.5rem;
+      font-weight: 700;
+      font-size: 1.125rem;
+      color: #fff;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-top: 0.5rem;
+      font-family: 'Inter', sans-serif;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+
+    .signin-btn:hover {
+      background: linear-gradient(to right, #f97316, #ef4444);
+      box-shadow: 0 10px 25px -5px rgba(249, 115, 22, 0.5);
+    }
+
+    .signin-btn:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+
+    /* Sign Up Link */
+    .signup-link {
+      text-align: center;
+      margin-top: 1.5rem;
+      color: #e2e8f0;
+    }
+
+    .signup-btn {
+      background: none;
+      border: none;
+      color: #fb923c;
+      font-weight: 600;
+      font-size: inherit;
+      font-family: inherit;
+      cursor: pointer;
+      transition: color 0.2s;
+      padding: 0;
+      text-decoration: none;
+    }
+
+    .signup-btn:hover {
+      color: #fdba74;
+    }
+
+    /* Footer */
+    .signin-footer {
+      text-align: center;
+      margin-top: 2rem;
+    }
+
+    .signin-footer-text {
+      color: #94a3b8;
+      font-size: 0.875rem;
+      font-weight: 600;
+    }
+
+    /* Error Message */
+    .error-message {
+      background: rgba(239, 68, 68, 0.2);
+      border: 1px solid rgba(239, 68, 68, 0.5);
+      border-radius: 0.5rem;
+      padding: 0.75rem 1rem;
+      color: #fca5a5;
+      font-size: 0.875rem;
+      text-align: center;
+      display: none;
+    }
+
+    .error-message.show {
+      display: block;
+    }
+
+    /* Responsive */
+    @media (max-width: 480px) {
+      .signin-card {
+        padding: 2rem 1.5rem;
+      }
+
+      .signin-title {
+        font-size: 2.5rem;
+      }
+
+      .nebula-1, .nebula-2 {
+        width: 250px;
+        height: 250px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="signin-page">
+    <!-- Space Background -->
+    <div class="space-background">
+      <div class="stars-container" id="starsContainer"></div>
+      <div class="nebula nebula-1" id="nebula1"></div>
+      <div class="nebula nebula-2" id="nebula2"></div>
+    </div>
+
+    <!-- Sign In Card -->
+    <div class="signin-card-wrapper">
+      <div class="signin-card-group">
+        <!-- Animated border glow -->
+        <div class="animated-border-glow"></div>
+        
+        <div class="signin-card" id="signinCard">
+          <!-- Cursor-tracking light effect -->
+          <div class="cursor-light" id="cursorLight"></div>
+
+          <!-- Glassmorphic effect layers -->
+          <div class="glass-layer-1"></div>
+          <div class="glass-layer-2"></div>
+
+          <!-- Header -->
+          <div class="signin-header">
+            <h1 class="signin-title">Sign In</h1>
+            <p class="signin-subtitle">Sign in to access a free FBLA Resource</p>
+          </div>
+
+          <!-- Form -->
+          <form class="signin-form" id="loginForm" autocomplete="off">
+            <div id="errorMessage" class="error-message"></div>
+
+            <div class="form-group">
+              <label class="form-label" for="email">Email</label>
+              <input
+                type="email"
+                id="email"
+                class="form-input email-input"
+                placeholder="Type your email address"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="password">Password</label>
+              <input
+                type="password"
+                id="password"
+                class="form-input password-input"
+                placeholder="Your password"
+                required
+              />
+            </div>
+
+            <button type="submit" class="signin-btn" id="signInBtn">Sign In</button>
+
+            <div class="signup-link">
+              Need an account? <button type="button" class="signup-btn" onclick="window.location.href='Public/signup.html'">Sign Up</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="signin-footer">
+        <p class="signin-footer-text">FBLAZE 2026</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Create Stars
+    function createStars() {
+      const container = document.getElementById('starsContainer');
+      if (!container) return;
+
+      for (let i = 0; i < 150; i++) {
+        const star = document.createElement('div');
+        star.className = 'star';
+        star.style.top = Math.random() * 100 + '%';
+        star.style.left = Math.random() * 100 + '%';
+        const size = Math.random() * 2 + 0.5;
+        star.style.width = size + 'px';
+        star.style.height = size + 'px';
+        star.style.opacity = Math.random() * 0.7 + 0.3;
+        star.style.animationDuration = (Math.random() * 3 + 2) + 's';
+        container.appendChild(star);
+      }
+    }
+
+    // Mouse tracking for parallax effects
+    let mousePos = { x: 0, y: 0 };
+
+    function handleMouseMove(e) {
+      mousePos.x = (e.clientX / window.innerWidth - 0.5) * 20;
+      mousePos.y = (e.clientY / window.innerHeight - 0.5) * 20;
+
+      // Update nebula positions
+      const nebula1 = document.getElementById('nebula1');
+      const nebula2 = document.getElementById('nebula2');
+      if (nebula1) {
+        nebula1.style.transform = `translate(${mousePos.x}px, ${mousePos.y}px)`;
+      }
+      if (nebula2) {
+        nebula2.style.transform = `translate(${mousePos.x * 0.5}px, ${mousePos.y * 0.5}px)`;
+      }
+
+      // Update cursor light position
+      const cursorLight = document.getElementById('cursorLight');
+      const signinCard = document.getElementById('signinCard');
+      if (cursorLight && signinCard) {
+        const rect = signinCard.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        cursorLight.style.left = x + 'px';
+        cursorLight.style.top = y + 'px';
+      }
+
+      // Update card shadow based on mouse position
+      if (signinCard) {
+        signinCard.style.boxShadow = `
+          0 0 20px rgba(255, 107, 53, 0.2),
+          ${-mousePos.x * 0.015}px ${-mousePos.y * 0.015}px 40px rgba(255, 107, 53, 0.1),
+          inset ${mousePos.x * 0.008}px ${mousePos.y * 0.008}px 30px rgba(255, 255, 255, 0.03)
+        `;
+      }
+    }
+
+    // Initialize stars on load
+    createStars();
+
+    // Add mouse move listener
+    window.addEventListener('mousemove', handleMouseMove);
+
+    // Firebase Config
+    const firebaseConfig = {
+      apiKey: "AIzaSyDGYp9sBwOWBdu9W46Q6XFp9zfLCrEsaO4",
+      authDomain: "certquest-94959.firebaseapp.com",
+      projectId: "certquest-94959",
+      storageBucket: "certquest-94959.appspot.com",
+      messagingSenderId: "323956529033",
+      appId: "1:323956529033:web:e9c9c6a3c7668b8a72f358",
+      measurementId: "G-F5JHTGGN6K"
+    };
+
+    // Initialize Firebase
+    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+    if (firebase.analytics) firebase.analytics();
+    const auth = firebase.auth();
+
+    // Email/Password Login
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      const signInBtn = document.getElementById('signInBtn');
+      const errorMessage = document.getElementById('errorMessage');
+
+      // Show loading state
+      signInBtn.textContent = 'Signing in...';
+      signInBtn.disabled = true;
+      errorMessage.classList.remove('show');
+
+      auth.signInWithEmailAndPassword(email, password)
+        .then(() => {
+          window.location.href = "/docs/Public/home3.html";
+        })
+        .catch((error) => {
+          errorMessage.textContent = error.message;
+          errorMessage.classList.add('show');
+          signInBtn.textContent = 'Sign In';
+          signInBtn.disabled = false;
+        });
+    });
+  </script>
+</body>
+</html>

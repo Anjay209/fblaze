@@ -11,6 +11,7 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-functions-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.12.313/pdf.min.js"></script>
 <script>pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.12.313/pdf.worker.min.js';</script>
 <style>
@@ -3663,7 +3664,7 @@ button[onclick="generateQuestions()"]:hover {
     </a>
   </li>
   <li>
-     <a href="/Public/Calendar/calendar.html">
+     <a href="/Public/Calendar/calendar1.html">
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
       <rect x="3" y="6" width="18" height="15" rx="2" fill="#3b82f6" fill-opacity="0.3"/>
       <rect x="3" y="6" width="18" height="4" rx="2" fill="#3b82f6" fill-opacity="0.2"/>
@@ -5206,7 +5207,32 @@ function setupDragAndDrop() {
 setTimeout(setupDragAndDrop, 100);
 
 
-  window.generateQuestionsFromCompetencies = async function(competencies, questionCount, difficulty, assignment) {
+  
+  window.fetchBaselineNotesForCompetition = async function(competitionName) {
+    try {
+      console.log("📚 Fetching baseline notes for:", competitionName);
+      if (!competitionName || competitionName === "general") {
+        console.log("⏭️ No competition specified, skipping baseline notes");
+        return "";
+      }
+      const docRef = firebase.firestore().collection("competitions").doc(competitionName);
+      const docSnapshot = await docRef.get();
+      if (docSnapshot.exists) {
+        const baseline = docSnapshot.data().baseline;
+        if (baseline && baseline.text) {
+          console.log("✅ Baseline notes found, length:", baseline.text.length);
+          return baseline.text;
+        }
+      }
+      console.log("❌ No baseline notes found for", competitionName);
+      return "";
+    } catch (error) {
+      console.error("💥 Error fetching baseline:", error);
+      return "";
+    }
+  };
+
+window.generateQuestionsFromCompetencies = async function(competencies, questionCount, difficulty, assignment) {
         console.log("🚀 =========================== QUESTION GENERATION START ===========================");
         console.log("🔍 Initial parameters:", { 
             competencies, 
@@ -5267,7 +5293,23 @@ setTimeout(setupDragAndDrop, 100);
         }
 
         // ================================ USER TRAINING DATA SECTION ================================
-        console.log("\n👤 =========================== USER TRAINING DATA START ===========================");
+        
+        console.log("\n📚 =========================== BASELINE NOTES START ===========================");
+        let baselineNotes = "";
+        const selectedCompetition = document.getElementById("competitionSelectWritten")?.value || document.getElementById("caseCompetitionSelect")?.value;
+        if (selectedCompetition && selectedCompetition !== "general") {
+            baselineNotes = await window.fetchBaselineNotesForCompetition(selectedCompetition);
+            if (baselineNotes) {
+                allTrainingContent.push(baselineNotes);
+                hasTrainingData = true;
+                console.log("✅ Baseline notes ADDED to training content");
+                console.log(`   Baseline length: ${baselineNotes.length}`);
+            }
+        } else {
+            console.log("⏭️ No competition selected, skipping baseline");
+        }
+
+console.log("\n👤 =========================== USER TRAINING DATA START ===========================");
         
         if (assignment?.usedMenteeTrainingData === true) {
             console.log("✅ User training data REQUESTED");
@@ -5397,7 +5439,7 @@ Return JSON only in this format:
                             "You are an expert at creating personalized FBLA questions based on student content. Always connect the student's actual uploaded content to business concepts. Be creative in making these connections." :
                             "You are an expert FBLA exam writer who creates realistic business competition questions."
                     },
-                    { role: "user", content: prompt }
+                    { role: "user", content: (window.__CERTQUEST_CONTEXT__ || "") + "\n\n" + prompt }
                 ],
                 temperature: 0.8,
                 max_tokens: 2500
@@ -5410,31 +5452,24 @@ Return JSON only in this format:
                 temperature: requestBody.temperature
             });
             
-            const res = await fetch("https://api.openai.com/v1/chat/completions", {
-                method: "POST",
-                headers: { 
-                    "Authorization": `Bearer ${apiKey}`, 
-                    "Content-Type": "application/json" 
-                },
-                body: JSON.stringify(requestBody)
+            const res = await firebase.functions().httpsCallable("generateQuestionsWithAI")({
+                messages: requestBody.messages
             });
 
-            console.log(`📥 Response status: ${res.status} ${res.statusText}`);
+            console.log("📥 Cloud Function response received");
 
-            if (!res.ok) {
-                const errorText = await res.text();
-                console.error("💥 GPT API Error:", res.status, errorText);
-                throw new Error(`API Error ${res.status}: ${errorText}`);
+            if (!res.data || !res.data.success) {
+                const errorMsg = res.data?.error || "Unknown error";
+                console.error("💥 API Error:", errorMsg);
+                throw new Error("API Error: " + errorMsg);
             }
             
-            const responseData = await res.json();
+            const responseData = res.data;
             console.log("📥 API response summary:", {
-                hasChoices: !!responseData.choices,
-                choicesLength: responseData.choices?.length || 0,
-                finishReason: responseData.choices?.[0]?.finish_reason
+                success: responseData.success, contentLength: responseData.content?.length || 0
             });
             
-            let content = responseData.choices[0].message.content.trim();
+            let content = responseData.content.trim();
             console.log("📥 Raw content length:", content.length);
             console.log("📥 Raw content preview:", content.substring(0, 500) + "...");
             
@@ -5831,22 +5866,11 @@ async function generateFlashcardsWithAI(competency, questions) {
 
   Make questions different from the originals but test the same concept.`;
 
-  const response = await fetch('https://api.openai.com/v1/chat/completions', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${yourOpenAIKey}`
-    },
-    body: JSON.stringify({
-      model: "gpt-4",
-      messages: [{ role: "user", content: prompt }],
-      temperature: 0.7,
-      max_tokens: 2000
-    })
+  const response = await firebase.functions().httpsCallable("generateQuestionsWithAI")({
+    messages: [{ role: "user", content: (window.__CERTQUEST_CONTEXT__ || "") + "\n\n" + prompt }]
   });
 
-  const data = await response.json();
-  const content = data.choices[0].message.content;
+  const data = response.data; const content = data.content;
   
   // Extract JSON from response
   const jsonStart = content.indexOf('[');
@@ -6604,7 +6628,10 @@ function resetForm() {
   document.querySelectorAll('.time-btn.selected').forEach(btn => btn.classList.remove('selected'));
   document.querySelectorAll('.difficulty-btn.selected').forEach(btn => btn.classList.remove('selected'));
   document.querySelectorAll('.competency-option:checked').forEach(checkbox => checkbox.checked = false);
-  document.getElementById('simulate').checked = false;
+  const simulateCheckbox = document.getElementById('simulate');
+  if (simulateCheckbox) {
+    simulateCheckbox.checked = false;
+  }
 }
 // Add this new function to get the latest key changes for a competition
 async function getLatestKeyChanges(competitionName) {
@@ -7137,35 +7164,22 @@ USE the specific details (San Jose Sharks, ice skating, specific activities, etc
 ]`;
 
   try {
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${apiKey}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        model: 'gpt-4',
-        messages: [
+    const response = await firebase.functions().httpsCallable("generateQuestionsWithAI")({messages: [
           {
             role: 'system',
             content: `You are an expert FBLA exam question writer. Use specific names, companies, activities, amounts, and details directly from the study material in your questions. Never reference the source document itself. If the content mentions "San Jose Sharks" and "ice skating activities", ask about San Jose Sharks and ice skating directly. Present all specific details as established facts. Forbidden phrases: "the agreement", "as specified", "the document", "according to". Create questions about the specific content, not about what the content says. Always return valid JSON only.`
           },
           {
             role: 'user',
-            content: prompt
+            content: (window.__CERTQUEST_CONTEXT__ || "") + "\n\n" + prompt
           }
-        ],
-        temperature: 0.7,
-        max_tokens: 4000
-      })
-    });
+        ], temperature: 0.7, max_tokens: 4000});
 
     if (!response.ok) {
       throw new Error(`API Error: ${response.status} - ${response.statusText}`);
     }
 
-    const data = await response.json();
-    let content = data.choices[0].message.content.trim();
+    const data = response.data; let content = data.content.trim();
     
     // Clean JSON formatting
     content = content.replace(/```json\n?/g, '').replace(/```\n?/g, '');
@@ -8048,35 +8062,152 @@ Use specific names, dates, laws, companies, amounts, percentages - just present 
 ]`;
 
   try {
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${apiKey}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        model: 'gpt-4',
-        messages: [
+    const response = await firebase.functions().httpsCallable("generateQuestionsWithAI")({messages: [
           {
             role: 'system',
-            content: `You are an expert FBLA exam question writer. Use specific facts, names, dates, laws, and details from the study material, but never reference the source document itself. Present all information as established business knowledge. You can mention specific laws like "The Sherman Act of 1890" or specific companies, but never say "according to the document" or "as mentioned in the text". Create detailed, fact-based questions using concrete information. Always return valid JSON only.`
+            content: `You are an expert FBLA written-competition exam designer.
+
+Your role is to generate ORIGINAL, competition-accurate FBLA-style multiple-choice questions that match the structure, rigor, tone, and professional standards of official FBLA written tests.
+
+You must follow ALL rules below.
+
+────────────────────────────────
+CORE FBLA PHILOSOPHY
+────────────────────────────────
+FBLA written tests assess professional correctness, precision, and applied business literacy.
+
+They do NOT assess creativity, opinion, or open-ended reasoning.
+
+Each question must test exactly ONE concept.
+
+Questions must be concise, objective, and professionally worded.
+
+Avoid unnecessary narrative unless the question type explicitly requires a scenario.
+
+────────────────────────────────
+APPROVED FBLA QUESTION ARCHETYPES
+────────────────────────────────
+Every question MUST clearly belong to ONE of the following archetypes:
+
+1. Definition / Term Identification  
+   - Identifying the correct term based on a definition  
+   - Selecting the correct meaning of a professional word or concept  
+
+2. Classification / Category Recognition  
+   - Determining where an item belongs within a professional category system  
+   - Examples include document types, account categories, system types, business forms, or classifications  
+
+3. Procedural / Workflow Knowledge  
+   - Understanding the stages of a professional workflow specific to the competition area  
+   - Identifying where information originates within that workflow  
+   - Determining which document, tool, or action is appropriate at a given stage  
+   - Recognizing correct sequencing of professional tasks within the domain  
+
+4. Tool-to-Function Matching  
+   - Matching software features, commands, utilities, or tools to their correct purpose  
+   - Selecting the correct function used to accomplish a professional task  
+
+5. Quantitative / Calculation Application  
+   - Performing single-step or limited multi-step calculations  
+   - Selecting the correct numeric result based on provided data  
+   - Avoid unnecessary complexity or advanced math  
+
+6. Language Precision & Usage  
+   - Correct use of professional vocabulary  
+   - Distinguishing homophones, word meanings, spelling, grammar, and standard usage  
+
+7. Error Detection / Exception Identification  
+   - Identifying what is incorrect, misspelled, or does NOT belong  
+   - Using negation ("NOT") carefully and intentionally  
+
+────────────────────────────────
+QUESTION STRUCTURE RULES
+────────────────────────────────
+• Each question must assess ONE idea only.  
+• Do not combine multiple concepts in one question.  
+• Avoid ambiguous wording.  
+• Use professional, neutral language.
+
+Acceptable stem styles include:
+- "Which of the following…"
+- "What term best describes…"
+- "The document used to…"
+- "Which action should be taken…"
+- "Which of the following is NOT…"
+
+────────────────────────────────
+ANSWER CHOICE DESIGN (CRITICAL)
+────────────────────────────────
+Each question MUST include exactly FOUR answer choices.
+
+Answer choices must:
+• Be the same grammatical form  
+• Be similar in length  
+• Belong to the same conceptual family  
+
+Wrong answer choices (distractors) must be plausible and realistic.
+
+Allowed distractor strategies include:
+• Closely related terms within the same category  
+• Common student misconceptions  
+• Incorrect step within a workflow  
+• Reversed or misapplied professional rules  
+• Visually or linguistically similar words  
+• Typical calculation or classification errors  
+
+Never include joke answers or obviously incorrect options.
+
+────────────────────────────────
+DIFFICULTY CALIBRATION
+────────────────────────────────
+Easy:
+• Direct recall or recognition  
+• Minimal traps  
+
+Medium:
+• Requires discrimination between similar concepts  
+• Includes common misconceptions  
+
+Hard:
+• Includes negation ("NOT")  
+• Requires precise rule awareness  
+• Uses subtle wording differences  
+• Penalizes shallow memorization  
+
+────────────────────────────────
+CONTENT INTEGRITY RULES
+────────────────────────────────
+• All questions must be ORIGINAL.  
+• Do NOT copy real FBLA questions.  
+• Do NOT closely paraphrase known questions.  
+• Use authentic structure only, not replicated wording.
+
+Questions must feel realistic for competitive FBLA written events at the regional, state, or national level.
+
+When study materials are provided, extract concepts, facts, names, dates, laws, and details from them. Present this information as established business knowledge. NEVER mention "the study guide", "the document", "the material", or use phrases like "according to", "as stated in", or "mentioned in".
+
+────────────────────────────────
+OUTPUT REQUIREMENTS
+────────────────────────────────
+• Generate ONLY the requested number of questions.  
+• Each question must have exactly four answer options.  
+• Only ONE option may be correct.  
+• Output valid JSON only.  
+• Do not include explanations, commentary, or headings.  
+
+You are writing as a professional exam author — not as a tutor or teacher.`
           },
           {
             role: 'user',
-            content: prompt
+            content: (window.__CERTQUEST_CONTEXT__ || "") + "\n\n" + prompt
           }
-        ],
-        temperature: 0.7,
-        max_tokens: 4000
-      })
-    });
+        ], temperature: 0.7, max_tokens: 4000});
 
     if (!response.ok) {
       throw new Error(`API Error: ${response.status} - ${response.statusText}`);
     }
 
-    const data = await response.json();
-    let content = data.choices[0].message.content.trim();
+    const data = response.data; let content = data.content.trim();
     
     // Clean JSON formatting
     content = content.replace(/```json\n?/g, '').replace(/```\n?/g, '');
@@ -9547,25 +9678,13 @@ Generate 3 thoughtful, challenging questions that test the speaker's understandi
         console.log("🚀 Sending request to GPT...");
         console.log("Speech length:", speech.length);
 
-        const response = await fetch('https://api.openai.com/v1/chat/completions', {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${apiKey}`,
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                model: 'gpt-4',
-                messages: [{
+        const response = await firebase.functions().httpsCallable("generateQuestionsWithAI")({messages: [{
                     role: 'system',
                     content: `You are an expert debate coach. Create 3 challenging follow-up questions based on speech content. Return ONLY the 3 questions, one per line, with no numbers, bullets, or additional text.`
                 }, {
                     role: 'user',
-                    content: prompt
-                }],
-                temperature: 0.7,
-                max_tokens: 400
-            })
-        });
+                    content: (window.__CERTQUEST_CONTEXT__ || "") + "\n\n" + prompt
+                }], temperature: 0.7, max_tokens: 4000});
 
         if (!response.ok) {
             const errorText = await response.text();
@@ -9573,8 +9692,8 @@ Generate 3 thoughtful, challenging questions that test the speaker's understandi
             throw new Error(`API Error: ${response.status}`);
         }
 
-        const data = await response.json();
-        const responseText = data.choices[0].message.content.trim();
+        const data = response.data;
+        const responseText = data.content.trim();
         
         console.log("✅ Raw GPT Response:", responseText);
 
@@ -10330,32 +10449,20 @@ Make the case engaging, realistic, and clearly connected to the selected compete
 
         console.log("Generating case with prompt:", prompt);
 
-        const response = await fetch('https://api.openai.com/v1/chat/completions', {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${apiKey}`,
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                model: 'gpt-4',
-                messages: [{
+        const response = await firebase.functions().httpsCallable("generateQuestionsWithAI")({messages: [{
                     role: 'system',
                     content: `You are an expert ${selectedCompetition} case study writer. Create engaging, realistic business scenarios that clearly test specific competencies. Make cases appropriate for high school students and directly relevant to the competition focus.`
                 }, {
                     role: 'user',
-                    content: prompt
-                }],
-                temperature: 0.7,
-                max_tokens: 1500
-            })
-        });
+                    content: (window.__CERTQUEST_CONTEXT__ || "") + "\n\n" + prompt
+                }], temperature: 0.7, max_tokens: 4000});
 
         if (!response.ok) {
             throw new Error(`API Error: ${response.status}`);
         }
 
-        const data = await response.json();
-        const generatedCase = data.choices[0].message.content;
+        const data = response.data;
+        const generatedCase = data.content;
 
         // Hide prompt section and show results
         document.getElementById('casePromptSection').style.display = 'none';
@@ -12461,5 +12568,37 @@ console.log('🎯 Modal reset setup complete. Try closing the modal now!');
   
   
   
+<script>
+async function loadCertQuestContext(userId, competition) {
+  const db = firebase.firestore();
+
+  let baselineText = "";
+  if (competition) {
+    const compDoc = await db.collection("competitions").doc(competition).get();
+    if (compDoc.exists && compDoc.data().baseline && compDoc.data().baseline.text) {
+      baselineText = compDoc.data().baseline.text;
+    }
+  }
+
+  let personalText = "";
+  const entriesSnap = await db
+    .collection("userTraining")
+    .doc(userId)
+    .collection("entries")
+    .orderBy("timestamp", "desc")
+    .limit(10)
+    .get();
+
+  entriesSnap.forEach(d => {
+    if (d.data().content) personalText += d.data().content + "\n\n";
+  });
+
+  window.__CERTQUEST_CONTEXT__ =
+    "=== OFFICIAL COMPETITION STUDY GUIDE ===\n" +
+    baselineText +
+    "\n\n=== STUDENT PERSONAL TRAINING DATA ===\n" +
+    personalText;
+}
+</script>
 </body>
 </html> 

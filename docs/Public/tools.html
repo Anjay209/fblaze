@@ -1166,8 +1166,8 @@ async function callGPTAPI(messages, temperature = 0.7, maxTokens = 2000) {
         if (!response.ok) {
             throw new Error(`API Error: ${response.status} - ${response.statusText}`);
         }
-        const data = await response.json();
-        return data.choices[0].message.content.trim();
+        const data = response.data;
+        return data.content.trim();
         
     } catch (error) {
         console.error('GPT API Error:', error);

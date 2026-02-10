@@ -4236,14 +4236,14 @@ async function generateFlashcardsWithAI(competency, questions) {
     },
     body: JSON.stringify({
       model: "gpt-4",
-      messages: [{ role: "user", content: prompt }],
+      messages: [{ role: "user", content: (window.__CERTQUEST_CONTEXT__ || "") + "\n\n" + prompt }],
       temperature: 0.7,
       max_tokens: 2000
     })
   });
 
-  const data = await response.json();
-  const content = data.choices[0].message.content;
+  const data = response.data;
+  const content = data.content;
   
   // Extract JSON from response
   const jsonStart = content.indexOf('[');
@@ -5199,7 +5199,7 @@ Create questions that test understanding of concepts from this material.`;
             },
             {
               role: 'user',
-              content: prompt
+              content: (window.__CERTQUEST_CONTEXT__ || "") + "\n\n" + prompt
             }
           ],
           temperature: 0.8,
@@ -5211,8 +5211,8 @@ Create questions that test understanding of concepts from this material.`;
         throw new Error(`API Error: ${response.status}`);
       }
 
-      const data = await response.json();
-      let content = data.choices[0].message.content.trim();
+      const data = response.data;
+      let content = data.content.trim();
       
       // Clean JSON formatting
       content = content.replace(/```json\n?/g, '').replace(/```\n?/g, '');
@@ -5989,7 +5989,7 @@ Requirements:
             },
             {
               role: 'user',
-              content: prompt
+              content: (window.__CERTQUEST_CONTEXT__ || "") + "\n\n" + prompt
             }
           ],
           temperature: 0.7,
@@ -6001,8 +6001,8 @@ Requirements:
         throw new Error(`API Error: ${response.status}`);
       }
 
-      const data = await response.json();
-      let content = data.choices[0].message.content.trim();
+      const data = response.data;
+      let content = data.content.trim();
       
       // Clean JSON formatting
       content = content.replace(/```json\n?/g, '').replace(/```\n?/g, '');
@@ -8009,5 +8009,37 @@ document.addEventListener('keydown', function(event) {
   
   
   
+<script>
+async function loadCertQuestContext(userId, competition) {
+  const db = firebase.firestore();
+
+  let baselineText = "";
+  if (competition) {
+    const compDoc = await db.collection("competitions").doc(competition).get();
+    if (compDoc.exists && compDoc.data().baseline && compDoc.data().baseline.text) {
+      baselineText = compDoc.data().baseline.text;
+    }
+  }
+
+  let personalText = "";
+  const entriesSnap = await db
+    .collection("userTraining")
+    .doc(userId)
+    .collection("entries")
+    .orderBy("timestamp", "desc")
+    .limit(10)
+    .get();
+
+  entriesSnap.forEach(d => {
+    if (d.data().content) personalText += d.data().content + "\n\n";
+  });
+
+  window.__CERTQUEST_CONTEXT__ =
+    "=== OFFICIAL COMPETITION STUDY GUIDE ===\n" +
+    baselineText +
+    "\n\n=== STUDENT PERSONAL TRAINING DATA ===\n" +
+    personalText;
+}
+</script>
 </body>
 </html> 
