@@ -2,6 +2,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebas
 import { getAuth } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
 
 const firebaseConfig = {
+if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
   apiKey: "AIzaSyDGYp9sBwOWBdu9W46Q6XFp9zfLCrEsaO4",
   authDomain: "certquest-94959.firebaseapp.com",
   projectId: "certquest-94959",
