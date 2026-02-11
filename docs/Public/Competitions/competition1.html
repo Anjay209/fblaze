@@ -724,7 +724,7 @@
       cursor: not-allowed;
     }
   </style>
-</head>
+<script type="module" src="/js/firebase.js"></script></head>
 <body>
   <div class="min-h-screen text-white overflow-hidden">
     <!-- Galaxy Background -->
@@ -1013,18 +1013,8 @@
   <script src="https://cdn.jsdelivr.net/npm/meilisearch@latest/dist/bundles/meilisearch.umd.min.js"></script>
   <script>
     // Firebase configuration
-    const firebaseConfig = {
-      apiKey: "AIzaSyDGYp9sBwOWBdu9W46Q6XFp9zfLCrEsaO4",
-      authDomain: "certquest-94959.firebaseapp.com",
-      projectId: "certquest-94959",
-      storageBucket: "certquest-94959.appspot.com",
-      messagingSenderId: "323956529033",
-      appId: "1:323956529033:web:e9c9c6a3c7668b8a72f358",
-      measurementId: "G-F5JHTGGN6K"
-    };
 
     // Initialize Firebase
-    const app = firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
     const auth = firebase.auth();
 
