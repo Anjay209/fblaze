@@ -3972,7 +3972,12 @@ if (backdrop) {
     })();
 
   } else {
-    window.location.href = "/Public/index.html";
+    auth.onAuthStateChanged(user => {
+  if (!user) {
+    window.location.href = "/Public/landing.html";
+  }
+});
+
   }
 });
 
