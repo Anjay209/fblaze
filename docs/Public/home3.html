@@ -3761,6 +3761,7 @@ if (backdrop) {
 
     // ---- Show full name from Firestore and modal logic ----
     auth.onAuthStateChanged(function(user) {
+  if (!user) { window.location.href = "/Public/landing.html"; return; }
   if (user) {
     db.collection('users').doc(user.uid).get()
       .then(function(doc) {
@@ -4052,6 +4053,7 @@ if (backdrop) {
 
     // === REALTIME ASSIGNMENT LISTENER ===
     auth.onAuthStateChanged(function(user) {
+  if (!user) { window.location.href = "/Public/landing.html"; return; }
       if (!user) return;
       
       
