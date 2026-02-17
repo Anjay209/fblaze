@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>FBLAZE Search</title>
+  <link rel="stylesheet" href="home.css">
+</head>
+<body>
+  <h1>Search FBLAZE</h1>
+  <input type="text" id="searchBox" placeholder="Search anything..." />
+  <div id="results"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/meilisearch@latest/dist/bundles/meilisearch.umd.min.js"></script>
+  <script>
+    // Init Meilisearch client
+    const client = new MeiliSearch({ host: 'http://127.0.0.1:7700' });
+    const index = client.index('content');
+
+    document.getElementById('searchBox').addEventListener('input', async function(e) {
+      const query = e.target.value;
+      if (!query) {
+        document.getElementById('results').innerHTML = "";
+        return;
+      }
+      const result = await index.search(query, { limit: 10 });
+      document.getElementById('results').innerHTML = result.hits.map(doc => `
+        <div class="result">
+          <a href="${doc.url}"><b>${doc.title}</b></a>
+          <div>${highlight(doc.content, query)}</div>
+          <div><i>${doc.category}</i> | <small>${doc.tags.join(', ')}</small></div>
+        </div>
+      `).join('');
+    });
+
+    function highlight(text, query) {
+      // Very basic highlighter!
+      return text.replace(new RegExp(`(${query})`, "gi"), "<mark>$1</mark>");
+    }
+  </script>
+  <style>
+    .result { margin-bottom: 1.5em; padding: 1em; border-bottom: 1px solid #eee; }
+    mark { background: #bae6fd; }
+  </style>
+</body>
+</html>

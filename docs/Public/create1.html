@@ -4112,7 +4112,9 @@ button[onclick="generateQuestions()"]:hover {
 
     <!-- Action Buttons -->
     <div class="written-modal-actions">
-      <button class="written-modal-cancel-btn" onclick="closeWrittenModal()">Cancel</button>
+      <div style="width: 100%; padding: 1rem; background: rgba(30, 41, 59, 0.3); border: 2px solid rgba(71, 85, 105, 0.5); border-radius: 0.75rem; margin-bottom: 1rem; text-align: center; color: #e2e8f0; font-size: 0.95rem; line-height: 1.6;">
+        This website is equipped with baseline information about all FBLA competitions, but is most effective if you <span id="trainModelLink" onclick="closeWrittenModal(); openTrainingModal();" style="font-style: italic; font-weight: 900; color: #f97316; cursor: pointer; text-decoration: underline; transition: color 0.2s;" onmouseover="this.style.color='#dc2626'" onmouseout="this.style.color='#f97316'">Train your Model</span>
+      </div>
       <button class="written-modal-start-btn start-btn" onclick="generateQuizQuestions()">Customized Test</button>
       <button class="written-modal-smart-btn personalized-btn" onclick="generatePersonalizedTest()">SMART Test</button>
     </div>
@@ -9992,27 +9994,44 @@ function addLoadingStyles() {
     });
   }
 
-  // LOAD MENTEES WITH MATCHING COMPETITIONS
+  // LOAD MENTEES FROM FIREBASE (NEW EXPLICIT LIST)
   setTimeout(async () => {
     const currentUser = firebase.auth().currentUser;
     if (!currentUser) return;
     
     try {
-      const userDoc = await db.collection('users').doc(currentUser.uid).get();
-      const mentorComps = userDoc.data()?.competitions || [];
+      // Load mentees from Firebase
+      async function loadMenteesFromFirebase(mentorId) {
+        try {
+          const menteesSnapshot = await db.collection('users').doc(mentorId).collection('mentees').get();
+          const mentees = [];
+          
+          for (const menteeDoc of menteesSnapshot.docs) {
+            const menteeId = menteeDoc.id;
+            const userDoc = await db.collection('users').doc(menteeId).get();
+            if (userDoc.exists) {
+              const userData = userDoc.data();
+              mentees.push({
+                id: menteeId,
+                name: userData.name || userData.fullName || userData.email || '(unnamed)',
+                email: userData.email || ''
+              });
+            }
+          }
+          return mentees;
+        } catch (error) {
+          console.error('Error loading mentees from Firebase:', error);
+          return [];
+        }
+      }
       
-      const snap = await db.collection('users')
-        .where('competitions', 'array-contains-any', mentorComps)
-        .get();
+      const mentees = await loadMenteesFromFirebase(currentUser.uid);
       
       const menteesList = document.getElementById('menteesList');
       if (!menteesList) return;
       
-      snap.docs.forEach(userDoc => {
-        const userId = userDoc.id;
-        const userName = userDoc.data().name || userDoc.data().email;
-        
-        const exists = menteesList.querySelector(`input[value="${userId}"]`);
+      mentees.forEach(mentee => {
+        const exists = menteesList.querySelector(`input[value="${mentee.id}"]`);
         if (exists) return;
         
         const label = document.createElement('label');
@@ -10024,11 +10043,11 @@ function addLoadingStyles() {
         
         const checkbox = document.createElement('input');
         checkbox.type = 'checkbox';
-        checkbox.value = userId;
+        checkbox.value = mentee.id;
         checkbox.style.marginRight = '10px';
         
         const text = document.createElement('span');
-        text.innerText = userName;
+        text.innerText = mentee.name;
         
         label.appendChild(checkbox);
         label.appendChild(text);

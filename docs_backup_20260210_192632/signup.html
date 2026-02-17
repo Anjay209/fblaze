@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Sign Up | CertQuest</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="stylesheet" href="/Public/Login/signup.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <!-- Firebase SDKs (compat) -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+</head>
+<body>
+  <div class="login-outer">
+    <form class="login-container" autocomplete="off">
+      <h1 class="login-title">Sign Up</h1>
+
+      <div class="divider-row">
+        <div class="divider"></div>
+        <span class="divider-text">Sign up for a free FBLA resource!</span>
+        <div class="divider"></div>
+      </div>
+
+      <label for="fullname" class="label">Full Name</label>
+      <input id="fullname" type="text" name="fullname" placeholder="Your full name" required>
+      <label for="email" class="label">Email</label>
+      <input id="email" type="email" name="email" placeholder="Type your email address" required>
+      <label for="password" class="label">Password</label>
+      <input id="password" type="password" name="password" placeholder="Create a password" required>
+      <label for="confirm" class="label">Confirm Password</label>
+      <input id="confirm" type="password" name="confirm" placeholder="Repeat your password" required>
+      <button type="submit" class="sign-up-btn" id="signUpBtn">Sign Up</button>
+      <div class="signup">
+        Already have an account?
+        <a href="/Public/index.html">Sign In</a>
+      </div>
+    </form>
+  </div>
+
+<script>
+  // Firebase config (same as your login.html)
+
+  const db = firebase.firestore();
+
+  // Transaction-safe function to increment member count
+  async function incrementMemberCount() {
+    const statsRef = db.collection('stats').doc('membersCount');
+    try {
+      await db.runTransaction(async (transaction) => {
+        const doc = await transaction.get(statsRef);
+        if (!doc.exists) {
+          transaction.set(statsRef, { count: 1 });
+        } else {
+          const currentCount = doc.data().count || 0;
+          transaction.update(statsRef, { count: currentCount + 1 });
+        }
+      });
+      console.log("Member count incremented");
+    } catch (error) {
+      console.error("Failed to increment member count:", error);
+      throw error; // propagate error so caller knows
+    }
+  }
+
+  // Mark user counted and increment members if not done before
+  async function markUserCounted(userDocRef) {
+    try {
+      await db.runTransaction(async (transaction) => {
+        const userDoc = await transaction.get(userDocRef);
+        if (!userDoc.exists) {
+          throw new Error("User doc does not exist");
+        }
+        const userData = userDoc.data();
+        if (userData.countedInMembers) {
+          // Already counted, do nothing
+          return;
+        }
+        // Increment members count
+        const statsRef = db.collection('stats').doc('membersCount');
+        const statsDoc = await transaction.get(statsRef);
+        if (!statsDoc.exists) {
+          transaction.set(statsRef, { count: 1 });
+        } else {
+          const currentCount = statsDoc.data().count || 0;
+          transaction.update(statsRef, { count: currentCount + 1 });
+        }
+        // Mark user as counted
+        transaction.update(userDocRef, { countedInMembers: true });
+      });
+      console.log("User marked as counted and member count incremented");
+    } catch (error) {
+      console.error("Error marking user counted:", error);
+      throw error;
+    }
+  }
+
+  // Email/password sign-up flow
+  document.querySelector('.login-container').addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    const fullName = document.getElementById('fullname').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+    const confirm = document.getElementById('confirm').value;
+
+    if (!fullName || !email || !password || !confirm) {
+      alert("All fields are required.");
+      return;
+    }
+    if (password !== confirm) {
+      alert("Passwords do not match!");
+      return;
+    }
+
+    try {
+      const userCredential = await firebase.auth().createUserWithEmailAndPassword(email, password);
+      const user = userCredential.user;
+
+      // Update profile displayName
+      await user.updateProfile({ displayName: fullName });
+
+      // Create user doc with countedInMembers = false initially
+      const userDocRef = db.collection("users").doc(user.uid);
+      await userDocRef.set({
+        uid: user.uid,
+        name: user.displayName || fullName,
+        email: user.email,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        countedInMembers: false
+      });
+
+      // Now mark user counted and increment member count
+      await markUserCounted(userDocRef);
+
+      // Redirect on success
+      window.location.href = "/Public/index.html";
+
+    } catch (error) {
+      console.error("Signup error:", error);
+      alert(error.message);
+    }
+  });
+
+  // Google sign-up / sign-in flow
+  document.getElementById('googleSignUpBtn').addEventListener('click', async function() {
+    const provider = new firebase.auth.GoogleAuthProvider();
+
+    try {
+      const result = await firebase.auth().signInWithPopup(provider);
+      const user = result.user;
+
+      // Reference to user doc
+      const userDocRef = db.collection("users").doc(user.uid);
+      const userDocSnapshot = await userDocRef.get();
+
+      if (!userDocSnapshot.exists) {
+        // New user — create user doc with countedInMembers = false
+        await userDocRef.set({
+          uid: user.uid,
+          name: user.displayName || "",
+          email: user.email,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+          countedInMembers: false
+        });
+
+        // Increment member count only once
+        await markUserCounted(userDocRef);
+
+      } else {
+        // Existing user — ensure member count only increments once
+        const userData = userDocSnapshot.data();
+        if (!userData.countedInMembers) {
+          await markUserCounted(userDocRef);
+        }
+      }
+
+      // Redirect on success
+      window.location.href = "/Public/index.html";
+
+    } catch (error) {
+      console.error("Google sign-in error:", error);
+      alert(error.message);
+    }
+  });
+</script>
+
+</body>
+</html>

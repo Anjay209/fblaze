@@ -1,0 +1,2338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FBLAZE Dashboard</title>
+  <link rel="stylesheet" href="assigned.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/feather-icons"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
+<style>
+  .btn {
+    background-color: #e6e9ff;
+    border: 1.5px solid #c0c4ff;
+    color: #4f74f9;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s, box-shadow 0.3s, color 0.3s;
+  }
+  .btn:hover:not(.selected) {
+    background-color: #d4d9ff;
+    box-shadow: 0 0 6px #b0b8ff88;
+  }
+  .btn.selected {
+    background-color: #c0c4ff;
+    border-color: #a0a8ff;
+    color: #1e40af;
+    box-shadow: 0 0 10px #a0a8ff88;
+  }
+</style>
+
+</head>
+<body>
+
+  <!-- Top Nav -->
+  <div class="top-header">
+    <div class="nav-left">🌐</div>
+    <div class="nav-title">Dashboard <span class="new-badge">(New!)</span></div>
+    <div class="nav-right">
+  <input type="text" id="navbarSearch" placeholder="Search CertQuest..." />
+  <span class="search-icon" id="navbarSearchIcon">🔍</span>
+  <div id="searchDropdown"></div>
+</div>
+  </div>
+
+  <!-- Section Header -->
+  <div class="section-header-background">
+    <div class="section-header-inline">
+      <h1 class="unit-title"><span class="name">Mentor Dashboard</span></h1>
+    </div><div class="question-tabs">
+        <div class="tab" onclick="selectTab(this)">Dashboard</div>
+        <div class="tab active" onclick="selectTab(this)">Assignments</div> 
+        <div class="tab" onclick="selectTab(this)">Meetings</div> 
+      </div>
+      <div class="tab-underline"></div>
+  </div>
+  <div class="main-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="logo">FB</div>
+      <ul class="nav-icons">
+  <li>
+     <a href="/Public/home.html">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M12 3L20 9V21H15V15H9V21H4V9L12 3Z" fill="#3b82f6" fill-opacity="0.3"/>
+      <path d="M12 3L4 9V21H9V15H15V21H20V9L12 3Z" stroke="#3b82f6" stroke-width="2" fill="none" stroke-linejoin="round"/>
+      <rect x="10" y="17" width="4" height="4" fill="#3b82f6"/>
+      <rect x="6" y="11" width="2" height="2" fill="#3b82f6"/>
+      <rect x="16" y="11" width="2" height="2" fill="#3b82f6"/>
+    </svg>
+    
+    <span class="nav-label">Home</span>
+     </a>
+  </li>
+  <li>
+  <a href="#" onclick="openNotificationsOnHome(); return false;">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- Bell body main fill -->
+    <path d="M18 8C18 6.4087 17.3679 4.88258 16.2426 3.75736C15.1174 2.63214 13.5913 2 12 2C10.4087 2 8.88258 2.63214 7.75736 3.75736C6.63214 4.88258 6 6.4087 6 8C6 15 3 17 3 17H21C21 17 18 15 18 8Z" fill="#3b82f6" fill-opacity="0.3"/>
+    <!-- Bell body lighter overlay -->
+    <path d="M18 8C18 6.4087 17.3679 4.88258 16.2426 3.75736C15.1174 2.63214 13.5913 2 12 2C10.4087 2 8.88258 2.63214 7.75736 3.75736C6.63214 4.88258 6 6.4087 6 8C6 12 6 15 6 15H18C18 15 18 12 18 8Z" fill="#3b82f6" fill-opacity="0.2"/>
+    <!-- Bell outline -->
+    <path d="M18 8C18 6.4087 17.3679 4.88258 16.2426 3.75736C15.1174 2.63214 13.5913 2 12 2C10.4087 2 8.88258 2.63214 7.75736 3.75736C6.63214 4.88258 6 6.4087 6 8C6 15 3 17 3 17H21C21 17 18 15 18 8Z" stroke="#3b82f6" stroke-width="2" fill="none"/>
+    <!-- Bell clapper -->
+    <circle cx="12" cy="8" r="1" fill="#3b82f6"/>
+    <!-- Sound waves -->
+    <path d="M19 4L20 3" stroke="#3b82f6" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/>
+    <path d="M20.5 6.5L22 6" stroke="#3b82f6" stroke-width="1.5" stroke-linecap="round" opacity="0.3"/>
+    <path d="M5 4L4 3" stroke="#3b82f6" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/>
+    <path d="M3.5 6.5L2 6" stroke="#3b82f6" stroke-width="1.5" stroke-linecap="round" opacity="0.3"/>
+    <!-- Bottom notification indicator -->
+    <path d="M13.73 21C13.5542 21.3031 13.3019 21.5547 12.9982 21.7295C12.6946 21.9044 12.3504 21.9965 12 21.9965C11.6496 21.9965 11.3054 21.9044 11.0018 21.7295C10.6982 21.5547 10.4458 21.3031 10.27 21" stroke="#3b82f6" stroke-width="2" stroke-linecap="round"/>
+  </svg>
+  <span class="nav-label">Notifications</span>
+</a>
+</li>
+  <li>
+     <a href="/Public/practice.html">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="12" cy="12" r="9" fill="#3b82f6" fill-opacity="0.3"/>
+      <circle cx="12" cy="12" r="6" fill="#3b82f6" fill-opacity="0.2"/>
+      <circle cx="12" cy="12" r="9" stroke="#3b82f6" stroke-width="2" fill="none"/>
+      <circle cx="12" cy="12" r="6" stroke="#3b82f6" stroke-width="1.5" fill="none"/>
+      <circle cx="12" cy="12" r="3" stroke="#3b82f6" stroke-width="1.5" fill="none"/>
+      <circle cx="12" cy="12" r="1.5" fill="#3b82f6"/>
+      <path d="M16 8L12 12L16 8Z" fill="#3b82f6"/>
+      <line x1="16" y1="8" x2="19" y2="5" stroke="#3b82f6" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+    <span class="nav-label">Practice</span>
+    </a>
+  </li>
+  <li>
+    <a href="/Public/Forum/forum.html">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M8 6C8 4.89543 8.89543 4 10 4H18C19.1046 4 20 4.89543 20 6V12C20 13.1046 19.1046 14 18 14H12L8 18V6Z" fill="#3b82f6" fill-opacity="0.3"/>
+      <path d="M4 10C4 8.89543 4.89543 8 6 8H8V16L4 20V12C4 11.4477 4.44772 11 5 11C4.44772 11 4 10.5523 4 10Z" fill="#3b82f6" fill-opacity="0.2"/>
+      <path d="M8 6C8 4.89543 8.89543 4 10 4H18C19.1046 4 20 4.89543 20 6V12C20 13.1046 19.1046 14 18 14H12L8 18V6Z" stroke="#3b82f6" stroke-width="2" fill="none"/>
+      <path d="M4 10C4 8.89543 4.89543 8 6 8H8V16L4 20V12C4 11.4477 4.44772 11 5 11C4.44772 11 4 10.5523 4 10Z" stroke="#3b82f6" stroke-width="1.5" fill="none"/>
+      <line x1="11" y1="8" x2="17" y2="8" stroke="#3b82f6" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="11" y1="10" x2="15" y2="10" stroke="#3b82f6" stroke-width="1.5" stroke-linecap="round"/>
+    </svg>
+    <span class="nav-label">Forum</span>
+    </a>
+  </li>
+  <li>
+     <a href="/Public/Calendar/calendar1.html">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="3" y="6" width="18" height="15" rx="2" fill="#3b82f6" fill-opacity="0.3"/>
+      <rect x="3" y="6" width="18" height="4" rx="2" fill="#3b82f6" fill-opacity="0.2"/>
+      <rect x="3" y="6" width="18" height="15" rx="2" stroke="#3b82f6" stroke-width="2" fill="none"/>
+      <line x1="7" y1="3" x2="7" y2="7" stroke="#3b82f6" stroke-width="2" stroke-linecap="round"/>
+      <line x1="17" y1="3" x2="17" y2="7" stroke="#3b82f6" stroke-width="2" stroke-linecap="round"/>
+      <line x1="3" y1="10" x2="21" y2="10" stroke="#3b82f6" stroke-width="1" opacity="0.5"/>
+      <line x1="7.5" y1="10" x2="7.5" y2="21" stroke="#3b82f6" stroke-width="1" opacity="0.3"/>
+      <line x1="12" y1="10" x2="12" y2="21" stroke="#3b82f6" stroke-width="1" opacity="0.3"/>
+      <line x1="16.5" y1="10" x2="16.5" y2="21" stroke="#3b82f6" stroke-width="1" opacity="0.3"/>
+      <circle cx="9" cy="13" r="1" fill="#3b82f6"/>
+      <circle cx="15" cy="16" r="1" fill="#3b82f6"/>
+      <circle cx="12" cy="18" r="1" fill="#3b82f6"/>
+    </svg>
+    <span class="nav-label">Calendar</span>
+     </a>
+  </li>
+</ul>
+    </aside>
+
+  <main class="content">
+    <div class="exam-summary-container">
+        <!-- Exam Creation -->
+        <div class="create-exam-card">
+          <h2>Create an Assignment</h2>
+          <p>We’ll generate an exam based on what you want to practice</p>
+          <div class="exam-buttons">
+            <button onclick="openWrittenModal()">Written</button>
+            <button class="speaking-btn" onclick="openSpeakingModal()">Speaking</button>
+            <button onclick="openCaseModal()">Case</button>
+          </div>
+        </div>
+    </div>
+<div class="assignments-header">
+  <h3 class="incomplete-title">Complete Assignments</h3>
+  <div class="dropdown-sort">
+    <label for="sortPeopleComplete">Sort by name</label>
+    <select id="sortPeopleComplete"></select>
+  </div>
+</div>
+<div class="training-grid training-grid-complete"></div>
+<br><br>
+<div class="assignments-header">
+  <h3 class="incomplete-title">Incomplete Assignments</h3>
+  <div class="dropdown-sort">
+    <label for="sortPeopleIncomplete">Sort by name</label>
+    <select id="sortPeopleIncomplete"></select>
+  </div>
+</div>
+<div class="training-grid training-grid-incomplete"></div>
+
+
+        
+  </main>
+  </div>
+
+   <!-- Written Practice Modal -->
+<!-- Written Practice Modal -->
+<div id="writtenModal" class="modal" style="display:none;">
+  <div class="modal-content">
+    <span class="close" onclick="closeWrittenModal()"></span>
+    <h2>Written Practice Setup</h2>
+
+    <!-- Setup content -->
+    <div id="writtenSetup">
+      <div class="modal-section">
+        <label><strong>Time:</strong></label>
+        <div class="time-options">
+          <button class="time-btn" onclick="selectTime(this)">15 min</button>
+          <button class="time-btn" onclick="selectTime(this)">30 min</button>
+          <button class="time-btn" onclick="selectTime(this)">50 min</button>
+        </div>
+      </div>
+      
+      <!-- Competition Dropdown -->
+      <div style="margin-bottom: 15px;">
+        <label for="competitionSelectWritten" style="display: block; margin-bottom: 5px; font-weight: normal;">Competition:</label>
+        <select id="competitionSelectWritten" style="
+            padding: 8px 16px;
+            font-size: 14px;
+            font-family: inherit;
+            border: 1px solid #ccc;
+            border-radius: 20px;
+            background-color: #e3f2fd;
+            color: #1976d2;
+            cursor: pointer;
+            min-width: 200px;
+            appearance: none;
+            background-image: url('data:image/svg+xml;charset=US-ASCII,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 4 5%22><path fill=%22%231976d2%22 d=%22M2 0L0 2h4zm0 5L0 3h4z%22/></svg>');
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 12px;
+            padding-right: 32px;
+        ">
+            <option value="">Select competition...</option>
+        </select>
+      </div>
+      
+      <div class="modal-section">
+        <label><strong>Competencies Tested</strong></label><br>
+        <div class="checkbox-group">
+          <label><input type="checkbox" class="competency-option" value="Business Communication"> Business Communication</label>
+          <label><input type="checkbox" class="competency-option" value="Marketing"> Marketing</label>
+          <label><input type="checkbox" class="competency-option" value="Accounting"> Accounting</label>
+          <label><input type="checkbox" class="competency-option" value="Economics"> Economics</label>
+          <button type="button" class="select-all-btn" onclick="selectAllCompetencies()">Select All</button>
+        </div>
+      </div>
+      
+      <!-- Rest of the modal content remains the same -->
+      <div class="modal-section">
+        <label for="speechInput"><strong>Custom Questions</strong></label><br>
+        <textarea id="speechInput" placeholder="Paste your questions here..." rows="6"></textarea>
+      </div>
+      <div class="modal-section">
+        <label><strong>Difficulty:</strong></label>
+        <div class="difficulty-options">
+          <button class="difficulty-btn" onclick="selectDifficulty(this)">Easy</button>
+          <button class="difficulty-btn" onclick="selectDifficulty(this)">Medium</button>
+          <button class="difficulty-btn" onclick="selectDifficulty(this)">Hard</button>
+        </div>
+      </div>
+      <div class="training-source-toggle" style="margin-bottom: 1rem;">
+  <button type="button" class="toggle-btn active" onclick="selectTrainingSource('mentee')">Use Mentee Training Data</button>
+  <button type="button" class="toggle-btn" onclick="selectTrainingSource('upload')">Upload Your Own Documents</button>
+</div>
+
+<!-- Add this container for the drag and drop area (initially hidden) -->
+<div id="pdfUploadContainer" style="display: none; margin-bottom: 1rem;">
+    <div id="multiDropZone" style="border: 2px dashed #ccc; padding: 2rem; text-align: center; margin-bottom: 1rem; cursor: pointer; border-radius: 8px;">
+        Drag & Drop PDF Here or Click to Upload (Max 5)
+    </div>
+    <input type="file" id="multiFileInput" accept="application/pdf" hidden multiple />
+    <div id="uploadedFilesList"></div>
+</div>
+      <div class="modal-section">
+        <label><strong>Assign to Mentee</strong></label><br>
+        <div class="checkbox-group" id="userCheckboxes">
+          <!-- Mentees list goes here -->
+          <div id="menteesList">
+            <!-- Populated dynamically by JS -->
+          </div>
+        </div>
+        <button type="button" class="select-all-btn" onclick="selectAllUsers()">Select All</button>
+      </div>
+      <div class="checkbox-row">
+        <input type="checkbox" id="simulate" />
+        <label for="simulate">Simulate BluePanda testing environment</label>
+      </div>
+      <button class="start-btn" onclick="generateWrittenAssignment()">Assign Practice</button>
+    </div>
+    <!-- Congrats Message, hidden by default -->
+    <div id="writtenCongrats" style="display:none;">
+      <div style="text-align:center; padding: 2rem;">
+        <span style="font-size: 2.6rem; color: #16a34a;">🎉</span>
+        <h2 style="margin-top: 1rem; color: #007cf0; font-weight: 700;">Congratulations!</h2>
+        <div style="margin-top: 0.5rem; font-size: 1.25rem; color: #333;">Assignment has been made.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+  <!-- SPEAKING MODAL -->
+<!-- SPEAKING MODAL -->
+<!-- SPEAKING MODAL -->
+<div class="modal speaking-modal hidden" id="speakingModal">
+  <div class="modal-content">
+   <span class="close" onclick="closeSpeakingModal()">&times;</span>
+    <h2>Speaking Practice Setup</h2>
+
+    <!-- Setup content goes here -->
+    <div id="speakingSetup">
+      <div class="modal-section">
+        <label for="speakingAssignmentName"><strong>Assignment Name:</strong></label>
+        <textarea id="speakingAssignmentName" placeholder="Enter assignment name..." rows="2"></textarea>
+      </div>
+      
+      <div class="modal-section">
+        <label for="speakingAssignmentDesc"><strong>Assignment Description:</strong></label>
+        <textarea id="speakingAssignmentDesc" placeholder="Describe the speaking assignment..." rows="3"></textarea>
+      </div>
+
+      <!-- Add this section to your speaking modal after the questions -->
+<div class="modal-section">
+  <label><strong>Competencies Tested</strong></label><br>
+  <div class="checkbox-group">
+    <label><input type="checkbox" class="speaking-competency-option" value="Public Speaking"> Public Speaking</label>
+    <label><input type="checkbox" class="speaking-competency-option" value="Communication"> Communication</label>
+    <label><input type="checkbox" class="speaking-competency-option" value="Presentation"> Presentation</label>
+    <label><input type="checkbox" class="speaking-competency-option" value="Leadership"> Leadership</label>
+    <button type="button" class="select-all-btn" onclick="selectAllSpeakingCompetencies()">Select All</button>
+  </div>
+</div>
+
+      <div class="modal-section">
+        <label for="speakingQuestion1"><strong>Question 1:</strong></label>
+        <textarea id="speakingQuestion1" placeholder="Enter the first speaking question..." rows="3"></textarea>
+      </div>
+
+      <div class="modal-section">
+        <label for="speakingQuestion2"><strong>Question 2:</strong></label>
+        <textarea id="speakingQuestion2" placeholder="Enter the second speaking question..." rows="3"></textarea>
+      </div>
+
+      <div class="modal-section">
+        <label for="speakingQuestion3"><strong>Question 3 (Optional):</strong></label>
+        <textarea id="speakingQuestion3" placeholder="Enter a third speaking question (optional)..." rows="3"></textarea>
+      </div>
+
+      <div class="modal-section">
+        <label><strong>Time Limit:</strong></label>
+        <div class="time-options">
+          <!-- Example for a time button -->
+
+
+        </div>
+      </div>
+
+      <div class="modal-section">
+        <label><strong>Assign to Mentee</strong></label><br>
+        <div class="checkbox-group" id="speakingMenteesList"></div>
+        <button type="button" class="select-all-btn" onclick="selectAllSpeakingMentees()">Select All</button>
+      </div>
+      
+      <button class="start-btn" onclick="generateSpeakingAssignment()">Assign Speaking Practice</button>
+    </div>
+
+    <!-- Success message, hidden by default -->
+    <div id="speakingCongrats" style="display:none;">
+      <div style="text-align:center; padding: 2rem;">
+        <span style="font-size: 2.6rem; color: #16a34a;">🎉</span>
+        <h2 style="margin-top: 1rem; color: #007cf0; font-weight: 700;">Congratulations!</h2>
+        <div style="margin-top: 0.5rem; font-size: 1.25rem; color: #333;">Speaking assignment has been created!</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+    <!-- Success message, hidden by default -->
+    <div id="congratsArea" style="display:none;">
+      <div style="text-align:center; padding: 2rem;">
+        <span style="font-size: 2.6rem; color: #16a34a;">🎉</span>
+        <h2 style="margin-top: 1rem; color: #007cf0; font-weight: 700;">Congratulations!</h2>
+        <div style="margin-top: 0.5rem; font-size: 1.25rem; color: #333;">Assignment has been made.</div>
+      </div>
+    </div>
+
+    <!-- The rest of your question/recording area can go here if you want -->
+  </div>
+</div>
+
+  
+  <!-- CASE MODAL -->
+<!-- Replace your entire case modal with this -->
+<!-- Updated Case Modal -->
+<div id="caseModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeCaseModal()">&times;</span>
+    <h2>Case Assignment</h2>
+    
+    <div id="caseSetup">
+      <div class="modal-section">
+        <label for="caseAssignmentName"><strong>Case Name:</strong></label>
+        <textarea id="caseAssignmentName" placeholder="Enter case name..." rows="2"></textarea>
+      </div>
+      
+      <div class="modal-section">
+        <label for="caseAssignmentDesc"><strong>Case Description:</strong></label>
+        <textarea id="caseAssignmentDesc" placeholder="Describe your case..." rows="4"></textarea>
+      </div>
+      
+      <div class="modal-section">
+        <label for="caseStudyContent"><strong>Case Study Content:</strong></label>
+        <textarea id="caseStudyContent" placeholder="Paste your case study content here..." rows="6"></textarea>
+      </div>
+
+      <!-- Add these question sections -->
+      <div class="modal-section">
+        <label for="caseQuestion1"><strong>Question 1:</strong></label>
+        <textarea id="caseQuestion1" placeholder="Enter the first case question..." rows="3"></textarea>
+      </div>
+
+      <div class="modal-section">
+        <label for="caseQuestion2"><strong>Question 2:</strong></label>
+        <textarea id="caseQuestion2" placeholder="Enter the second case question..." rows="3"></textarea>
+      </div>
+
+      <div class="modal-section">
+        <label for="caseQuestion3"><strong>Question 3 (Optional):</strong></label>
+        <textarea id="caseQuestion3" placeholder="Enter a third case question (optional)..." rows="3"></textarea>
+      </div>
+
+      <div class="modal-section">
+        <label><strong>Competencies Tested</strong></label><br>
+        <div class="checkbox-group">
+          <label><input type="checkbox" class="case-competency-option" value="Business Communication"> Business Communication</label>
+          <label><input type="checkbox" class="case-competency-option" value="Marketing"> Marketing</label>
+          <label><input type="checkbox" class="case-competency-option" value="Accounting"> Accounting</label>
+          <label><input type="checkbox" class="case-competency-option" value="Economics"> Economics</label>
+          <label><input type="checkbox" class="case-competency-option" value="Strategy"> Strategy</label>
+          <button type="button" class="select-all-btn" onclick="selectAllCaseCompetencies()">Select All</button>
+        </div>
+      </div>
+
+      <div class="modal-section">
+        <label><strong>Assign to Mentee</strong></label><br>
+        <div class="checkbox-group" id="caseMenteesList"></div>
+        <button type="button" class="select-all-btn" onclick="selectAllCaseMentees()">Select All</button>
+      </div>
+      
+      <button class="start-btn" onclick="generateCaseAssignment()">Assign Case Study</button>
+    </div>
+    
+    <div id="caseCongrats" style="display:none;">
+      <div style="text-align:center; padding: 2rem;">
+        <span style="font-size: 2.6rem; color: #16a34a;">🎉</span>
+        <h2 style="margin-top: 1rem; color: #007cf0; font-weight: 700;">Congratulations!</h2>
+        <div style="margin-top: 0.5rem; font-size: 1.25rem; color: #333;">Case assignment has been created!</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Mentor Comment Modal -->
+<div id="commentModal" class="modal" style="display:none;">
+  <div class="modal-content" style="max-width:380px; padding:2rem 2.3rem;">
+    <span class="close" onclick="closeCommentModal()" style="top:18px;right:20px;">&times;</span>
+    <h2 style="margin-bottom:1rem; font-size:1.4rem;">Leave Feedback</h2>
+    <textarea id="commentInput" placeholder="Enter your comments here..." rows="6" style="width:100%;font-size:1.1rem;margin-bottom:1rem;padding:0.5rem;border-radius:7px;border:1px solid #ddd;resize:vertical;"></textarea>
+    <button class="btn" onclick="submitComment()" style="width:100%;">Submit</button>
+    <div id="commentSuccess" style="display:none;color:#059669;margin-top:1rem;font-weight:600;text-align:center;">Comment submitted!</div>
+  </div>
+</div>
+
+
+
+  <script src="https://cdn.jsdelivr.net/npm/meilisearch@latest/dist/bundles/meilisearch.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+
+<script>
+
+  
+
+const db = firebase.firestore();
+const auth = firebase.auth();
+
+
+
+  // Global variables
+  let menteesCache = [];
+  let currentAssignments = [];
+  let menteeNameMap = {};
+  let selectedMenteeId = "";
+
+
+
+
+
+  // Initialize app when page loads
+  window.addEventListener('load', () => {
+    feather.replace();
+    initializeApp();
+  });
+
+
+
+  // Main initialization
+  async function initializeApp() {
+    const user = await new Promise(resolve => {
+      firebase.auth().onAuthStateChanged(resolve);
+    });
+    
+    if (!user) return;
+    
+    await loadMentees(user);
+    await loadAssignments(user);
+    populateSortDropdowns();
+    
+    // Initialize modal if open
+    const writtenModal = document.getElementById('writtenModal');
+    if (writtenModal && writtenModal.style.display === 'block') {
+      showMenteesInWrittenModal();
+    }
+  }
+
+  let useMenteeTrainingData = true;
+let uploadedPDFs = [];
+
+function selectTrainingSource(source) {
+  const menteeBtn = document.querySelector('.toggle-btn:nth-child(1)');
+  const uploadBtn = document.querySelector('.toggle-btn:nth-child(2)');
+  const uploadContainer = document.getElementById('pdfUploadContainer');
+  
+  if (source === 'mentee') {
+    useMenteeTrainingData = true;
+    menteeBtn.classList.add('active');
+    uploadBtn.classList.remove('active');
+    uploadContainer.style.display = 'none';
+  } else {
+    useMenteeTrainingData = false;
+    menteeBtn.classList.remove('active');
+    uploadBtn.classList.add('active');
+    uploadContainer.style.display = 'block';
+    
+    // Setup drag and drop when upload container is shown
+    setTimeout(() => {
+      setupMultiFileDragAndDrop();
+      // Run debug if in development
+      if (window.location.hostname === 'localhost' || window.location.search.includes('debug=true')) {
+        debugDragAndDrop();
+      }
+    }, 100);
+  }
+}
+
+// Debug function - integrated into your code
+function debugDragAndDrop() {
+  console.log('🔍 Starting Drag & Drop Debug...');
+  
+  const debugDropZone = document.getElementById('multiDropZone');
+  const debugFileInput = document.getElementById('multiFileInput');
+  
+  console.log('Drop Zone Element:', debugDropZone);
+  console.log('File Input Element:', debugFileInput);
+  
+  if (!debugDropZone) {
+    console.error('❌ multiDropZone element not found!');
+    console.log('Available elements with "Drop" in ID:', 
+      Array.from(document.querySelectorAll('[id*="rop"]')).map(el => el.id));
+  } else {
+    console.log('✅ Drop zone found');
+    console.log('Drop zone styles:', window.getComputedStyle(debugDropZone));
+    console.log('Drop zone dimensions:', {
+      width: debugDropZone.offsetWidth,
+      height: debugDropZone.offsetHeight,
+      top: debugDropZone.offsetTop,
+      left: debugDropZone.offsetLeft
+    });
+  }
+  
+  if (!debugFileInput) {
+    console.error('❌ multiFileInput element not found!');
+  } else {
+    console.log('✅ File input found');
+  }
+  
+  // Test if functions exist
+  console.log('setupMultiFileDragAndDrop function exists:', typeof setupMultiFileDragAndDrop);
+  console.log('handleMultipleFiles function exists:', typeof handleMultipleFiles);
+  console.log('pdfjsLib exists:', typeof pdfjsLib);
+  
+  // Visual test - add colorful border
+  if (debugDropZone) {
+   
+    debugDropZone.style.minHeight = '100px'; // Ensure it's visible
+    console.log('🔴 Added red border to drop zone for visibility');
+  }
+  
+  // Add debug event listeners
+  if (debugDropZone) {
+    const events = ['dragenter', 'dragover', 'dragleave', 'drop', 'click'];
+    events.forEach(eventName => {
+      debugDropZone.addEventListener(eventName, (e) => {
+        console.log(`🎯 ${eventName.toUpperCase()} on drop zone`, {
+          target: e.target,
+          files: e.dataTransfer?.files?.length || 'none',
+          preventDefault: e.defaultPrevented
+        });
+      }, true);
+    });
+  }
+  
+  // Document level listeners
+  document.addEventListener('dragover', (e) => {
+    console.log('📄 Document dragover', e.target.tagName, e.target.id);
+  });
+  
+  document.addEventListener('drop', (e) => {
+    console.log('📄 Document drop', e.target.tagName, e.dataTransfer?.files?.length);
+  });
+  
+  console.log('🏁 Debug setup complete. Try dragging a file now!');
+}
+
+// Enhanced PDF.js loader
+function ensurePDFJS() {
+  return new Promise((resolve, reject) => {
+    if (typeof pdfjsLib !== 'undefined') {
+      console.log('✅ PDF.js already loaded');
+      resolve(pdfjsLib);
+      return;
+    }
+    
+    console.log('⏳ Loading PDF.js dynamically...');
+    const script = document.createElement('script');
+    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+    
+    script.onload = () => {
+      if (typeof pdfjsLib !== 'undefined') {
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+        console.log('✅ PDF.js loaded successfully!');
+        resolve(pdfjsLib);
+      } else {
+        reject(new Error('PDF.js failed to initialize'));
+      }
+    };
+    
+    script.onerror = () => reject(new Error('Failed to load PDF.js'));
+    document.head.appendChild(script);
+  });
+}
+
+function setupMultiFileDragAndDrop() {
+    console.log('🔧 Setting up drag and drop...');
+    
+    const dropZone = document.getElementById('multiDropZone');
+    const fileInput = document.getElementById('multiFileInput');
+    
+    if (!dropZone || !fileInput) {
+        console.error('❌ Drop zone or file input not found, retrying in 100ms...');
+        console.log('Available elements:', {
+            dropZone: !!dropZone,
+            fileInput: !!fileInput,
+            allElements: document.querySelectorAll('[id*="multi"]').length
+        });
+        setTimeout(setupMultiFileDragAndDrop, 100);
+        return;
+    }
+
+    console.log('✅ Elements found, setting up listeners...');
+
+    // Remove existing event listeners by cloning (your original approach)
+    const newDropZone = dropZone.cloneNode(true);
+    const newFileInput = fileInput.cloneNode(true);
+    
+    dropZone.parentNode.replaceChild(newDropZone, dropZone);
+    fileInput.parentNode.replaceChild(newFileInput, fileInput);
+
+    // Get fresh references
+    const freshDropZone = document.getElementById('multiDropZone');
+    const freshFileInput = document.getElementById('multiFileInput');
+
+    if (!freshDropZone || !freshFileInput) {
+        console.error('❌ Failed to get fresh references after cloning');
+        return;
+    }
+
+    // Prevent default drag behaviors
+    const preventDefaults = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+    };
+
+    // Add event listeners with better error handling
+    try {
+        // Click to upload
+        freshDropZone.addEventListener('click', (e) => {
+            console.log('🖱️ Drop zone clicked');
+            e.preventDefault();
+            e.stopPropagation();
+            freshFileInput.click();
+        });
+
+        // Drag events
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            freshDropZone.addEventListener(eventName, preventDefaults, false);
+        });
+
+        // Visual feedback
+        freshDropZone.addEventListener('dragenter', highlight, false);
+        freshDropZone.addEventListener('dragover', highlight, false);
+        freshDropZone.addEventListener('dragleave', unhighlight, false);
+        freshDropZone.addEventListener('drop', unhighlight, false);
+
+        // File handling
+        freshDropZone.addEventListener('drop', handleDrop, false);
+        freshFileInput.addEventListener('change', handleFileSelect, false);
+
+        console.log('✅ All event listeners attached successfully');
+
+    } catch (error) {
+        console.error('❌ Error setting up event listeners:', error);
+    }
+
+    function highlight(e) {
+        console.log('✨ Highlighting drop zone');
+        freshDropZone.style.backgroundColor = '#f0f9ff';
+        freshDropZone.style.borderColor = '#3b82f6';
+        freshDropZone.style.transform = 'scale(1.02)';
+    }
+
+    function unhighlight(e) {
+        console.log('🔄 Unhighlighting drop zone');
+        freshDropZone.style.backgroundColor = '';
+        freshDropZone.style.borderColor = '';
+        freshDropZone.style.transform = '';
+    }
+
+    function handleDrop(e) {
+        console.log('📁 Files dropped:', e.dataTransfer.files.length);
+        const dt = e.dataTransfer;
+        const files = dt.files;
+        handleMultipleFiles(files);
+    }
+
+    function handleFileSelect(e) {
+        console.log('📁 Files selected via input:', e.target.files.length);
+        const files = e.target.files;
+        handleMultipleFiles(files);
+        e.target.value = ''; // Reset input
+    }
+}
+
+function handleMultipleFiles(files) {
+  console.log(`📂 Processing ${files.length} files...`);
+  
+  for (let i = 0; i < files.length; i++) {
+    const file = files[i];
+    console.log(`Processing file ${i + 1}: ${file.name} (${file.type})`);
+    
+    // Check if file is PDF
+    const isPDF = file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
+    
+    if (!isPDF) {
+      console.warn(`❌ File ${file.name} is not a PDF`);
+      alert('Please upload only PDF files.');
+      continue;
+    }
+    
+    if (uploadedPDFs.length >= 5) {
+      console.warn('❌ Maximum PDF limit reached');
+      alert('Maximum of 5 PDFs allowed.');
+      break;
+    }
+    
+    // Check for duplicates
+    if (uploadedPDFs.some(pdf => pdf.name === file.name)) {
+      console.warn(`❌ File ${file.name} already uploaded`);
+      alert(`File "${file.name}" is already uploaded.`);
+      continue;
+    }
+    
+    console.log(`✅ Adding ${file.name} to processing queue`);
+    
+    // Add to uploaded files array
+    uploadedPDFs.push({
+      file: file,
+      name: file.name,
+      processed: false
+    });
+    
+    // Process the PDF
+    processPDFForMultiUpload(file);
+  }
+  
+  // Update the UI
+  updateUploadedFilesList();
+}
+
+// Enhanced PDF processing with better error handling
+async function processPDFForMultiUpload(file) {
+  console.log(`🔄 Processing PDF: ${file.name}`);
+  
+  try {
+    // Ensure PDF.js is available
+    await ensurePDFJS();
+  } catch (error) {
+    console.error('❌ PDF.js not available:', error);
+    markFileAsError(file.name, 'PDF.js not available');
+    return;
+  }
+  
+  const reader = new FileReader();
+  
+  reader.onload = async function(e) {
+    try {
+      console.log(`📖 Reading PDF content: ${file.name}`);
+      const typedArray = new Uint8Array(e.target.result);
+      const pdf = await pdfjsLib.getDocument(typedArray).promise;
+      let fullText = '';
+      
+      // Extract text from each page (limit to first 10 pages for performance)
+      const pageLimit = Math.min(pdf.numPages, 10);
+      console.log(`📄 Processing ${pageLimit} pages from ${file.name}`);
+      
+      for (let i = 1; i <= pageLimit; i++) {
+        const page = await pdf.getPage(i);
+        const textContent = await page.getTextContent();
+        fullText += textContent.items.map(item => item.str).join(' ');
+      }
+      
+      // Update the file in the array with the extracted text
+      const fileIndex = uploadedPDFs.findIndex(pdf => pdf.name === file.name);
+      if (fileIndex !== -1) {
+        uploadedPDFs[fileIndex].content = fullText.substring(0, 10000); // Limit text length
+        uploadedPDFs[fileIndex].processed = true;
+        console.log(`✅ Successfully processed ${file.name}`);
+        updateUploadedFilesList();
+      }
+      
+    } catch (error) {
+      console.error(`❌ PDF processing error for ${file.name}:`, error);
+      markFileAsError(file.name, error.message);
+    }
+  };
+  
+  reader.onerror = function(error) {
+    console.error(`❌ FileReader error for ${file.name}:`, error);
+    markFileAsError(file.name, 'Failed to read file');
+  };
+  
+  reader.readAsArrayBuffer(file);
+}
+
+function markFileAsError(fileName, errorMessage) {
+  const fileIndex = uploadedPDFs.findIndex(pdf => pdf.name === fileName);
+  if (fileIndex !== -1) {
+    uploadedPDFs[fileIndex].error = true;
+    uploadedPDFs[fileIndex].errorMessage = errorMessage;
+    updateUploadedFilesList();
+  }
+}
+
+function updateUploadedFilesList() {
+  const container = document.getElementById('uploadedFilesList');
+  if (!container) {
+    console.warn('❌ uploadedFilesList container not found');
+    return;
+  }
+  
+  container.innerHTML = '';
+  
+  uploadedPDFs.forEach((pdf, index) => {
+    const fileDiv = document.createElement('div');
+    fileDiv.className = 'uploaded-file-item';
+    
+    let statusText = 'Processing...';
+    let statusColor = '#666';
+    
+    if (pdf.processed) {
+      statusText = `Ready (${pdf.content?.length || 0} chars)`;
+      statusColor = '#10b981';
+    } else if (pdf.error) {
+      statusText = `Error: ${pdf.errorMessage || 'Unknown error'}`;
+      statusColor = '#ef4444';
+    }
+    
+    fileDiv.innerHTML = `
+      <div>
+        <strong>${pdf.name}</strong>
+        <span style="color: ${statusColor}; font-size: 0.8rem; margin-left: 0.5rem;">${statusText}</span>
+      </div>
+      <button class="remove-file-btn" onclick="removeUploadedFile(${index})">Remove</button>
+    `;
+    
+    container.appendChild(fileDiv);
+  });
+  
+  console.log(`📋 Updated files list: ${uploadedPDFs.length} files`);
+}
+
+function removeUploadedFile(index) {
+  const fileName = uploadedPDFs[index]?.name;
+  uploadedPDFs.splice(index, 1);
+  console.log(`🗑️ Removed file: ${fileName}`);
+  updateUploadedFilesList();
+}
+
+// Utility function to manually trigger debug (call this in console)
+function runDebug() {
+  debugDragAndDrop();
+}
+
+// Enhanced initialization - call this when your modal opens
+function initializeDragAndDrop() {
+  console.log('🚀 Initializing drag and drop system...');
+  
+  // Small delay to ensure DOM is ready
+  setTimeout(() => {
+    setupMultiFileDragAndDrop();
+    
+    // Auto-debug in development or with debug parameter
+    if (window.location.hostname === 'localhost' || 
+        window.location.search.includes('debug=true')) {
+      setTimeout(debugDragAndDrop, 500);
+    }
+  }, 100);
+}
+
+  // Load mentees
+  async function loadMentees(user) {
+    const userDoc = await firebase.firestore().collection('users').doc(user.uid).get();
+    const userData = userDoc.data();
+
+    let mentorComps = [];
+    if (Array.isArray(userData.mentorCompetition)) mentorComps = userData.mentorCompetition;
+    else if (typeof userData.mentorCompetition === 'string' && userData.mentorCompetition.trim() !== '')
+      mentorComps = [userData.mentorCompetition.trim()];
+    if (mentorComps.length === 0) return;
+    
+    const usersSnapshot = await firebase.firestore().collection('users').get();
+    menteesCache = [];
+    usersSnapshot.forEach(doc => {
+      const other = doc.data();
+      if (doc.id === user.uid) return;
+      let otherComps = [];
+      if (Array.isArray(other.competitions)) otherComps = other.competitions;
+      else if (typeof other.competitions === 'string' && other.competitions.trim() !== '')
+        otherComps = [other.competitions.trim()];
+      const overlap = otherComps.some(comp => mentorComps.includes(comp));
+      if (overlap) {
+        menteesCache.push({ id: doc.id, ...other });
+        menteeNameMap[doc.id] = other.name || other.fullName || other.email || "(unnamed)";
+      }
+    });
+  }
+
+  const selectionState = {
+  written: {
+    time: null,
+    difficulty: null
+  },
+  speaking: {
+    time: null,
+    focus: null
+  },
+  case: {
+    time: null,
+    focus: null,
+    difficulty: null
+  }
+};
+
+// Function to populate competition dropdown based on user's mentor competitions
+async function populateCompetitionDropdown() {
+  try {
+    const user = firebase.auth().currentUser;
+    if (!user) return;
+
+    const userDoc = await firebase.firestore().collection('users').doc(user.uid).get();
+    if (!userDoc.exists) return;
+
+    const userData = userDoc.data();
+    let comps = [];
+
+    if (Array.isArray(userData.mentorCompetition)) comps = userData.mentorCompetition;
+    else if (typeof userData.mentorCompetition === 'string' && userData.mentorCompetition.trim())
+      comps = [userData.mentorCompetition.trim()];
+
+    const dropdown = document.getElementById('competitionSelectWritten');
+    if (!dropdown) return;
+
+    // Reset dropdown except first placeholder
+    const firstOption = dropdown.options[0];
+    dropdown.innerHTML = '';
+    dropdown.appendChild(firstOption);
+
+    comps.forEach(comp => {
+      const opt = document.createElement('option');
+      opt.value = comp;
+      opt.textContent = comp;
+      dropdown.appendChild(opt);
+    });
+
+  } catch (err) {
+    console.error("Error populating competition dropdown:", err);
+  }
+}
+
+// Call this function when the modal is opened
+
+
+// Call this function when the page loads to ensure it's ready
+document.addEventListener('DOMContentLoaded', function() {
+  // Set up event listener for when the modal might be opened
+  const writtenModalBtn = document.querySelector('[onclick*="openWrittenModal"]');
+  if (writtenModalBtn) {
+    writtenModalBtn.addEventListener('click', populateCompetitionDropdown);
+  }
+});
+
+ // Written Modal
+function selectTime(button) {
+  document.querySelectorAll('.time-btn').forEach(btn => {
+    btn.classList.remove('selected');
+    btn.style.backgroundColor = '#e6e9ff';
+  });
+  button.classList.add('selected');
+  button.style.backgroundColor = '#c0c4ff';
+}
+
+function selectDifficulty(button) {
+  document.querySelectorAll('.difficulty-btn').forEach(btn => {
+    btn.classList.remove('selected');
+    btn.style.backgroundColor = '#e6e9ff';
+  });
+  button.classList.add('selected');
+  button.style.backgroundColor = '#c0c4ff';
+}
+
+// Speaking Modal
+function selectSpeakingTime(button) {
+  document.querySelectorAll('.speaking-time-btn').forEach(btn => {
+    btn.classList.remove('selected');
+    btn.style.backgroundColor = '#e6e9ff';
+  });
+  button.classList.add('selected');
+  button.style.backgroundColor = '#c0c4ff';
+}
+
+function selectSpeakingFocus(button) {
+  document.querySelectorAll('.speaking-focus-btn').forEach(btn => {
+    btn.classList.remove('selected');
+    btn.style.backgroundColor = '#e6e9ff';
+  });
+  button.classList.add('selected');
+  button.style.backgroundColor = '#c0c4ff';
+}
+
+// Case Modal
+function selectCaseTime(button) {
+  document.querySelectorAll('.case-time-btn').forEach(btn => {
+    btn.classList.remove('selected');
+    btn.style.backgroundColor = '#e6e9ff';
+  });
+  button.classList.add('selected');
+  button.style.backgroundColor = '#c0c4ff';
+}
+
+function selectCaseFocus(button) {
+  document.querySelectorAll('.case-focus-btn').forEach(btn => {
+    btn.classList.remove('selected');
+    btn.style.backgroundColor = '#e6e9ff';
+  });
+  button.classList.add('selected');
+  button.style.backgroundColor = '#c0c4ff';
+}
+
+function selectCaseDifficulty(button) {
+  document.querySelectorAll('.case-difficulty-btn').forEach(btn => {
+    btn.classList.remove('selected');
+    btn.style.backgroundColor = '#e6e9ff';
+  });
+  button.classList.add('selected');
+  button.style.backgroundColor = '#c0c4ff';
+}
+  // Load assignments
+// Replace your loadAssignments function with this debug version
+async function loadAssignments(user) {
+    console.log("=== LOADING ASSIGNMENTS DEBUG ===");
+    console.log("Mentees cache:", menteesCache);
+    
+    if (menteesCache.length === 0) {
+        console.log("No mentees found, exiting loadAssignments");
+        return;
+    }
+    
+    const menteeIds = menteesCache.map(m => m.id);
+    console.log("Looking for assignments for menteeIds:", menteeIds);
+    
+    firebase.firestore().collection("assignments")
+      .where("to", "in", menteeIds)
+      .onSnapshot(snapshot => {
+          console.log("=== ASSIGNMENTS SNAPSHOT ===");
+          console.log("Snapshot size:", snapshot.size);
+          
+          currentAssignments = [];
+          snapshot.forEach(doc => {
+              const data = doc.data();
+              console.log("Assignment doc:", doc.id, data);
+              
+              currentAssignments.push({ 
+                  id: doc.id, 
+                  ...data,
+                  congratulated: data.congratulated || false,
+                  reported: data.reported || false
+              });
+          });
+          
+          console.log("Current assignments after processing:", currentAssignments);
+          console.log("Assignments by status:");
+          console.log("- Complete:", currentAssignments.filter(a => a.status === "complete"));
+          console.log("- Incomplete:", currentAssignments.filter(a => a.status !== "complete"));
+          
+          renderAssignments();
+      }, error => {
+          console.error("Error loading assignments:", error);
+      });
+}
+
+
+  function populateSortDropdowns() {
+    const completeDropdown = document.getElementById('sortPeopleComplete');
+    const incompleteDropdown = document.getElementById('sortPeopleIncomplete');
+    
+    [completeDropdown, incompleteDropdown].forEach(dropdown => {
+      if (!dropdown) return;
+      
+      dropdown.innerHTML = '<option value="">All Mentees</option>';
+      
+      if (menteesCache.length === 0) {
+        dropdown.innerHTML += '<option disabled>No mentees found</option>';
+        return;
+      }
+
+      // Sort mentees alphabetically
+      const sortedMentees = [...menteesCache].sort((a, b) => {
+        const nameA = menteeNameMap[a.id] || '';
+        const nameB = menteeNameMap[b.id] || '';
+        return nameA.localeCompare(nameB);
+      });
+
+      sortedMentees.forEach(mentee => {
+        const option = document.createElement('option');
+        option.value = mentee.id;
+        option.text = menteeNameMap[mentee.id] || mentee.email || "(unnamed)";
+        dropdown.add(option);
+      });
+
+      dropdown.addEventListener('change', function() {
+        selectedMenteeId = this.value;
+        renderAssignments(selectedMenteeId);
+      });
+    });
+  }
+
+  document.getElementById('competitionSelectWritten')?.addEventListener('change', function(e) {
+  const selectedCompetition = e.target.value;
+  if (selectedCompetition) {
+    populateCompetencyOptions(selectedCompetition); // ✅ refresh checkboxes
+  }
+});
+
+
+  // Render assignments
+ function renderAssignments(menteeId = "") {
+    console.log("=== RENDERING ASSIGNMENTS DEBUG ===");
+    console.log("Selected menteeId:", menteeId);
+    console.log("Current assignments:", currentAssignments);
+    
+    const filtered = menteeId
+      ? currentAssignments.filter(a => {
+          console.log(`Filtering assignment ${a.id}: a.to=${a.to}, menteeId=${menteeId}, match=${a.to === menteeId}`);
+          return a.to === menteeId;
+        })
+      : currentAssignments;
+
+    console.log("Filtered assignments:", filtered);
+
+    const complete = filtered
+      .filter(a => {
+          const isComplete = a.status === "complete";
+          console.log(`Assignment ${a.id}: status=${a.status}, isComplete=${isComplete}`);
+          return isComplete;
+      })
+      .sort((a, b) => (b.completedAt?.seconds || 0) - (a.completedAt?.seconds || 0));
+    
+    const incomplete = filtered
+      .filter(a => a.status !== "complete")
+      .sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+
+    console.log("Complete assignments after filtering:", complete);
+    console.log("Incomplete assignments after filtering:", incomplete);
+
+    renderAssignmentCards("training-grid-complete", complete);
+    renderAssignmentCards("training-grid-incomplete", incomplete);
+}
+
+function renderAssignmentCards(gridClass, assignments) {
+    console.log(`=== RENDERING ${gridClass.toUpperCase()} ===`);
+    console.log("Assignments to render:", assignments);
+    
+    let grid = document.querySelector(`.${gridClass}`) 
+             || document.querySelector(`.training-grid.${gridClass.replace('training-grid-', '')}`)
+             || (gridClass === 'training-grid-complete'
+                    ? document.querySelector('.training-grid.training-grid-complete')
+                    : document.querySelector('.training-grid.training-grid-incomplete'));
+
+    if (!grid) {
+        console.error(`Grid element not found with any selector for: ${gridClass}`);
+        console.log("Available elements with training-grid class:", document.querySelectorAll('.training-grid'));
+        return;
+    }
+
+    if (assignments.length === 0) {
+        grid.innerHTML = `<div class="no-assignments">No assignments found</div>`;
+        return;
+    }
+
+    const html = assignments.map(a => {
+        let submissionContent = '';
+
+        // ✅ For complete speaking/case assignments
+        if (a.status === "complete") {
+            if (a.type === "written") {
+                submissionContent = `
+                    <div class="submission-score">
+                        <strong>Score:</strong> ${a.score !== undefined ? a.score : 'N/A'} / ${a.maxScore || 'N/A'}
+                    </div>`;
+            } else if ((a.type === "speaking" || a.type === "case") && a.recordingUrl) {
+                submissionContent = `
+                    <div class="file-box-wrapper" style="margin-top: 10px; width: 450px; margin-left: -80px;">
+                        <div class="file-box" style="display: flex; align-items: center; background: #f5f5f5; padding: 8px 12px; border-radius: 10px; width: 300px;">
+                            <i class="feather-icon" style="margin-right: 6px;">📎</i>
+                            <a href="${a.recordingUrl}" download target="_blank" style="color: #007bff; text-decoration: none;">View Submission</a>
+                        </div>
+                    </div>`;
+            } else if (a.type === "speaking" && a.submissionAudioUrl) {
+                submissionContent = `<audio controls src="${a.submissionAudioUrl}" style="width: 100%; margin-top: 0.5rem;"></audio>`;
+            } else if (a.type === "case" && a.submissionVideoUrl) {
+                submissionContent = `<video controls src="${a.submissionVideoUrl}" style="width: 100%; margin-top: 0.5rem;"></video>`;
+            }
+        }
+
+        return `
+    <div class="training-card" data-id="${a.id}">
+        <div class="badge ${a.optional ? 'optional' : ''}">${a.optional ? "OPTIONAL" : ""}</div>
+        <div class="mentee-name">${menteeNameMap[a.to] || "Unknown mentee"}</div>
+        <h4>${a.title || "Untitled Assignment"}</h4>
+        <p>${a.description || "No description provided."}</p>
+        ${submissionContent}
+        <div class="training-meta">
+           
+            <div class="action-buttons" style="display: flex; align-items: center; gap: 8px;">
+               ${a.status !== "complete" 
+    ? `<button class="action-btn report" onclick="handleReport(this, '${a.id}')" style="height: 40px; display: flex; align-items: center; justify-content: center;">
+        ${a.reported ? '✓ Reported' : 'Report'}
+       </button>`
+    : `
+<button class="action-btn congratulate" onclick="handleCongratulate(this, '${a.id}')" style="min-width: 97px; height: 40px; margin-top: 10px;">
+           ${a.congratulated ? 'Congratulated' : 'Congratulate'}
+       </button>
+     
+      
+       ${(a.type === "speaking" || a.type === "case") ? `
+           <button class="action-btn comment-btn" onclick="openCommentModal('${a.id}')" style="min-width: 5px; height: 40px; background: #f3f4f6; color: #6b7280; display: flex; align-items: center; justify-content: center;">Comment</button>
+           
+       </button>
+            <div class="time-sp-container">
+                <span class="time" style="min-width: 55px; min-height: 40px; display: inline-flex; align-items: center; justify-content: center; margin-top: 10px;">${a.time || "0 min"}</span>
+                <span class="sp" style="min-width: 65px;  margin-top: 10px; min-height: 40px; display: inline-flex; align-items: center; justify-content: center;">${a.sp || "0"} SP</span>
+            </div>
+
+       ` : ""}
+       ${(a.type === "written") ? `
+       <div class="time-sp-container">
+                <span class="time" style="min-width: 55px; min-height: 40px; display: inline-flex; align-items: center; justify-content: center; margin-top: 15px;">${a.time || "0 min"}</span>
+                <span class="sp" style="min-width: 65px;  margin-top: 15px; min-height: 40px; display: inline-flex; align-items: center; justify-content: center;">${a.sp || "0"} SP</span>
+            </div>
+            
+       ` : ""}
+       `
+}
+            </div>
+        </div>
+    </div>
+`.trim();
+}).join('');
+
+grid.innerHTML = html;
+}
+
+async function updateExistingCards() {
+    console.log('Updating existing cards...');
+    
+    // Get all existing user-generated cards
+    const existingCards = document.querySelectorAll('.training-card[data-user-generated="true"]');
+    
+    if (existingCards.length === 0) {
+        console.log('No existing cards found');
+        return;
+    }
+    
+    try {
+        // Get fresh data from Firebase
+        const snapshot = await db.collection('submissions')
+            .orderBy('createdAt', 'desc')
+            .get();
+        
+        // Remove all existing user-generated cards
+        existingCards.forEach(card => card.remove());
+        
+        // Recreate cards with new design
+        const plusCard = document.querySelector('.plus-card');
+        if (!plusCard) {
+            console.error('Plus card not found');
+            return;
+        }
+        
+        snapshot.forEach(doc => {
+            const data = { id: doc.id, ...doc.data() };
+            createCardElement(data, plusCard);
+        });
+        
+        console.log('✅ All cards updated successfully!');
+        
+    } catch (error) {
+        console.error('Error updating cards:', error);
+        
+        // Fallback: Update cards with dummy data if Firebase fails
+        existingCards.forEach((card, index) => {
+            const dummyData = {
+                id: `card-${index}`,
+                title: card.querySelector('h4')?.textContent || 'Sample Assignment',
+                difficulty: 'medium',
+                rawUrl: '#',
+                reactions: { heart: 0, thumbsup: 0 }
+            };
+            
+            // Replace old card with new design
+            const newCard = document.createElement('div');
+            newCard.className = 'training-card user-generated-card';
+            newCard.setAttribute('data-user-generated', 'true');
+            newCard.onclick = () => toggleCommentPanel(dummyData.id);
+            
+            newCard.innerHTML = `
+                <div class="card-header">
+                    ${formatCardBadges(dummyData)}
+                    <h4 class="card-title">${dummyData.title}</h4>
+                </div>
+                
+                <div class="card-content">
+                    ${formatVideoLink(dummyData)}
+                </div>
+                
+                <div class="card-footer">
+                    ${formatCardMeta(dummyData)}
+                    ${formatReactions(dummyData)}
+                </div>
+            `;
+            
+            addCardAnimations(newCard);
+            card.replaceWith(newCard);
+        });
+        
+        console.log('✅ Cards updated with fallback method');
+    }
+}
+
+function showModalWithAnimation(modalId) {
+  const modal = document.getElementById(modalId);
+  modal.style.display = 'block';
+  modal.style.opacity = '0';
+  
+  requestAnimationFrame(() => {
+    modal.style.transition = 'opacity 0.3s ease';
+    modal.style.opacity = '1';
+  });
+}
+
+// ========== CALL THIS FUNCTION TO UPDATE CARDS NOW ========== //
+// Add this to your existing script section or run in console
+document.addEventListener('DOMContentLoaded', () => {
+    // Wait a bit for Firebase to initialize, then update cards
+    setTimeout(() => {
+        if (typeof updateExistingCards === 'function') {
+            updateExistingCards();
+        }
+    }, 2000);
+});
+
+// ========== MANUAL UPDATE FUNCTION (run this in console) ========== //
+function forceUpdateCardsNow() {
+    console.log('🔄 Force updating cards...');
+    updateExistingCards();
+}
+
+function testAssignmentCompletion() {
+    console.log("=== MANUAL TEST ===");
+    console.log("Current assignments:", currentAssignments);
+    
+    // Find a specific assignment to test
+    if (currentAssignments.length > 0) {
+        const testAssignment = currentAssignments[0];
+        console.log("Testing with assignment:", testAssignment);
+        
+        // Manually mark it as complete for testing
+        firebase.firestore().collection("assignments").doc(testAssignment.id).update({
+            status: "complete",
+            completedAt: firebase.firestore.FieldValue.serverTimestamp(),
+            score: 3,
+            maxScore: 5
+        }).then(() => {
+            console.log("Test assignment marked as complete");
+        }).catch(error => {
+            console.error("Error marking test assignment:", error);
+        });
+    }
+}
+
+async function handleCongratulate(buttonElement, assignmentId) {
+    try {
+        const db = firebase.firestore();
+        const user = firebase.auth().currentUser;
+        
+        // Get the assignment data
+        const assignmentDoc = await db.collection("assignments").doc(assignmentId).get();
+        const assignment = assignmentDoc.data();
+        
+        // Update UI immediately for better UX
+        buttonElement.textContent = '✓ Congratulated';
+        buttonElement.classList.add('congratulated');
+        buttonElement.disabled = true;
+        
+        // Create congratulation notification in mentee's notifications collection
+        await db.collection('notifications').add({
+            menteeId: assignment.to,
+            message: `${user.displayName || "Your mentor"} congratulated you!`,
+            assignmentName: assignment.title || "your assignment",
+            showModal: true,  // This triggers the modal
+            read: false,
+            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        // Update assignment status in Firestore
+        await db.collection("assignments").doc(assignmentId).update({
+            congratulated: true,
+            congratulatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        
+    } catch (error) {
+        console.error("Error congratulating:", error);
+        buttonElement.textContent = 'Error - Try Again';
+        buttonElement.classList.remove('congratulated');
+        buttonElement.disabled = false;
+    }
+}
+
+async function handleReport(buttonElement, assignmentId) {
+    try {
+        const db = firebase.firestore();
+        const user = firebase.auth().currentUser;
+        
+        // Get the current assignment data
+        const assignmentRef = db.collection("assignments").doc(assignmentId);
+        const assignmentDoc = await assignmentRef.get();
+        const assignment = assignmentDoc.data();
+        
+        if (!assignment) {
+            throw new Error("Assignment not found");
+        }
+
+        // Update UI immediately
+        buttonElement.textContent = '✓ Reported';
+        buttonElement.classList.add('reported');
+        buttonElement.disabled = true;
+
+        // Create notification in root collection (not user subcollection)
+        await db.collection('notifications').add({
+            menteeId: assignment.to, // The mentee who will receive this
+            message: `${user.displayName || "Your mentor"} has reported an issue with your assignment: ${assignment.title}`,
+            assignmentId: assignmentId,
+            assignmentName: assignment.title || "Assignment",
+            showModal: true, // This will trigger the modal popup
+            read: false,
+            timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+            type: "report"
+        });
+
+        // Update assignment status
+        await assignmentRef.update({
+            reported: true,
+            reportedAt: firebase.firestore.FieldValue.serverTimestamp(),
+            status: "reported" // Add this to change the status
+        });
+
+        // Update local state
+        const assignmentIndex = currentAssignments.findIndex(a => a.id === assignmentId);
+        if (assignmentIndex !== -1) {
+            currentAssignments[assignmentIndex].reported = true;
+            renderAssignments(selectedMenteeId);
+        }
+
+    } catch (error) {
+        console.error("Error reporting assignment:", error);
+        buttonElement.textContent = 'Error - Try Again';
+        buttonElement.classList.remove('reported');
+        buttonElement.disabled = false;
+        
+        // Optional: Show error to user
+        alert("Failed to report assignment. Please try again.");
+    }
+}
+
+  // Mark complete
+  function markAsComplete(id) {
+    const assignment = currentAssignments.find(a => a.id === id);
+    if (!assignment) return;
+    
+    firebase.firestore().collection("assignments").doc(id).update({ 
+      status: "complete",
+      completedAt: firebase.firestore.FieldValue.serverTimestamp()
+    })
+    .then(() => {
+      assignment.status = "complete";
+      renderAssignments(selectedMenteeId);
+    })
+    .catch(error => {
+      console.error("Error marking complete:", error);
+      alert("Failed to mark assignment as complete");
+    });
+  }
+function initializeButtonEffects() {
+  // Remove any existing event listeners to prevent duplicates
+  const allButtons = document.querySelectorAll('.speaking-time-btn, .speaking-focus-btn, .case-time-btn, .case-focus-btn, .case-difficulty-btn, .time-btn, .difficulty-btn, .focus-btn');
+  
+  allButtons.forEach(button => {
+    // Remove inline styles that might interfere
+    button.style.backgroundColor = '';
+    button.style.borderColor = '';
+    button.style.color = '';
+    button.style.boxShadow = '';
+    
+    // Clone the button to remove all existing event listeners
+    const newButton = button.cloneNode(true);
+    button.parentNode.replaceChild(newButton, button);
+  });
+}
+
+// Call this function after modals are opened or buttons are created
+function setupModalButtons() {
+  initializeButtonEffects();
+}
+
+function openWrittenModal() {
+  showModalWithAnimation('writtenModal');
+  populateCompetitionDropdown();     // <-- keep this
+  showMenteesInWrittenModal();       // <-- and this
+  setTimeout(setupModalButtons, 100);
+   addQuestionInput();
+    setTimeout(() => {
+        setupMultiFileDragAndDrop();
+    }, 300);
+}
+
+
+  function closeWrittenModal() {
+    document.getElementById('writtenModal').style.display = 'none';
+    document.getElementById('writtenSetup').style.display = 'block';
+    document.getElementById('writtenCongrats').style.display = 'none';
+  }
+
+  // --- SPEAKING MODAL ---
+// Update your modal opening functions:
+function openSpeakingModal() {
+  document.getElementById('speakingModal').style.display = 'block';
+  showMenteesInSpeakingModal();
+  setTimeout(setupModalButtons, 100); // Small delay to ensure DOM is ready
+}
+
+function closeSpeakingModal() {
+  document.getElementById('speakingModal').style.display = 'none';
+  // Reset to setup state
+  document.getElementById('speakingSetup').style.display = 'block';
+  document.getElementById('speakingCongrats').style.display = 'none';
+  
+  // Clear form fields
+  clearSpeakingForm();
+}
+
+function clearSpeakingForm() {
+  document.getElementById('speakingAssignmentName').value = '';
+  document.getElementById('speakingAssignmentDesc').value = '';
+  document.getElementById('speakingQuestion1').value = '';
+  document.getElementById('speakingQuestion2').value = '';
+  document.getElementById('speakingQuestion3').value = '';
+  
+  // Clear selected buttons
+  document.querySelectorAll('.speaking-focus-btn.selected').forEach(btn => btn.classList.remove('selected'));
+  document.querySelectorAll('.speaking-time-btn.selected').forEach(btn => btn.classList.remove('selected'));
+  
+  // Clear mentee selections
+  document.querySelectorAll('.speaking-user-checkbox').forEach(cb => cb.checked = false);
+  
+  // Clear competency selections
+  document.querySelectorAll('.speaking-competency-option').forEach(cb => cb.checked = false);
+}
+
+function openCaseModal() {
+  document.getElementById('caseModal').style.display = 'block';
+  showMenteesInCaseModal();
+  setTimeout(setupModalButtons, 100);
+}
+
+
+function closeCaseModal() {
+  document.getElementById('caseModal').style.display = 'none';
+  document.getElementById('caseSetup').style.display = 'block';
+  document.getElementById('caseCongrats').style.display = 'none';
+  clearCaseForm();
+}
+
+function clearCaseForm() {
+  document.getElementById('caseAssignmentName').value = '';
+  document.getElementById('caseAssignmentDesc').value = '';
+  document.getElementById('caseStudyContent').value = '';
+  document.getElementById('caseQuestion1').value = '';
+  document.getElementById('caseQuestion2').value = '';
+  document.getElementById('caseQuestion3').value = '';
+  
+  document.querySelectorAll('.case-focus-btn.selected').forEach(btn => btn.classList.remove('selected'));
+  document.querySelectorAll('.case-time-btn.selected').forEach(btn => btn.classList.remove('selected'));
+  document.querySelectorAll('.case-difficulty-btn.selected').forEach(btn => btn.classList.remove('selected'));
+  
+  document.querySelectorAll('.case-user-checkbox').forEach(cb => cb.checked = false);
+  document.querySelectorAll('.case-competency-option').forEach(cb => cb.checked = false);
+}
+
+  function showMenteesInWrittenModal() {
+    const menteesList = document.getElementById('menteesList');
+    if (!menteesList) return;
+    
+    menteesList.innerHTML = menteesCache.length === 0
+      ? '<div class="no-mentees">No mentees found</div>'
+      : menteesCache.map(mentee => `
+        <label class="mentee-checkbox">
+          <input type="checkbox" class="user-checkbox" value="${mentee.id}">
+          <span class="mentee-info">
+            <b>${menteeNameMap[mentee.id] || mentee.email || "Unnamed"}</b>
+            <span class="mentee-details">
+              ${Array.isArray(mentee.competitions) ? mentee.competitions.join(', ') : ''}
+              ${mentee.email ? " | " + mentee.email : ""}
+            </span>
+          </span>
+        </label>
+      `).join('');
+  }
+function addButtonEffects(buttonsSelector) {
+  const buttons = document.querySelectorAll(buttonsSelector);
+
+  buttons.forEach(button => {
+    button.style.transition = 'background-color 0.3s, box-shadow 0.3s, color 0.3s';
+
+    button.addEventListener('mouseenter', () => {
+      if (!button.classList.contains('selected')) {
+        button.style.backgroundColor = '#d4d9ff'; // lighter pastel hover
+        button.style.boxShadow = '0 0 6px #b0b8ff88';
+      }
+    });
+    button.addEventListener('mouseleave', () => {
+      if (!button.classList.contains('selected')) {
+        button.style.backgroundColor = '#e6e9ff';
+        button.style.boxShadow = 'none';
+      }
+    });
+  });
+}
+
+// Call this after buttons render
+addButtonEffects('.speaking-time-btn');
+addButtonEffects('.speaking-focus-btn');
+
+  function showMenteesInSpeakingModal() {
+    const menteesList = document.getElementById('speakingMenteesList');
+    if (!menteesList) return;
+
+    menteesList.innerHTML = menteesCache.length === 0
+      ? '<div class="no-mentees">No mentees found</div>'
+      : menteesCache.map(mentee => `
+        <label class="mentee-checkbox">
+          <input type="checkbox" class="speaking-user-checkbox" value="${mentee.id}">
+          <span class="mentee-info">
+            <b>${menteeNameMap[mentee.id] || mentee.email || "Unnamed"}</b>
+            <span class="mentee-details">
+              ${Array.isArray(mentee.competitions) ? mentee.competitions.join(', ') : ''}
+              ${mentee.email ? " | " + mentee.email : ""}
+            </span>
+          </span>
+        </label>
+      `).join('');
+  }
+
+  function showMenteesInCaseModal() {
+    const menteesList = document.getElementById('caseMenteesList');
+    if (!menteesList) return;
+
+    menteesList.innerHTML = menteesCache.length === 0
+      ? '<div class="no-mentees">No mentees found</div>'
+      : menteesCache.map(mentee => `
+        <label class="mentee-checkbox">
+          <input type="checkbox" class="case-user-checkbox" value="${mentee.id}">
+          <span class="mentee-info">
+            <b>${menteeNameMap[mentee.id] || mentee.email || "Unnamed"}</b>
+            <span class="mentee-details">
+              ${Array.isArray(mentee.competitions) ? mentee.competitions.join(', ') : ''}
+              ${mentee.email ? " | " + mentee.email : ""}
+            </span>
+          </span>
+        </label>
+      `).join('');
+  }
+
+  function selectAllSpeakingMentees() {
+    document.querySelectorAll('.speaking-user-checkbox').forEach(cb => cb.checked = true);
+  }
+
+  function selectAllCaseMentees() {
+    document.querySelectorAll('.case-user-checkbox').forEach(cb => cb.checked = true);
+  }
+
+  function selectAllSpeakingCompetencies() {
+    document.querySelectorAll('.speaking-competency-option').forEach(box => box.checked = true);
+  }
+
+  function selectAllCaseCompetencies() {
+    document.querySelectorAll('.case-competency-option').forEach(box => box.checked = true);
+  }
+
+  // Assignment generation
+  function generateWrittenAssignment() {
+    const selectedMentees = Array.from(document.querySelectorAll('.user-checkbox:checked')).map(cb => cb.value);
+    if (!selectedMentees.length) {
+        alert("Please select at least one mentee.");
+        return;
+    }
+
+    const timeBtn = document.querySelector('.time-btn.selected');
+    const time = timeBtn ? timeBtn.textContent.trim() : null;
+    const competencies = Array.from(document.querySelectorAll('.competency-option:checked')).map(cb => cb.value);
+    const questions = document.getElementById('speechInput').value.trim();
+    const diffBtn = document.querySelector('.difficulty-btn.selected');
+    const difficulty = diffBtn ? diffBtn.textContent.trim() : null;
+    const simulate = document.getElementById('simulate').checked;
+
+    const batch = firebase.firestore().batch();
+    const assignmentsRef = firebase.firestore().collection('assignments');
+    
+   selectedMentees.forEach(uid => {
+    const newRef = assignmentsRef.doc();
+    batch.set(newRef, {
+        title: "Written Practice",
+        type: "written",
+        time: time,
+        sp: calculateSP(time),
+        competencies: competencies,
+        questions: questions,
+        difficulty: difficulty,
+        simulate: simulate,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        to: uid,
+        status: "assigned",
+        correctAnswers: {
+            q1: "To make meetings more efficient",
+            q2: "Adjourn", 
+            q3: "Majority vote",
+            q4: "Amend",
+            q5: "\"I move to...\""
+        },
+        maxScore: 5,
+        // Save training data source
+        usedMenteeTrainingData: useMenteeTrainingData,
+        // Save ALL uploaded PDFs (regardless of training source selection)
+        trainingPDFs: uploadedPDFs.length > 0 ? uploadedPDFs.map(pdf => ({
+            name: pdf.name,
+            processed: pdf.processed,
+            content: pdf.content || '',
+            contentLength: pdf.content ? pdf.content.length : 0
+        })) : null
+    });
+});
+    batch.commit()
+        .then(() => {
+            document.getElementById('writtenSetup').style.display = 'none';
+            document.getElementById('writtenCongrats').style.display = 'block';
+        })
+        .catch(error => {
+            console.error("Error creating assignments:", error);
+            alert("Failed to create assignments");
+        });
+}
+
+function selectSpeakingFocus(button) {
+  document.querySelectorAll('.speaking-focus-btn').forEach(btn => btn.classList.remove('selected'));
+  button.classList.add('selected');
+}
+
+function selectSpeakingTime(button) {
+  document.querySelectorAll('.speaking-time-btn').forEach(btn => btn.classList.remove('selected'));
+  button.classList.add('selected');
+}
+
+function selectCaseFocus(button) {
+  document.querySelectorAll('.case-focus-btn').forEach(btn => btn.classList.remove('selected'));
+  button.classList.add('selected');
+}
+
+function selectCaseTime(button) {
+  document.querySelectorAll('.case-time-btn').forEach(btn => btn.classList.remove('selected'));
+  button.classList.add('selected');
+}
+
+function selectCaseDifficulty(button) {
+  document.querySelectorAll('.case-difficulty-btn').forEach(btn => btn.classList.remove('selected'));
+  button.classList.add('selected');
+}
+
+function generateSpeakingAssignment() {
+  const selectedMentees = Array.from(document.querySelectorAll('.speaking-user-checkbox:checked')).map(cb => cb.value);
+  if (!selectedMentees.length) {
+      alert("Please select at least one mentee.");
+      return;
+  }
+
+  const name = document.getElementById('speakingAssignmentName').value.trim();
+  const desc = document.getElementById('speakingAssignmentDesc').value.trim();
+  const question1 = document.getElementById('speakingQuestion1').value.trim();
+  const question2 = document.getElementById('speakingQuestion2').value.trim();
+  const question3 = document.getElementById('speakingQuestion3').value.trim();
+  
+  const timeBtn = document.querySelector('.speaking-time-btn.selected');
+  const time = timeBtn ? timeBtn.textContent.trim() : "5 min";
+  
+  const focusBtn = document.querySelector('.speaking-focus-btn.selected');
+  const focusArea = focusBtn ? focusBtn.textContent.trim() : "General";
+  
+  const competencies = Array.from(document.querySelectorAll('.speaking-competency-option:checked')).map(cb => cb.value);
+
+  const batch = firebase.firestore().batch();
+  const assignmentsRef = firebase.firestore().collection('assignments');
+  const notificationsRef = firebase.firestore().collection('notifications');
+
+  selectedMentees.forEach(uid => {
+    // 1. Create the assignment
+    const assignmentRef = assignmentsRef.doc();
+    
+    batch.set(assignmentRef, {
+      title: name || "Prepared Speaking",
+      description: desc,
+      type: "speaking",
+      time: time,
+      sp: calculateSP(time),
+      focusArea: focusArea,
+      competencies: competencies,
+      questions: [
+        question1 || "No question provided", 
+        question2 || "No question provided",
+        question3 || "No question provided"
+      ].filter(q => q !== "No question provided"),
+      to: uid,
+      status: "assigned",
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+
+    // 2. Add notification for mentee homepage
+    const notifRef = notificationsRef.doc();
+    batch.set(notifRef, {
+      menteeId: uid,
+      message: `You've been assigned a new Speaking Practice${name ? ': ' + name : ''}!`,
+      assignmentName: name || "Prepared Speaking",
+      assignmentId: assignmentRef.id,
+      type: "speaking",
+      showModal: false,
+      read: false,
+      timestamp: firebase.firestore.FieldValue.serverTimestamp()
+    });
+  });
+
+  batch.commit()
+    .then(() => {
+      document.getElementById('speakingSetup').style.display = 'none';
+      document.getElementById('speakingCongrats').style.display = 'block';
+    })
+    .catch(error => {
+      console.error("Error creating speaking assignments:", error);
+      alert("Failed to create assignments");
+    });
+}
+
+function generateCaseAssignment() {
+  const selectedMentees = Array.from(document.querySelectorAll('.case-user-checkbox:checked')).map(cb => cb.value);
+  if (!selectedMentees.length) {
+      alert("Please select at least one mentee.");
+      return;
+  }
+
+  const name = document.getElementById('caseAssignmentName').value.trim();
+  const desc = document.getElementById('caseAssignmentDesc').value.trim();
+  const caseContent = document.getElementById('caseStudyContent').value.trim();
+  const question1 = document.getElementById('caseQuestion1').value.trim();
+  const question2 = document.getElementById('caseQuestion2').value.trim();
+  const question3 = document.getElementById('caseQuestion3').value.trim();
+  
+  const timeBtn = document.querySelector('.case-time-btn.selected');
+  const time = timeBtn ? timeBtn.textContent.trim() : "10 min";
+  
+  const focusBtn = document.querySelector('.case-focus-btn.selected');
+  const focusArea = focusBtn ? focusBtn.textContent.trim() : "General";
+  
+  const diffBtn = document.querySelector('.case-difficulty-btn.selected');
+  const difficulty = diffBtn ? diffBtn.textContent.trim() : "Medium";
+  
+  const competencies = Array.from(document.querySelectorAll('.case-competency-option:checked')).map(cb => cb.value);
+
+  const batch = firebase.firestore().batch();
+  const assignmentsRef = firebase.firestore().collection('assignments');
+  const notificationsRef = firebase.firestore().collection('notifications');
+
+  selectedMentees.forEach(uid => {
+    const assignmentRef = assignmentsRef.doc();
+    
+    batch.set(assignmentRef, {
+      title: name || "Case Study",
+      description: desc,
+      type: "case",
+      time: time,
+      sp: calculateSP(time),
+      focusArea: focusArea,
+      difficulty: difficulty,
+      competencies: competencies,
+      caseContent: caseContent,
+      questions: [
+        question1 || "No question provided", 
+        question2 || "No question provided",
+        question3 || "No question provided"
+      ].filter(q => q !== "No question provided"),
+      to: uid,
+      status: "assigned",
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+
+    const notifRef = notificationsRef.doc();
+    batch.set(notifRef, {
+      menteeId: uid,
+      message: `You've been assigned a new Case Study${name ? ': ' + name : ''}!`,
+      assignmentName: name || "Case Study",
+      assignmentId: assignmentRef.id,
+      type: "case",
+      showModal: false,
+      read: false,
+      timestamp: firebase.firestore.FieldValue.serverTimestamp()
+    });
+  });
+
+  batch.commit()
+    .then(() => {
+      document.getElementById('caseSetup').style.display = 'none';
+      document.getElementById('caseCongrats').style.display = 'block';
+    })
+    .catch(error => {
+      console.error("Error creating case assignments:", error);
+      alert("Failed to create assignments");
+    });
+}
+
+// Helper function to calculate SP based on time
+function calculateSP(timeStr) {
+  if (!timeStr) return 0;
+  const minutes = parseInt(timeStr.replace(/\D/g, '')) || 0;
+  return Math.max(5, Math.floor(minutes / 2) * 5); // Minimum 5 SP, then 5 SP per 2 minutes
+}
+
+  // Helper functions for written modal
+  function selectTime(button) {
+    document.querySelectorAll('.time-btn').forEach(btn => btn.classList.remove('selected'));
+    button.classList.add('selected');
+  }
+
+  function selectDifficulty(button) {
+    document.querySelectorAll('.difficulty-btn').forEach(btn => btn.classList.remove('selected'));
+    button.classList.add('selected');
+  }
+
+  function selectAllCompetencies() {
+    document.querySelectorAll('.competency-option').forEach(box => box.checked = true);
+  }
+
+  function selectAllUsers() {
+    document.querySelectorAll('.user-checkbox').forEach(cb => cb.checked = true);
+  }
+
+  // Deprecated function - keeping for backward compatibility
+  function generateAssignment() {
+    document.getElementById('speakingSetup').style.display = 'none';
+    document.getElementById('congratsArea').style.display = 'block';
+  }
+
+  // Media recording functions (keep your existing implementations)
+  let mediaRecorder, mediaStream, recordedChunks = [];
+
+  function stopAllMedia() {
+    if (mediaRecorder && mediaRecorder.state !== "inactive") mediaRecorder.stop();
+    if (mediaStream) mediaStream.getTracks().forEach(track => track.stop());
+  }
+
+  function startAudio(context) {
+    stopAllMedia();
+    recordedChunks = [];
+    navigator.mediaDevices.getUserMedia({ audio: true })
+      .then(stream => {
+        mediaStream = stream;
+        mediaRecorder = new MediaRecorder(stream);
+        mediaRecorder.ondataavailable = e => recordedChunks.push(e.data);
+        mediaRecorder.onstop = () => {
+          const blob = new Blob(recordedChunks, { type: 'audio/webm' });
+          const audioURL = URL.createObjectURL(blob);
+          const audio = document.getElementById(`audioPlayback${capitalize(context)}`);
+          audio.src = audioURL;
+          audio.style.display = 'block';
+        };
+        mediaRecorder.start();
+        document.getElementById(`stopBtn${capitalize(context)}`).style.display = 'inline-block';
+      })
+      .catch(err => {
+        alert('Microphone permission denied.');
+        console.error(err);
+      });
+  }
+
+  function startVideo(context) {
+    stopAllMedia();
+    recordedChunks = [];
+    navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+      .then(stream => {
+        mediaStream = stream;
+        const video = document.getElementById(`videoPreview${capitalize(context)}`);
+        video.srcObject = stream;
+        video.muted = true;
+        video.play();
+        video.style.display = 'block';
+        mediaRecorder = new MediaRecorder(stream);
+        mediaRecorder.ondataavailable = e => recordedChunks.push(e.data);
+        mediaRecorder.onstop = () => {
+          const blob = new Blob(recordedChunks, { type: 'video/webm' });
+          const videoURL = URL.createObjectURL(blob);
+          video.srcObject = null;
+          video.src = videoURL;
+          video.controls = true;
+          video.muted = false;
+          video.play();
+        };
+        mediaRecorder.start();
+        document.getElementById(`stopBtn${capitalize(context)}`).style.display = 'inline-block';
+      })
+      .catch(err => {
+        alert('Camera permission denied.');
+        console.error(err);
+      });
+  }
+
+  function stopRecording(context) {
+    if (mediaRecorder && mediaRecorder.state === 'recording') {
+      mediaRecorder.stop();
+    }
+    const stopBtn = document.getElementById(`stopBtn${capitalize(context)}`);
+    if (stopBtn) stopBtn.style.display = 'none';
+  }
+
+  function capitalize(str) {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+  }
+
+  // Search functionality (keep your existing implementation)
+  const client = new MeiliSearch({ host: 'http://127.0.0.1:7700' });
+  const index = client.index('content');
+  const searchBox = document.getElementById('navbarSearch');
+  const searchDropdown = document.getElementById('searchDropdown');
+  const searchIcon = document.getElementById('navbarSearchIcon');
+
+  if (searchBox && searchDropdown) {
+    searchBox.addEventListener('input', async function (e) {
+      const query = e.target.value.trim();
+      if (!query) {
+        searchDropdown.style.display = 'none';
+        searchDropdown.innerHTML = '';
+        return;
+      }
+      try {
+        const result = await index.search(query, { limit: 5 });
+        if (!result.hits.length) {
+          searchDropdown.style.display = 'none';
+          searchDropdown.innerHTML = '';
+          return;
+        }
+        searchDropdown.style.display = 'block';
+        searchDropdown.innerHTML = result.hits.map(doc => `
+          <div class="dropdown-result" tabindex="0" data-url="${doc.url}">
+            <b>${doc.title}</b><br>
+            <span style="font-size:12px;color:#888;">${doc.category || ''}${doc.tags ? ' | ' + doc.tags.join(', ') : ''}</span>
+          </div>
+        `).join('');
+      } catch (err) {
+        searchDropdown.style.display = 'none';
+        searchDropdown.innerHTML = '';
+      }
+    });
+    
+    searchDropdown.addEventListener('click', function (e) {
+      const target = e.target.closest('.dropdown-result');
+      if (target?.dataset.url) window.location = target.dataset.url;
+    });
+    
+    searchBox.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' && searchDropdown.innerHTML) {
+        const first = searchDropdown.querySelector('.dropdown-result');
+        if (first?.dataset.url) window.location = first.dataset.url;
+      }
+    });
+    
+    document.addEventListener('click', function (e) {
+      if (!searchBox.contains(e.target) && !searchDropdown.contains(e.target)) {
+        searchDropdown.style.display = 'none';
+      }
+    });
+    
+    if (searchIcon) {
+      searchIcon.addEventListener('click', () => {
+        searchBox.dispatchEvent(new Event('input'));
+      });
+    }
+  }
+
+  // Tab selection + underline animation
+function selectTab(selectedTab) {
+  const tabText = selectedTab.textContent.trim();
+  if (tabText === "Dashboard") {
+    window.location.href = "mentor.html";
+    return;
+  }
+  if (tabText === "Assignments") {
+    window.location.href = "assigned.html";
+    return;
+  }
+  if (tabText === "Meetings") {
+    window.location.href = "meeting.html";
+    return;
+  }
+  
+  // Handle in-page tab selection (if you ever add that)
+  const tabs = document.querySelectorAll('.tab');
+  tabs.forEach(tab => tab.classList.remove('active'));
+  selectedTab.classList.add('active');
+  const underline = document.querySelector('.tab-underline');
+  if (underline) {
+    underline.style.transform = `translateX(${selectedTab.offsetLeft}px)`;
+    underline.style.width = `${selectedTab.offsetWidth}px`;
+  }
+}
+
+// Also add this initialization code to ensure underline is positioned correctly
+document.addEventListener('DOMContentLoaded', () => {
+  const activeTab = document.querySelector('.tab.active');
+  const underline = document.querySelector('.tab-underline');
+  if (activeTab && underline) {
+    underline.style.transform = `translateX(${activeTab.offsetLeft}px)`;
+    underline.style.width = `${activeTab.offsetWidth}px`;
+  }
+});
+
+// State to track assignment being commented on
+let commentAssignmentId = null;
+
+function openCommentModal(assignmentId) {
+  commentAssignmentId = assignmentId;
+  document.getElementById('commentModal').style.display = 'block';
+  document.getElementById('commentInput').value = '';
+  document.getElementById('commentSuccess').style.display = 'none';
+}
+
+function closeCommentModal() {
+  document.getElementById('commentModal').style.display = 'none';
+}
+
+
+async function submitComment() {
+  const comment = document.getElementById('commentInput').value.trim();
+  if (!commentAssignmentId || !comment) {
+    alert("Please write a comment.");
+    return;
+  }
+  
+  const db = firebase.firestore();
+  try {
+    // Get the assignment data first
+    const assignmentDoc = await db.collection("assignments").doc(commentAssignmentId).get();
+    const assignment = assignmentDoc.data();
+    
+    if (!assignment) {
+      alert("Assignment not found.");
+      return;
+    }
+
+    // Create the mentor comment notification
+    await db.collection('notifications').add({
+      menteeId: assignment.to,
+      assignmentId: commentAssignmentId,
+      assignmentName: assignment.title || "Assignment",
+      type: "mentorComment",
+      read: false,
+      comment: comment,  // This is the mentor's feedback
+      timestamp: firebase.firestore.FieldValue.serverTimestamp()
+    });
+
+    document.getElementById('commentInput').value = '';
+    document.getElementById('commentSuccess').style.display = 'block';
+
+    setTimeout(closeCommentModal, 1200);
+  } catch (err) {
+    alert("Failed to submit comment.");
+    console.error(err);
+  }}
+
+  function openNotificationsOnHome() {
+    // Set a flag in sessionStorage (gets cleared when browser is closed)
+    sessionStorage.setItem('openNotifications', 'true');
+    // Navigate to home page - CHANGE THIS PATH to match your structure
+    window.location.href = 'public/home.html';
+}
+
+async function populateCompetencyOptions(competitionName) {
+    const competencies = await getCompetenciesFromLatestSubmission(competitionName);
+    const checkboxGroup = document.querySelector('.checkbox-group');
+    
+    if (!checkboxGroup) return;
+    
+    // Clear existing checkboxes (keep the select all button)
+    const existingLabels = checkboxGroup.querySelectorAll('label');
+    existingLabels.forEach(label => {
+        if (!label.querySelector('.select-all-btn')) {
+            label.remove();
+        }
+    });
+    
+    if (competencies.length === 0) {
+        // Fallback to default FBLA competencies if none found
+        const defaultCompetencies = [
+            'Business Communication',
+            'Marketing',
+            'Accounting', 
+            'Economics',
+            'Business Law',
+            'Management',
+            'Entrepreneurship',
+            'Finance',
+            'International Business',
+            'Business Ethics',
+            'Parliamentary Procedure'
+        ];
+        
+        defaultCompetencies.forEach(comp => {
+            const label = document.createElement('label');
+            label.innerHTML = `<input type="checkbox" class="competency-option" value="${comp}"> ${comp}`;
+            checkboxGroup.insertBefore(label, checkboxGroup.querySelector('.select-all-btn'));
+        });
+        
+        return;
+    }
+    
+    // Create checkboxes for extracted competencies
+    competencies.forEach(comp => {
+        const label = document.createElement('label');
+        label.innerHTML = `<input type="checkbox" class="competency-option" value="${comp}"> ${comp}`;
+        checkboxGroup.insertBefore(label, checkboxGroup.querySelector('.select-all-btn'));
+    });
+}
+
+// Add this event listener where you initialize your page
+document.getElementById('competitionSelectWritten')?.addEventListener('change', function(e) {
+    const selectedCompetition = e.target.value;
+    if (selectedCompetition) {
+        populateCompetencyOptions(selectedCompetition);
+    }
+});
+
+async function getCompetenciesFromLatestSubmission(competitionName) {
+    if (!competitionName) return [];
+    
+    try {
+        const snapshot = await db.collection('competition-submissions')
+            .where('competition', '==', competitionName)
+            .orderBy('processedAt', 'desc')
+            .limit(1)
+            .get();
+        
+        if (!snapshot.empty) {
+            const latestDoc = snapshot.docs[0].data();
+            const extractedCompetencies = latestDoc.extractedCompetencies;
+            
+            if (extractedCompetencies) {
+                // Extract competency titles, remove letter prefixes (A., B., etc.)
+                const competencyLines = extractedCompetencies
+                    .split('\n')
+                    .filter(line => /^[A-Z]\.\s/.test(line.trim()))
+                    .map(line => line.replace(/^[A-Z]\.\s*/, '').trim())
+                    .filter(comp => comp.length > 0);
+                
+                return competencyLines;
+            }
+        }
+        
+        return [];
+    } catch (error) {
+        console.error('Error fetching competencies:', error);
+        return [];
+    }
+}
+
+
+
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,65 @@
+<!-- Assignment Modal -->
+<div id="cq-assignment-modal" class="cq-modal" style="display: none;">
+  <div class="cq-modal-content">
+    <span class="cq-close" onclick="closeAssignmentModal()">&times;</span>
+    <div id="cq-assignment-title" class="cq-modal-title">New Assignment</div>
+    
+    <!-- Assignment Info (shown first) -->
+    <div id="cq-assignment-info">
+      <div id="cq-assignment-fields" class="cq-modal-fields"></div>
+      <div class="cq-modal-footer" style="margin-top:1.5rem; text-align:right;">
+        <button class="cq-modal-btn" onclick="acceptAssignmentNow()">I'll do it now</button>
+        <button class="cq-modal-btn" onclick="snoozeAssignment()">I'll do it later</button>
+      </div>
+    </div>
+    
+    <!-- Quiz Section (hidden initially) -->
+    <div id="cq-assignment-quiz" style="display:none;">
+      <div id="quizQuestions" class="cq-modal-fields"></div>
+      <div class="cq-modal-footer">
+        <button class="cq-modal-btn" id="submitQuizBtn" disabled>Submit Answers</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Congratulations Modal - Fullscreen -->
+<div id="congratsModal" class="practice-quiz-fullscreen" style="display:none;">
+  <!-- Galaxy Background -->
+  <div class="practice-quiz-galaxy-bg">
+    <div class="practice-quiz-galaxy-gradient"></div>
+    <div class="practice-quiz-stars-container" id="congratsStarsContainer"></div>
+    <div class="practice-quiz-nebula practice-quiz-nebula-1"></div>
+    <div class="practice-quiz-nebula practice-quiz-nebula-2"></div>
+    <div class="practice-quiz-nebula practice-quiz-nebula-3"></div>
+  </div>
+
+  <!-- Main Content - Centered -->
+  <div class="practice-quiz-main" style="display: flex; align-items: center; justify-content: center; min-height: calc(100vh - 80px);">
+    <div class="congrats-content">
+      <!-- Congratulations Header - Centered -->
+      <div class="congrats-header">
+        <h1 id="congratsTitle" class="congrats-title">Congratulations!</h1>
+        <p class="congrats-subtitle" id="congratsSubtitle">
+          Excellent work! You scored <span id="congratsScore">0/0</span>
+        </p>
+      </div>
+
+      <!-- Assignment Info - Centered -->
+      <div class="congrats-assignment-info">
+        <p class="congrats-assignment-label">For completing:</p>
+        <h2 id="congratsAssignmentName" class="congrats-assignment-name">Written Practice</h2>
+      </div>
+
+      <!-- Competency Breakdown - Grid Layout -->
+      <div class="congrats-competencies-grid" id="congratsCompetencies">
+        <!-- Competencies will be populated here -->
+      </div>
+
+      <!-- Action Button -->
+      <div class="congrats-actions">
+        <button class="practice-quiz-next-btn" onclick="closeCongratsModal()">Got it!</button>
+      </div>
+    </div>
+  </div>
+</div>

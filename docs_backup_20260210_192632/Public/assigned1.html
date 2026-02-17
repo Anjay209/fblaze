@@ -1,0 +1,4573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Assignments | FBLAZE</title>
+  <link rel="stylesheet" href="assigned1.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+  
+   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-functions-compat.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+</head>
+<body>
+  <!-- Space Background -->
+  <div class="space-background" id="spaceBackground">
+    <div class="star-field" id="starField"></div>
+    <div class="nebula nebula-1"></div>
+    <div class="nebula nebula-2"></div>
+  </div>
+
+  <!-- Header -->
+  <header class="assignments-header">
+    <div class="assignments-header-content">
+      <div class="header-left">
+        <button class="hamburger-menu" id="hamburgerMenu" onclick="toggleMobileNav()" aria-label="Toggle menu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+        <h1 class="blaze-logo">FBLAZE</h1>
+      </div>
+      <h1 class="blaze-logo desktop-logo">FBLAZE</h1>
+      <nav class="assignments-nav" id="mainNav">
+        <button class="mobile-nav-close" onclick="toggleMobileNav()" aria-label="Close menu">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+        <a href="home3.html" class="nav-link">HOME</a>
+        <a href="javascript:void(0)" onclick="toggleNotificationPanel()" class="nav-link" style="position: relative;">
+          NOTIFICATIONS
+          <span id="notificationBadge" class="notification-badge" style="display: none;">0</span>
+        </a>
+        <a href="practice.html" class="nav-link">PRACTICE</a>
+        <a href="Forum/forum.html" class="nav-link">FORUM</a>
+        <a href="Calendar/calendar1.html" class="nav-link">CALENDAR</a>
+        <a href="mentor1.html" class="nav-link" id="mentorNavLink" style="display: none;">MENTOR</a>
+      </nav>
+    </div>
+    
+    <div class="assignments-subnav">
+      <div class="assignments-subnav-content">
+        <button class="subnav-btn" onclick="window.location.href='mentor1.html'">Dashboard</button>
+        <button class="subnav-btn active">Assignments</button>
+        <button class="subnav-btn" onclick="window.location.href='meeting1.html'">Meetings</button>
+  </div>
+    </div>
+  </header>
+
+  <!-- Notification Panel -->
+  <div id="notificationPanel" class="notification-panel hidden">
+    <div class="notification-panel-header">
+      <h3 class="notification-panel-title">NOTIFICATIONS</h3>
+      <button onclick="toggleNotificationPanel()" class="close-notifications">✕</button>
+    </div>
+    <div id="notificationList" class="notification-list"></div>
+  </div>
+
+  <!-- Main Content -->
+  <main class="assignments-main">
+    <!-- Title -->
+    <div class="assignments-title-section">
+      <h2 class="assignments-title">
+        <span class="assignments-title-gradient">Assignments</span>
+      </h2>
+    </div>
+
+    <!-- Create Assignment Section -->
+    <div class="create-assignment-card">
+      <h3 class="create-assignment-title">Create an Assignment</h3>
+      <p class="create-assignment-subtitle">Help generate an exam based on what you want to practice</p>
+      <div class="create-assignment-buttons">
+        <button class="create-btn" onclick="openCreateModal('written')">Written</button>
+        <button class="create-btn" onclick="openCreateModal('speaking')">Speaking</button>
+        <button class="create-btn" onclick="openCreateModal('case')">Case</button>
+          </div>
+        </div>
+
+    <!-- Complete Assignments -->
+    <div class="assignments-section">
+      <div class="assignments-section-header">
+        <h3 class="assignments-section-title">Complete Assignments</h3>
+        <div class="assignments-section-controls">
+          <button class="filter-btn" onclick="sortAssignments('complete', 'name')">
+            <span>Sort by name</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+            </svg>
+          </button>
+          <select id="completeMenteeFilter" class="mentee-filter" onchange="filterAssignments('complete')">
+            <option>All Mentees</option>
+          </select>
+    </div>
+  </div>
+      
+      <div class="assignments-grid" id="completeAssignmentsGrid">
+        <!-- Complete assignments will be populated here -->
+</div>
+  </div>
+
+    <!-- Incomplete Assignments -->
+    <div class="assignments-section">
+      <div class="assignments-section-header">
+        <h3 class="assignments-section-title">Incomplete Assignments</h3>
+        <div class="assignments-section-controls">
+          <button class="filter-btn" onclick="sortAssignments('incomplete', 'name')">
+            <span>Sort by name</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+            </svg>
+          </button>
+          <select id="incompleteMenteeFilter" class="mentee-filter" onchange="filterAssignments('incomplete')">
+            <option>All Mentees</option>
+          </select>
+</div>
+      </div>
+
+      <div class="assignments-grid" id="incompleteAssignmentsGrid">
+        <!-- Incomplete assignments will be populated here -->
+  </div>
+    </div>
+  </main>
+
+   <!-- Written Practice Modal -->
+  <div id="writtenModal" class="written-modal" style="display: none;">
+    <div class="written-modal-backdrop" onclick="closeWrittenModal()"></div>
+    <div class="written-modal-content">
+      <!-- Header -->
+      <div class="written-modal-header">
+        <h2 class="written-modal-title">Written Practice Setup</h2>
+        <button onclick="closeWrittenModal()" class="written-modal-close">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+
+    <!-- Setup content -->
+    <div id="writtenSetup">
+        <!-- Time Selection -->
+        <div class="written-modal-section">
+          <label class="written-modal-label">Time:</label>
+          <div class="written-time-options">
+            <button class="written-time-btn" onclick="selectTime(this)" data-time="15">15 min</button>
+            <button class="written-time-btn" onclick="selectTime(this)" data-time="30">30 min</button>
+            <button class="written-time-btn" onclick="selectTime(this)" data-time="50">50 min</button>
+        </div>
+      </div>
+      
+        <!-- Competition Selection -->
+        <div class="written-modal-section">
+          <label class="written-modal-label">Competition:</label>
+          <select id="competitionSelectWritten" class="written-modal-select">
+            <option value="">Select competition...</option>
+        </select>
+      </div>
+      
+        <!-- Competencies -->
+        <div class="written-modal-section">
+          <label class="written-modal-label">Competencies Tested:</label>
+          <div class="written-checkbox-group" id="competencyCheckboxes">
+            <!-- Competencies will be populated dynamically -->
+        </div>
+          <button type="button" class="written-select-all-btn" onclick="selectAllCompetencies()">Select All</button>
+      </div>
+      
+        <!-- Custom Questions -->
+        <div class="written-modal-section">
+          <label class="written-modal-label">Custom Questions:</label>
+          <textarea id="speechInput" placeholder="Paste your questions here..." class="written-modal-textarea"></textarea>
+      </div>
+
+        <!-- Difficulty -->
+        <div class="written-modal-section">
+          <label class="written-modal-label">Difficulty:</label>
+          <div class="written-difficulty-options">
+            <button class="written-difficulty-btn" onclick="selectDifficulty(this)" data-difficulty="easy">Easy</button>
+            <button class="written-difficulty-btn" onclick="selectDifficulty(this)" data-difficulty="medium">Medium</button>
+            <button class="written-difficulty-btn" onclick="selectDifficulty(this)" data-difficulty="hard">Hard</button>
+        </div>
+      </div>
+
+        <!-- Data Source -->
+        <div class="written-modal-section">
+          <div class="written-data-source-toggle">
+            <button type="button" class="written-toggle-btn active" onclick="selectTrainingSource('mentee')" id="menteeDataBtn">
+              Use Mentee Training Data
+            </button>
+            <button type="button" class="written-toggle-btn" onclick="selectTrainingSource('upload')" id="uploadDataBtn">
+              Upload Your Own Documents
+            </button>
+          </div>
+</div>
+
+        <!-- PDF Upload Container (hidden initially) -->
+        <div id="pdfUploadContainer" class="written-modal-section" style="display: none;">
+          <div id="multiDropZone" class="written-drop-zone">
+        Drag & Drop PDF Here or Click to Upload (Max 5)
+    </div>
+    <input type="file" id="multiFileInput" accept="application/pdf" hidden multiple />
+    <div id="uploadedFilesList"></div>
+</div>
+
+        <!-- Assign to Mentee -->
+        <div class="written-modal-section">
+          <label class="written-modal-label">Assign to Mentee:</label>
+          <div class="written-checkbox-group" id="menteesList">
+            <!-- Mentees will be populated dynamically -->
+          </div>
+          <button type="button" class="written-select-all-btn" onclick="selectAllUsers()">Select All</button>
+        </div>
+
+
+        <!-- Action Button -->
+        <button class="written-assign-btn" onclick="generateWrittenAssignment()">Assign Practice</button>
+      </div>
+
+      <!-- Congrats Message -->
+    <div id="writtenCongrats" style="display:none;">
+        <div class="written-congrats-content">
+          <span class="written-congrats-emoji">🎉</span>
+          <h2 class="written-congrats-title">Congratulations!</h2>
+          <div class="written-congrats-message">Assignment has been made.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <!-- Speaking Practice Modal -->
+  <div id="speakingModal" class="written-modal" style="display: none;">
+    <div class="written-modal-backdrop" onclick="closeSpeakingModal()"></div>
+    <div class="written-modal-content">
+      <div class="written-modal-header">
+        <h2 class="written-modal-title">Speaking Practice Setup</h2>
+        <button onclick="closeSpeakingModal()" class="written-modal-close">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+
+    <div id="speakingSetup">
+        <div class="written-modal-section">
+          <label class="written-modal-label">Assignment Name:</label>
+          <textarea id="speakingAssignmentName" placeholder="Enter assignment name..." rows="2" class="written-modal-textarea"></textarea>
+      </div>
+      
+        <div class="written-modal-section">
+          <label class="written-modal-label">Assignment Description:</label>
+          <textarea id="speakingAssignmentDesc" placeholder="Describe the speaking assignment..." rows="3" class="written-modal-textarea"></textarea>
+      </div>
+
+        <div class="written-modal-section">
+          <label class="written-modal-label">Competition:</label>
+          <select id="competitionSelectSpeaking" class="written-modal-select">
+            <option value="">Select competition...</option>
+          </select>
+  </div>
+
+        <div class="written-modal-section">
+          <label class="written-modal-label">Competencies Tested:</label>
+          <div class="written-checkbox-group" id="speakingCompetencyCheckboxes">
+            <!-- Competencies will be populated dynamically -->
+          </div>
+          <button type="button" class="written-select-all-btn" onclick="selectAllSpeakingCompetencies()">Select All</button>
+</div>
+
+        <div class="written-modal-section">
+          <label class="written-modal-label">Question 1:</label>
+          <textarea id="speakingQuestion1" placeholder="Enter the first speaking question..." rows="3" class="written-modal-textarea"></textarea>
+      </div>
+
+        <div class="written-modal-section">
+          <label class="written-modal-label">Question 2:</label>
+          <textarea id="speakingQuestion2" placeholder="Enter the second speaking question..." rows="3" class="written-modal-textarea"></textarea>
+      </div>
+
+        <div class="written-modal-section">
+          <label class="written-modal-label">Question 3 (Optional):</label>
+          <textarea id="speakingQuestion3" placeholder="Enter a third speaking question (optional)..." rows="3" class="written-modal-textarea"></textarea>
+      </div>
+
+        <div class="written-modal-section">
+          <label class="written-modal-label">Time Limit:</label>
+          <div class="written-time-options">
+            <button class="written-time-btn speaking-time-btn" onclick="selectSpeakingTime(this)" data-time="5">5 min</button>
+            <button class="written-time-btn speaking-time-btn" onclick="selectSpeakingTime(this)" data-time="10">10 min</button>
+            <button class="written-time-btn speaking-time-btn" onclick="selectSpeakingTime(this)" data-time="15">15 min</button>
+        </div>
+      </div>
+
+        <div class="written-modal-section">
+          <label class="written-modal-label">Assign to Mentee:</label>
+          <div class="written-checkbox-group" id="speakingMenteesList"></div>
+          <button type="button" class="written-select-all-btn" onclick="selectAllSpeakingMentees()">Select All</button>
+      </div>
+      
+        <button class="written-assign-btn" onclick="generateSpeakingAssignment()">Assign Speaking Practice</button>
+    </div>
+
+    <div id="speakingCongrats" style="display:none;">
+        <div class="written-congrats-content">
+          <span class="written-congrats-emoji">🎉</span>
+          <h2 class="written-congrats-title">Congratulations!</h2>
+          <div class="written-congrats-message">Speaking assignment has been created!</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <!-- Case Practice Modal -->
+  <div id="caseModal" class="written-modal" style="display: none;">
+    <div class="written-modal-backdrop" onclick="closeCaseModal()"></div>
+    <div class="written-modal-content">
+      <div class="written-modal-header">
+        <h2 class="written-modal-title">Case Assignment</h2>
+        <button onclick="closeCaseModal()" class="written-modal-close">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+    </div>
+
+      <div id="caseSetup">
+        <div class="written-modal-section">
+          <label class="written-modal-label">Case Name:</label>
+          <textarea id="caseAssignmentName" placeholder="Enter case name..." rows="2" class="written-modal-textarea"></textarea>
+</div>
+
+        <div class="written-modal-section">
+          <label class="written-modal-label">Case Description:</label>
+          <textarea id="caseAssignmentDesc" placeholder="Describe your case..." rows="4" class="written-modal-textarea"></textarea>
+      </div>
+      
+        <div class="written-modal-section">
+          <label class="written-modal-label">Case Study Content:</label>
+          <textarea id="caseStudyContent" placeholder="Paste your case study content here..." rows="6" class="written-modal-textarea"></textarea>
+      </div>
+      
+        <div class="written-modal-section">
+          <label class="written-modal-label">Question 1:</label>
+          <textarea id="caseQuestion1" placeholder="Enter the first case question..." rows="3" class="written-modal-textarea"></textarea>
+      </div>
+
+        <div class="written-modal-section">
+          <label class="written-modal-label">Question 2:</label>
+          <textarea id="caseQuestion2" placeholder="Enter the second case question..." rows="3" class="written-modal-textarea"></textarea>
+      </div>
+
+        <div class="written-modal-section">
+          <label class="written-modal-label">Question 3 (Optional):</label>
+          <textarea id="caseQuestion3" placeholder="Enter a third case question (optional)..." rows="3" class="written-modal-textarea"></textarea>
+      </div>
+
+        <div class="written-modal-section">
+          <label class="written-modal-label">Competition:</label>
+          <select id="competitionSelectCase" class="written-modal-select">
+            <option value="">Select competition...</option>
+          </select>
+      </div>
+
+        <div class="written-modal-section">
+          <label class="written-modal-label">Competencies Tested:</label>
+          <div class="written-checkbox-group" id="caseCompetencyCheckboxes">
+            <!-- Competencies will be populated dynamically -->
+        </div>
+          <button type="button" class="written-select-all-btn" onclick="selectAllCaseCompetencies()">Select All</button>
+      </div>
+
+        <div class="written-modal-section">
+          <label class="written-modal-label">Assign to Mentee:</label>
+          <div class="written-checkbox-group" id="caseMenteesList"></div>
+          <button type="button" class="written-select-all-btn" onclick="selectAllCaseMentees()">Select All</button>
+      </div>
+      
+        <button class="written-assign-btn" onclick="generateCaseAssignment()">Assign Case Study</button>
+    </div>
+    
+    <div id="caseCongrats" style="display:none;">
+        <div class="written-congrats-content">
+          <span class="written-congrats-emoji">🎉</span>
+          <h2 class="written-congrats-title">Congratulations!</h2>
+          <div class="written-congrats-message">Case assignment has been created!</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+    // Firebase Configuration
+
+    if (!firebase.apps.length) {
+    }
+
+const db = firebase.firestore();
+const auth = firebase.auth();
+
+    // Global state
+  let menteesCache = [];
+  let currentAssignments = [];
+    let allMentees = [];
+  let menteeNameMap = {};
+    let selectedMenteeIdComplete = "";
+    let selectedMenteeIdIncomplete = "";
+    let sortByNameComplete = false;
+    let sortByNameIncomplete = false;
+
+    // Create star field
+    function createStarField() {
+      const starField = document.getElementById('starField');
+      if (!starField) return;
+      
+      starField.innerHTML = '';
+      for (let i = 0; i < 150; i++) {
+        const star = document.createElement('div');
+        star.className = 'star';
+        star.style.top = Math.random() * 100 + '%';
+        star.style.left = Math.random() * 100 + '%';
+        star.style.width = (Math.random() * 2 + 0.5) + 'px';
+        star.style.height = star.style.width;
+        star.style.opacity = Math.random() * 0.7 + 0.3;
+        star.style.animationDuration = (Math.random() * 3 + 2) + 's';
+        starField.appendChild(star);
+      }
+    }
+
+    // Notification Pipeline
+    function toggleNotificationPanel() {
+      const panel = document.getElementById("notificationPanel");
+      if (!panel) return;
+      
+      if (panel.classList.contains("active")) {
+        panel.classList.remove("active");
+        setTimeout(() => panel.classList.add("hidden"), 300);
+  } else {
+        panel.classList.remove("hidden");
+        setTimeout(() => panel.classList.add("active"), 10);
+        loadNotifications();
+      }
+    }
+    window.toggleNotificationPanel = toggleNotificationPanel;
+
+    function updateNotificationBadge(count) {
+      const notificationLink = document.querySelector('a[onclick*="toggleNotificationPanel"]');
+      if (notificationLink) {
+        let notificationBadge = notificationLink.querySelector('.notification-badge');
+        if (!notificationBadge && count > 0) {
+          notificationBadge = document.createElement('span');
+          notificationBadge.className = 'notification-badge';
+          notificationBadge.id = 'notificationBadge';
+          notificationBadge.textContent = count;
+          notificationLink.style.position = 'relative';
+          notificationLink.appendChild(notificationBadge);
+        } else if (notificationBadge) {
+          if (count > 0) {
+            notificationBadge.style.display = 'inline-flex';
+            notificationBadge.textContent = count;
+  } else {
+            notificationBadge.style.display = 'none';
+          }
+        }
+      }
+    }
+    window.updateNotificationBadge = updateNotificationBadge;
+
+    function setupNotifications() {
+      const user = auth.currentUser;
+      if (!user) return;
+      
+      const notificationList = document.getElementById('notificationList');
+      if (!notificationList) return;
+      
+      db.collection('notifications')
+        .where('menteeId', '==', user.uid)
+        .limit(50)
+        .onSnapshot((snapshot) => {
+          notificationList.innerHTML = '';
+          
+          let unreadCount = 0;
+          const notifications = [];
+    
+          if (snapshot.empty) {
+            notificationList.innerHTML = '<div class="notification-empty">No notifications</div>';
+            updateNotificationBadge(0);
+        return;
+    }
+
+          snapshot.forEach((doc) => {
+            notifications.push({ id: doc.id, data: doc.data(), ref: doc.ref });
+          });
+          
+          notifications.sort((a, b) => {
+            const aTime = a.data.timestamp?.toDate?.() || new Date(0);
+            const bTime = b.data.timestamp?.toDate?.() || new Date(0);
+            return bTime - aTime;
+        });
+
+          notifications.forEach(({ id, data: notif, ref }) => {
+            if (!notif.read) {
+              unreadCount++;
+            }
+            
+            const item = document.createElement('div');
+            item.className = `notification-item ${notif.read ? 'read' : ''}`;
+            
+            let timeText = 'Just now';
+            if (notif.timestamp && notif.timestamp.toDate) {
+              const date = notif.timestamp.toDate();
+              const now = new Date();
+              const diffMs = now - date;
+              const diffMins = Math.floor(diffMs / 60000);
+              const diffHours = Math.floor(diffMs / 3600000);
+              const diffDays = Math.floor(diffMs / 86400000);
+              
+              if (diffMins < 1) timeText = 'Just now';
+              else if (diffMins < 60) timeText = `${diffMins}m ago`;
+              else if (diffHours < 24) timeText = `${diffHours}h ago`;
+              else timeText = `${diffDays}d ago`;
+    }
+    
+            if (notif.type === 'assignment' && notif.assignmentId) {
+              db.collection('assignments').doc(notif.assignmentId).get().then((assignmentDoc) => {
+                if (assignmentDoc.exists) {
+                  const assignment = assignmentDoc.data();
+                  item.innerHTML = `
+                    <div class="notification-header">
+                      <strong>${notif.message || notif.title || 'New Assignment'}</strong>
+                      <span class="notification-time">${timeText}</span>
+                    </div>
+                    <div class="notification-body">
+                      Type: ${assignment.type || 'Quiz'}<br>
+                      Competencies: ${assignment.competencies ? assignment.competencies.join(', ') : 'n/a'}<br>
+                      ${assignment.time ? `Time: ${assignment.time}<br>` : ''}
+                      ${assignment.difficulty ? `Difficulty: ${assignment.difficulty}` : ''}
+                    </div>
+                  `;
+                  
+                  item.addEventListener('click', async () => {
+                    if (!notif.read) {
+                      ref.update({ read: true });
+                    }
+                    item.classList.add('read');
+                    
+                    // Fetch assignment and open modal
+                    const assignmentDoc = await db.collection('assignments').doc(notif.assignmentId).get();
+                    if (assignmentDoc.exists) {
+                      const assignment = { id: assignmentDoc.id, ...assignmentDoc.data() };
+                      window.currentAssignment = assignment;
+                      window.latestAssignmentId = assignmentDoc.id;
+                      openFullAssignmentModal(assignment);
+                      toggleNotificationPanel(); // Close notification panel
+                    }
+                  });
+    }
+              });
+            } else {
+              item.innerHTML = `
+                <div class="notification-header">
+                  <strong>${notif.message || notif.title || 'Notification'}</strong>
+                  <span class="notification-time">${timeText}</span>
+      </div>
+                <div class="notification-body">
+                  ${notif.message || notif.title || 'Notification'}
+                </div>
+              `;
+              
+              item.addEventListener('click', () => {
+                if (!notif.read) {
+                  ref.update({ read: true });
+                }
+                item.classList.add('read');
+              });
+            }
+            
+            notificationList.appendChild(item);
+          });
+          
+          updateNotificationBadge(unreadCount);
+        }, (error) => {
+          console.error('Error loading notifications:', error);
+        });
+    }
+
+    function loadNotifications() {
+      setupNotifications();
+}
+
+    // Load mentees and assignments
+  async function loadMentees(user) {
+      const userDoc = await db.collection('users').doc(user.uid).get();
+    const userData = userDoc.data();
+
+    let mentorComps = [];
+    if (Array.isArray(userData.mentorCompetition)) mentorComps = userData.mentorCompetition;
+    else if (typeof userData.mentorCompetition === 'string' && userData.mentorCompetition.trim() !== '')
+      mentorComps = [userData.mentorCompetition.trim()];
+    
+      if (mentorComps.length === 0) {
+    menteesCache = [];
+        return;
+      }
+
+      const usersSnapshot = await db.collection('users').get();
+      menteesCache = [];
+      allMentees = [];
+      
+    usersSnapshot.forEach(doc => {
+      if (doc.id === user.uid) return;
+        const other = doc.data();
+      let otherComps = [];
+      if (Array.isArray(other.competitions)) otherComps = other.competitions;
+      else if (typeof other.competitions === 'string' && other.competitions.trim() !== '')
+        otherComps = [other.competitions.trim()];
+        
+      const overlap = otherComps.some(comp => mentorComps.includes(comp));
+      if (overlap) {
+          const menteeName = other.name || other.fullName || other.email || '(unnamed)';
+          const mentee = {
+            id: doc.id,
+            name: menteeName,
+            grade: other.grade || '',
+            comps: otherComps.filter(Boolean)
+          };
+          menteesCache.push(mentee);
+          allMentees.push(mentee);
+          menteeNameMap[doc.id] = menteeName;
+        }
+      });
+
+      // Populate mentee filters
+      const completeFilter = document.getElementById('completeMenteeFilter');
+      const incompleteFilter = document.getElementById('incompleteMenteeFilter');
+      
+      [completeFilter, incompleteFilter].forEach(filter => {
+        if (filter) {
+          filter.innerHTML = '<option>All Mentees</option>';
+          allMentees.forEach(mentee => {
+      const opt = document.createElement('option');
+            opt.value = mentee.id;
+            opt.textContent = mentee.name;
+            filter.appendChild(opt);
+          });
+        }
+      });
+    }
+
+async function loadAssignments(user) {
+    if (menteesCache.length === 0) {
+        console.log("No mentees found, exiting loadAssignments");
+        return;
+    }
+    
+    const menteeIds = menteesCache.map(m => m.id);
+    
+      db.collection("assignments")
+        .where("to", "in", menteeIds.length > 10 ? menteeIds.slice(0, 10) : menteeIds)
+      .onSnapshot(snapshot => {
+          // Always reset and rebuild from the complete snapshot
+          const assignmentMap = new Map(); // Use Map to prevent duplicates
+          
+          snapshot.forEach(doc => {
+              const data = doc.data();
+              // Only add if assignment has required fields
+              if (data && doc.id) {
+                // Use Map to ensure no duplicates (by assignment ID)
+                assignmentMap.set(doc.id, { 
+                    id: doc.id, 
+                    ...data,
+                    congratulated: data.congratulated || false,
+                    reported: data.reported || false
+                });
+              }
+          });
+          
+          // Convert Map to array
+          currentAssignments = Array.from(assignmentMap.values());
+          
+          console.log('📥 Loaded assignments from Firebase:', currentAssignments.length);
+          console.log('📥 Snapshot size:', snapshot.size);
+          console.log('📥 Assignment IDs:', currentAssignments.map(a => a.id));
+          console.log('📥 Assignment statuses:', currentAssignments.map(a => ({ id: a.id, status: a.status, completedAt: a.completedAt })));
+          
+          // Verify we have all assignments
+          if (snapshot.size !== currentAssignments.length) {
+            console.warn('⚠️ Snapshot size mismatch! Snapshot:', snapshot.size, 'Assignments:', currentAssignments.length);
+          }
+          
+          // Only render if we have assignments or if snapshot is empty (to show empty state)
+          renderAssignments();
+      }, error => {
+          console.error("Error loading assignments:", error);
+          // If error due to > 10 items, load in batches
+          if (menteeIds.length > 10) {
+            loadAssignmentsInBatches(menteeIds);
+          }
+        });
+    }
+
+    async function loadAssignmentsInBatches(menteeIds) {
+      const batchSize = 10;
+      currentAssignments = [];
+      
+      for (let i = 0; i < menteeIds.length; i += batchSize) {
+        const batch = menteeIds.slice(i, i + batchSize);
+        const snapshot = await db.collection("assignments")
+          .where("to", "in", batch)
+          .get();
+        
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          currentAssignments.push({ 
+            id: doc.id, 
+            ...data,
+            congratulated: data.congratulated || false,
+            reported: data.reported || false
+      });
+    });
+  }
+
+      console.log('📥 Loaded assignments in batches:', currentAssignments.length);
+      console.log('📥 Assignment statuses:', currentAssignments.map(a => ({ id: a.id, status: a.status, completedAt: a.completedAt })));
+      
+      renderAssignments();
+    }
+
+    function renderAssignments() {
+      const completeGrid = document.getElementById('completeAssignmentsGrid');
+      const incompleteGrid = document.getElementById('incompleteAssignmentsGrid');
+      
+      if (!completeGrid || !incompleteGrid) return;
+      
+      console.log('📊 Rendering assignments. Total assignments:', currentAssignments.length);
+      console.log('📊 All assignments:', currentAssignments.map(a => ({ id: a.id, status: a.status, to: a.to })));
+      
+      completeGrid.innerHTML = '';
+      incompleteGrid.innerHTML = '';
+      
+      // Filter by mentee
+      let filtered = currentAssignments;
+      if (selectedMenteeIdComplete || selectedMenteeIdIncomplete) {
+        filtered = currentAssignments.filter(a => {
+          if (a.status === 'complete' && selectedMenteeIdComplete) {
+            return a.to === selectedMenteeIdComplete;
+          }
+          if (a.status !== 'complete' && selectedMenteeIdIncomplete) {
+            return a.to === selectedMenteeIdIncomplete;
+          }
+          return true;
+        });
+      }
+      
+      // Check for various status values that might indicate completion
+      let complete = filtered.filter(a => {
+        const status = a.status?.toLowerCase();
+        return status === 'complete' || status === 'completed' || a.completedAt || a.submittedAt;
+      });
+      let incomplete = filtered.filter(a => {
+        const status = a.status?.toLowerCase();
+        return status !== 'complete' && status !== 'completed' && !a.completedAt && !a.submittedAt;
+      });
+
+      console.log('✅ Complete assignments:', complete.length, complete.map(a => ({ id: a.id, status: a.status })));
+      console.log('⏳ Incomplete assignments:', incomplete.length);
+      
+      // Sort by name if enabled
+      if (sortByNameComplete) {
+        complete.sort((a, b) => {
+          const nameA = menteeNameMap[a.to] || '';
+          const nameB = menteeNameMap[b.to] || '';
+          return nameA.localeCompare(nameB);
+        });
+      } else {
+        complete.sort((a, b) => (b.completedAt?.seconds || 0) - (a.completedAt?.seconds || 0));
+      }
+      
+      if (sortByNameIncomplete) {
+        incomplete.sort((a, b) => {
+          const nameA = menteeNameMap[a.to] || '';
+          const nameB = menteeNameMap[b.to] || '';
+          return nameA.localeCompare(nameB);
+        });
+      } else {
+        incomplete.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+      }
+      
+      // Render complete assignments
+      console.log('🎯 Rendering complete assignments. Count:', complete.length);
+      console.log('🎯 allMentees available:', allMentees.length > 0);
+      console.log('🎯 Complete assignment IDs:', complete.map(a => a.id));
+      
+      // Clear grid first
+      completeGrid.innerHTML = '';
+      
+      if (complete.length === 0) {
+        completeGrid.innerHTML = '<p class="no-assignments">No complete assignments</p>';
+      } else {
+        complete.forEach((assignment, index) => {
+          try {
+            console.log(`🎯 Creating card ${index + 1}/${complete.length} for assignment:`, assignment.id, assignment.title);
+            const card = createAssignmentCard(assignment, true);
+            if (card) {
+              completeGrid.appendChild(card);
+              console.log(`✅ Card appended for assignment:`, assignment.id);
+            } else {
+              console.error(`❌ Failed to create card for assignment:`, assignment.id);
+            }
+          } catch (error) {
+            console.error(`❌ Error creating card for assignment ${assignment.id}:`, error);
+            }
+        });
+      }
+      
+      console.log('🎯 Final complete grid children count:', completeGrid.children.length);
+      
+      // Render incomplete assignments
+      console.log('🎯 Rendering incomplete assignments. Count:', incomplete.length);
+      console.log('🎯 Incomplete assignment IDs:', incomplete.map(a => a.id));
+      
+      // Clear grid first
+      incompleteGrid.innerHTML = '';
+      
+      if (incomplete.length === 0) {
+        incompleteGrid.innerHTML = '<p class="no-assignments">No incomplete assignments</p>';
+      } else {
+        incomplete.forEach((assignment, index) => {
+          try {
+            console.log(`🎯 Creating incomplete card ${index + 1}/${incomplete.length} for assignment:`, assignment.id);
+            const card = createAssignmentCard(assignment, false);
+            if (card) {
+              incompleteGrid.appendChild(card);
+              console.log(`✅ Incomplete card appended for assignment:`, assignment.id);
+            } else {
+              console.error(`❌ Failed to create incomplete card for assignment:`, assignment.id);
+            }
+          } catch (error) {
+            console.error(`❌ Error creating incomplete card for assignment ${assignment.id}:`, error);
+          }
+        });
+      }
+      
+      console.log('🎯 Final incomplete grid children count:', incompleteGrid.children.length);
+    }
+
+    function createAssignmentCard(assignment, isComplete) {
+      console.log('🃏 createAssignmentCard called for:', assignment.id, 'isComplete:', isComplete);
+      console.log('🃏 allMentees length:', allMentees.length);
+      console.log('🃏 assignment.to:', assignment.to);
+      
+      const card = document.createElement('div');
+      card.className = 'assignment-card';
+      
+      const mentee = allMentees.find(m => m.id === assignment.to);
+      console.log('🃏 Found mentee:', mentee ? mentee.name : 'NOT FOUND');
+      const menteeName = mentee ? mentee.name : (menteeNameMap[assignment.to] || 'Unknown');
+      
+      const score = assignment.score !== undefined && assignment.maxScore !== undefined
+        ? `${assignment.score} / ${assignment.maxScore}`
+        : assignment.score !== undefined
+        ? `${assignment.score} / N/A`
+        : '0 / N/A';
+      
+      const difficulty = [];
+      if (assignment.time) difficulty.push(assignment.time);
+      if (assignment.xp) difficulty.push(`${assignment.xp} xp`);
+      else difficulty.push('50 xp');
+      
+      let submissionContent = '';
+      
+      // ✅ For complete speaking/case assignments
+      if (assignment.status === "complete") {
+          if (assignment.type === "written") {
+              submissionContent = `
+                  <div class="submission-score">
+                      <strong>Score:</strong> ${assignment.score !== undefined ? assignment.score : 'N/A'} / ${assignment.maxScore || 'N/A'}
+                  </div>`;
+          } else if ((assignment.type === "speaking" || assignment.type === "case") && assignment.recordingUrl) {
+              submissionContent = `
+                  <div style="margin-top: 0.5rem; margin-bottom: 0.75rem; width: 100%;">
+                      <div style="display: flex; align-items: center; background: transparent; border: 1px solid rgba(251, 146, 60, 0.6); padding: 0.5rem 0.75rem; border-radius: 0.5rem; width: 100%; box-sizing: border-box;">
+                          <span style="margin-right: 0.5rem; font-size: 0.875rem;">📎</span>
+                          <a href="${assignment.recordingUrl}" download target="_blank" style="color: #fb923c; text-decoration: none; font-weight: 500; font-size: 0.875rem; flex: 1;">View Submission</a>
+                      </div>
+                  </div>`;
+          } else if (assignment.type === "speaking" && assignment.submissionAudioUrl) {
+              submissionContent = `<audio controls src="${assignment.submissionAudioUrl}" style="width: 100%; margin-top: 0.5rem;"></audio>`;
+          } else if (assignment.type === "case" && assignment.submissionVideoUrl) {
+              submissionContent = `<video controls src="${assignment.submissionVideoUrl}" style="width: 100%; margin-top: 0.5rem;"></video>`;
+          }
+      }
+      
+      card.innerHTML = `
+        <p class="assignment-mentee">${menteeName}</p>
+        <h4 class="assignment-name">${assignment.title || assignment.name || 'Written Practice'}</h4>
+        <p class="assignment-description">${assignment.description || 'No description provided'}</p>
+        ${submissionContent}
+        ${(assignment.type !== "speaking" && assignment.type !== "case" && assignment.status !== "complete") ? `<p class="assignment-score">Score: ${score}</p>` : ''}
+        <div class="assignment-tags">
+          ${difficulty.map(tag => `<span class="assignment-tag">${tag}</span>`).join('')}
+                </div>
+        ${isComplete 
+          ? `<button class="assignment-congratulate-btn ${assignment.congratulated ? 'congratulated' : ''}" onclick="handleCongratulate(this, '${assignment.id}')" ${assignment.congratulated ? 'disabled' : ''}>
+              ${assignment.congratulated ? '✓ Congratulated' : 'Congratulate'}
+            </button>`
+          : `<button class="assignment-report-btn ${assignment.reported ? 'reported' : ''}" onclick="handleReport(this, '${assignment.id}')" ${assignment.reported ? 'disabled' : ''}>
+              ${assignment.reported ? '✓ Reported' : 'Report'}
+            </button>`
+        }
+      `;
+      
+      console.log('🃏 Card created successfully for assignment:', assignment.id);
+      return card;
+}
+
+    function sortAssignments(section, sortBy) {
+      if (section === 'complete') {
+        sortByNameComplete = !sortByNameComplete;
+      } else if (section === 'incomplete') {
+        sortByNameIncomplete = !sortByNameIncomplete;
+      }
+      renderAssignments();
+    }
+
+    function filterAssignments(section) {
+      if (section === 'complete') {
+        const filter = document.getElementById('completeMenteeFilter');
+        selectedMenteeIdComplete = filter ? filter.value : '';
+        if (selectedMenteeIdComplete === 'All Mentees') selectedMenteeIdComplete = '';
+      } else if (section === 'incomplete') {
+        const filter = document.getElementById('incompleteMenteeFilter');
+        selectedMenteeIdIncomplete = filter ? filter.value : '';
+        if (selectedMenteeIdIncomplete === 'All Mentees') selectedMenteeIdIncomplete = '';
+      }
+      renderAssignments();
+}
+
+    async function handleReport(buttonElement, assignmentId) {
+    try {
+        const user = auth.currentUser;
+        if (!user) return;
+        
+        const assignmentRef = db.collection("assignments").doc(assignmentId);
+        const assignmentDoc = await assignmentRef.get();
+        const assignment = assignmentDoc.data();
+        
+        if (!assignment) {
+          throw new Error("Assignment not found");
+        }
+
+        // Update UI immediately
+        buttonElement.textContent = '✓ Reported';
+        buttonElement.classList.add('reported');
+        buttonElement.disabled = true;
+        
+        // Create notification
+        await db.collection('notifications').add({
+            menteeId: assignment.to,
+          message: `${user.displayName || "Your mentor"} has reported an issue with your assignment: ${assignment.title || "Assignment"}`,
+          assignmentId: assignmentId,
+          assignmentName: assignment.title || "Assignment",
+          type: "report",
+          showModal: false,
+            read: false,
+            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        // Update assignment status in Firestore
+        await assignmentRef.update({
+          reported: true,
+          reportedAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        
+        // Update local state
+        const assignmentIndex = currentAssignments.findIndex(a => a.id === assignmentId);
+        if (assignmentIndex !== -1) {
+          currentAssignments[assignmentIndex].reported = true;
+        }
+        
+    } catch (error) {
+        console.error("Error reporting assignment:", error);
+        buttonElement.textContent = 'Error - Try Again';
+        buttonElement.classList.remove('reported');
+        buttonElement.disabled = false;
+    }
+}
+    window.handleReport = handleReport;
+
+    async function handleCongratulate(buttonElement, assignmentId) {
+    try {
+        const user = auth.currentUser;
+        if (!user) return;
+        
+        const assignmentRef = db.collection("assignments").doc(assignmentId);
+        const assignmentDoc = await assignmentRef.get();
+        const assignment = assignmentDoc.data();
+        
+        if (!assignment) {
+            throw new Error("Assignment not found");
+        }
+
+        // Update UI immediately
+        buttonElement.textContent = '✓ Congratulated';
+        buttonElement.classList.add('congratulated');
+        buttonElement.disabled = true;
+
+        // Get mentor name
+        const mentorName = user.displayName || "Your mentor";
+        
+        // Create congratulation notification
+        await db.collection('notifications').add({
+          menteeId: assignment.to,
+          message: `${mentorName} congratulated you!`,
+          assignmentName: assignment.title || "your assignment",
+            assignmentId: assignmentId,
+          type: "congratulation",
+          mentorName: mentorName,
+          showModal: true,
+            read: false,
+          timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        // Update assignment status in Firestore
+        await assignmentRef.update({
+          congratulated: true,
+          congratulatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        // Update local state
+        const assignmentIndex = currentAssignments.findIndex(a => a.id === assignmentId);
+        if (assignmentIndex !== -1) {
+          currentAssignments[assignmentIndex].congratulated = true;
+        }
+
+    } catch (error) {
+        console.error("Error congratulating:", error);
+        buttonElement.textContent = 'Error - Try Again';
+        buttonElement.classList.remove('congratulated');
+        buttonElement.disabled = false;
+      }
+    }
+    window.handleCongratulate = handleCongratulate;
+
+    function openCreateModal(type) {
+      if (type === 'written') {
+        openWrittenModal();
+      } else if (type === 'speaking') {
+        openSpeakingModal();
+      } else if (type === 'case') {
+        openCaseModal();
+    }
+}
+    window.openCreateModal = openCreateModal;
+
+    // Written Modal Functions
+    function openWrittenModal() {
+      const modal = document.getElementById('writtenModal');
+      if (!modal) return;
+      
+      modal.style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+      
+      populateCompetitionDropdown();
+      showMenteesInWrittenModal();
+      populateDefaultCompetencies();
+      
+      // Reset form
+      document.getElementById('writtenSetup').style.display = 'block';
+      document.getElementById('writtenCongrats').style.display = 'none';
+      document.getElementById('speechInput').value = '';
+      
+      // Reset selections
+      document.querySelectorAll('.written-time-btn').forEach(btn => btn.classList.remove('selected'));
+      document.querySelectorAll('.written-difficulty-btn').forEach(btn => btn.classList.remove('selected'));
+      document.querySelectorAll('.competency-option').forEach(cb => cb.checked = false);
+      document.querySelectorAll('.user-checkbox').forEach(cb => cb.checked = false);
+      
+      // Set default time and difficulty
+      const defaultTimeBtn = document.querySelector('.written-time-btn[data-time="15"]');
+      const defaultDiffBtn = document.querySelector('.written-difficulty-btn[data-difficulty="easy"]');
+      if (defaultTimeBtn) defaultTimeBtn.classList.add('selected');
+      if (defaultDiffBtn) defaultDiffBtn.classList.add('selected');
+      
+      // Reset training source
+      useMenteeTrainingData = true;
+      document.getElementById('menteeDataBtn').classList.add('active');
+      document.getElementById('uploadDataBtn').classList.remove('active');
+      document.getElementById('pdfUploadContainer').style.display = 'none';
+      uploadedPDFs = [];
+    }
+    window.openWrittenModal = openWrittenModal;
+
+    function closeWrittenModal() {
+      const modal = document.getElementById('writtenModal');
+      if (modal) {
+        modal.style.display = 'none';
+      }
+      document.body.style.overflow = 'auto';
+    }
+    window.closeWrittenModal = closeWrittenModal;
+
+    // Global variables for written modal
+    let useMenteeTrainingData = true;
+    let uploadedPDFs = [];
+
+    function selectTrainingSource(source) {
+      const menteeBtn = document.getElementById('menteeDataBtn');
+      const uploadBtn = document.getElementById('uploadDataBtn');
+      const uploadContainer = document.getElementById('pdfUploadContainer');
+      
+      if (source === 'mentee') {
+        useMenteeTrainingData = true;
+        menteeBtn.classList.add('active');
+        uploadBtn.classList.remove('active');
+        uploadContainer.style.display = 'none';
+      } else {
+        useMenteeTrainingData = false;
+        menteeBtn.classList.remove('active');
+        uploadBtn.classList.add('active');
+        uploadContainer.style.display = 'block';
+    setTimeout(() => {
+        setupMultiFileDragAndDrop();
+        }, 100);
+}
+    }
+    window.selectTrainingSource = selectTrainingSource;
+
+    function selectTime(button) {
+      document.querySelectorAll('.written-time-btn').forEach(btn => btn.classList.remove('selected'));
+      button.classList.add('selected');
+}
+    window.selectTime = selectTime;
+
+    function selectDifficulty(button) {
+      document.querySelectorAll('.written-difficulty-btn').forEach(btn => btn.classList.remove('selected'));
+      button.classList.add('selected');
+    }
+    window.selectDifficulty = selectDifficulty;
+
+    function selectAllCompetencies() {
+      document.querySelectorAll('.competency-option').forEach(cb => cb.checked = true);
+    }
+    window.selectAllCompetencies = selectAllCompetencies;
+
+    function selectAllUsers() {
+      document.querySelectorAll('.user-checkbox').forEach(cb => cb.checked = true);
+}
+    window.selectAllUsers = selectAllUsers;
+
+    function calculateSP(timeStr) {
+      if (!timeStr) return 0;
+      const minutes = parseInt(timeStr.replace(/\D/g, '')) || 0;
+      return Math.max(5, Math.floor(minutes / 2) * 5);
+}
+    window.calculateSP = calculateSP;
+
+    async function populateCompetitionDropdown() {
+      try {
+        const user = auth.currentUser;
+        if (!user) return;
+        
+        const userDoc = await db.collection('users').doc(user.uid).get();
+        const userData = userDoc.data();
+        
+        let mentorComps = [];
+        if (Array.isArray(userData.mentorCompetition)) {
+          mentorComps = userData.mentorCompetition;
+        } else if (typeof userData.mentorCompetition === 'string' && userData.mentorCompetition.trim() !== '') {
+          mentorComps = [userData.mentorCompetition.trim()];
+        }
+        
+        const dropdown = document.getElementById('competitionSelectWritten');
+        if (!dropdown) return;
+        
+        dropdown.innerHTML = '<option value="">Select competition...</option>';
+        
+        mentorComps.forEach(comp => {
+          const opt = document.createElement('option');
+          opt.value = comp;
+          opt.textContent = comp;
+          dropdown.appendChild(opt);
+        });
+        
+        // Add event listener for competition change
+        dropdown.onchange = async function(e) {
+          const selectedCompetition = e.target.value;
+          if (selectedCompetition) {
+            await populateCompetencyOptions(selectedCompetition);
+          } else {
+            populateDefaultCompetencies();
+          }
+        };
+      } catch (err) {
+        console.error("Error populating competition dropdown:", err);
+      }
+    }
+    window.populateCompetitionDropdown = populateCompetitionDropdown;
+
+    function populateDefaultCompetencies() {
+      const checkboxGroup = document.getElementById('competencyCheckboxes');
+      if (!checkboxGroup) return;
+      
+      const defaultCompetencies = [
+        'Business Communication',
+        'Marketing',
+        'Accounting',
+        'Economics'
+      ];
+      
+      checkboxGroup.innerHTML = defaultCompetencies.map(comp => `
+        <label class="written-checkbox-item">
+          <input type="checkbox" class="competency-option" value="${comp}" />
+          <span>${comp}</span>
+        </label>
+      `).join('');
+    }
+
+    async function populateCompetencyOptions(competitionName) {
+      try {
+        const competencies = await getCompetenciesFromLatestSubmission(competitionName);
+        const checkboxGroup = document.getElementById('competencyCheckboxes');
+        
+        if (!checkboxGroup) return;
+        
+        if (competencies.length === 0) {
+          populateDefaultCompetencies();
+          return;
+        }
+        
+        checkboxGroup.innerHTML = competencies.map(comp => `
+          <label class="written-checkbox-item">
+            <input type="checkbox" class="competency-option" value="${comp}" />
+            <span>${comp}</span>
+        </label>
+      `).join('');
+      } catch (error) {
+        console.error('Error fetching competencies:', error);
+        populateDefaultCompetencies();
+      }
+    }
+    window.populateCompetencyOptions = populateCompetencyOptions;
+
+    async function getCompetenciesFromLatestSubmission(competitionName) {
+      if (!competitionName) return [];
+      
+      try {
+        const snapshot = await db.collection('competition-submissions')
+          .where('competition', '==', competitionName)
+          .orderBy('processedAt', 'desc')
+          .limit(1)
+          .get();
+        
+        if (!snapshot.empty) {
+          const latestDoc = snapshot.docs[0].data();
+          const extractedCompetencies = latestDoc.extractedCompetencies;
+          
+          if (extractedCompetencies) {
+            const competencyLines = extractedCompetencies
+              .split('\n')
+              .filter(line => /^[A-Z]\.\s/.test(line.trim()))
+              .map(line => line.replace(/^[A-Z]\.\s*/, '').trim())
+              .filter(comp => comp.length > 0);
+            
+            return competencyLines;
+          }
+        }
+        
+        return [];
+      } catch (error) {
+        console.error('Error fetching competencies:', error);
+        return [];
+      }
+    }
+    window.getCompetenciesFromLatestSubmission = getCompetenciesFromLatestSubmission;
+
+    // ========== SPEAKING COMPETENCY FUNCTIONS ==========
+    async function populateCompetitionDropdownSpeaking() {
+      try {
+        const user = auth.currentUser;
+        if (!user) return;
+        
+        const userDoc = await db.collection('users').doc(user.uid).get();
+        const userData = userDoc.data();
+        
+        let mentorComps = [];
+        if (Array.isArray(userData.mentorCompetition)) {
+          mentorComps = userData.mentorCompetition;
+        } else if (typeof userData.mentorCompetition === 'string' && userData.mentorCompetition.trim() !== '') {
+          mentorComps = [userData.mentorCompetition.trim()];
+        }
+        
+        const dropdown = document.getElementById('competitionSelectSpeaking');
+        if (!dropdown) return;
+        
+        dropdown.innerHTML = '<option value="">Select competition...</option>';
+        
+        mentorComps.forEach(comp => {
+          const opt = document.createElement('option');
+          opt.value = comp;
+          opt.textContent = comp;
+          dropdown.appendChild(opt);
+        });
+        
+        // Add event listener for competition change
+        dropdown.onchange = async function(e) {
+          const selectedCompetition = e.target.value;
+          if (selectedCompetition) {
+            await populateSpeakingCompetencyOptions(selectedCompetition);
+          } else {
+            populateDefaultSpeakingCompetencies();
+      }
+        };
+      } catch (err) {
+        console.error("Error populating speaking competition dropdown:", err);
+      }
+    }
+    window.populateCompetitionDropdownSpeaking = populateCompetitionDropdownSpeaking;
+
+    function populateDefaultSpeakingCompetencies() {
+      const checkboxGroup = document.getElementById('speakingCompetencyCheckboxes');
+      if (!checkboxGroup) return;
+      
+      const defaultCompetencies = [
+        'Public Speaking',
+        'Communication',
+        'Presentation',
+        'Leadership'
+      ];
+      
+      checkboxGroup.innerHTML = defaultCompetencies.map(comp => `
+        <label class="written-checkbox-item">
+          <input type="checkbox" class="speaking-competency-option" value="${comp}" />
+          <span>${comp}</span>
+        </label>
+      `).join('');
+  }
+
+    async function populateSpeakingCompetencyOptions(competitionName) {
+      try {
+        const competencies = await getCompetenciesFromLatestSubmission(competitionName);
+        const checkboxGroup = document.getElementById('speakingCompetencyCheckboxes');
+        
+        if (!checkboxGroup) return;
+        
+        if (competencies.length === 0) {
+          populateDefaultSpeakingCompetencies();
+          return;
+        }
+        
+        checkboxGroup.innerHTML = competencies.map(comp => `
+          <label class="written-checkbox-item">
+            <input type="checkbox" class="speaking-competency-option" value="${comp}" />
+            <span>${comp}</span>
+        </label>
+      `).join('');
+      } catch (error) {
+        console.error('Error fetching speaking competencies:', error);
+        populateDefaultSpeakingCompetencies();
+      }
+    }
+    window.populateSpeakingCompetencyOptions = populateSpeakingCompetencyOptions;
+
+    // ========== CASE COMPETENCY FUNCTIONS ==========
+    async function populateCompetitionDropdownCase() {
+      try {
+        const user = auth.currentUser;
+        if (!user) return;
+        
+        const userDoc = await db.collection('users').doc(user.uid).get();
+        const userData = userDoc.data();
+        
+        let mentorComps = [];
+        if (Array.isArray(userData.mentorCompetition)) {
+          mentorComps = userData.mentorCompetition;
+        } else if (typeof userData.mentorCompetition === 'string' && userData.mentorCompetition.trim() !== '') {
+          mentorComps = [userData.mentorCompetition.trim()];
+        }
+        
+        const dropdown = document.getElementById('competitionSelectCase');
+        if (!dropdown) return;
+        
+        dropdown.innerHTML = '<option value="">Select competition...</option>';
+        
+        mentorComps.forEach(comp => {
+          const opt = document.createElement('option');
+          opt.value = comp;
+          opt.textContent = comp;
+          dropdown.appendChild(opt);
+        });
+        
+        // Add event listener for competition change
+        dropdown.onchange = async function(e) {
+          const selectedCompetition = e.target.value;
+          if (selectedCompetition) {
+            await populateCaseCompetencyOptions(selectedCompetition);
+          } else {
+            populateDefaultCaseCompetencies();
+          }
+        };
+      } catch (err) {
+        console.error("Error populating case competition dropdown:", err);
+      }
+    }
+    window.populateCompetitionDropdownCase = populateCompetitionDropdownCase;
+
+    function populateDefaultCaseCompetencies() {
+      const checkboxGroup = document.getElementById('caseCompetencyCheckboxes');
+      if (!checkboxGroup) return;
+      
+      const defaultCompetencies = [
+        'Business Communication',
+        'Marketing',
+        'Accounting',
+        'Economics',
+        'Strategy'
+      ];
+      
+      checkboxGroup.innerHTML = defaultCompetencies.map(comp => `
+        <label class="written-checkbox-item">
+          <input type="checkbox" class="case-competency-option" value="${comp}" />
+          <span>${comp}</span>
+        </label>
+      `).join('');
+  }
+
+    async function populateCaseCompetencyOptions(competitionName) {
+      try {
+        const competencies = await getCompetenciesFromLatestSubmission(competitionName);
+        const checkboxGroup = document.getElementById('caseCompetencyCheckboxes');
+        
+        if (!checkboxGroup) return;
+        
+        if (competencies.length === 0) {
+          populateDefaultCaseCompetencies();
+          return;
+        }
+        
+        checkboxGroup.innerHTML = competencies.map(comp => `
+          <label class="written-checkbox-item">
+            <input type="checkbox" class="case-competency-option" value="${comp}" />
+            <span>${comp}</span>
+          </label>
+        `).join('');
+      } catch (error) {
+        console.error('Error fetching case competencies:', error);
+        populateDefaultCaseCompetencies();
+  }
+    }
+    window.populateCaseCompetencyOptions = populateCaseCompetencyOptions;
+
+    function showMenteesInWrittenModal() {
+      const menteesList = document.getElementById('menteesList');
+      if (!menteesList) return;
+      
+      if (menteesCache.length === 0) {
+        menteesList.innerHTML = '<div class="written-no-mentees">No mentees found</div>';
+        return;
+      }
+      
+      menteesList.innerHTML = menteesCache.map(mentee => `
+        <label class="written-checkbox-item">
+          <input type="checkbox" class="user-checkbox" value="${mentee.id}" />
+          <span>${menteeNameMap[mentee.id] || mentee.name || mentee.email || 'Unnamed'} (${mentee.email || 'no email'})</span>
+        </label>
+      `).join('');
+  }
+    window.showMenteesInWrittenModal = showMenteesInWrittenModal;
+
+  function generateWrittenAssignment() {
+    const selectedMentees = Array.from(document.querySelectorAll('.user-checkbox:checked')).map(cb => cb.value);
+    if (!selectedMentees.length) {
+        alert("Please select at least one mentee.");
+        return;
+    }
+
+      const timeBtn = document.querySelector('.written-time-btn.selected');
+    const time = timeBtn ? timeBtn.textContent.trim() : null;
+    const competencies = Array.from(document.querySelectorAll('.competency-option:checked')).map(cb => cb.value);
+    const questions = document.getElementById('speechInput').value.trim();
+      const diffBtn = document.querySelector('.written-difficulty-btn.selected');
+    const difficulty = diffBtn ? diffBtn.textContent.trim() : null;
+      const simulate = false; // Removed BluePanda option
+
+      const batch = db.batch();
+      const assignmentsRef = db.collection('assignments');
+      const notificationsRef = db.collection('notifications');
+    
+   selectedMentees.forEach(uid => {
+    const newRef = assignmentsRef.doc();
+    batch.set(newRef, {
+        title: "Written Practice",
+        type: "written",
+        time: time,
+        sp: calculateSP(time),
+        competencies: competencies,
+        questions: questions,
+        difficulty: difficulty,
+        simulate: simulate,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        to: uid,
+        status: "assigned",
+        correctAnswers: {
+            q1: "To make meetings more efficient",
+            q2: "Adjourn", 
+            q3: "Majority vote",
+            q4: "Amend",
+            q5: "\"I move to...\""
+        },
+        maxScore: 5,
+        usedMenteeTrainingData: useMenteeTrainingData,
+        trainingPDFs: uploadedPDFs.length > 0 ? uploadedPDFs.map(pdf => ({
+            name: pdf.name,
+            processed: pdf.processed,
+            content: pdf.content || '',
+            contentLength: pdf.content ? pdf.content.length : 0
+        })) : null
+    });
+
+        // Create notification
+        const notifRef = notificationsRef.doc();
+        batch.set(notifRef, {
+          menteeId: uid,
+          message: `You've been assigned a new Written Practice!`,
+          assignmentName: "Written Practice",
+          assignmentId: newRef.id,
+          type: "assignment",
+          showModal: false,
+          read: false,
+          timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        });
+});
+
+    batch.commit()
+        .then(() => {
+            document.getElementById('writtenSetup').style.display = 'none';
+            document.getElementById('writtenCongrats').style.display = 'block';
+          setTimeout(() => {
+            closeWrittenModal();
+            renderAssignments();
+          }, 2000);
+        })
+        .catch(error => {
+            console.error("Error creating assignments:", error);
+            alert("Failed to create assignments");
+        });
+}
+    window.generateWrittenAssignment = generateWrittenAssignment;
+
+    // PDF Upload Functions (simplified - you can add full drag and drop if needed)
+    function setupMultiFileDragAndDrop() {
+      const dropZone = document.getElementById('multiDropZone');
+      const fileInput = document.getElementById('multiFileInput');
+      const filesList = document.getElementById('uploadedFilesList');
+      
+      if (!dropZone || !fileInput) return;
+      
+      dropZone.onclick = () => fileInput.click();
+      
+      dropZone.ondragover = (e) => {
+        e.preventDefault();
+        dropZone.style.borderColor = '#f97316';
+      };
+      
+      dropZone.ondragleave = () => {
+        dropZone.style.borderColor = 'rgba(71, 85, 105, 0.5)';
+      };
+      
+      dropZone.ondrop = (e) => {
+        e.preventDefault();
+        dropZone.style.borderColor = 'rgba(71, 85, 105, 0.5)';
+        handleFiles(e.dataTransfer.files);
+      };
+      
+      fileInput.onchange = (e) => {
+        handleFiles(e.target.files);
+      };
+    }
+
+    async function handleFiles(files) {
+      const pdfFiles = Array.from(files).filter(f => f.type === 'application/pdf');
+      if (pdfFiles.length > 5) {
+        alert('Maximum 5 PDFs allowed');
+        return;
+      }
+      
+      // Check if pdfjsLib is available
+      if (typeof pdfjsLib === 'undefined') {
+        console.error('PDF.js library not loaded');
+        alert('PDF processing not available. Please refresh the page.');
+        return;
+      }
+      
+      for (const file of pdfFiles) {
+        const reader = new FileReader();
+        reader.onload = async (e) => {
+          try {
+            const pdf = await pdfjsLib.getDocument({ data: e.target.result }).promise;
+            let text = '';
+            for (let i = 1; i <= pdf.numPages; i++) {
+              const page = await pdf.getPage(i);
+              const content = await page.getTextContent();
+              text += content.items.map(item => item.str).join(' ') + '\n';
+            }
+            
+            uploadedPDFs.push({
+              name: file.name,
+              content: text,
+              processed: true
+            });
+            
+            updateUploadedFilesList();
+          } catch (err) {
+            console.error('Error processing PDF:', err);
+            // Add file anyway without processing
+            uploadedPDFs.push({
+              name: file.name,
+              content: '',
+              processed: false
+            });
+            updateUploadedFilesList();
+          }
+        };
+        reader.readAsArrayBuffer(file);
+      }
+    }
+
+    function updateUploadedFilesList() {
+      const filesList = document.getElementById('uploadedFilesList');
+      if (!filesList) return;
+      
+      if (uploadedPDFs.length === 0) {
+        filesList.innerHTML = '';
+        return;
+      }
+      
+      filesList.innerHTML = uploadedPDFs.map((pdf, idx) => `
+        <div class="uploaded-file-item">
+          <span>${pdf.name}</span>
+          <button onclick="removePDF(${idx})" class="remove-pdf-btn">×</button>
+        </div>
+      `).join('');
+    }
+
+    function removePDF(index) {
+      uploadedPDFs.splice(index, 1);
+      updateUploadedFilesList();
+    }
+    window.removePDF = removePDF;
+
+    // Assignment modal functions (for notifications)
+    function openFullAssignmentModal(assignment) {
+      // Set the modal title
+      document.getElementById('cq-assignment-title').innerText = assignment.title || "New Assignment";
+      
+      // Show info section, hide quiz section
+      document.getElementById('cq-assignment-info').style.display = 'block';
+      document.getElementById('cq-assignment-quiz').style.display = 'none';
+      
+      // Fill in all assignment details
+      const fieldsElement = document.getElementById('cq-assignment-fields');
+      if (fieldsElement) {
+          if (assignment.type === "speaking" || assignment.type === "case") {
+              // Speaking/Case assignment format
+              const q1 = assignment.questions && assignment.questions[0] ? assignment.questions[0] : "No question provided";
+              const q2 = assignment.questions && assignment.questions[1] ? assignment.questions[1] : "No question provided";
+              
+              fieldsElement.innerHTML = `
+                  <div><b>Type:</b> ${assignment.type === "speaking" ? "Speaking" : "Case"} Assignment</div>
+                  <div><b>Competencies:</b> ${assignment.competencies ? assignment.competencies.join(', ') : 'n/a'}</div>
+                  <div><b>Description:</b> ${assignment.description || 'n/a'}</div>
+                  <div><b>Questions:</b></div>
+                  <ul>
+                      <li>${q1}</li>
+                      <li>${q2}</li>
+                  </ul>
+              `;
+          } else {
+              // Regular assignment format
+              fieldsElement.innerHTML = `
+                  <div><b>Time:</b> ${assignment.time || 'n/a'}</div>
+                  <div><b>Competencies:</b> ${assignment.competencies ? assignment.competencies.join(', ') : 'n/a'}</div>
+                  <div><b>Questions:</b><br> <span style="font-weight:400; color:#374151">${assignment.questions || 'n/a'}</span></div>
+                  <div><b>Difficulty:</b> ${assignment.difficulty || 'n/a'}</div>
+                  <div><b>Simulate:</b> ${assignment.simulate ? "Yes" : "No"}</div>
+              `;
+          }
+
+          if (assignment.trainingPDFs && assignment.trainingPDFs.length > 0) {
+              assignment.trainingPDFs.forEach(pdf => {
+                  const pdfBox = document.createElement('div');
+                  pdfBox.style.cssText = 'background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 12px; margin: 8px 0; border-radius: 8px; cursor: pointer; font-weight: 500;';
+                  pdfBox.textContent = pdf.name || 'Training Document';
+                  pdfBox.onclick = () => downloadPDF(pdf);
+                  fieldsElement.appendChild(pdfBox);
+              });
+          }
+      }
+      
+      // Show the modal
+      document.getElementById('cq-assignment-modal').style.display = 'block';
+    }
+    window.openFullAssignmentModal = openFullAssignmentModal;
+
+    function closeAssignmentModal() {
+      const modal = document.getElementById('cq-assignment-modal');
+      if (modal) {
+        modal.style.display = 'none';
+      }
+    }
+    window.closeAssignmentModal = closeAssignmentModal;
+
+    function snoozeAssignment() {
+      if (window.latestAssignmentId) {
+        // Mark as snoozed (you can add a snooze field to the assignment if needed)
+        closeAssignmentModal();
+      }
+    }
+    window.snoozeAssignment = snoozeAssignment;
+
+    async function acceptAssignmentNow() {
+      console.log("🚀 acceptAssignmentNow() called");
+      showLoader();
+
+      const assignment = window.currentAssignment;
+      console.log("📋 Current assignment:", assignment);
+
+      if (!assignment) {
+        console.error("❌ No current assignment found");
+        hideLoader();
+        return;
+      }
+
+      if (window.latestAssignmentId) {
+        console.log("✅ Marking assignment as seen");
+
+        const updateData = {
+          status: "seen",
+          completedAt: firebase.firestore.FieldValue.serverTimestamp(),
+          acceptedAt: firebase.firestore.FieldValue.serverTimestamp()
+        };
+
+        if (assignment.type === 'written') {
+          updateData.score = 0;
+          updateData.maxScore = assignment.writtenQuestions?.length || 10;
+        }
+
+        try {
+          await db.collection('assignments').doc(window.latestAssignmentId).update(updateData);
+          console.log("✅ Assignment marked as seen successfully");
+        } catch (error) {
+          console.error("❌ Error marking assignment as seen:", error);
+        }
+      }
+
+      // Handle assignment types
+      if (assignment.type === 'case') {
+        console.log("📋 Opening case study modal for case assignment");
+        document.getElementById('cq-assignment-modal').style.display = 'none';
+        hideLoader();
+        
+        // Store assignment questions globally for the case study modal
+        window.currentAssignmentQuestions = {
+          q1: assignment.questions && assignment.questions[0] ? assignment.questions[0] : "No question provided",
+          q2: assignment.questions && assignment.questions[1] ? assignment.questions[1] : "No question provided",
+          title: assignment.title || "Case Study",
+          description: assignment.description || assignment.caseStudyContent || ""
+        };
+        
+        if (typeof openCaseStudyModal === 'function') {
+          openCaseStudyModal(assignment);
+        } else {
+          console.error("openCaseStudyModal function not found");
+        }
+        return;
+      }
+      
+      if (assignment.type === 'speaking') {
+        console.log("🎤 Opening speaking modal for speaking assignment");
+        document.getElementById('cq-assignment-modal').style.display = 'none';
+        hideLoader();
+        
+        // Store assignment questions globally for the speaking modal
+        window.currentAssignmentQuestions = {
+          q1: assignment.questions && assignment.questions[0] ? assignment.questions[0] : "No question provided",
+          q2: assignment.questions && assignment.questions[1] ? assignment.questions[1] : "No question provided",
+          title: assignment.title || "Speaking Assignment",
+          description: assignment.description || ""
+        };
+        
+        if (typeof openSpeakingAssignmentModal === 'function') {
+          openSpeakingAssignmentModal(assignment);
+        } else {
+          console.error("openSpeakingAssignmentModal function not found");
+        }
+        return;
+      }
+
+      if (assignment.type === 'written') {
+        console.log("✍️ Opening written assignment (with GPT if needed)");
+        document.getElementById('cq-assignment-modal').style.display = 'none';
+        if (typeof openWrittenPracticeModal === 'function') {
+          await openWrittenPracticeModal(assignment);
+        } else {
+          console.error("openWrittenPracticeModal function not found");
+          alert("Error: Written assignment handler not available");
+        }
+        return;
+      }
+
+      // Handle quiz assignments
+      if (assignment.type === 'quiz') {
+        console.log("📝 Quiz assignment - opening quiz modal");
+        document.getElementById('cq-assignment-modal').style.display = 'none';
+        hideLoader();
+        // Quiz assignments are handled in the assignment modal itself
+        return;
+      }
+
+      // Unknown assignment type
+      console.error("❌ Unknown assignment type:", assignment.type);
+      hideLoader();
+      alert(`Assignment type "${assignment.type || 'unknown'}" is not yet implemented. Please contact support.`);
+    }
+    window.acceptAssignmentNow = acceptAssignmentNow;
+
+    // ========== SPEAKING MODAL FUNCTIONS ==========
+    function openSpeakingModal() {
+      const modal = document.getElementById('speakingModal');
+      if (!modal) return;
+      
+      modal.style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+      
+      populateCompetitionDropdownSpeaking();
+      showMenteesInSpeakingModal();
+      populateDefaultSpeakingCompetencies();
+      
+      // Reset form
+      document.getElementById('speakingSetup').style.display = 'block';
+      document.getElementById('speakingCongrats').style.display = 'none';
+      
+      // Clear selections
+  document.querySelectorAll('.speaking-time-btn').forEach(btn => btn.classList.remove('selected'));
+      document.querySelectorAll('.speaking-competency-option').forEach(cb => cb.checked = false);
+      document.querySelectorAll('.speaking-user-checkbox').forEach(cb => cb.checked = false);
+      
+      // Set default time
+      const defaultTimeBtn = document.querySelector('.speaking-time-btn[data-time="5"]');
+      if (defaultTimeBtn) defaultTimeBtn.classList.add('selected');
+}
+    window.openSpeakingModal = openSpeakingModal;
+
+    function closeSpeakingModal() {
+      const modal = document.getElementById('speakingModal');
+      if (modal) {
+        modal.style.display = 'none';
+      }
+      document.body.style.overflow = 'auto';
+      
+      // Reset to setup state
+      document.getElementById('speakingSetup').style.display = 'block';
+      document.getElementById('speakingCongrats').style.display = 'none';
+      
+      // Clear form fields
+      clearSpeakingForm();
+    }
+    window.closeSpeakingModal = closeSpeakingModal;
+
+    function clearSpeakingForm() {
+      document.getElementById('speakingAssignmentName').value = '';
+      document.getElementById('speakingAssignmentDesc').value = '';
+      document.getElementById('speakingQuestion1').value = '';
+      document.getElementById('speakingQuestion2').value = '';
+      document.getElementById('speakingQuestion3').value = '';
+      
+      // Clear selected buttons
+      document.querySelectorAll('.speaking-time-btn.selected').forEach(btn => btn.classList.remove('selected'));
+      
+      // Clear mentee selections
+      document.querySelectorAll('.speaking-user-checkbox').forEach(cb => cb.checked = false);
+      
+      // Clear competency selections
+      document.querySelectorAll('#speakingCompetencyCheckboxes .speaking-competency-option').forEach(cb => cb.checked = false);
+}
+
+    function showMenteesInSpeakingModal() {
+      const menteesList = document.getElementById('speakingMenteesList');
+      if (!menteesList) return;
+      
+      menteesList.innerHTML = allMentees.length === 0
+        ? '<div class="no-mentees">No mentees found</div>'
+        : allMentees.map(mentee => `
+          <label class="written-checkbox-label">
+            <input type="checkbox" class="speaking-user-checkbox" value="${mentee.id}">
+            <span>${mentee.name || mentee.email || "Unnamed"}</span>
+          </label>
+        `).join('');
+    }
+
+    function selectAllSpeakingMentees() {
+      document.querySelectorAll('.speaking-user-checkbox').forEach(cb => cb.checked = true);
+    }
+    window.selectAllSpeakingMentees = selectAllSpeakingMentees;
+
+    function selectAllSpeakingCompetencies() {
+      document.querySelectorAll('#speakingCompetencyCheckboxes .speaking-competency-option').forEach(cb => cb.checked = true);
+}
+    window.selectAllSpeakingCompetencies = selectAllSpeakingCompetencies;
+
+    function selectSpeakingTime(button) {
+      document.querySelectorAll('.speaking-time-btn').forEach(btn => btn.classList.remove('selected'));
+  button.classList.add('selected');
+}
+    window.selectSpeakingTime = selectSpeakingTime;
+
+function generateSpeakingAssignment() {
+  const selectedMentees = Array.from(document.querySelectorAll('.speaking-user-checkbox:checked')).map(cb => cb.value);
+  if (!selectedMentees.length) {
+      alert("Please select at least one mentee.");
+      return;
+  }
+
+  const name = document.getElementById('speakingAssignmentName').value.trim();
+  const desc = document.getElementById('speakingAssignmentDesc').value.trim();
+  const question1 = document.getElementById('speakingQuestion1').value.trim();
+  const question2 = document.getElementById('speakingQuestion2').value.trim();
+  const question3 = document.getElementById('speakingQuestion3').value.trim();
+  
+  const timeBtn = document.querySelector('.speaking-time-btn.selected');
+  const time = timeBtn ? timeBtn.textContent.trim() : "5 min";
+  
+      const competencies = Array.from(document.querySelectorAll('#speakingCompetencyCheckboxes .speaking-competency-option:checked')).map(cb => cb.value);
+
+      const batch = db.batch();
+      const assignmentsRef = db.collection('assignments');
+      const notificationsRef = db.collection('notifications');
+
+  selectedMentees.forEach(uid => {
+    // 1. Create the assignment
+    const assignmentRef = assignmentsRef.doc();
+    
+    batch.set(assignmentRef, {
+      title: name || "Prepared Speaking",
+      description: desc,
+      type: "speaking",
+      time: time,
+      sp: calculateSP(time),
+      competencies: competencies,
+      questions: [
+        question1 || "No question provided", 
+        question2 || "No question provided",
+        question3 || "No question provided"
+      ].filter(q => q !== "No question provided"),
+      to: uid,
+      status: "assigned",
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+
+    // 2. Add notification for mentee homepage
+    const notifRef = notificationsRef.doc();
+    batch.set(notifRef, {
+      menteeId: uid,
+      message: `You've been assigned a new Speaking Practice${name ? ': ' + name : ''}!`,
+      assignmentName: name || "Prepared Speaking",
+      assignmentId: assignmentRef.id,
+          type: "assignment", // MUST be "assignment" for the click handler to work
+          assignmentType: "speaking", // Preserve the assignment type
+          competencies: competencies,
+          time: time,
+      showModal: false,
+      read: false,
+      timestamp: firebase.firestore.FieldValue.serverTimestamp()
+    });
+  });
+
+  batch.commit()
+    .then(() => {
+      document.getElementById('speakingSetup').style.display = 'none';
+      document.getElementById('speakingCongrats').style.display = 'block';
+          
+          // Reload assignments after a short delay
+          setTimeout(() => {
+            const user = auth.currentUser;
+            if (user) {
+              loadAssignments(user);
+            }
+          }, 2000);
+    })
+    .catch(error => {
+      console.error("Error creating speaking assignments:", error);
+      alert("Failed to create assignments");
+    });
+}
+    window.generateSpeakingAssignment = generateSpeakingAssignment;
+
+    // ========== CASE MODAL FUNCTIONS ==========
+    function openCaseModal() {
+      const modal = document.getElementById('caseModal');
+      if (!modal) return;
+      
+      modal.style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+      
+      populateCompetitionDropdownCase();
+      showMenteesInCaseModal();
+      populateDefaultCaseCompetencies();
+      
+      // Reset form
+      document.getElementById('caseSetup').style.display = 'block';
+      document.getElementById('caseCongrats').style.display = 'none';
+      
+      // Clear selections
+      document.querySelectorAll('.case-competency-option').forEach(cb => cb.checked = false);
+      document.querySelectorAll('.case-user-checkbox').forEach(cb => cb.checked = false);
+    }
+    window.openCaseModal = openCaseModal;
+
+    function closeCaseModal() {
+      const modal = document.getElementById('caseModal');
+      if (modal) {
+        modal.style.display = 'none';
+      }
+      document.body.style.overflow = 'auto';
+      
+      document.getElementById('caseSetup').style.display = 'block';
+      document.getElementById('caseCongrats').style.display = 'none';
+      clearCaseForm();
+    }
+    window.closeCaseModal = closeCaseModal;
+
+    function clearCaseForm() {
+      document.getElementById('caseAssignmentName').value = '';
+      document.getElementById('caseAssignmentDesc').value = '';
+      document.getElementById('caseStudyContent').value = '';
+      document.getElementById('caseQuestion1').value = '';
+      document.getElementById('caseQuestion2').value = '';
+      document.getElementById('caseQuestion3').value = '';
+      
+      document.querySelectorAll('.case-user-checkbox').forEach(cb => cb.checked = false);
+      document.querySelectorAll('#caseCompetencyCheckboxes .case-competency-option').forEach(cb => cb.checked = false);
+    }
+
+    function showMenteesInCaseModal() {
+      const menteesList = document.getElementById('caseMenteesList');
+      if (!menteesList) return;
+      
+      menteesList.innerHTML = allMentees.length === 0
+        ? '<div class="no-mentees">No mentees found</div>'
+        : allMentees.map(mentee => `
+          <label class="written-checkbox-label">
+            <input type="checkbox" class="case-user-checkbox" value="${mentee.id}">
+            <span>${mentee.name || mentee.email || "Unnamed"}</span>
+          </label>
+        `).join('');
+    }
+
+    function selectAllCaseMentees() {
+      document.querySelectorAll('.case-user-checkbox').forEach(cb => cb.checked = true);
+    }
+    window.selectAllCaseMentees = selectAllCaseMentees;
+
+    function selectAllCaseCompetencies() {
+      document.querySelectorAll('#caseCompetencyCheckboxes .case-competency-option').forEach(cb => cb.checked = true);
+    }
+    window.selectAllCaseCompetencies = selectAllCaseCompetencies;
+
+function generateCaseAssignment() {
+  const selectedMentees = Array.from(document.querySelectorAll('.case-user-checkbox:checked')).map(cb => cb.value);
+  if (!selectedMentees.length) {
+      alert("Please select at least one mentee.");
+      return;
+  }
+
+  const name = document.getElementById('caseAssignmentName').value.trim();
+  const desc = document.getElementById('caseAssignmentDesc').value.trim();
+  const caseContent = document.getElementById('caseStudyContent').value.trim();
+  const question1 = document.getElementById('caseQuestion1').value.trim();
+  const question2 = document.getElementById('caseQuestion2').value.trim();
+  const question3 = document.getElementById('caseQuestion3').value.trim();
+  
+      const competencies = Array.from(document.querySelectorAll('#caseCompetencyCheckboxes .case-competency-option:checked')).map(cb => cb.value);
+
+      const batch = db.batch();
+      const assignmentsRef = db.collection('assignments');
+      const notificationsRef = db.collection('notifications');
+
+  selectedMentees.forEach(uid => {
+    const assignmentRef = assignmentsRef.doc();
+    
+    batch.set(assignmentRef, {
+      title: name || "Case Study",
+      description: desc,
+      type: "case",
+          time: "10 min",
+          sp: calculateSP("10 min"),
+      competencies: competencies,
+      caseContent: caseContent,
+      questions: [
+        question1 || "No question provided", 
+        question2 || "No question provided",
+        question3 || "No question provided"
+      ].filter(q => q !== "No question provided"),
+      to: uid,
+      status: "assigned",
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+
+    const notifRef = notificationsRef.doc();
+    batch.set(notifRef, {
+      menteeId: uid,
+      message: `You've been assigned a new Case Study${name ? ': ' + name : ''}!`,
+      assignmentName: name || "Case Study",
+      assignmentId: assignmentRef.id,
+          type: "assignment", // MUST be "assignment" for the click handler to work
+          assignmentType: "case", // Preserve the assignment type
+          competencies: competencies,
+          time: "10 min",
+      showModal: false,
+      read: false,
+      timestamp: firebase.firestore.FieldValue.serverTimestamp()
+    });
+  });
+
+  batch.commit()
+    .then(() => {
+      document.getElementById('caseSetup').style.display = 'none';
+      document.getElementById('caseCongrats').style.display = 'block';
+          
+          // Reload assignments after a short delay
+          setTimeout(() => {
+            const user = auth.currentUser;
+            if (user) {
+              loadAssignments(user);
+            }
+          }, 2000);
+    })
+    .catch(error => {
+      console.error("Error creating case assignments:", error);
+      alert("Failed to create assignments");
+    });
+}
+    window.generateCaseAssignment = generateCaseAssignment;
+
+// Helper function to calculate SP based on time
+function calculateSP(timeStr) {
+  if (!timeStr) return 0;
+  const minutes = parseInt(timeStr.replace(/\D/g, '')) || 0;
+  return Math.max(5, Math.floor(minutes / 2) * 5); // Minimum 5 SP, then 5 SP per 2 minutes
+}
+
+    // Mobile Navigation Toggle
+    window.toggleMobileNav = function() {
+      const nav = document.getElementById('mainNav');
+      const hamburger = document.getElementById('hamburgerMenu');
+      
+      if (nav && hamburger) {
+        nav.classList.toggle('active');
+        hamburger.classList.toggle('active');
+        document.body.style.overflow = nav.classList.contains('active') ? 'hidden' : '';
+      }
+    };
+    
+    // Close mobile nav when clicking a nav link
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('.assignments-nav .nav-link').forEach(link => {
+        link.addEventListener('click', () => {
+          if (window.innerWidth <= 768) {
+            toggleMobileNav();
+          }
+        });
+      });
+    });
+
+    // Initialize
+    window.addEventListener('load', async function() {
+      createStarField();
+      
+      const user = auth.currentUser || await new Promise(resolve => auth.onAuthStateChanged(resolve));
+      if (!user) {
+        window.location.href = '../index1.html';
+        return;
+      }
+      
+      // Check mentor status and show/hide mentor link
+      db.collection('users').doc(user.uid).get().then((doc) => {
+        const mentorNavLink = document.getElementById('mentorNavLink');
+        if (mentorNavLink) {
+          const isMentor = doc.exists && doc.data().isMentor === true;
+          mentorNavLink.style.display = isMentor ? 'block' : 'none';
+        }
+      }).catch((error) => {
+        console.error('Error checking mentor status:', error);
+      });
+      
+      await loadMentees(user);
+      await loadAssignments(user);
+      setupNotifications();
+      
+      // Initialize PDF.js worker
+      if (typeof pdfjsLib !== 'undefined') {
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+      }
+    });
+
+    // ========== LOADER FUNCTIONS ==========
+    let progressInterval = null;
+    let currentProgress = 0;
+
+    function updateCircularProgress(progress) {
+      const fill = document.getElementById('circularProgressFill');
+      const text = document.getElementById('circularProgressText');
+      
+      if (fill && text) {
+        const circumference = 2 * Math.PI * 45;
+        const offset = circumference - (progress / 100) * circumference;
+        fill.style.strokeDashoffset = offset;
+        text.textContent = Math.round(progress) + '%';
+      }
+    }
+
+    function startCircularProgress() {
+      currentProgress = 0;
+      updateCircularProgress(0);
+      
+      progressInterval = setInterval(() => {
+        currentProgress += 2;
+        if (currentProgress > 95) {
+          currentProgress = 95;
+        }
+        updateCircularProgress(currentProgress);
+      }, 100);
+    }
+
+    function completeCircularProgress() {
+      if (progressInterval) {
+        clearInterval(progressInterval);
+        progressInterval = null;
+      }
+      updateCircularProgress(100);
+    }
+
+    function stopCircularProgress() {
+      if (progressInterval) {
+        clearInterval(progressInterval);
+        progressInterval = null;
+      }
+      currentProgress = 0;
+    }
+
+    function showLoader() {
+      const loader = document.getElementById("assignmentLoader");
+      if (loader) {
+        loader.style.display = "flex";
+        startCircularProgress();
+      }
+    }
+    window.showLoader = showLoader;
+
+    function hideLoader() {
+      completeCircularProgress();
+      setTimeout(() => {
+        stopCircularProgress();
+        const loader = document.getElementById("assignmentLoader");
+        if (loader) {
+          loader.style.display = "none";
+        }
+      }, 300);
+    }
+    window.hideLoader = hideLoader;
+
+    // ========== SPEAKING AND CASE STUDY RECORDING VARIABLES ==========
+    let cqSpeakingMediaRecorder = null;
+    let cqSpeakingMediaStream = null;
+    let cqSpeakingRecordedChunks = [];
+    let isRecording = false;
+    let isIntentionallyStopping = false;
+    let recordingStateMonitor = null;
+    
+    // Case Study variables
+    let cqCaseStudyIsRecording = false;
+    let cqCaseStudyIsIntentionallyStopping = false;
+    let cqCaseStudyRecordingStateMonitor = null;
+    let cqCaseStudyMediaRecorder = null;
+    let cqCaseStudyMediaStream = null;
+    let cqCaseStudyRecordedChunks = [];
+    let cqCaseStudyTimerInterval = null;
+    let cqCaseStudyTimeLeft = 1200; // 20 minutes in seconds
+    let cqCaseStudyTimerActive = false;
+
+    // Helper function to convert blob to base64
+    function blobToBase64(blob) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result.split(',')[1]);
+        reader.onerror = reject;
+        reader.readAsDataURL(blob);
+      });
+    }
+
+    function cqCaseStudyBlobToBase64(blob) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result.split(',')[1]);
+        reader.onerror = reject;
+        reader.readAsDataURL(blob);
+      });
+    }
+
+    // Complete Speaking Assignment Submission Function
+    async function submitSpeakingResponse() {
+      if (!window.latestAssignmentId || cqSpeakingRecordedChunks.length === 0) {
+        alert("Recording not found or assignment ID missing.");
+        return;
+      }
+
+      const submitBtn = document.getElementById('cq-speaking-submitBtn');
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Submitting...';
+      }
+
+      const blob = new Blob(cqSpeakingRecordedChunks, { type: 'video/webm' });
+      const filename = `${firebase.auth().currentUser.uid}-${Date.now()}.webm`;
+
+      const GITHUB_USERNAME = "Anjay209";
+      const GITHUB_REPO = "video-storage";
+      const GITHUB_TOKEN = "REDACTED_TOKEN";
+
+      let githubApiUrl = `https://github-proxy.certquest.workers.dev/github/repos/${GITHUB_USERNAME}/${GITHUB_REPO}/contents/docs/videos/${filename}`;
+      let githubPagesUrl = `https://${GITHUB_USERNAME.toLowerCase()}.github.io/${GITHUB_REPO}/docs/videos/${filename}`;
+
+      try {
+        const base64 = await blobToBase64(blob);
+
+        const uploadRes = await fetch(githubApiUrl, {
+          method: 'PUT',
+          headers: {
+            Authorization: `Bearer ${GITHUB_TOKEN}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            message: `Upload ${filename}`,
+            content: base64,
+            branch: 'main'
+          })
+        });
+
+        if (!uploadRes.ok) {
+          const errData = await uploadRes.json().catch(() => ({}));
+          const errorMessage = errData?.message || "GitHub upload failed";
+          
+          if (uploadRes.status === 409) {
+            console.log("File exists, attempting to update with SHA...");
+            try {
+              const getRes = await fetch(githubApiUrl, {
+                headers: {
+                  Authorization: `Bearer ${GITHUB_TOKEN}`,
+                  'Accept': 'application/vnd.github.v3+json'
+                }
+              });
+              
+              if (getRes.ok) {
+                const existingFile = await getRes.json();
+                const updateRes = await fetch(githubApiUrl, {
+                  method: 'PUT',
+                  headers: {
+                    Authorization: `Bearer ${GITHUB_TOKEN}`,
+                    'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify({
+                    message: `Update ${filename}`,
+                    content: base64,
+                    branch: 'main',
+                    sha: existingFile.sha
+                  })
+                });
+                
+                if (!updateRes.ok) {
+                  throw new Error("Failed to update existing file: " + (await updateRes.json().catch(() => ({}))).message);
+                }
+                console.log("Successfully updated existing file");
+              } else {
+                throw new Error("Could not get existing file info: " + errorMessage);
+              }
+            } catch (updateError) {
+              console.log("Update failed, using unique filename...");
+              const uniqueFilename = `${firebase.auth().currentUser.uid}-${Date.now()}-${Math.random().toString(36).substring(7)}.webm`;
+              const uniqueGithubApiUrl = `https://github-proxy.certquest.workers.dev/github/repos/${GITHUB_USERNAME}/${GITHUB_REPO}/contents/docs/videos/${uniqueFilename}`;
+              const uniqueGithubPagesUrl = `https://${GITHUB_USERNAME.toLowerCase()}.github.io/${GITHUB_REPO}/docs/videos/${uniqueFilename}`;
+              
+              const retryRes = await fetch(uniqueGithubApiUrl, {
+                method: 'PUT',
+                headers: {
+                  Authorization: `Bearer ${GITHUB_TOKEN}`,
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                  message: `Upload ${uniqueFilename}`,
+                  content: base64,
+                  branch: 'main'
+                })
+              });
+              
+              if (!retryRes.ok) {
+                throw new Error("Failed to upload with unique filename: " + (await retryRes.json().catch(() => ({}))).message);
+              }
+              
+              githubPagesUrl = uniqueGithubPagesUrl;
+              console.log("Successfully uploaded with unique filename");
+            }
+          } else {
+            throw new Error(errorMessage);
+          }
+        }
+
+        // Firestore update
+        await firebase.firestore()
+          .collection('assignments')
+          .doc(window.latestAssignmentId)
+          .update({
+            status: "complete",
+            completedAt: firebase.firestore.FieldValue.serverTimestamp(),
+            recordingUrl: githubPagesUrl
+          });
+
+        // Update user's assignments collection
+        const user = firebase.auth().currentUser;
+        const userId = user?.uid;
+        const assignmentId = window.latestAssignmentId || window.currentAssignment?.id;
+        
+        if (userId && assignmentId && typeof assignmentId === 'string' && assignmentId.trim() !== '') {
+          try {
+            await firebase.firestore()
+              .collection('users')
+              .doc(userId)
+              .collection('assignments')
+              .doc(assignmentId)
+              .set({
+                status: 'completed',
+                submittedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                fileUrl: githubPagesUrl,
+                fileType: 'video',
+              }, { merge: true });
+          } catch (userAssignError) {
+            console.warn("Could not update user assignments collection (non-critical):", userAssignError);
+          }
+        }
+
+        // Fetch assignment data to get competencies
+        let competencies = [];
+        let assignmentName = 'Speaking Assessment';
+        try {
+          const assignmentDoc = await firebase.firestore()
+            .collection('assignments')
+            .doc(window.latestAssignmentId)
+            .get();
+          
+          if (assignmentDoc.exists) {
+            const assignmentData = assignmentDoc.data();
+            competencies = assignmentData.competencies || [];
+            assignmentName = assignmentData.title || 'Speaking Assessment';
+          }
+        } catch (error) {
+          console.error("Error fetching assignment data:", error);
+        }
+
+        // Show success message and congrats modal
+        showCongratsModal({ 
+          score: undefined, 
+          totalQuestions: undefined,
+          assignmentName: assignmentName,
+          competencies: competencies,
+          assignmentType: 'speaking'
+        });
+        
+        // Close modal
+        closeSpeakingAssignmentModal();
+
+      } catch (err) {
+        console.error("Upload Error:", err);
+        alert("Upload Error: " + err.message);
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Submit Assessment';
+        }
+      }
+    }
+    window.submitSpeakingResponse = submitSpeakingResponse;
+
+    // Complete Case Study Assignment Submission Function
+    async function submitCaseStudyResponse() {
+      if (!window.latestAssignmentId || cqCaseStudyRecordedChunks.length === 0) {
+        alert("Recording not found or assignment ID missing.");
+        return;
+      }
+
+      const submitBtn = document.getElementById('cq-case-study-submitBtn');
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Submitting...';
+      }
+
+      const blob = new Blob(cqCaseStudyRecordedChunks, { type: 'video/webm' });
+      const filename = `${firebase.auth().currentUser.uid}-${Date.now()}.webm`;
+
+      const GITHUB_USERNAME = "Anjay209";
+      const GITHUB_REPO = "video-storage";
+      const GITHUB_TOKEN = "REDACTED_TOKEN";
+
+      let githubApiUrl = `https://github-proxy.certquest.workers.dev/github/repos/${GITHUB_USERNAME}/${GITHUB_REPO}/contents/docs/videos/${filename}`;
+      let githubPagesUrl = `https://${GITHUB_USERNAME.toLowerCase()}.github.io/${GITHUB_REPO}/docs/videos/${filename}`;
+
+      try {
+        const base64 = await cqCaseStudyBlobToBase64(blob);
+
+        const uploadRes = await fetch(githubApiUrl, {
+          method: 'PUT',
+          headers: {
+            Authorization: `Bearer ${GITHUB_TOKEN}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            message: `Upload ${filename}`,
+            content: base64,
+            branch: 'main'
+          })
+        });
+
+        if (!uploadRes.ok) {
+          const errData = await uploadRes.json().catch(() => ({}));
+          const errorMessage = errData?.message || "GitHub upload failed";
+          
+          if (uploadRes.status === 409) {
+            console.log("File exists, attempting to update with SHA...");
+            try {
+              const getRes = await fetch(githubApiUrl, {
+                headers: {
+                  Authorization: `Bearer ${GITHUB_TOKEN}`,
+                  'Accept': 'application/vnd.github.v3+json'
+                }
+              });
+              
+              if (getRes.ok) {
+                const existingFile = await getRes.json();
+                const updateRes = await fetch(githubApiUrl, {
+                  method: 'PUT',
+                  headers: {
+                    Authorization: `Bearer ${GITHUB_TOKEN}`,
+                    'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify({
+                    message: `Update ${filename}`,
+                    content: base64,
+                    branch: 'main',
+                    sha: existingFile.sha
+                  })
+                });
+                
+                if (!updateRes.ok) {
+                  throw new Error("Failed to update existing file: " + (await updateRes.json().catch(() => ({}))).message);
+                }
+                console.log("Successfully updated existing file");
+              } else {
+                throw new Error("Could not get existing file info: " + errorMessage);
+              }
+            } catch (updateError) {
+              console.log("Update failed, using unique filename...");
+              const uniqueFilename = `${firebase.auth().currentUser.uid}-${Date.now()}-${Math.random().toString(36).substring(7)}.webm`;
+              const uniqueGithubApiUrl = `https://github-proxy.certquest.workers.dev/github/repos/${GITHUB_USERNAME}/${GITHUB_REPO}/contents/docs/videos/${uniqueFilename}`;
+              const uniqueGithubPagesUrl = `https://${GITHUB_USERNAME.toLowerCase()}.github.io/${GITHUB_REPO}/docs/videos/${uniqueFilename}`;
+              
+              const retryRes = await fetch(uniqueGithubApiUrl, {
+                method: 'PUT',
+                headers: {
+                  Authorization: `Bearer ${GITHUB_TOKEN}`,
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                  message: `Upload ${uniqueFilename}`,
+                  content: base64,
+                  branch: 'main'
+                })
+              });
+              
+              if (!retryRes.ok) {
+                throw new Error("Failed to upload with unique filename: " + (await retryRes.json().catch(() => ({}))).message);
+              }
+              
+              githubPagesUrl = uniqueGithubPagesUrl;
+              console.log("Successfully uploaded with unique filename");
+            }
+          } else {
+            throw new Error(errorMessage);
+          }
+        }
+
+        // Firestore update
+        await firebase.firestore()
+          .collection('assignments')
+          .doc(window.latestAssignmentId)
+          .update({
+            status: "complete",
+            completedAt: firebase.firestore.FieldValue.serverTimestamp(),
+            recordingUrl: githubPagesUrl
+          });
+
+        // Update user's assignments collection
+        const user = firebase.auth().currentUser;
+        const userId = user?.uid;
+        const assignmentId = window.latestAssignmentId || window.currentAssignment?.id;
+        
+        if (userId && assignmentId && typeof assignmentId === 'string' && assignmentId.trim() !== '') {
+          try {
+            await firebase.firestore()
+              .collection('users')
+              .doc(userId)
+              .collection('assignments')
+              .doc(assignmentId)
+              .set({
+                status: "complete",
+                completedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                recordingUrl: githubPagesUrl
+              }, { merge: true });
+          } catch (userUpdateError) {
+            console.error("Error updating user assignments:", userUpdateError);
+          }
+        }
+
+        // Fetch assignment data to get competencies
+        let competencies = [];
+        let assignmentName = 'Case Study';
+        try {
+          const assignmentDoc = await firebase.firestore()
+            .collection('assignments')
+            .doc(window.latestAssignmentId)
+            .get();
+          
+          if (assignmentDoc.exists) {
+            const assignmentData = assignmentDoc.data();
+            competencies = assignmentData.competencies || [];
+            assignmentName = assignmentData.title || 'Case Study';
+          }
+        } catch (error) {
+          console.error("Error fetching assignment data:", error);
+        }
+
+        // Show success message and congrats modal
+        showCongratsModal({ 
+          score: undefined, 
+          totalQuestions: undefined,
+          assignmentName: assignmentName,
+          competencies: competencies,
+          assignmentType: 'case'
+        });
+        
+        // Close modal
+        closeCaseStudyModal();
+      } catch (error) {
+        console.error("Upload Error:", error);
+        alert("Upload Error: " + error.message);
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Submit Case Study';
+        }
+      }
+    }
+    window.submitCaseStudyResponse = submitCaseStudyResponse;
+
+    // ========== SPEAKING MODAL FUNCTIONS ==========
+    function openSpeakingAssignmentModal(assignment) {
+      if (assignment) {
+        if (assignment.id) {
+          window.latestAssignmentId = assignment.id;
+        }
+        window.currentAssignment = assignment;
+      }
+      
+      document.getElementById('cq-speaking-title').textContent = "Speaking Assessment";
+      
+      if (window.currentAssignmentQuestions) {
+        document.getElementById('cq-speaking-q1').textContent = window.currentAssignmentQuestions.q1;
+        document.getElementById('cq-speaking-q2').textContent = window.currentAssignmentQuestions.q2;
+      } else if (assignment && assignment.questions) {
+        document.getElementById('cq-speaking-q1').textContent = assignment.questions[0] || "No question provided";
+        document.getElementById('cq-speaking-q2').textContent = assignment.questions[1] || "No question provided";
+      }
+      
+      const starsContainer = document.getElementById('cq-speaking-stars');
+      if (starsContainer) {
+        starsContainer.innerHTML = '';
+        for (let i = 0; i < 150; i++) {
+          const star = document.createElement('div');
+          star.className = 'cq-speaking-star';
+          star.style.top = Math.random() * 100 + '%';
+          star.style.left = Math.random() * 100 + '%';
+          const size = Math.random() * 2 + 0.5;
+          star.style.width = size + 'px';
+          star.style.height = size + 'px';
+          star.style.opacity = Math.random() * 0.7 + 0.3;
+          star.style.animationDuration = (Math.random() * 3 + 2) + 's';
+          starsContainer.appendChild(star);
+        }
+      }
+      
+      const recordingIndicator = document.getElementById('cq-speaking-recordingIndicator');
+      if (recordingIndicator) {
+        recordingIndicator.classList.remove('active');
+      }
+      
+      const modal = document.getElementById('cq-speaking-modal');
+      if (modal) {
+        modal.style.display = 'flex';
+      }
+      
+      setTimeout(() => {
+        initializeVideoPreview();
+      }, 100);
+    }
+    window.openSpeakingAssignmentModal = openSpeakingAssignmentModal;
+
+    async function initializeVideoPreview() {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ 
+          video: {
+            width: { min: 640, ideal: 1280, max: 1920 },
+            height: { min: 480, ideal: 720, max: 1080 },
+            frameRate: { min: 15, ideal: 30, max: 60 }
+          }, 
+          audio: {
+            echoCancellation: true,
+            noiseSuppression: true,
+            sampleRate: 44100
+          }
+        });
+        
+        const videoElement = document.getElementById('cq-speaking-videoPreview');
+        const noVideoView = document.getElementById('cq-speaking-noVideoView');
+        
+        if (videoElement) {
+          videoElement.srcObject = stream;
+          videoElement.muted = true;
+          videoElement.autoplay = true;
+          videoElement.playsInline = true;
+          videoElement.style.display = 'block';
+          if (noVideoView) noVideoView.style.display = 'none';
+          
+          cqSpeakingMediaStream = stream;
+          setupRecordingFromStream(stream);
+          
+          videoElement.addEventListener('loadedmetadata', () => {
+            videoElement.play().catch(e => {
+              console.error("Error playing video preview:", e);
+            });
+          });
+        }
+      } catch (error) {
+        console.error('Error initializing video preview:', error);
+        const noVideoView = document.getElementById('cq-speaking-noVideoView');
+        if (noVideoView) {
+          noVideoView.style.display = 'flex';
+        }
+      }
+    }
+
+    function setupRecordingFromStream(stream) {
+      const videoElement = document.getElementById('cq-speaking-videoPreview');
+      const noVideoView = document.getElementById('cq-speaking-noVideoView');
+      if (!videoElement) {
+        console.error("Video preview element not found in DOM");
+        return;
+      }
+      
+      videoElement.srcObject = stream;
+      videoElement.muted = true;
+      videoElement.autoplay = true;
+      videoElement.playsInline = true;
+      videoElement.style.display = 'block';
+      if (noVideoView) noVideoView.style.display = 'none';
+      
+      videoElement.addEventListener('loadedmetadata', () => {
+        videoElement.play().catch(e => {
+          console.error("Error playing video preview:", e);
+        });
+      });
+      
+      let options = {};
+      if (MediaRecorder.isTypeSupported('video/webm;codecs=vp9')) {
+        options.mimeType = 'video/webm;codecs=vp9';
+      } else if (MediaRecorder.isTypeSupported('video/webm;codecs=vp8')) {
+        options.mimeType = 'video/webm;codecs=vp8';
+      } else if (MediaRecorder.isTypeSupported('video/webm')) {
+        options.mimeType = 'video/webm';
+      } else if (MediaRecorder.isTypeSupported('video/mp4')) {
+        options.mimeType = 'video/mp4';
+      }
+      
+      cqSpeakingMediaRecorder = new MediaRecorder(stream, options);
+      
+      cqSpeakingMediaRecorder.ondataavailable = (event) => {
+        if (event.data && event.data.size > 0) {
+          cqSpeakingRecordedChunks.push(event.data);
+        }
+      };
+      
+      cqSpeakingMediaRecorder.onstop = () => {
+        if (recordingStateMonitor) {
+          clearInterval(recordingStateMonitor);
+          recordingStateMonitor = null;
+        }
+        
+        setTimeout(() => {
+          if (cqSpeakingRecordedChunks.length === 0) {
+            alert("No video data was recorded. Please try recording for at least 1 second.");
+            return;
+          }
+          const mimeType = cqSpeakingMediaRecorder.mimeType || 'video/webm';
+          const blob = new Blob(cqSpeakingRecordedChunks, { type: mimeType });
+
+          const videoURL = URL.createObjectURL(blob);
+          const videoElement = document.getElementById('cq-speaking-videoPreview');
+          const noVideoView = document.getElementById('cq-speaking-noVideoView');
+          if (videoElement) {
+            videoElement.srcObject = null;
+            videoElement.src = videoURL;
+            videoElement.controls = true;
+            videoElement.muted = false;
+            videoElement.style.display = 'block';
+            if (noVideoView) noVideoView.style.display = 'none';
+          }
+
+          const recordBtn = document.getElementById('cq-speaking-recordBtn');
+          if (recordBtn) {
+            recordBtn.classList.remove('recording');
+          }
+          
+          const recordingIndicator = document.getElementById('cq-speaking-recordingIndicator');
+          if (recordingIndicator) {
+            recordingIndicator.classList.remove('active');
+          }
+
+          isRecording = false;
+          
+          const submitBtn = document.getElementById('cq-speaking-submitBtn');
+          if (submitBtn && cqSpeakingRecordedChunks.length > 0) {
+            submitBtn.style.display = 'block';
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Submit Assessment';
+          }
+        }, 1000);
+      };
+      
+      cqSpeakingMediaRecorder.onerror = (event) => {
+        console.error("MediaRecorder error:", event.error);
+        alert("Recording error: " + (event.error?.message || "Unknown error."));
+        isRecording = false;
+        
+        const recordBtn = document.getElementById('cq-speaking-recordBtn');
+        if (recordBtn) {
+          recordBtn.classList.remove('recording');
+        }
+        
+        const recordingIndicator = document.getElementById('cq-speaking-recordingIndicator');
+        if (recordingIndicator) {
+          recordingIndicator.classList.remove('active');
+        }
+      };
+    }
+
+    function stopRecording() {
+      if (!cqSpeakingMediaRecorder || !isRecording) {
+        return;
+      }
+      
+      isIntentionallyStopping = true;
+      
+      if (recordingStateMonitor) {
+        clearInterval(recordingStateMonitor);
+        recordingStateMonitor = null;
+      }
+      
+      isRecording = false;
+      
+      if (cqSpeakingMediaRecorder.state === 'recording') {
+        try {
+          cqSpeakingMediaRecorder.requestData();
+          setTimeout(() => {
+            try {
+              cqSpeakingMediaRecorder.stop();
+            const recordBtn = document.getElementById('cq-speaking-recordBtn');
+              if (recordBtn) {
+                recordBtn.classList.remove('recording');
+              }
+              
+              const recordingIndicator = document.getElementById('cq-speaking-recordingIndicator');
+              if (recordingIndicator) {
+                recordingIndicator.classList.remove('active');
+              }
+            } catch (e) {
+              console.error("Error stopping recorder:", e);
+            }
+          }, 100);
+        } catch (e) {
+          console.error("Error requesting final data:", e);
+        }
+      }
+    }
+
+    function toggleSpeakingRecording() {
+      const recordBtn = document.getElementById('cq-speaking-recordBtn');
+      if (!recordBtn) return;
+      
+      if (isRecording) {
+        stopRecording();
+      } else {
+        if (cqSpeakingMediaRecorder && cqSpeakingMediaRecorder.state === 'inactive') {
+          cqSpeakingRecordedChunks = [];
+          try {
+            isRecording = true;
+            recordBtn.classList.add('recording');
+            
+            const recordingIndicator = document.getElementById('cq-speaking-recordingIndicator');
+            if (recordingIndicator) {
+              recordingIndicator.classList.add('active');
+            }
+            
+            cqSpeakingMediaRecorder.start();
+          } catch (e) {
+            console.error("Error starting recorder:", e);
+            alert("Error starting recording: " + e.message);
+            isRecording = false;
+          }
+        } else if (cqSpeakingMediaStream && !cqSpeakingMediaRecorder) {
+          setupRecordingFromStream(cqSpeakingMediaStream);
+          setTimeout(() => {
+            if (cqSpeakingMediaRecorder && cqSpeakingMediaRecorder.state === 'inactive') {
+              cqSpeakingRecordedChunks = [];
+              try {
+                isRecording = true;
+                recordBtn.classList.add('recording');
+                
+                const recordingIndicator2 = document.getElementById('cq-speaking-recordingIndicator');
+                if (recordingIndicator2) {
+                  recordingIndicator2.classList.add('active');
+                }
+                
+                cqSpeakingMediaRecorder.start();
+              } catch (e) {
+                console.error("Error starting recorder after setup:", e);
+                alert("Error starting recording: " + e.message);
+                isRecording = false;
+              }
+            }
+          }, 200);
+        } else if (!cqSpeakingMediaStream) {
+          initializeVideoPreview();
+        } else {
+          alert("Recording is already in progress or not ready. Please wait.");
+        }
+      }
+    }
+    window.toggleSpeakingRecording = toggleSpeakingRecording;
+
+    function cqSpeakingStopAllMedia() {
+      if (cqSpeakingMediaRecorder && cqSpeakingMediaRecorder.state !== 'inactive') {
+        try {
+          cqSpeakingMediaRecorder.stop();
+        } catch (e) {
+          console.error("Error stopping recorder:", e);
+        }
+      }
+      
+      if (cqSpeakingMediaStream) {
+        cqSpeakingMediaStream.getTracks().forEach(track => track.stop());
+        cqSpeakingMediaStream = null;
+      }
+      
+      cqSpeakingMediaRecorder = null;
+      cqSpeakingRecordedChunks = [];
+      isRecording = false;
+      
+      const recordBtn = document.getElementById('cq-speaking-recordBtn');
+      if (recordBtn) {
+        recordBtn.classList.remove('recording');
+      }
+      
+      const recordingIndicator = document.getElementById('cq-speaking-recordingIndicator');
+      if (recordingIndicator) {
+        recordingIndicator.classList.remove('active');
+      }
+    }
+
+    function closeSpeakingAssignmentModal() {
+      cqSpeakingStopAllMedia();
+      document.getElementById('cq-speaking-modal').style.display = 'none';
+    }
+    window.closeSpeakingAssignmentModal = closeSpeakingAssignmentModal;
+
+    // ========== CASE STUDY MODAL FUNCTIONS ==========
+    function toggleCaseStudyTimer() {
+      cqCaseStudyTimerActive = !cqCaseStudyTimerActive;
+      const timerEl = document.getElementById('cq-case-study-timer');
+      const timerStart = document.getElementById('cq-case-study-timer-start');
+      
+      if (cqCaseStudyTimerActive) {
+        timerEl.classList.add('active');
+        if (timerStart) timerStart.style.display = 'none';
+        
+        cqCaseStudyTimerInterval = setInterval(() => {
+          if (cqCaseStudyTimeLeft > 0) {
+            cqCaseStudyTimeLeft--;
+            const timerText = document.getElementById('cq-case-study-timer-text');
+            if (timerText) {
+              const mins = Math.floor(cqCaseStudyTimeLeft / 60);
+              const secs = cqCaseStudyTimeLeft % 60;
+              timerText.textContent = `${mins}:${secs.toString().padStart(2, '0')}`;
+            }
+          } else {
+            cqCaseStudyTimerActive = false;
+            if (timerEl) timerEl.classList.remove('active');
+            if (timerStart) timerStart.style.display = 'inline';
+            if (cqCaseStudyTimerInterval) {
+              clearInterval(cqCaseStudyTimerInterval);
+              cqCaseStudyTimerInterval = null;
+            }
+            alert('Time is up!');
+          }
+        }, 1000);
+      } else {
+        timerEl.classList.remove('active');
+        if (timerStart) timerStart.style.display = 'inline';
+        if (cqCaseStudyTimerInterval) {
+          clearInterval(cqCaseStudyTimerInterval);
+          cqCaseStudyTimerInterval = null;
+        }
+      }
+    }
+    window.toggleCaseStudyTimer = toggleCaseStudyTimer;
+
+    function expandCaseStudyContent() {
+      document.getElementById('cq-case-study-top-info').style.display = 'none';
+      document.getElementById('cq-case-study-video-container').style.display = 'none';
+      document.getElementById('cq-case-study-bottom-info').style.display = 'none';
+      document.getElementById('cq-case-study-controls-wrapper').style.display = 'none';
+      document.getElementById('cq-case-study-expanded-content').style.display = 'flex';
+    }
+    window.expandCaseStudyContent = expandCaseStudyContent;
+
+    function collapseCaseStudyContent() {
+      document.getElementById('cq-case-study-top-info').style.display = 'grid';
+      document.getElementById('cq-case-study-video-container').style.display = 'block';
+      document.getElementById('cq-case-study-bottom-info').style.display = 'grid';
+      document.getElementById('cq-case-study-controls-wrapper').style.display = 'flex';
+      document.getElementById('cq-case-study-expanded-content').style.display = 'none';
+    }
+    window.collapseCaseStudyContent = collapseCaseStudyContent;
+
+    function openCaseStudyModal(assignment) {
+      if (assignment) {
+        if (assignment.id) {
+          window.latestAssignmentId = assignment.id;
+        }
+        window.currentAssignment = assignment;
+      }
+      
+      document.getElementById('cq-case-study-title').textContent = "Case Study";
+      
+      const caseName = assignment.title || "Case Study";
+      document.getElementById('cq-case-study-name').textContent = caseName;
+      document.getElementById('cq-case-study-expanded-title').textContent = caseName;
+      
+      const caseContent = assignment.description || assignment.caseStudyContent || "No case study content provided.";
+      const previewText = caseContent.substring(0, 100) + (caseContent.length > 100 ? '...' : '');
+      document.getElementById('cq-case-study-content-preview-text').textContent = previewText;
+      document.getElementById('cq-case-study-full-content').textContent = caseContent;
+      
+      if (assignment.questions && assignment.questions.length > 0) {
+        document.getElementById('cq-case-study-q1').textContent = assignment.questions[0] || "No question provided";
+        if (assignment.questions.length > 1) {
+          document.getElementById('cq-case-study-q2').textContent = assignment.questions[1] || "No question provided";
+        }
+      }
+      
+      cqCaseStudyTimeLeft = 1200;
+      const timerText = document.getElementById('cq-case-study-timer-text');
+      if (timerText) {
+        const mins = Math.floor(cqCaseStudyTimeLeft / 60);
+        const secs = cqCaseStudyTimeLeft % 60;
+        timerText.textContent = `${mins}:${secs.toString().padStart(2, '0')}`;
+      }
+      cqCaseStudyTimerActive = false;
+      const timerEl = document.getElementById('cq-case-study-timer');
+      if (timerEl) timerEl.classList.remove('active');
+      
+      const starsContainer = document.getElementById('cq-case-study-stars');
+      if (starsContainer) {
+        starsContainer.innerHTML = '';
+        for (let i = 0; i < 150; i++) {
+          const star = document.createElement('div');
+          star.className = 'cq-case-study-star';
+          star.style.top = Math.random() * 100 + '%';
+          star.style.left = Math.random() * 100 + '%';
+          const size = Math.random() * 2 + 0.5;
+          star.style.width = size + 'px';
+          star.style.height = size + 'px';
+          star.style.opacity = Math.random() * 0.7 + 0.3;
+          star.style.animationDuration = (Math.random() * 3 + 2) + 's';
+          starsContainer.appendChild(star);
+        }
+      }
+      
+      const recordingIndicator = document.getElementById('cq-case-study-recordingIndicator');
+      if (recordingIndicator) {
+        recordingIndicator.classList.remove('active');
+      }
+      
+      collapseCaseStudyContent();
+      document.getElementById('cq-case-study-submitBtn').style.display = 'none';
+      document.getElementById('cq-case-study-downloadBtn').style.display = 'none';
+      
+      const modal = document.getElementById('cq-case-study-modal');
+      if (modal) {
+        modal.style.display = 'flex';
+      }
+      
+      setTimeout(() => {
+        cqCaseStudyInitializeVideoPreview();
+      }, 100);
+    }
+    window.openCaseStudyModal = openCaseStudyModal;
+
+    async function cqCaseStudyInitializeVideoPreview() {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ 
+          video: {
+            width: { min: 640, ideal: 1280, max: 1920 },
+            height: { min: 480, ideal: 720, max: 1080 },
+            frameRate: { min: 15, ideal: 30, max: 60 }
+          }, 
+          audio: {
+            echoCancellation: true,
+            noiseSuppression: true,
+            sampleRate: 44100
+          }
+        });
+        
+        const videoElement = document.getElementById('cq-case-study-videoPreview');
+        const noVideoView = document.getElementById('cq-case-study-noVideoView');
+        
+        if (videoElement) {
+          videoElement.srcObject = stream;
+          videoElement.muted = true;
+          videoElement.autoplay = true;
+          videoElement.playsInline = true;
+          videoElement.style.display = 'block';
+          if (noVideoView) noVideoView.style.display = 'none';
+          
+          cqCaseStudyMediaStream = stream;
+          cqCaseStudySetupRecordingFromStream(stream);
+          
+          videoElement.addEventListener('loadedmetadata', () => {
+            videoElement.play().catch(e => {
+              console.error("Error playing video preview:", e);
+            });
+          });
+        }
+      } catch (error) {
+        console.error('Error initializing video preview:', error);
+        const noVideoView = document.getElementById('cq-case-study-noVideoView');
+        if (noVideoView) {
+          noVideoView.style.display = 'flex';
+        }
+      }
+    }
+
+    function cqCaseStudySetupRecordingFromStream(stream) {
+      const videoElement = document.getElementById('cq-case-study-videoPreview');
+      if (!videoElement) {
+        console.error("Video preview element not found in DOM");
+        return;
+      }
+      
+      let options = {};
+      if (MediaRecorder.isTypeSupported('video/webm;codecs=vp9')) {
+        options.mimeType = 'video/webm;codecs=vp9';
+      } else if (MediaRecorder.isTypeSupported('video/webm;codecs=vp8')) {
+        options.mimeType = 'video/webm;codecs=vp8';
+      } else if (MediaRecorder.isTypeSupported('video/webm')) {
+        options.mimeType = 'video/webm';
+      } else if (MediaRecorder.isTypeSupported('video/mp4')) {
+        options.mimeType = 'video/mp4';
+      }
+      
+      cqCaseStudyMediaRecorder = new MediaRecorder(stream, options);
+      
+      cqCaseStudyMediaRecorder.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          cqCaseStudyRecordedChunks.push(event.data);
+        }
+      };
+      
+      cqCaseStudyMediaRecorder.onstop = () => {
+        if (cqCaseStudyRecordedChunks.length === 0) {
+          alert("No video data was recorded. Please try again.");
+          return;
+        }
+        
+        const mimeType = cqCaseStudyMediaRecorder.mimeType || 'video/webm';
+        const blob = new Blob(cqCaseStudyRecordedChunks, { type: mimeType });
+
+        const videoURL = URL.createObjectURL(blob);
+        const videoElement = document.getElementById('cq-case-study-videoPreview');
+        const noVideoView = document.getElementById('cq-case-study-noVideoView');
+        if (videoElement) {
+          videoElement.srcObject = null;
+          videoElement.src = videoURL;
+          videoElement.controls = true;
+          videoElement.muted = false;
+          videoElement.style.display = 'block';
+          if (noVideoView) noVideoView.style.display = 'none';
+        }
+        
+        const submitBtn = document.getElementById('cq-case-study-submitBtn');
+        if (submitBtn) {
+          submitBtn.style.display = 'block';
+        }
+      };
+      
+      cqCaseStudyMediaRecorder.onerror = (event) => {
+        console.error("Case Study MediaRecorder error:", event.error);
+        alert("Recording error: " + event.error.message);
+        cqCaseStudyIsRecording = false;
+      };
+    }
+
+    function cqCaseStudyStopAllMedia() {
+      if (cqCaseStudyMediaRecorder && cqCaseStudyMediaRecorder.state !== 'inactive') {
+        try {
+          cqCaseStudyMediaRecorder.stop();
+        } catch (e) {
+          console.error("Error stopping recorder:", e);
+        }
+      }
+      
+      if (cqCaseStudyMediaStream) {
+        cqCaseStudyMediaStream.getTracks().forEach(track => track.stop());
+        cqCaseStudyMediaStream = null;
+      }
+      
+      cqCaseStudyMediaRecorder = null;
+      cqCaseStudyRecordedChunks = [];
+      cqCaseStudyIsRecording = false;
+      
+      const recordBtn = document.getElementById('cq-case-study-recordBtn');
+      if (recordBtn) {
+        recordBtn.classList.remove('recording');
+      }
+      
+      const recordingIndicator = document.getElementById('cq-case-study-recordingIndicator');
+      if (recordingIndicator) {
+        recordingIndicator.classList.remove('active');
+      }
+    }
+
+    function toggleCaseStudyRecording() {
+      const recordBtn = document.getElementById('cq-case-study-recordBtn');
+      if (!recordBtn) return;
+      
+      if (cqCaseStudyIsRecording) {
+        cqCaseStudyStopRecording();
+      } else {
+        if (cqCaseStudyMediaRecorder && cqCaseStudyMediaRecorder.state === 'inactive') {
+          cqCaseStudyRecordedChunks = [];
+          try {
+            cqCaseStudyIsRecording = true;
+            recordBtn.classList.add('recording');
+            
+            const recordingIndicator = document.getElementById('cq-case-study-recordingIndicator');
+            if (recordingIndicator) {
+              recordingIndicator.classList.add('active');
+            }
+            
+            cqCaseStudyMediaRecorder.start();
+          } catch (e) {
+            console.error("Error starting recorder:", e);
+            alert("Error starting recording: " + e.message);
+            cqCaseStudyIsRecording = false;
+          }
+        } else if (cqCaseStudyMediaStream && !cqCaseStudyMediaRecorder) {
+          cqCaseStudySetupRecordingFromStream(cqCaseStudyMediaStream);
+          setTimeout(() => {
+            if (cqCaseStudyMediaRecorder && cqCaseStudyMediaRecorder.state === 'inactive') {
+              cqCaseStudyRecordedChunks = [];
+              try {
+                cqCaseStudyIsRecording = true;
+                recordBtn.classList.add('recording');
+                
+                const recordingIndicator = document.getElementById('cq-case-study-recordingIndicator');
+                if (recordingIndicator) {
+                  recordingIndicator.classList.add('active');
+                }
+                
+                cqCaseStudyMediaRecorder.start();
+              } catch (e) {
+                console.error("Error starting recorder after setup:", e);
+                alert("Error starting recording: " + e.message);
+                cqCaseStudyIsRecording = false;
+              }
+            }
+          }, 200);
+        } else if (!cqCaseStudyMediaStream) {
+          cqCaseStudyInitializeVideoPreview();
+        } else {
+          alert("Recording is already in progress or not ready. Please wait.");
+        }
+      }
+    }
+    window.toggleCaseStudyRecording = toggleCaseStudyRecording;
+
+    function cqCaseStudyStopRecording() {
+      if (!cqCaseStudyMediaRecorder || !cqCaseStudyIsRecording) {
+        return;
+      }
+      
+      cqCaseStudyIsIntentionallyStopping = true;
+      cqCaseStudyIsRecording = false;
+      
+      if (cqCaseStudyMediaRecorder.state === 'recording') {
+        try {
+          cqCaseStudyMediaRecorder.requestData();
+          cqCaseStudyMediaRecorder.stop();
+        } catch (e) {
+          console.error("Error stopping recorder:", e);
+        }
+      }
+      
+      const recordBtn = document.getElementById('cq-case-study-recordBtn');
+      if (recordBtn) {
+        recordBtn.classList.remove('recording');
+      }
+      
+      const recordingIndicator = document.getElementById('cq-case-study-recordingIndicator');
+      if (recordingIndicator) {
+        recordingIndicator.classList.remove('active');
+      }
+      
+      cqCaseStudyIsIntentionallyStopping = false;
+    }
+
+    function closeCaseStudyModal() {
+      if (cqCaseStudyTimerInterval) {
+        clearInterval(cqCaseStudyTimerInterval);
+        cqCaseStudyTimerInterval = null;
+      }
+      cqCaseStudyTimerActive = false;
+      cqCaseStudyStopAllMedia();
+      
+      const modal = document.getElementById('cq-case-study-modal');
+      if (modal) {
+        modal.style.display = 'none';
+      }
+    }
+    window.closeCaseStudyModal = closeCaseStudyModal;
+
+    // ========== CONGRATS MODAL FUNCTIONS ==========
+    function showCongratsModal(results) {
+      const modal = document.getElementById('congratsModal');
+      
+      // Check if modal exists
+      if (!modal) {
+        alert(results.message || `Congratulations! ${results.assignmentName || 'Assignment'} completed successfully!`);
+        return;
+      }
+      
+      // Handle case study assignments
+      if (results.assignmentType === 'case') {
+        const titleEl = document.getElementById('congratsTitle');
+        const scoreEl = document.getElementById('congratsScore');
+        const subtitleEl = document.getElementById('congratsSubtitle');
+        const assignmentNameEl = document.getElementById('congratsAssignmentName');
+        const competenciesContainer = document.getElementById('congratsCompetencies');
+        
+        if (titleEl) titleEl.textContent = 'Congratulations!';
+        if (scoreEl) scoreEl.textContent = '';
+        if (subtitleEl) subtitleEl.style.display = 'none';
+        if (assignmentNameEl) assignmentNameEl.textContent = results.assignmentName || 'Case Study';
+        
+        if (competenciesContainer) {
+          if (results.competencies && results.competencies.length > 0) {
+            competenciesContainer.innerHTML = results.competencies.map(comp => {
+              return `
+                <div class="congrats-competency-item">
+                  <div class="congrats-competency-header">
+                    <span class="congrats-competency-name">${comp}</span>
+                  </div>
+                </div>
+              `;
+            }).join('');
+          } else {
+            competenciesContainer.innerHTML = '<p style="color: #94a3b8; text-align: center;">No competency breakdown available</p>';
+          }
+        }
+        
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+        createCongratsStars();
+        return;
+      }
+      
+      // Handle speaking assignments
+      if (results.assignmentType === 'speaking' || (results.message && !results.score && !results.totalQuestions)) {
+        const titleEl = document.getElementById('congratsTitle');
+        const scoreEl = document.getElementById('congratsScore');
+        const subtitleEl = document.getElementById('congratsSubtitle');
+        const assignmentNameEl = document.getElementById('congratsAssignmentName');
+        const competenciesContainer = document.getElementById('congratsCompetencies');
+        
+        if (titleEl) titleEl.textContent = 'Congratulations!';
+        if (scoreEl) scoreEl.textContent = '';
+        if (subtitleEl) {
+          subtitleEl.style.display = 'block';
+          subtitleEl.innerHTML = results.message || 'Assignment submitted successfully!';
+        }
+        if (assignmentNameEl) assignmentNameEl.textContent = results.assignmentName || 'Assignment';
+        
+        if (competenciesContainer) {
+          if (results.competencies && results.competencies.length > 0) {
+            competenciesContainer.innerHTML = results.competencies.map(comp => {
+              return `
+                <div class="congrats-competency-item">
+                  <div class="congrats-competency-header">
+                    <span class="congrats-competency-name">${comp}</span>
+                  </div>
+                </div>
+              `;
+            }).join('');
+          } else {
+            competenciesContainer.innerHTML = '';
+          }
+        }
+        
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+        createCongratsStars();
+        return;
+      }
+      
+      // Handle written assignments (with scores)
+      const percentage = results.percentage || (results.score && results.totalQuestions ? Math.round((results.score / results.totalQuestions) * 100) : 0);
+      
+      const titleEl = document.getElementById('congratsTitle');
+      const scoreEl = document.getElementById('congratsScore');
+      const subtitleEl = document.getElementById('congratsSubtitle');
+      const assignmentNameEl = document.getElementById('congratsAssignmentName');
+      const competenciesContainer = document.getElementById('congratsCompetencies');
+      
+      if (titleEl) titleEl.textContent = 'Congratulations!';
+      if (scoreEl && results.score !== undefined && results.totalQuestions !== undefined) {
+        scoreEl.textContent = `${results.score}/${results.totalQuestions}`;
+      }
+      if (subtitleEl) {
+        subtitleEl.style.display = 'block';
+        if (results.score !== undefined && results.totalQuestions !== undefined) {
+          subtitleEl.innerHTML = 
+            `Excellent work! You scored <span id="congratsScoreSpan" style="background: linear-gradient(to right, #ef4444, #f97316, #eab308); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; font-weight: 900; font-size: 1.75rem;">${results.score}/${results.totalQuestions}</span>`;
+        } else if (results.message) {
+          subtitleEl.innerHTML = results.message;
+        }
+      }
+      
+      if (assignmentNameEl) assignmentNameEl.textContent = results.assignmentName || 'Written Practice';
+      
+      if (competenciesContainer) {
+        if (results.competencyStats && Object.keys(results.competencyStats).length > 0) {
+          competenciesContainer.innerHTML = Object.entries(results.competencyStats).map(([comp, stats]) => {
+            const percentage = Math.round((stats.correct / stats.total) * 100);
+            const isFull = stats.correct === stats.total;
+            return `
+              <div class="congrats-competency-item">
+                <div class="congrats-competency-header">
+                  <span class="congrats-competency-name">${comp}</span>
+                  <span class="congrats-competency-score">${stats.correct}/${stats.total} correct</span>
+                </div>
+                <div class="congrats-competency-progress-bar">
+                  <div class="congrats-competency-progress-fill ${isFull ? 'full' : ''}" style="width: ${percentage}%"></div>
+                </div>
+              </div>
+            `;
+          }).join('');
+        } else {
+          competenciesContainer.innerHTML = '<p style="color: #94a3b8; text-align: center;">No competency breakdown available</p>';
+        }
+      }
+      
+      modal.style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+      createCongratsStars();
+    }
+    window.showCongratsModal = showCongratsModal;
+
+    function createCongratsStars() {
+      const starsContainer = document.getElementById('congratsStarsContainer');
+      if (!starsContainer) return;
+      
+      starsContainer.innerHTML = '';
+      
+      for (let i = 0; i < 200; i++) {
+        const star = document.createElement('div');
+        star.className = 'practice-quiz-star';
+        
+        const size = Math.random() * 3 + 0.5;
+        const duration = Math.random() * 4 + 2;
+        const delay = Math.random() * 2;
+        const randomLeft = Math.random() * 100;
+        const randomTop = Math.random() * 100;
+        const randomOpacity = Math.random() * 0.9 + 0.3;
+        
+        star.style.width = size + 'px';
+        star.style.height = size + 'px';
+        star.style.left = randomLeft + '%';
+        star.style.top = randomTop + '%';
+        star.style.opacity = randomOpacity;
+        star.style.animation = `practice-quiz-twinkle ${duration}s ease-in-out infinite`;
+        star.style.animationDelay = delay + 's';
+        star.style.boxShadow = `0 0 ${size * 2}px rgba(255, 255, 255, 0.8)`;
+        
+        starsContainer.appendChild(star);
+      }
+    }
+
+    function closeCongratsModal() {
+      const modal = document.getElementById('congratsModal');
+      if (modal) {
+        modal.style.display = 'none';
+      }
+      document.body.style.overflow = 'auto';
+    }
+    window.closeCongratsModal = closeCongratsModal;
+
+    // ========== WRITTEN ASSIGNMENT FUNCTIONS ==========
+    // Written practice variables
+    let writtenQuestions = [];
+    let currentQuestionIndex = 0;
+    let writtenAnswers = {};
+    let writtenTimer = null;
+    let writtenTimeRemaining = 0;
+
+    function getQuestionCount(timeStr) {
+      if (!timeStr) return 5;
+      const normalized = timeStr.toString().toLowerCase();
+      if (normalized.includes("15")) return 10;
+      if (normalized.includes("10")) return 7;
+      if (normalized.includes("5")) return 5;
+      return 5;
+    }
+
+    async function generatePersonalizedQuestionsWithGPT(formData) {
+      const questionCount = getQuestionCount(formData.time);
+      const competenciesText = formData.competencies.join(', ');
+
+      let prompt = `Generate ${questionCount} FBLA-style multiple choice questions.
+- Difficulty: ${formData.difficulty}
+- Competencies to cover: ${competenciesText}
+- Each question must have exactly 4 options and 1 correct answer
+- Questions must be standalone, realistic for FBLA, and never reference "the document", "the text", "as stated", etc.
+- Use business, finance, marketing, management, economics, law, and related topics depending on the competencies.`
+
+      prompt += `\n\nReturn ONLY valid JSON array in format:
+[
+  {
+    "text": "Question text?",
+    "competency": "Marketing",
+    "correctAnswer": "Correct option text",
+    "options": ["A", "B", "C", "D"],
+    "difficulty": "${formData.difficulty}",
+    "source": "gpt_generated"
+  }
+]`;
+
+      try {
+        const response = await firebase.functions().httpsCallable("generateQuestionsWithAI")({
+          messages: [
+            { role: "system", content: `You are an expert FBLA written-competition exam designer.
+
+Your role is to generate ORIGINAL, competition-accurate FBLA-style multiple-choice questions that match the structure, rigor, tone, and professional standards of official FBLA written tests.
+
+You must follow ALL rules below.
+
+────────────────────────────────
+CORE FBLA PHILOSOPHY
+────────────────────────────────
+FBLA written tests assess professional correctness, precision, and applied business literacy.
+
+They do NOT assess creativity, opinion, or open-ended reasoning.
+
+Each question must test exactly ONE concept.
+
+Questions must be concise, objective, and professionally worded.
+
+Avoid unnecessary narrative unless the question type explicitly requires a scenario.
+
+────────────────────────────────
+APPROVED FBLA QUESTION ARCHETYPES
+────────────────────────────────
+Every question MUST clearly belong to ONE of the following archetypes:
+
+1. Definition / Term Identification  
+   - Identifying the correct term based on a definition  
+   - Selecting the correct meaning of a professional word or concept  
+
+2. Classification / Category Recognition  
+   - Determining where an item belongs within a professional category system  
+   - Examples include document types, account categories, system types, business forms, or classifications  
+
+3. Procedural / Workflow Knowledge  
+   - Understanding the stages of a professional workflow specific to the competition area  
+   - Identifying where information originates within that workflow  
+   - Determining which document, tool, or action is appropriate at a given stage  
+   - Recognizing correct sequencing of professional tasks within the domain  
+
+4. Tool-to-Function Matching  
+   - Matching software features, commands, utilities, or tools to their correct purpose  
+   - Selecting the correct function used to accomplish a professional task  
+
+5. Quantitative / Calculation Application  
+   - Performing single-step or limited multi-step calculations  
+   - Selecting the correct numeric result based on provided data  
+   - Avoid unnecessary complexity or advanced math  
+
+6. Language Precision & Usage  
+   - Correct use of professional vocabulary  
+   - Distinguishing homophones, word meanings, spelling, grammar, and standard usage  
+
+7. Error Detection / Exception Identification  
+   - Identifying what is incorrect, misspelled, or does NOT belong  
+   - Using negation ("NOT") carefully and intentionally  
+
+────────────────────────────────
+QUESTION STRUCTURE RULES
+────────────────────────────────
+• Each question must assess ONE idea only.  
+• Do not combine multiple concepts in one question.  
+• Avoid ambiguous wording.  
+• Use professional, neutral language.
+
+Acceptable stem styles include:
+- "Which of the following…"
+- "What term best describes…"
+- "The document used to…"
+- "Which action should be taken…"
+- "Which of the following is NOT…"
+
+────────────────────────────────
+ANSWER CHOICE DESIGN (CRITICAL)
+────────────────────────────────
+Each question MUST include exactly FOUR answer choices.
+
+Answer choices must:
+• Be the same grammatical form  
+• Be similar in length  
+• Belong to the same conceptual family  
+
+Wrong answer choices (distractors) must be plausible and realistic.
+
+Allowed distractor strategies include:
+• Closely related terms within the same category  
+• Common student misconceptions  
+• Incorrect step within a workflow  
+• Reversed or misapplied professional rules  
+• Visually or linguistically similar words  
+• Typical calculation or classification errors  
+
+Never include joke answers or obviously incorrect options.
+
+────────────────────────────────
+DIFFICULTY CALIBRATION
+────────────────────────────────
+Easy:
+• Direct recall or recognition  
+• Minimal traps  
+
+Medium:
+• Requires discrimination between similar concepts  
+• Includes common misconceptions  
+
+Hard:
+• Includes negation ("NOT")  
+• Requires precise rule awareness  
+• Uses subtle wording differences  
+• Penalizes shallow memorization  
+
+────────────────────────────────
+CONTENT INTEGRITY RULES
+────────────────────────────────
+• All questions must be ORIGINAL.  
+• Do NOT copy real FBLA questions.  
+• Do NOT closely paraphrase known questions.  
+• Use authentic structure only, not replicated wording.
+
+Questions must feel realistic for competitive FBLA written events at the regional, state, or national level.
+
+When study materials are provided, extract concepts, facts, names, dates, laws, and details from them. Present this information as established business knowledge. NEVER mention "the study guide", "the document", "the material", or use phrases like "according to", "as stated in", or "mentioned in".
+
+────────────────────────────────
+OUTPUT REQUIREMENTS
+────────────────────────────────
+• Generate ONLY the requested number of questions.  
+• Each question must have exactly four answer options.  
+• Only ONE option may be correct.  
+• Output valid JSON only.  
+• Do not include explanations, commentary, or headings.  
+
+You are writing as a professional exam author — not as a tutor or teacher.` },
+            { role: "user", content: (window.__CERTQUEST_CONTEXT__ || "") + "\n\n" + prompt }
+          ]
+        });
+
+        const data = response.data;
+        let content = data.content || data.choices?.[0]?.message?.content || data;
+        
+        if (typeof content !== 'string') {
+          content = JSON.stringify(content);
+        }
+        
+        content = content.trim();
+        content = content.replace(/```json|```/g, "");
+        const jsonStart = content.indexOf('[');
+        const jsonEnd = content.lastIndexOf(']') + 1;
+        
+        if (jsonStart !== -1 && jsonEnd > jsonStart) {
+          content = content.slice(jsonStart, jsonEnd);
+        }
+        
+        const generated = JSON.parse(content);
+        console.log(`✅ Generated ${generated.length} GPT questions`);
+        return generated;
+
+      } catch (err) {
+        console.error("❌ GPT error:", err);
+        return getFallbackQuestions(questionCount, formData.competencies);
+      }
+    }
+
+    function getFallbackQuestions(count, competencies) {
+      const fallbackQuestions = [
+        {
+          text: "What is the primary purpose of parliamentary procedure?",
+          competency: "Parliamentary Procedure",
+          correctAnswer: "To make meetings more efficient",
+          options: [
+            "To make meetings more efficient",
+            "To give the president more power",
+            "To eliminate debate",
+            "To make meetings longer"
+          ]
+        },
+        {
+          text: "Which motion is used to end a meeting?",
+          competency: "Parliamentary Procedure",
+          correctAnswer: "Adjourn",
+          options: ["Adjourn", "Recess", "Postpone", "Table"]
+        },
+        {
+          text: "What is the most effective way to communicate in business?",
+          competency: "Business Communication",
+          correctAnswer: "Clear and concise messaging",
+          options: [
+            "Clear and concise messaging",
+            "Using complex terminology",
+            "Lengthy detailed explanations",
+            "Informal casual language"
+          ]
+        }
+      ];
+      
+      const result = [];
+      for (let i = 0; i < count; i++) {
+        result.push(fallbackQuestions[i % fallbackQuestions.length]);
+      }
+      return result;
+    }
+
+    async function openWrittenPracticeModal(assignment) {
+      console.log("Opening written practice modal with assignment:", assignment);
+
+      try {
+        currentQuestionIndex = 0;
+        writtenAnswers = {};
+        if (!window.writtenAnswers) {
+          window.writtenAnswers = {};
+        }
+
+        const timeInMinutes = parseInt(assignment.time) || 15;
+        writtenTimeRemaining = timeInMinutes * 60;
+
+        // Check if window.writtenQuestions exists (from "create your own" flow)
+        if (window.writtenQuestions && window.writtenQuestions.length > 0) {
+          console.log("✅ Using window.writtenQuestions from create your own flow");
+          writtenQuestions = window.writtenQuestions;
+        } else if (assignment.writtenQuestions && assignment.writtenQuestions.length > 0) {
+          // Use assignment's preloaded questions
+          writtenQuestions = assignment.writtenQuestions;
+          window.writtenQuestions = assignment.writtenQuestions;
+        } else {
+          // Generate new questions via GPT
+          console.log("⚡ No preloaded questions, generating via GPT...");
+          assignment.writtenQuestions = await generatePersonalizedQuestionsWithGPT({
+            time: assignment.time || "15 mins",
+            difficulty: assignment.difficulty || "Medium",
+            competencies: assignment.competencies || ["General"],
+            type: "written"
+          });
+          writtenQuestions = assignment.writtenQuestions;
+          window.writtenQuestions = assignment.writtenQuestions;
+        }
+
+        console.log("✅ Written questions ready:", writtenQuestions);
+
+        // Show modal and create stars
+        const modal = document.getElementById('quizModal');
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+        createQuizStars();
+        loadWrittenQuestion();
+        startWrittenTimer();
+
+      } catch (err) {
+        console.error("❌ Error in openWrittenPracticeModal:", err);
+        alert("Could not load written practice. Please try again.");
+      } finally {
+        hideLoader();
+      }
+    }
+    window.openWrittenPracticeModal = openWrittenPracticeModal;
+
+    function loadWrittenQuestion() {
+      const questions = window.writtenQuestions && window.writtenQuestions.length > 0 ? window.writtenQuestions : writtenQuestions;
+      const question = questions[currentQuestionIndex];
+      if (!question) {
+        console.error("No question found at index", currentQuestionIndex);
+        return;
+      }
+      
+      const assignmentTitle = window.currentAssignment?.title || 'Written Practice';
+      const difficulty = window.currentAssignment?.difficulty || 'Easy';
+      document.getElementById('quizTitle').textContent = `${difficulty} ${assignmentTitle}`;
+      document.getElementById('quizProgress').textContent = 
+        `Question ${currentQuestionIndex + 1} of ${questions.length}`;
+      
+      document.getElementById('questionCompetency').textContent = question.competency || 'General';
+      const questionTextEl = document.getElementById('questionText');
+      questionTextEl.textContent = question.question || question.text;
+      questionTextEl.style.color = '#fff';
+      
+      const optionsContainer = document.getElementById('optionsContainer');
+      const answers = window.writtenAnswers || writtenAnswers;
+      const previousAnswer = answers[currentQuestionIndex];
+      
+      optionsContainer.innerHTML = question.options.map((option, index) => {
+        const isSelected = previousAnswer === option;
+        return `
+          <button class="practice-quiz-option-btn ${isSelected ? 'selected' : ''}" data-option="${option}">
+            <div class="practice-quiz-option-radio ${isSelected ? 'selected' : ''}">
+              ${isSelected ? '<div class="practice-quiz-option-dot"></div>' : ''}
+            </div>
+            <span class="practice-quiz-option-text">${option}</span>
+          </button>
+        `;
+      }).join('');
+      
+      const options = optionsContainer.querySelectorAll('.practice-quiz-option-btn');
+      options.forEach(optionBtn => {
+        optionBtn.addEventListener('click', function(e) {
+          options.forEach(opt => {
+            opt.classList.remove("selected");
+            const radio = opt.querySelector('.practice-quiz-option-radio');
+            radio.classList.remove("selected");
+            radio.innerHTML = '';
+          });
+          
+          this.classList.add('selected');
+          const radio = this.querySelector('.practice-quiz-option-radio');
+          radio.classList.add('selected');
+          radio.innerHTML = '<div class="practice-quiz-option-dot"></div>';
+          
+          if (window.writtenAnswers) {
+            window.writtenAnswers[currentQuestionIndex] = this.dataset.option;
+          } else {
+            writtenAnswers[currentQuestionIndex] = this.dataset.option;
+          }
+        });
+      });
+      
+      updateWrittenProgress();
+      updateWrittenNavButtons();
+    }
+
+    function updateWrittenProgress() {
+      const questions = window.writtenQuestions && window.writtenQuestions.length > 0 ? window.writtenQuestions : writtenQuestions;
+      const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
+      document.getElementById('progressFill').style.width = `${progress}%`;
+      document.getElementById('progressPercent').textContent = Math.round(progress);
+    }
+
+    function updateWrittenNavButtons() {
+      const prevBtn = document.getElementById('prevBtn');
+      const nextBtn = document.getElementById('nextBtn');
+      const submitBtn = document.getElementById('submitBtn');
+      const questions = window.writtenQuestions && window.writtenQuestions.length > 0 ? window.writtenQuestions : writtenQuestions;
+      
+      prevBtn.disabled = currentQuestionIndex === 0;
+      
+      if (currentQuestionIndex === questions.length - 1) {
+        nextBtn.style.display = 'none';
+        submitBtn.style.display = 'block';
+      } else {
+        nextBtn.style.display = 'block';
+        submitBtn.style.display = 'none';
+      }
+    }
+
+    function previousQuestion() {
+      const questions = window.writtenQuestions && window.writtenQuestions.length > 0 ? window.writtenQuestions : writtenQuestions;
+      if (currentQuestionIndex > 0) {
+        currentQuestionIndex--;
+        loadWrittenQuestion();
+      }
+    }
+    window.previousQuestion = previousQuestion;
+
+    function nextQuestion() {
+      const questions = window.writtenQuestions && window.writtenQuestions.length > 0 ? window.writtenQuestions : writtenQuestions;
+      if (currentQuestionIndex < questions.length - 1) {
+        currentQuestionIndex++;
+        loadWrittenQuestion();
+      }
+    }
+    window.nextQuestion = nextQuestion;
+
+    function startWrittenTimer() {
+      clearInterval(writtenTimer);
+      
+      updateTimerDisplay();
+      
+      writtenTimer = setInterval(() => {
+        writtenTimeRemaining--;
+        updateTimerDisplay();
+        
+        if (writtenTimeRemaining <= 0) {
+          clearInterval(writtenTimer);
+          submitQuiz();
+        }
+      }, 1000);
+    }
+
+    function updateTimerDisplay() {
+      const minutes = Math.floor(writtenTimeRemaining / 60);
+      const seconds = writtenTimeRemaining % 60;
+      const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+      
+      const timerElement = document.getElementById('quizTimer');
+      if (timerElement) {
+        timerElement.textContent = timeString;
+        
+        if (writtenTimeRemaining <= 60) {
+          timerElement.style.color = '#ef4444';
+        } else if (writtenTimeRemaining <= 300) {
+          timerElement.style.color = '#f97316';
+        } else {
+          timerElement.style.color = '#fb923c';
+        }
+      }
+    }
+
+    function createQuizStars() {
+      const starsContainer = document.getElementById('quizStarsContainer');
+      if (!starsContainer) return;
+      
+      starsContainer.innerHTML = '';
+      
+      for (let i = 0; i < 200; i++) {
+        const star = document.createElement('div');
+        star.className = 'practice-quiz-star';
+        
+        const size = Math.random() * 3 + 0.5;
+        const duration = Math.random() * 4 + 2;
+        const delay = Math.random() * 2;
+        const randomLeft = Math.random() * 100;
+        const randomTop = Math.random() * 100;
+        const randomOpacity = Math.random() * 0.9 + 0.3;
+        
+        star.style.width = size + 'px';
+        star.style.height = size + 'px';
+        star.style.left = randomLeft + '%';
+        star.style.top = randomTop + '%';
+        star.style.opacity = randomOpacity;
+        star.style.animation = `practice-quiz-twinkle ${duration}s ease-in-out infinite`;
+        star.style.animationDelay = delay + 's';
+        star.style.boxShadow = `0 0 ${size * 2}px rgba(255, 255, 255, 0.8)`;
+        
+        starsContainer.appendChild(star);
+      }
+    }
+
+    function closeQuizModal() {
+      const modal = document.getElementById('quizModal');
+      if (modal) {
+        modal.style.display = 'none';
+      }
+      document.body.style.overflow = 'auto';
+      clearInterval(writtenTimer);
+      writtenQuestions = [];
+      currentQuestionIndex = 0;
+      writtenAnswers = {};
+      writtenTimeRemaining = 0;
+      writtenTimer = null;
+    }
+    window.closeQuizModal = closeQuizModal;
+
+    async function submitQuiz() {
+      const hasWrittenQuestions = (window.writtenQuestions && window.writtenQuestions.length > 0) || 
+                                  (writtenQuestions && writtenQuestions.length > 0);
+      
+      if (hasWrittenQuestions) {
+        if (window.latestAssignmentId) {
+          await submitWrittenPractice();
+          return;
+        } else {
+          await submitWrittenPracticeForCreateYourOwn();
+          return;
+        }
+      }
+    }
+    window.submitQuiz = submitQuiz;
+
+    async function submitWrittenPractice() {
+      try {
+        clearInterval(writtenTimer);
+        
+        if (!window.latestAssignmentId) {
+          alert("Error: No assignment ID found. Cannot submit written practice.");
+          closeQuizModal();
+          return;
+        }
+        
+        const questions = writtenQuestions;
+        const answers = writtenAnswers;
+        
+        let score = 0;
+        const competencyStats = {};
+        const detailedAnswers = [];
+        const totalQuestions = questions.length;
+        
+        questions.forEach((question, index) => {
+          const userAnswer = answers[index];
+          const correctAnswer = question.correctAnswer;
+          const isCorrect = userAnswer === correctAnswer;
+          
+          if (isCorrect) score++;
+          
+          const competency = question.competency;
+          if (!competencyStats[competency]) {
+            competencyStats[competency] = { total: 0, correct: 0 };
+          }
+          competencyStats[competency].total++;
+          if (isCorrect) competencyStats[competency].correct++;
+          
+          detailedAnswers.push({
+            questionIndex: index,
+            question: question.question || question.text,
+            competency: competency,
+            userAnswer: userAnswer || "No answer",
+            correctAnswer: correctAnswer,
+            isCorrect: isCorrect
+          });
+        });
+        
+        const originalTime = parseInt(window.currentAssignment?.time) * 60 || 900;
+        const timeSpent = originalTime - writtenTimeRemaining;
+        const percentage = Math.round((score / totalQuestions) * 100);
+        
+        const updateData = {
+          completedAt: firebase.firestore.FieldValue.serverTimestamp(),
+          score: score,
+          totalQuestions: totalQuestions,
+          maxScore: totalQuestions,
+          competencyStats: competencyStats,
+          timeSpent: timeSpent,
+          detailedAnswers: detailedAnswers,
+          competencies: Object.keys(competencyStats),
+          correctCompetencies: Object.entries(competencyStats)
+            .filter(([_, stats]) => stats.correct === stats.total)
+            .map(([comp, _]) => comp),
+          percentage: percentage,
+          submittedAt: firebase.firestore.FieldValue.serverTimestamp()
+        };
+        
+        await db.collection('assignments').doc(window.latestAssignmentId).update(updateData);
+        
+        const resultsData = {
+          message: `Excellent work! You scored ${score}/${totalQuestions}`,
+          assignmentName: window.currentAssignment?.title || 'Written Practice',
+          competencyStats: competencyStats,
+          score: score,
+          totalQuestions: totalQuestions,
+          percentage: percentage,
+          timeSpent: timeSpent
+        };
+        
+        closeQuizModal();
+        
+        showCongratsModal(resultsData);
+        
+        window.latestAssignmentId = null;
+        window.currentAssignment = null;
+        
+      } catch (error) {
+        console.error("❌ Written practice submission error:", error);
+        alert("Failed to submit practice: " + error.message);
+      }
+    }
+
+    async function submitWrittenPracticeForCreateYourOwn() {
+      try {
+        clearInterval(writtenTimer);
+        
+        const questions = window.writtenQuestions || writtenQuestions;
+        const answers = window.writtenAnswers || writtenAnswers;
+        
+        if (!questions || questions.length === 0) {
+          alert("Error: No questions found. Cannot submit written practice.");
+          closeQuizModal();
+          return;
+        }
+        
+        let score = 0;
+        const competencyStats = {};
+        const detailedAnswers = [];
+        const totalQuestions = questions.length;
+        
+        questions.forEach((question, index) => {
+          const userAnswer = answers[index];
+          const correctAnswer = question.correctAnswer;
+          const isCorrect = userAnswer === correctAnswer;
+          
+          if (isCorrect) score++;
+          
+          const competency = question.competency;
+          if (!competencyStats[competency]) {
+            competencyStats[competency] = { total: 0, correct: 0 };
+          }
+          competencyStats[competency].total++;
+          if (isCorrect) competencyStats[competency].correct++;
+          
+          detailedAnswers.push({
+            questionIndex: index,
+            question: question.question || question.text,
+            competency: competency,
+            userAnswer: userAnswer || "No answer",
+            correctAnswer: correctAnswer,
+            isCorrect: isCorrect
+          });
+        });
+        
+        const timeStr = document.getElementById('quizTitle')?.textContent?.match(/\d+/)?.[0] || '15';
+        const originalTime = parseInt(timeStr) * 60 || 900;
+        const timeSpent = originalTime - writtenTimeRemaining;
+        const percentage = Math.round((score / totalQuestions) * 100);
+        
+        const resultsData = {
+          message: `Excellent work! You scored ${score}/${totalQuestions}`,
+          assignmentName: 'Written Practice',
+          competencyStats: competencyStats,
+          score: score,
+          totalQuestions: totalQuestions,
+          percentage: percentage,
+          timeSpent: timeSpent
+        };
+        
+        closeQuizModal();
+        
+        showCongratsModal(resultsData);
+        
+        window.writtenQuestions = null;
+        window.writtenAnswers = null;
+        
+      } catch (error) {
+        console.error("❌ Create your own written practice submission error:", error);
+        alert("Failed to submit practice: " + error.message);
+      }
+    }
+  </script>
+
+  <!-- Assignment Modal -->
+  <div id="cq-assignment-modal" class="cq-modal" style="display: none;">
+    <div class="cq-modal-content">
+      <span class="cq-close" onclick="closeAssignmentModal()">&times;</span>
+      <div id="cq-assignment-title" class="cq-modal-title">New Assignment</div>
+      
+      <!-- Assignment Info (shown first) -->
+      <div id="cq-assignment-info">
+        <div id="cq-assignment-fields" class="cq-modal-fields"></div>
+        <div class="cq-modal-footer" style="margin-top:1.5rem; text-align:right;">
+          <button class="cq-modal-btn" onclick="acceptAssignmentNow()">I'll do it now</button>
+          <button class="cq-modal-btn" onclick="snoozeAssignment()">I'll do it later</button>
+          </div>
+      </div>
+      
+      <!-- Quiz Section (hidden initially) -->
+      <div id="cq-assignment-quiz" style="display:none;">
+        <div class="quiz-meta">
+          <span id="quizDifficulty">Difficulty: Medium</span>
+          <span id="quizTime">Time: 10 mins</span>
+          <span id="quizScore" style="margin-left: auto; font-weight: 600;">Score: 0/5</span>
+        </div>
+        <div id="quizQuestions" class="cq-modal-fields"></div>
+        <div class="cq-modal-footer">
+          <button class="cq-modal-btn" id="submitQuizBtn" disabled>Submit Answers</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quiz Modal - Fullscreen -->
+  <div id="quizModal" style="display: none;" class="practice-quiz-fullscreen">
+    <!-- Galaxy Background -->
+    <div class="practice-quiz-galaxy-bg">
+      <div class="practice-quiz-galaxy-gradient"></div>
+      <div class="practice-quiz-stars-container" id="quizStarsContainer"></div>
+      <div class="practice-quiz-nebula practice-quiz-nebula-1"></div>
+      <div class="practice-quiz-nebula practice-quiz-nebula-2"></div>
+      <div class="practice-quiz-nebula practice-quiz-nebula-3"></div>
+    </div>
+
+    <!-- Top Bar -->
+    <div class="practice-quiz-topbar">
+      <div class="practice-quiz-topbar-content">
+        <div>
+          <h1 id="quizTitle" class="practice-quiz-topbar-title">Easy Written Practice</h1>
+          <p class="practice-quiz-topbar-subtitle">
+            <span id="quizProgress">Question 1 of 14</span>
+          </p>
+        </div>
+        
+        <div class="practice-quiz-topbar-right">
+          <div class="practice-quiz-timer-section">
+            <p class="practice-quiz-timer-label">Time Remaining</p>
+            <p id="quizTimer" class="practice-quiz-timer-value">14:53</p>
+          </div>
+          
+          <button class="practice-quiz-close-btn" onclick="closeQuizModal()">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="practice-quiz-main">
+      <!-- Competency Badge -->
+      <div class="practice-quiz-competency-badge">
+        <span id="questionCompetency" class="practice-quiz-competency-text">Business Communication</span>
+      </div>
+
+      <!-- Question -->
+      <div class="practice-quiz-question-section">
+        <h2 id="questionText" class="practice-quiz-question">Loading question...</h2>
+        <p class="practice-quiz-question-hint">Select the best answer from the options below</p>
+      </div>
+
+      <!-- Answer Options -->
+      <div id="optionsContainer" class="practice-quiz-options">
+        <!-- Options will be populated dynamically -->
+      </div>
+
+      <!-- Progress Section -->
+      <div class="practice-quiz-progress-section">
+        <div class="practice-quiz-progress-header">
+          <p class="practice-quiz-progress-label">Overall Progress</p>
+          <p class="practice-quiz-progress-value"><span id="progressPercent">0</span>/100</p>
+        </div>
+        <div class="practice-quiz-progress-bar">
+          <div class="practice-quiz-progress-fill" id="progressFill"></div>
+        </div>
+      </div>
+
+      <!-- Navigation Buttons -->
+      <div class="practice-quiz-actions">
+        <button id="prevBtn" class="practice-quiz-prev-btn" onclick="previousQuestion()" disabled>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="15 18 9 12 15 6"></polyline>
+          </svg>
+          Previous Question
+        </button>
+        <button id="nextBtn" class="practice-quiz-next-btn" onclick="nextQuestion()">Next Question</button>
+        <button id="submitBtn" class="practice-quiz-submit-btn" onclick="submitQuiz()" style="display: none;">Submit Quiz</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Congratulations Modal - Fullscreen -->
+  <div id="congratsModal" class="practice-quiz-fullscreen" style="display:none;">
+    <!-- Galaxy Background -->
+    <div class="practice-quiz-galaxy-bg">
+      <div class="practice-quiz-galaxy-gradient"></div>
+      <div class="practice-quiz-stars-container" id="congratsStarsContainer"></div>
+      <div class="practice-quiz-nebula practice-quiz-nebula-1"></div>
+      <div class="practice-quiz-nebula practice-quiz-nebula-2"></div>
+      <div class="practice-quiz-nebula practice-quiz-nebula-3"></div>
+    </div>
+
+    <!-- Main Content - Centered -->
+    <div class="practice-quiz-main" style="display: flex; align-items: center; justify-content: center; min-height: calc(100vh - 80px);">
+      <div class="congrats-content">
+        <!-- Congratulations Header - Centered -->
+        <div class="congrats-header">
+          <h1 id="congratsTitle" class="congrats-title">Congratulations!</h1>
+          <p class="congrats-subtitle" id="congratsSubtitle">
+            Excellent work! You scored <span id="congratsScore">0/0</span>
+          </p>
+        </div>
+
+        <!-- Assignment Info - Centered -->
+        <div class="congrats-assignment-info">
+          <p class="congrats-assignment-label">For completing:</p>
+          <h2 id="congratsAssignmentName" class="congrats-assignment-name">Written Practice</h2>
+        </div>
+
+        <!-- Competency Breakdown - Grid Layout -->
+        <div class="congrats-competencies-grid" id="congratsCompetencies">
+          <!-- Competencies will be populated here -->
+        </div>
+
+        <!-- Action Button -->
+        <div class="congrats-actions">
+          <button class="practice-quiz-next-btn" onclick="closeCongratsModal()">Got it!</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Assignment Loader - Fullscreen Blurred -->
+  <div id="assignmentLoader" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); z-index: 10000; justify-content: center; align-items: center; flex-direction: column;">
+    <div class="circular-progress-loader">
+      <svg class="circular-progress-svg" viewBox="0 0 100 100">
+        <defs>
+          <linearGradient id="progressGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" style="stop-color:#ef4444;stop-opacity:1" />
+            <stop offset="50%" style="stop-color:#f97316;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#eab308;stop-opacity:1" />
+          </linearGradient>
+        </defs>
+        <circle class="circular-progress-bg" cx="50" cy="50" r="45"></circle>
+        <circle class="circular-progress-fill" cx="50" cy="50" r="45" id="circularProgressFill"></circle>
+      </svg>
+      <div class="circular-progress-text" id="circularProgressText">0%</div>
+    </div>
+  </div>
+
+  <div id="cq-written-loading" class="cq-written-loading" style="display:none;">
+    <!-- Gradient balls background -->
+    <div class="gradient-balls">
+        <div class="ball ball-1"></div>
+        <div class="ball ball-2"></div>
+        <div class="ball ball-3"></div>
+        <div class="ball ball-4"></div>
+    </div>
+    
+    <!-- Loading content -->
+    <div class="cq-loading-container">
+        <div class="cq-loading-spinner"></div>
+        <div class="cq-loading-text">Loading Assignment!</div>
+        <div class="cq-loading-subtext">Analyzing your competencies and creating personalized content...</div>
+        <div class="cq-loading-progress">
+            <div class="cq-loading-progress-bar" id="cq-loading-progress-bar"></div>
+        </div>
+    </div>
+  </div>
+
+  <!-- Speaking Assignment Modal -->
+  <div id="cq-speaking-modal" class="cq-speaking-modal" style="display:none;">
+    <!-- Star Field Background -->
+    <div class="cq-speaking-stars" id="cq-speaking-stars"></div>
+    <div class="cq-speaking-glow-1"></div>
+    <div class="cq-speaking-glow-2"></div>
+    
+    <div class="cq-speaking-modal-content">
+      <!-- Header -->
+      <div class="cq-speaking-header">
+        <h1 class="cq-speaking-title" id="cq-speaking-title">Speaking Assessment</h1>
+        <button class="cq-speaking-close" onclick="closeSpeakingAssignmentModal()">×</button>
+      </div>
+      
+      <!-- Main Container -->
+      <div class="cq-speaking-main-container">
+        <!-- Questions Row -->
+        <div class="cq-speaking-questions">
+          <div class="cq-speaking-question-card">
+            <h2 class="cq-speaking-question-label">Question 1:</h2>
+            <p id="cq-speaking-q1" class="cq-speaking-question-text">What is your strategy for this scenario?</p>
+          </div>
+          <div class="cq-speaking-question-card">
+            <h2 class="cq-speaking-question-label">Question 2:</h2>
+            <p id="cq-speaking-q2" class="cq-speaking-question-text">How would you handle unexpected challenges?</p>
+          </div>
+        </div>
+        
+        <!-- Video Feed -->
+        <div class="cq-speaking-video-container">
+          <video id="cq-speaking-videoPreview" autoplay playsInline muted style="width:100%; height:100%; object-fit:cover; background:#000; display:none;"></video>
+          <div id="cq-speaking-noVideoView" class="cq-speaking-no-video" style="width:100%; height:100%; background:#000; display:flex; align-items:center; justify-content:center; color:#94a3b8; position:absolute; top:0; left:0;">
+            <span>No video preview</span>
+          </div>
+          
+          <!-- Recording Indicator -->
+          <div id="cq-speaking-recordingIndicator" class="cq-speaking-recording-indicator">
+            <div class="cq-speaking-recording-dot"></div>
+            <span class="cq-speaking-recording-text">Recording</span>
+          </div>
+        </div>
+        
+        <!-- Controls -->
+        <div class="cq-speaking-controls-wrapper">
+          <div class="cq-speaking-controls">
+            <button id="cq-speaking-documentBtn" class="cq-speaking-control-btn" title="Document">
+              📄
+            </button>
+            <button id="cq-speaking-recordBtn" class="cq-speaking-record-btn" onclick="toggleSpeakingRecording()">
+              🎤
+            </button>
+            <button id="cq-speaking-micBtn" class="cq-speaking-control-btn" title="Settings">
+              ⚙️
+            </button>
+          </div>
+          
+          <!-- Submit button - shown after recording -->
+          <button id="cq-speaking-submitBtn" class="cq-speaking-submit-btn" style="display:none;" onclick="submitSpeakingResponse()">Submit Assessment</button>
+        </div>
+      </div>
+      
+      <!-- Audio playback (hidden by default) -->
+      <audio id="cq-speaking-audioPlayback" style="display:none;"></audio>
+      
+      <!-- Hidden buttons for functionality (kept for JavaScript) -->
+      <button id="cq-speaking-audioBtn" style="display:none;"></button>
+      <button id="cq-speaking-videoBtn" style="display:none;"></button>
+      <button id="cq-speaking-stopBtn" style="display:none;"></button>
+      <button id="cq-speaking-downloadBtn" style="display:none;"></button>
+    </div>
+  </div>
+
+  <!-- Case Study Assignment Modal -->
+  <div id="cq-case-study-modal" class="cq-case-study-modal" style="display:none;">
+    <!-- Star Field Background -->
+    <div class="cq-case-study-stars" id="cq-case-study-stars"></div>
+    <div class="cq-case-study-glow-1"></div>
+    <div class="cq-case-study-glow-2"></div>
+    
+    <div class="cq-case-study-modal-content">
+      <!-- Header -->
+      <div class="cq-case-study-header">
+        <h1 class="cq-case-study-title" id="cq-case-study-title">Case Study</h1>
+        <div class="cq-case-study-header-right">
+          <!-- Timer -->
+          <div id="cq-case-study-timer" class="cq-case-study-timer" onclick="toggleCaseStudyTimer()">
+            <div id="cq-case-study-timer-dot" class="cq-case-study-timer-dot"></div>
+            <span id="cq-case-study-timer-text" class="cq-case-study-timer-text">20:00</span>
+            <span id="cq-case-study-timer-start" class="cq-case-study-timer-start">Start</span>
+          </div>
+          <button class="cq-case-study-close" onclick="closeCaseStudyModal()">×</button>
+        </div>
+      </div>
+      
+      <!-- Main Container -->
+      <div class="cq-case-study-main-container">
+        <!-- Top Info Section (when content collapsed) -->
+        <div id="cq-case-study-top-info" class="cq-case-study-top-info">
+          <div class="cq-case-study-info-card">
+            <p class="cq-case-study-info-label">Case Name</p>
+            <p id="cq-case-study-name" class="cq-case-study-info-value">Market Expansion Strategy</p>
+          </div>
+          <div id="cq-case-study-content-preview" class="cq-case-study-info-card cq-case-study-clickable" onclick="expandCaseStudyContent()">
+            <p class="cq-case-study-info-label">Case Study Content</p>
+            <p id="cq-case-study-content-preview-text" class="cq-case-study-info-preview">Loading...</p>
+            <p class="cq-case-study-read-more">Read More →</p>
+          </div>
+        </div>
+        
+        <!-- Expanded Content (when content expanded) -->
+        <div id="cq-case-study-expanded-content" class="cq-case-study-expanded-content" style="display:none;">
+          <div class="cq-case-study-expanded-header">
+            <div>
+              <p class="cq-case-study-expanded-label">Case Study Content</p>
+              <h3 id="cq-case-study-expanded-title" class="cq-case-study-expanded-title">Market Expansion Strategy</h3>
+            </div>
+            <button class="cq-case-study-expanded-close" onclick="collapseCaseStudyContent()">×</button>
+          </div>
+          <p id="cq-case-study-full-content" class="cq-case-study-full-content">Loading...</p>
+        </div>
+        
+        <!-- Video Feed (hidden when content expanded) -->
+        <div id="cq-case-study-video-container" class="cq-case-study-video-container">
+          <video id="cq-case-study-videoPreview" autoplay playsInline muted style="width:100%; height:100%; object-fit:cover; background:#000; display:none;"></video>
+          <div id="cq-case-study-noVideoView" class="cq-case-study-no-video" style="width:100%; height:100%; background:#000; display:flex; align-items:center; justify-content:center; color:#94a3b8; position:absolute; top:0; left:0;">
+            <span>No video preview</span>
+          </div>
+          
+          <!-- Recording Indicator -->
+          <div id="cq-case-study-recordingIndicator" class="cq-case-study-recording-indicator">
+            <div class="cq-case-study-recording-dot"></div>
+            <span class="cq-case-study-recording-text">Recording</span>
+          </div>
+        </div>
+        
+        <!-- Bottom Info Section (hidden when content expanded) -->
+        <div id="cq-case-study-bottom-info" class="cq-case-study-bottom-info">
+          <div class="cq-case-study-question-card">
+            <p class="cq-case-study-question-label">Question 1</p>
+            <p id="cq-case-study-q1" class="cq-case-study-question-text">What are the key market opportunities and challenges?</p>
+          </div>
+          <div class="cq-case-study-question-card">
+            <p class="cq-case-study-question-label">Question 2</p>
+            <p id="cq-case-study-q2" class="cq-case-study-question-text">How would you develop a comprehensive expansion strategy?</p>
+          </div>
+        </div>
+        
+        <!-- Controls (hidden when content expanded) -->
+        <div id="cq-case-study-controls-wrapper" class="cq-case-study-controls-wrapper">
+          <div class="cq-case-study-controls">
+            <button id="cq-case-study-recordBtn" class="cq-case-study-record-btn" onclick="toggleCaseStudyRecording()">
+              🎤
+            </button>
+            <button id="cq-case-study-downloadBtn" class="cq-case-study-control-btn" title="Download" style="display:none;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="7" y="7" width="10" height="10" rx="2.5" fill="#60a5fa"/>
+                <path d="M12 9.5v4.5m0 0l-2.5-2.5m2.5 2.5l2.5-2.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+          </div>
+          
+          <!-- Submit button - shown after recording -->
+          <button id="cq-case-study-submitBtn" class="cq-case-study-submit-btn" style="display:none;" onclick="submitCaseStudyResponse()">Submit Case Study</button>
+        </div>
+      </div>
+      
+      <!-- Audio playback (hidden by default) -->
+      <audio id="cq-case-study-audioPlayback" style="display:none;"></audio>
+      
+      <!-- Hidden buttons for functionality (kept for JavaScript) -->
+      <button id="cq-case-study-audioBtn" style="display:none;"></button>
+      <button id="cq-case-study-videoBtn" style="display:none;"></button>
+      <button id="cq-case-study-stopBtn" style="display:none;"></button>
+    </div>
+  </div>
+</body>
+</html>

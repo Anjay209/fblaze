@@ -637,22 +637,26 @@ if (!firebase.apps.length) {
             }
         }
 
-        // Load all competitions from all users
+        // Load all competitions from competitions collection
         async function loadCompetitions() {
             try {
                 document.getElementById('loading').style.display = 'flex';
                 competitions.clear();
 
-                const usersSnapshot = await db.collection('users').get();
+                // Fetch all documents from competitions collection
+                const competitionsSnapshot = await db.collection('competitions').get();
                 
-                usersSnapshot.forEach(doc => {
-                    const userData = doc.data();
-                    if (userData.competitions && Array.isArray(userData.competitions)) {
-                        userData.competitions.forEach(comp => {
-                            if (comp && typeof comp === 'string' && comp.trim()) {
-                                competitions.add(comp.trim());
-                            }
-                        });
+                competitionsSnapshot.forEach(doc => {
+                    // Use document ID as the competition name (document IDs are the competition names)
+                    const competitionName = doc.id;
+                    
+                    // Check if name already exists before adding (Set automatically handles this, but being explicit)
+                    if (competitionName && typeof competitionName === 'string' && competitionName.trim()) {
+                        const trimmedName = competitionName.trim();
+                        // Only add if not already in the set
+                        if (!competitions.has(trimmedName)) {
+                            competitions.add(trimmedName);
+                        }
                     }
                 });
 

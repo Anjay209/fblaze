@@ -1243,6 +1243,78 @@ if (!firebase.apps.length) {
         padding: 2rem 1rem;
       }
     }
+    
+    /* Force select elements to appear as dropdowns, not text inputs */
+    select.comp-input,
+    select.mentor-comp-input {
+      appearance: menulist !important;
+      -webkit-appearance: menulist !important;
+      -moz-appearance: menulist !important;
+      cursor: pointer !important;
+      /* Match chapter input styling */
+      background-color: rgba(127, 29, 29, 0.3) !important;
+      border: 2px solid rgba(239, 68, 68, 0.5) !important;
+      border-radius: 8px !important;
+      color: #fff !important;
+      /* Prevent any text input behavior */
+      -webkit-user-select: none !important;
+      -moz-user-select: none !important;
+      -ms-user-select: none !important;
+      user-select: none !important;
+    }
+    
+    /* Style select options */
+    select.comp-input option,
+    select.mentor-comp-input option {
+      background-color: rgba(127, 29, 29, 0.3) !important;
+      color: #fff !important;
+    }
+    
+    select.comp-input option[value=""],
+    select.mentor-comp-input option[value=""] {
+      color: #fca5a5 !important;
+    }
+    
+    /* Focus states to match chapter input */
+    select.comp-input:focus,
+    select.mentor-comp-input:focus {
+      outline: none !important;
+      border-color: #f97316 !important;
+      background-color: rgba(127, 29, 29, 0.5) !important;
+      box-shadow: 0 0 0 2px rgba(249, 115, 22, 0.3) !important;
+    }
+    
+    /* Ensure dropdown arrow is visible */
+    select.comp-input::-ms-expand,
+    select.mentor-comp-input::-ms-expand {
+      display: block !important;
+    }
+    
+    /* Make sure height matches chapter input */
+    select.comp-input,
+    select.mentor-comp-input {
+      height: 48px !important;
+      padding: 12px 16px !important;
+      font-size: 16px !important;
+    }
+    
+    /* Prevent any input elements from being created with these classes */
+    input.comp-input,
+    input.mentor-comp-input {
+      display: none !important;
+    }
+    
+    /* Force any element with these IDs to be a select */
+    #comps:not(select),
+    #mentorComp:not(select) {
+      display: none !important;
+    }
+    
+    /* Ensure selects cannot be made contenteditable */
+    select.comp-input,
+    select.mentor-comp-input {
+      pointer-events: auto !important;
+    }
   </style>
 
 <script type="module" src="/js/firebase.js"></script></head>
@@ -1461,34 +1533,38 @@ if (!firebase.apps.length) {
       <div class="goal-card" data-goal="running">Running the Show<br><span>4+ hrs/week</span></div>
     </div>
     
-    <!-- Competition Entries -->
-   <!-- Competition Entries -->
-<!-- Add this missing element in your goal modal section -->
-<div style="margin-bottom: 1rem;">
-  <label style="display: block; margin-bottom: 0.5rem;">What competitions are you in?</label>
-  <div id="competitionInputs">
-    <div class="comp-input-group">
-      <input type="text" id="comps" class="comp-input" placeholder="Ex. Introduction to FBLA">
-      <button type="button" id="addCompBtn" class="add-comp-btn" title="Add another competition">+</button>
+    <!-- Competition Entries - Rebuilt as proper dropdowns -->
+    <div style="margin-bottom: 1rem;">
+      <label style="display: block; margin-bottom: 0.5rem; color: white;">What competitions are you in?</label>
+      <div id="competitionInputs">
+        <div class="comp-input-group" style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+          <select id="comps" class="comp-input" required style="flex: 1; height: 48px; padding: 12px 16px; padding-right: 2.5rem; border: 2px solid rgba(239, 68, 68, 0.5); border-radius: 8px; font-size: 16px; background-color: rgba(127, 29, 29, 0.3); color: #fff; cursor: pointer; width: 100%; appearance: menulist; -webkit-appearance: menulist; -moz-appearance: menulist; background-image: url('data:image/svg+xml;charset=UTF-8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2212%22 height=%2212%22 viewBox=%220 0 12 12%22><path fill=%22%23fff%22 d=%22M6 9L1 4h10z%22/></svg>'); background-repeat: no-repeat; background-position: right 12px center; background-size: 12px;">
+            <option value="" style="background-color: rgba(127, 29, 29, 0.3); color: #fca5a5;">Select a competition...</option>
+            <!-- Options will be populated from Firestore -->
+          </select>
+          <button type="button" id="addCompBtn" class="add-comp-btn" title="Add another competition" style="width: 48px; height: 48px; border: 2px solid rgba(239, 68, 68, 0.5); background: rgba(127, 29, 29, 0.4); color: #fff; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s;">+</button>
+        </div>
+      </div>
     </div>
-  </div>
-</div>
     
     <div style="margin: 1.2rem 0 0.5rem 0; display: flex; align-items: center; gap: 0.5rem; margin-top: -30px;">
-  <input type="checkbox" id="isMentor" style="width: 18px; height: 18px; accent-color: #2563eb;">
-  <label for="isMentor" style="margin: 0; font-size: 1rem;">I am a mentor for a competition</label>
-</div>
+      <input type="checkbox" id="isMentor" style="width: 18px; height: 18px; accent-color: #2563eb;">
+      <label for="isMentor" style="margin: 0; font-size: 1rem; color: white;">I am a mentor for a competition</label>
+    </div>
 
-<div id="mentorCompDiv" style="margin-bottom: 1rem; display: none;">
-  <label style="display: block; margin-bottom: 0.5rem;">What competitions can you mentor in?</label>
-  <div class="mentor-comp-input-group" style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
-    <input type="text" id="mentorComp" class="mentor-comp-input" placeholder="e.g., Partnership with Business" style="flex: 1; padding: 0.75rem; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 1rem; transition: border-color 0.2s; outline: none;">
-    <button type="button" id="addMentorCompBtn" class="add-mentor-comp-btn" title="Add another mentoring competition" style="width: 48px; height: 48px; margin-bottom: 5px; border: none; background-color: #f3f4f6; color: #1f2937; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s;">+</button>
-  </div>
-  <div id="mentorCompetitionInputs">
-    <!-- Dynamic inputs with × buttons will be added here -->
-  </div>
-</div>
+    <div id="mentorCompDiv" style="margin-bottom: 1rem; display: none;">
+      <label style="display: block; margin-bottom: 0.5rem; color: white;">What competitions can you mentor in?</label>
+      <div class="mentor-comp-input-group" style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+        <select id="mentorComp" class="mentor-comp-input" style="flex: 1; height: 48px; padding: 12px 16px; padding-right: 2.5rem; border: 2px solid rgba(239, 68, 68, 0.5); border-radius: 8px; font-size: 16px; background: rgba(127, 29, 29, 0.3); color: #fff; cursor: pointer; width: 100%; appearance: menulist; -webkit-appearance: menulist; -moz-appearance: menulist; background-image: url('data:image/svg+xml;charset=UTF-8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2212%22 height=%2212%22 viewBox=%220 0 12 12%22><path fill=%22%23fff%22 d=%22M6 9L1 4h10z%22/></svg>'); background-repeat: no-repeat; background-position: right 12px center; background-size: 12px;">
+          <option value="" style="background-color: rgba(127, 29, 29, 0.3); color: #fca5a5;">Select a competition...</option>
+          <!-- Options will be populated from Firestore -->
+        </select>
+        <button type="button" id="addMentorCompBtn" class="add-mentor-comp-btn" title="Add another mentoring competition" style="width: 48px; height: 48px; border: none; background: linear-gradient(to right, #f97316, #ef4444); color: white; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s;">+</button>
+      </div>
+      <div id="mentorCompetitionInputs">
+        <!-- Dynamic dropdowns with × buttons will be added here -->
+      </div>
+    </div>
 
     
     <button id="goalSubmitBtn" disabled>Save</button>
@@ -1765,15 +1841,7 @@ if (!firebase.apps.length) {
   };
   
   // Close mobile nav when clicking a nav link
-  document.addEventListener('DOMContentLoaded', () => {
-    document.querySelectorAll('.blaze-nav .nav-link').forEach(link => {
-      link.addEventListener('click', () => {
-        if (window.innerWidth <= 768) {
-          toggleMobileNav();
-        }
-      });
-    });
-  });
+  // Consolidated DOMContentLoaded listener - all initialization code goes here
 
   // Firebase configuration
 
@@ -1781,6 +1849,126 @@ if (!firebase.apps.length) {
   const db = firebase.firestore();
   const auth = firebase.auth();
 
+  function populateCompetitionDropdowns() {
+  if (!window.allCompetitions || window.allCompetitions.length === 0) {
+    console.log('⚠️ No competitions loaded yet');
+    return;
+  }
+  
+  console.log('Populating dynamic dropdowns with', window.allCompetitions.length, 'competitions');
+  
+  // Populate regular competition dropdowns (added via "Add Competition" button)
+  const compInputs = document.querySelectorAll('.comp-input');
+  console.log(`Found ${compInputs.length} .comp-input elements`);
+  
+  compInputs.forEach((select, idx) => {
+    if (select.tagName === 'SELECT') {
+      select.innerHTML = '<option value="">Select a competition...</option>';
+      window.allCompetitions.forEach(comp => {
+        const option = document.createElement('option');
+        option.value = comp;
+        option.textContent = comp;
+        select.appendChild(option);
+      });
+      console.log(`✅ Populated .comp-input[${idx}]`);
+    }
+  });
+  
+  // Populate mentor competition dropdowns
+  const mentorCompInputs = document.querySelectorAll('.mentor-comp-input');
+  console.log(`Found ${mentorCompInputs.length} .mentor-comp-input elements`);
+  
+  mentorCompInputs.forEach((select, idx) => {
+    if (select.tagName === 'SELECT') {
+      select.innerHTML = '<option value="">Select a competition...</option>';
+      window.allCompetitions.forEach(comp => {
+        const option = document.createElement('option');
+        option.value = comp;
+        option.textContent = comp;
+        select.appendChild(option);
+      });
+      console.log(`✅ Populated .mentor-comp-input[${idx}]`);
+    }
+  });
+}
+
+
+async function loadCompetitionsFromFirestore() {
+  try {
+    console.log('🚀 Starting loadCompetitionsFromFirestore...');
+    
+    // Check if Firestore is initialized
+    if (!db) {
+      throw new Error('Firestore db not initialized');
+    }
+    
+    const competitionsSnapshot = await db.collection('competitions').get();
+    const competitions = [];
+    
+    console.log(`📊 Found ${competitionsSnapshot.size} competition documents in Firestore`);
+    
+    competitionsSnapshot.forEach(doc => {
+      competitions.push(doc.id);
+      console.log(`  - ${doc.id}`);
+    });
+    
+    competitions.sort();
+    window.allCompetitions = competitions;
+    
+    console.log('✅ Competitions loaded and sorted:', competitions);
+    
+    // ========== STEP 1: Populate the INITIAL select elements ==========
+    console.log('📋 Step 1: Populating initial form dropdowns...');
+    
+    const initialCompSelect = document.getElementById('comps');
+    if (initialCompSelect && initialCompSelect.tagName === 'SELECT') {
+      console.log('✅ Found initial comps SELECT element');
+      initialCompSelect.innerHTML = '<option value="">Select a competition...</option>';
+      competitions.forEach(comp => {
+        const option = document.createElement('option');
+        option.value = comp;
+        option.textContent = comp;
+        initialCompSelect.appendChild(option);
+      });
+      console.log(`✅ Populated comps with ${competitions.length} options`);
+    } else {
+      console.warn(`⚠️ comps element NOT found or is not a SELECT. Found: ${initialCompSelect?.tagName || 'null'}`);
+    }
+    
+    const initialMentorSelect = document.getElementById('mentorComp');
+    if (initialMentorSelect && initialMentorSelect.tagName === 'SELECT') {
+      console.log('✅ Found initial mentorComp SELECT element');
+      initialMentorSelect.innerHTML = '<option value="">Select a competition...</option>';
+      competitions.forEach(comp => {
+        const option = document.createElement('option');
+        option.value = comp;
+        option.textContent = comp;
+        initialMentorSelect.appendChild(option);
+      });
+      console.log(`✅ Populated mentorComp with ${competitions.length} options`);
+    } else {
+      console.warn(`⚠️ mentorComp element NOT found or is not a SELECT. Found: ${initialMentorSelect?.tagName || 'null'}`);
+    }
+    
+    // ========== STEP 2: Populate any dynamically-added dropdowns ==========
+    console.log('📋 Step 2: Populating dynamic dropdowns...');
+    populateCompetitionDropdowns();
+    
+    console.log('🎉 loadCompetitionsFromFirestore completed successfully!');
+    return competitions;
+    
+  } catch (error) {
+    console.error('❌ Error loading competitions from Firestore:', error);
+    console.error('Error details:', {
+      name: error.name,
+      message: error.message,
+      code: error.code,
+      stack: error.stack
+    });
+    window.allCompetitions = [];
+    return [];
+  }
+}
   // Galaxy Background - Create Stars
   function createStars() {
     const starsContainer = document.getElementById('starsContainer');
@@ -2457,29 +2645,7 @@ if (!firebase.apps.length) {
   }
 
   // Initialize on page load
-  document.addEventListener('DOMContentLoaded', function() {
-    createStars();
-    
-    // Display today's inspirational quote
-    displayDailyQuote();
-    
-    // Initialize duck rotation
-    duckContainer = document.getElementById('duckContainer');
-    duckWrapper = document.getElementById('duckWrapper');
-    
-    if (duckContainer && duckWrapper) {
-      duckContainer.addEventListener('mousemove', handleDuckMouseMove);
-      duckContainer.addEventListener('mouseleave', handleDuckMouseLeave);
-      // Start bobbing animation
-      animateBobbing();
-      console.log('Duck rotation initialized');
-    } else {
-      console.error('Duck container or wrapper not found');
-    }
-    
-    // Personality modal will be shown by auth.onAuthStateChanged after checking Firebase
-    // No need to show it here - it's handled in the auth state change handler
-  });
+  // Moved to consolidated DOMContentLoaded listener below
 
 
 
@@ -2563,10 +2729,7 @@ function createWrittenModal() {
     
     return modal;
 }
-// Initialize the modal when the page loads
-document.addEventListener('DOMContentLoaded', function() {
-    writtenModal = createWrittenModal();
-});
+// Initialize the modal when the page loads - moved to consolidated DOMContentLoaded listener
 
 
 // Add these functions to your existing code
@@ -3280,7 +3443,14 @@ function removeCompInput(button) {
 function getCompetitionValues() {
   const inputs = document.querySelectorAll('.comp-input');
   return Array.from(inputs)
-    .map(input => input.value.trim())
+    .map(input => {
+      // Handle both text inputs and select dropdowns
+      if (input.tagName === 'SELECT') {
+        return input.value.trim();
+      } else {
+        return input.value.trim();
+      }
+    })
     .filter(value => value !== '');
 }
 
@@ -3329,46 +3499,224 @@ function getCompetitionValues() {
 
   // Add this to your home page JavaScript
 // STEP 2: Add this to your home.html file
-window.addEventListener('DOMContentLoaded', function() {
 
-
-
-  goalSubmitBtn = document.getElementById('goalSubmitBtn');
-  compsInput = document.getElementById('comps'); // This was missing
-  goalCards = document.querySelectorAll('.goal-card');
-  isMentorCheckbox = document.getElementById('isMentor');
-  mentorCompDiv = document.getElementById('mentorCompDiv');
-  mentorCompInput = document.getElementById('mentorComp');
-  selectedGoal = null;
-
-  // Only add event listeners if elements exist
-  if (compsInput) {
-    compsInput.addEventListener('input', updateSaveState);
-  } else {
-    console.error("compsInput element not found");
+// Define updateSaveState function before it's used
+function updateSaveState() {
+  const roleSelected = document.querySelector('.role-btn.selected');
+  const goalSelected = document.querySelector('.goal-card.selected');
+  
+  // Check if any competition input has value
+  let hasCompetitions = false;
+  
+  // Check main competition input
+  const compsInput = document.getElementById('comps');
+  if (compsInput && compsInput.value.trim()) {
+    hasCompetitions = true;
   }
+  
+  // Check dynamically added competition inputs
+  if (!hasCompetitions) {
+    const additionalCompInputs = document.querySelectorAll('.comp-input');
+    hasCompetitions = Array.from(additionalCompInputs).some(input => {
+      if (input.tagName === 'SELECT') {
+        return input.value.trim();
+      } else {
+        return input.value.trim();
+      }
+    });
+  }
+  
+  // Enable button only if all required elements exist and have values
+  const goalSubmitBtn = document.getElementById('goalSubmitBtn');
+  if (goalSubmitBtn) {
+    goalSubmitBtn.disabled = !(roleSelected && goalSelected && hasCompetitions);
+  }
+}
 
- 
-    // Check if we should open notifications
-    if (sessionStorage.getItem('openNotifications') === 'true') {
-        // Clear the flag so it doesn't happen again
-        sessionStorage.removeItem('openNotifications');
+  // Moved to consolidated DOMContentLoaded listener below
+
+  // Consolidated DOMContentLoaded listener - all initialization code
+  document.addEventListener('DOMContentLoaded', async function() {
+    // FORCE SELECT ELEMENTS TO BE DROPDOWNS - RUN IMMEDIATELY
+    function forceSelectsToBeDropdowns() {
+      const compsSelect = document.getElementById('comps');
+      const mentorCompSelect = document.getElementById('mentorComp');
+      
+      // If comps is not a select, replace it with a select
+      if (compsSelect && compsSelect.tagName !== 'SELECT') {
+        console.warn('⚠️ comps element is not a SELECT, replacing it...');
+        const newSelect = document.createElement('select');
+        newSelect.id = 'comps';
+        newSelect.className = 'comp-input';
+        newSelect.style.cssText = 'flex: 1; height: 48px; padding: 12px 16px; padding-right: 2.5rem; border: 2px solid rgba(239, 68, 68, 0.5); border-radius: 8px; font-size: 16px; background-color: rgba(127, 29, 29, 0.3); color: #fff; cursor: pointer; width: 100%; appearance: menulist; -webkit-appearance: menulist; -moz-appearance: menulist; background-image: url(\'data:image/svg+xml;charset=UTF-8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2212%22 height=%2212%22 viewBox=%220 0 12 12%22><path fill=%22%23fff%22 d=%22M6 9L1 4h10z%22/></svg>\'); background-repeat: no-repeat; background-position: right 12px center; background-size: 12px;';
+        newSelect.innerHTML = '<option value="" style="background-color: rgba(127, 29, 29, 0.3); color: #fca5a5;">Select a competition...</option>';
+        compsSelect.parentNode.replaceChild(newSelect, compsSelect);
+      }
+      
+      // If mentorComp is not a select, replace it with a select
+      if (mentorCompSelect && mentorCompSelect.tagName !== 'SELECT') {
+        console.warn('⚠️ mentorComp element is not a SELECT, replacing it...');
+        const newSelect = document.createElement('select');
+        newSelect.id = 'mentorComp';
+        newSelect.className = 'mentor-comp-input';
+        newSelect.style.cssText = 'flex: 1; height: 48px; padding: 12px 16px; padding-right: 2.5rem; border: 2px solid rgba(239, 68, 68, 0.5); border-radius: 8px; font-size: 16px; background: rgba(127, 29, 29, 0.3); color: #fff; cursor: pointer; width: 100%; appearance: menulist; -webkit-appearance: menulist; -moz-appearance: menulist; background-image: url(\'data:image/svg+xml;charset=UTF-8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2212%22 height=%2212%22 viewBox=%220 0 12 12%22><path fill=%22%23fff%22 d=%22M6 9L1 4h10z%22/></svg>\'); background-repeat: no-repeat; background-position: right 12px center; background-size: 12px;';
+        newSelect.innerHTML = '<option value="" style="background-color: rgba(127, 29, 29, 0.3); color: #fca5a5;">Select a competition...</option>';
+        mentorCompSelect.parentNode.replaceChild(newSelect, mentorCompSelect);
+      }
+      
+      // Prevent any input events on select elements and ensure they're always dropdowns
+      document.querySelectorAll('select.comp-input, select.mentor-comp-input').forEach(select => {
+        // Remove contenteditable if it exists
+        select.removeAttribute('contenteditable');
+        select.setAttribute('contenteditable', 'false');
         
-        // Open your notifications panel - replace with your actual function name
-        if (typeof toggleCommentPanel === 'function') {
-            toggleCommentPanel();
+        // Force appearance to be dropdown
+        select.style.appearance = 'menulist';
+        select.style.webkitAppearance = 'menulist';
+        select.style.mozAppearance = 'menulist';
+        
+        // Prevent keydown/keypress events that might allow typing
+        const preventTyping = function(e) {
+          // Only allow arrow keys, enter, escape, tab, home, end
+          const allowedKeys = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Enter', 'Escape', 'Tab', 'Home', 'End', 'PageUp', 'PageDown'];
+          if (!allowedKeys.includes(e.key) && !e.ctrlKey && !e.metaKey && !e.altKey) {
+            e.preventDefault();
+            e.stopPropagation();
+            return false;
+          }
+        };
+        
+        // Remove old listeners and add new ones with capture phase
+        select.removeEventListener('keydown', preventTyping, true);
+        select.removeEventListener('keypress', preventTyping, true);
+        select.addEventListener('keydown', preventTyping, true);
+        select.addEventListener('keypress', preventTyping, true);
+        
+        // Prevent input events
+        const preventInput = function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          return false;
+        };
+        select.removeEventListener('input', preventInput, true);
+        select.addEventListener('input', preventInput, true);
+        
+        // Prevent paste
+        select.addEventListener('paste', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          return false;
+        }, true);
+        
+        // Ensure it's a select
+        if (select.tagName !== 'SELECT') {
+          console.error('❌ Element with class comp-input or mentor-comp-input is not a SELECT!', select);
         }
-        // Or if you have a different function name, use that:
-        // openNotifications();
-        // showNotificationPanel();
+      });
     }
-});
+    
+    // Run immediately
+    forceSelectsToBeDropdowns();
+    
+    // Run again after a short delay to catch any dynamic changes
+    setTimeout(forceSelectsToBeDropdowns, 100);
+    setTimeout(forceSelectsToBeDropdowns, 500);
+    setTimeout(forceSelectsToBeDropdowns, 1000);
+    
+    // Watch for any changes to these elements and force them to be selects
+    const observer = new MutationObserver(function(mutations) {
+      mutations.forEach(function(mutation) {
+        if (mutation.type === 'childList' || mutation.type === 'attributes') {
+          const compsEl = document.getElementById('comps');
+          const mentorCompEl = document.getElementById('mentorComp');
+          
+          if (compsEl && compsEl.tagName !== 'SELECT') {
+            console.warn('🚨 comps element changed to non-SELECT! Forcing back to SELECT...');
+            forceSelectsToBeDropdowns();
+          }
+          
+          if (mentorCompEl && mentorCompEl.tagName !== 'SELECT') {
+            console.warn('🚨 mentorComp element changed to non-SELECT! Forcing back to SELECT...');
+            forceSelectsToBeDropdowns();
+          }
+          
+          // Check all elements with these classes
+          document.querySelectorAll('.comp-input, .mentor-comp-input').forEach(el => {
+            if (el.tagName !== 'SELECT' && el.id !== 'school') {
+              console.warn('🚨 Found non-SELECT element with comp-input class!', el);
+              if (el.tagName === 'INPUT') {
+                // Replace input with select
+                const newSelect = document.createElement('select');
+                newSelect.className = el.className;
+                newSelect.id = el.id;
+                newSelect.style.cssText = 'flex: 1; padding: 0.75rem; padding-right: 2.5rem; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 1rem; background: white; color: #1f2937; cursor: pointer; width: 100%; appearance: auto; -webkit-appearance: menulist; -moz-appearance: menulist; background-image: url(\'data:image/svg+xml;charset=UTF-8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2212%22 height=%2212%22 viewBox=%220 0 12 12%22><path fill=%22%23333%22 d=%22M6 9L1 4h10z%22/></svg>\'); background-repeat: no-repeat; background-position: right 0.75rem center; background-size: 12px;';
+                newSelect.innerHTML = '<option value="">Select a competition...</option>';
+                el.parentNode.replaceChild(newSelect, el);
+                if (window.allCompetitions && window.allCompetitions.length > 0) {
+                  window.allCompetitions.forEach(comp => {
+                    const option = document.createElement('option');
+                    option.value = comp;
+                    option.textContent = comp;
+                    newSelect.appendChild(option);
+                  });
+                }
+              }
+            }
+          });
+        }
+      });
+    });
+    
+    // Start observing
+    const goalModal = document.getElementById('goalModal');
+    if (goalModal) {
+      observer.observe(goalModal, {
+        childList: true,
+        subtree: true,
+        attributes: true,
+        attributeFilter: ['tagName', 'type']
+      });
+    }
+    
+    await loadCompetitionsFromFirestore();
+    // 1. Navigation link handling for mobile
+    document.querySelectorAll('.blaze-nav .nav-link').forEach(link => {
+      link.addEventListener('click', () => {
+        if (window.innerWidth <= 768) {
+          toggleMobileNav();
+        }
+      });
+    });
 
-  document.addEventListener('DOMContentLoaded', function() {
-    // Check recording support on page load
+    // 2. Galaxy background and duck rotation
+    createStars();
+    displayDailyQuote();
+    
+    // Initialize duck rotation
+    duckContainer = document.getElementById('duckContainer');
+    duckWrapper = document.getElementById('duckWrapper');
+    
+    if (duckContainer && duckWrapper) {
+      duckContainer.addEventListener('mousemove', handleDuckMouseMove);
+      duckContainer.addEventListener('mouseleave', handleDuckMouseLeave);
+      // Start bobbing animation
+      animateBobbing();
+      console.log('Duck rotation initialized');
+    } else {
+      console.error('Duck container or wrapper not found');
+    }
+
+    // 3. Initialize written modal
+    writtenModal = createWrittenModal();
+
+    // 4. Load competitions from Firestore on page load
+    console.log('Page loaded, loading competitions...');
+    console.log('Competitions loaded:', window.allCompetitions);
+    
+    // 5. Check recording support on page load
     checkRecordingSupport();
 
-    // Assign global variables
+    // 6. Assign global variables for goal modal
     modal = document.getElementById('goalModal');
     backdrop = document.querySelector('.modal-backdrop');
     goalSubmitBtn = document.getElementById('goalSubmitBtn');
@@ -3378,6 +3726,29 @@ window.addEventListener('DOMContentLoaded', function() {
     mentorCompDiv = document.getElementById('mentorCompDiv');
     mentorCompInput = document.getElementById('mentorComp');
     selectedGoal = null;
+
+    // 7. Check if we should open notifications
+    if (sessionStorage.getItem('openNotifications') === 'true') {
+      // Clear the flag so it doesn't happen again
+      sessionStorage.removeItem('openNotifications');
+      
+      // Open your notifications panel - replace with your actual function name
+      if (typeof toggleCommentPanel === 'function') {
+        toggleCommentPanel();
+      }
+    }
+
+    // 8. Set up competition input event listeners
+    if (compsInput) {
+      // Handle both text inputs and select dropdowns
+      if (compsInput.tagName === 'SELECT') {
+        compsInput.addEventListener('change', updateSaveState);
+      } else {
+        compsInput.addEventListener('input', updateSaveState);
+      }
+    } else {
+      console.error("compsInput element not found");
+    }
 
     // Set up recording button event listeners
     const audioBtn = document.getElementById('cq-speaking-audioBtn');
@@ -3587,15 +3958,35 @@ submitBtn.addEventListener('click', async () => {
         updateSaveState();
       });
     });
-    compsInput.addEventListener('input', updateSaveState);
+    // Handle both text inputs and select dropdowns
+    if (compsInput) {
+      if (compsInput.tagName === 'SELECT') {
+        compsInput.addEventListener('change', updateSaveState);
+      } else {
+        compsInput.addEventListener('input', updateSaveState);
+      }
+    }
 
     // Mentor logic
     // Make mentor checkbox optional - no need to validate it
 if (isMentorCheckbox && mentorCompDiv && mentorCompInput) {
   isMentorCheckbox.addEventListener('change', function() {
     mentorCompDiv.style.display = isMentorCheckbox.checked ? 'block' : 'none';
+    // Populate mentor dropdowns when shown
+    if (isMentorCheckbox.checked) {
+      populateCompetitionDropdowns();
+    }
     // No need to call updateSaveState() here since mentor fields are optional
   });
+  
+  // Handle mentor competition input (both text and select)
+  if (mentorCompInput) {
+    if (mentorCompInput.tagName === 'SELECT') {
+      mentorCompInput.addEventListener('change', updateSaveState);
+    } else {
+      mentorCompInput.addEventListener('input', updateSaveState);
+    }
+  }
 }
     // Replace your existing goalSubmitBtn event listener with this simpler version:
 goalSubmitBtn.addEventListener('click', function() {
@@ -3605,11 +3996,18 @@ goalSubmitBtn.addEventListener('click', function() {
     // Collect ALL competition inputs (main + dynamically added)
     const competitionsArr = [];
     
-    // Get all dynamically added competition inputs
+    // Get all dynamically added competition inputs (handles both text inputs and select dropdowns)
     const additionalCompInputs = document.querySelectorAll('.comp-input');
     additionalCompInputs.forEach(input => {
-      if (input.value.trim()) {
-        competitionsArr.push(...input.value.split(',').map(x => x.trim()).filter(Boolean));
+      const value = input.value.trim();
+      if (value) {
+        // If it's a select dropdown, just add the value directly
+        if (input.tagName === 'SELECT') {
+          competitionsArr.push(value);
+        } else {
+          // If it's a text input, split by comma (for backwards compatibility)
+          competitionsArr.push(...value.split(',').map(x => x.trim()).filter(Boolean));
+        }
       }
     });
     
@@ -3619,14 +4017,28 @@ goalSubmitBtn.addEventListener('click', function() {
       // Get main mentor competition input
       const mainMentorCompInput = document.getElementById('mentorComp');
       if (mainMentorCompInput && mainMentorCompInput.value.trim()) {
-        mentorCompetitionsArr.push(...mainMentorCompInput.value.split(',').map(x => x.trim()).filter(Boolean));
+        const value = mainMentorCompInput.value.trim();
+        // If it's a select dropdown, just add the value directly
+        if (mainMentorCompInput.tagName === 'SELECT') {
+          mentorCompetitionsArr.push(value);
+        } else {
+          // If it's a text input, split by comma (for backwards compatibility)
+          mentorCompetitionsArr.push(...value.split(',').map(x => x.trim()).filter(Boolean));
+        }
       }
       
       // Get all dynamically added mentor competition inputs
       const additionalMentorCompInputs = document.querySelectorAll('.mentor-comp-input');
       additionalMentorCompInputs.forEach(input => {
-        if (input.value.trim()) {
-          mentorCompetitionsArr.push(...input.value.split(',').map(x => x.trim()).filter(Boolean));
+        const value = input.value.trim();
+        if (value) {
+          // If it's a select dropdown, just add the value directly
+          if (input.tagName === 'SELECT') {
+            mentorCompetitionsArr.push(value);
+          } else {
+            // If it's a text input, split by comma (for backwards compatibility)
+            mentorCompetitionsArr.push(...value.split(',').map(x => x.trim()).filter(Boolean));
+          }
         }
       });
     }
@@ -3686,29 +4098,6 @@ goalSubmitBtn.addEventListener('click', function() {
   }
 });
 
-function updateSaveState() {
-  const roleSelected = document.querySelector('.role-btn.selected');
-  const goalSelected = document.querySelector('.goal-card.selected');
-  
-  // Check if any competition input has value
-  let hasCompetitions = false;
-  
-  // Check main competition input
-  const compsInput = document.getElementById('comps');
-  if (compsInput && compsInput.value.trim()) {
-    hasCompetitions = true;
-  }
-  
-  // Check dynamically added competition inputs
-  if (!hasCompetitions) {
-    const additionalCompInputs = document.querySelectorAll('.comp-input');
-    hasCompetitions = Array.from(additionalCompInputs).some(input => input.value.trim());
-  }
-  
-  // Enable button only if all required elements exist and have values
-  goalSubmitBtn.disabled = !(roleSelected && goalSelected && hasCompetitions);
-}
-
 // Updated addCompBtn event listener to include input validation
 const addCompBtn = document.getElementById('addCompBtn');
 if (addCompBtn) {
@@ -3718,16 +4107,36 @@ if (addCompBtn) {
       const inputGroup = document.createElement('div');
       inputGroup.className = 'comp-input-group';
       
-      inputGroup.innerHTML = `
-        <input type="text" class="comp-input" placeholder="Ex. Business Law">
-        <button type="button" class="remove-comp-btn" onclick="removeCompInput(this)">×</button>
-      `;
+      // Create dropdown with competitions
+      const select = document.createElement('select');
+      select.className = 'comp-input';
+      select.style.cssText = 'flex: 1; height: 48px; padding: 12px 16px; padding-right: 2.5rem; border: 2px solid rgba(239, 68, 68, 0.5); border-radius: 8px; font-size: 16px; background-color: rgba(127, 29, 29, 0.3); color: #fff; cursor: pointer; appearance: menulist; -webkit-appearance: menulist; -moz-appearance: menulist; background-image: url(\'data:image/svg+xml;charset=UTF-8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2212%22 height=%2212%22 viewBox=%220 0 12 12%22><path fill=%22%23fff%22 d=%22M6 9L1 4h10z%22/></svg>\'); background-repeat: no-repeat; background-position: right 12px center; background-size: 12px;';
+      select.innerHTML = '<option value="" style="background-color: rgba(127, 29, 29, 0.3); color: #fca5a5;">Select a competition...</option>';
+      
+      // Populate with competitions from Firestore
+      if (window.allCompetitions && window.allCompetitions.length > 0) {
+        window.allCompetitions.forEach(comp => {
+          const option = document.createElement('option');
+          option.value = comp;
+          option.textContent = comp;
+          select.appendChild(option);
+        });
+      }
+      
+      inputGroup.innerHTML = '';
+      inputGroup.appendChild(select);
+      
+      const removeBtn = document.createElement('button');
+      removeBtn.type = 'button';
+      removeBtn.className = 'remove-comp-btn';
+      removeBtn.textContent = '×';
+      removeBtn.onclick = function() { removeCompInput(this); };
+      inputGroup.appendChild(removeBtn);
       
       container.appendChild(inputGroup);
       
-      // Add input validation listener to new field
-      const newInput = inputGroup.querySelector('.comp-input');
-      newInput.addEventListener('input', updateSaveState);
+      // Add change validation listener to new field
+      select.addEventListener('change', updateSaveState);
     }
   });
 }
@@ -3740,20 +4149,44 @@ if (addMentorCompBtn) {
     if (container) {
       const inputGroup = document.createElement('div');
       inputGroup.className = 'mentor-comp-input-group';
+      inputGroup.style.cssText = 'display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;';
       
-      inputGroup.innerHTML = `
-        <input type="text" class="mentor-comp-input" placeholder="e.g., Partnership with Business">
-        <button type="button" class="remove-mentor-comp-btn" onclick="removeMentorCompInput(this)" style="width: 48px; height: 48px; margin-bottom: 5px; border: none; background-color: #fee2e2; color: #dc2626; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s;">×</button>
-      `;
+      // Create dropdown with competitions
+      const select = document.createElement('select');
+      select.className = 'mentor-comp-input';
+      select.style.cssText = 'flex: 1; height: 48px; padding: 12px 16px; padding-right: 2.5rem; border: 2px solid rgba(239, 68, 68, 0.5); border-radius: 8px; font-size: 16px; background: rgba(127, 29, 29, 0.3); color: #fff; transition: border-color 0.2s; outline: none; appearance: menulist; -webkit-appearance: menulist; -moz-appearance: menulist; cursor: pointer; background-image: url(\'data:image/svg+xml;charset=UTF-8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2212%22 height=%2212%22 viewBox=%220 0 12 12%22><path fill=%22%23fff%22 d=%22M6 9L1 4h10z%22/></svg>\'); background-repeat: no-repeat; background-position: right 12px center; background-size: 12px;';
+      select.innerHTML = '<option value="" style="background-color: rgba(127, 29, 29, 0.3); color: #fca5a5;">Select a competition...</option>';
+      
+      // Populate with competitions from Firestore
+      if (window.allCompetitions && window.allCompetitions.length > 0) {
+        window.allCompetitions.forEach(comp => {
+          const option = document.createElement('option');
+          option.value = comp;
+          option.textContent = comp;
+          select.appendChild(option);
+        });
+      }
+      
+      inputGroup.appendChild(select);
+      
+      const removeBtn = document.createElement('button');
+      removeBtn.type = 'button';
+      removeBtn.className = 'remove-mentor-comp-btn';
+      removeBtn.textContent = '×';
+      removeBtn.style.cssText = 'width: 48px; height: 48px; margin-bottom: 5px; border: none; background-color: #fee2e2; color: #dc2626; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s;';
+      removeBtn.onclick = function() { removeMentorCompInput(this); };
+      inputGroup.appendChild(removeBtn);
       
       container.appendChild(inputGroup);
       
-      // Add input validation listener to new mentor field
-      const newInput = inputGroup.querySelector('.mentor-comp-input');
-      newInput.addEventListener('input', updateSaveState);
+      // Add change validation listener to new mentor field
+      select.addEventListener('change', updateSaveState);
     }
   });
 }
+
+// Load competitions from Firestore
+// Populate all competition dropdowns with loaded competitions
 
 // Updated remove functions with validation
 function removeCompInput(button) {
@@ -3893,10 +4326,23 @@ if (backdrop) {
         // Only show for new accounts after a tiny delay to ensure DOM is ready
         if (!doc.exists || !doc.data().studyGoalSet) {
           // This is a new account - show the goal modal after a brief delay
-          setTimeout(() => {
-            modal.style.display = 'block';
-            backdrop.style.display = 'block';
-          }, 50);
+          // Load competitions from Firestore first
+          loadCompetitionsFromFirestore().then((competitions) => {
+            console.log('Competitions loaded:', competitions);
+            // Ensure dropdowns are populated after a brief delay to ensure DOM is ready
+            setTimeout(() => {
+              populateCompetitionDropdowns();
+              modal.style.display = 'block';
+              backdrop.style.display = 'block';
+            }, 100);
+          }).catch((error) => {
+            console.error('Error loading competitions:', error);
+            // Still show modal even if competitions fail to load
+            setTimeout(() => {
+              modal.style.display = 'block';
+              backdrop.style.display = 'block';
+            }, 100);
+          });
         } else {
           // Existing account with goal set - ensure modal stays hidden
           modal.style.display = 'none';
@@ -4838,36 +5284,36 @@ class DynamicAISummary {
 // Usage examples and initialization:
 
 // Wait for Firebase auth and DOM to be ready
-document.addEventListener('DOMContentLoaded', () => {
-  // Initialize AI Summary when user is authenticated
-  firebase.auth().onAuthStateChanged((user) => {
-    if (user) {
-      const userId = user.uid;
-      const aiSummary = new DynamicAISummary(firebase.firestore(), userId);
-      
-      // Render AI summary only if container exists
-      const aiSummaryContainer = document.getElementById('ai-summary-container');
-      if (aiSummaryContainer) {
-        aiSummary.renderSummary('ai-summary-container');
+    // 9. Initialize AI Summary when user is authenticated
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        const userId = user.uid;
+        const aiSummary = new DynamicAISummary(firebase.firestore(), userId);
         
-        // Optional: Set up real-time updates for assignments
-        const assignmentsRef = firebase.firestore()
-          .collection('assignments')
-          .where('to', '==', userId)
-          .where('status', '==', 'complete')
-          .orderBy('completedAt', 'desc')
-          .limit(1);
-        
-        assignmentsRef.onSnapshot((snapshot) => {
-          if (!snapshot.empty && document.getElementById('ai-summary-container')) {
-            // Re-render summary when new assignments are completed
-            aiSummary.renderSummary('ai-summary-container');
-          }
-        });
+        // Render AI summary only if container exists
+        const aiSummaryContainer = document.getElementById('ai-summary-container');
+        if (aiSummaryContainer) {
+          aiSummary.renderSummary('ai-summary-container');
+          
+          // Optional: Set up real-time updates for assignments
+          const assignmentsRef = firebase.firestore()
+            .collection('assignments')
+            .where('to', '==', userId)
+            .where('status', '==', 'complete')
+            .orderBy('completedAt', 'desc')
+            .limit(1);
+          
+          assignmentsRef.onSnapshot((snapshot) => {
+            if (!snapshot.empty && document.getElementById('ai-summary-container')) {
+              // Re-render summary when new assignments are completed
+              aiSummary.renderSummary('ai-summary-container');
+            }
+          });
+        }
       }
-    }
-  });
-});
+    });
+
+    // All initialization complete
 
 // Alternative: If you already have the user ID in a variable
 function initializeAISummary(userId) {
@@ -10061,6 +10507,7 @@ You are writing as a professional exam author — not as a tutor or teacher.` },
     window.previousQuestion = previousQuestion;
   }
 
+  // All DOMContentLoaded listeners have been consolidated above
  
 
 </script>

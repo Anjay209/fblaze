@@ -146,6 +146,35 @@ if (!firebase.apps.length) {
         </div>
       </div>
 
+      <!-- Add Mentee Section -->
+      <div class="mentor-mentees-section" style="margin-bottom: 2rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+          <h3 class="mentor-section-title">Add Mentees</h3>
+        </div>
+        <div class="search-container" style="position: relative; max-width: 100%; margin-bottom: 1rem;">
+          <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: #ff5722; width: 20px; height: 20px; z-index: 1; pointer-events: none;">
+            <circle cx="11" cy="11" r="8"></circle>
+            <path d="m21 21-4.35-4.35"></path>
+          </svg>
+          <input 
+            type="text" 
+            id="menteeSearchInput"
+            placeholder="Search users by name or email..." 
+            style="width: 100%; padding: 0.75rem 3.25rem 0.75rem 3rem; border-radius: 1.5rem; background: rgba(26, 26, 26, 0.4); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); color: white; font-size: 1rem; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3); transition: all 0.3s ease; outline: none;"
+            onkeypress="if(event.key === 'Enter') searchUsers()"
+          />
+          <button id="addMenteeBtn" onclick="searchUsers()" style="position: absolute; right: 0.5rem; top: 50%; transform: translateY(-50%); width: 2.25rem; height: 2.25rem; border-radius: 1.125rem; background: linear-gradient(135deg, #dc2626 0%, #ea580c 50%, #f97316 100%); border: 1px solid rgba(255, 255, 255, 0.1); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 4px 12px rgba(220, 38, 38, 0.4); z-index: 2;" onmouseover="this.style.transform='translateY(-50%) scale(1.1)'" onmouseout="this.style.transform='translateY(-50%) scale(1)'">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" style="color: white;">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+          </button>
+        </div>
+        <div id="searchResults" style="display: none; max-height: 300px; overflow-y: auto; margin-top: 1rem;">
+          <!-- Search results will appear here -->
+        </div>
+      </div>
+
       <!-- Mentees Section -->
       <div class="mentor-mentees-section">
         <h3 class="mentor-section-title">Your Mentees</h3>
@@ -823,6 +852,276 @@ if (!firebase.apps.length) {
       setupNotifications();
     }
 
+    // ========== NEW MENTEE MANAGEMENT FUNCTIONS ==========
+    
+    // Reusable function to get mentees from Firebase (used everywhere)
+    async function loadMenteesFromFirebase(mentorId) {
+      try {
+        const menteesSnapshot = await db.collection('users').doc(mentorId).collection('mentees').get();
+        const mentees = [];
+        
+        for (const menteeDoc of menteesSnapshot.docs) {
+          const menteeId = menteeDoc.id;
+          
+          // Get full user data
+          const userDoc = await db.collection('users').doc(menteeId).get();
+          if (userDoc.exists) {
+            const userData = userDoc.data();
+            let comps = Array.isArray(userData.competitions) ? userData.competitions : [userData.competitions].filter(Boolean);
+            mentees.push({
+              id: menteeId,
+              name: userData.name || userData.fullName || userData.email || '(unnamed)',
+              grade: userData.grade || '',
+              email: userData.email || '',
+              comps: comps.filter(Boolean),
+              addedAt: menteeDoc.data().addedAt
+            });
+          }
+        }
+        
+        return mentees;
+      } catch (error) {
+        console.error('Error loading mentees from Firebase:', error);
+        return [];
+      }
+    }
+    
+    // Search users function
+    async function searchUsers() {
+      const searchInput = document.getElementById('menteeSearchInput');
+      const searchResults = document.getElementById('searchResults');
+      const query = searchInput.value.trim().toLowerCase();
+      
+      if (!query || query.length < 2) {
+        searchResults.style.display = 'none';
+        searchResults.innerHTML = '';
+        return;
+      }
+      
+      try {
+        const user = auth.currentUser;
+        if (!user) {
+          alert('Please sign in to search for users');
+          return;
+        }
+        
+        // Show loading state
+        searchResults.innerHTML = '<div style="padding: 1rem; color: rgba(255, 255, 255, 0.7); text-align: center;">Searching...</div>';
+        searchResults.style.display = 'block';
+        
+        // Get current mentees to exclude them
+        const currentMentees = await loadMenteesFromFirebase(user.uid);
+        const currentMenteeIds = new Set(currentMentees.map(m => m.id));
+        
+        // Search all users
+        const usersSnapshot = await db.collection('users').get();
+        const results = [];
+        
+        usersSnapshot.forEach(doc => {
+          if (doc.id === user.uid) return; // Skip self
+          if (currentMenteeIds.has(doc.id)) return; // Skip already added mentees
+          
+          const userData = doc.data();
+          const name = (userData.name || userData.fullName || '').toLowerCase();
+          const email = (userData.email || '').toLowerCase();
+          
+          if (name.includes(query) || email.includes(query)) {
+            results.push({
+              id: doc.id,
+              name: userData.name || userData.fullName || userData.email || '(unnamed)',
+              email: userData.email || '',
+              grade: userData.grade || ''
+            });
+          }
+        });
+        
+        if (results.length === 0) {
+          searchResults.innerHTML = '<div style="padding: 1rem; color: rgba(255, 255, 255, 0.7); text-align: center;">No users found</div>';
+          searchResults.style.display = 'block';
+          return;
+        }
+        
+        searchResults.innerHTML = results.slice(0, 10).map(user => `
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; margin-bottom: 0.5rem; background: rgba(26, 26, 26, 0.6); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 0.75rem; transition: all 0.3s ease;" onmouseover="this.style.background='rgba(26, 26, 26, 0.8)'; this.style.borderColor='rgba(255, 87, 34, 0.3)'" onmouseout="this.style.background='rgba(26, 26, 26, 0.6)'; this.style.borderColor='rgba(255, 255, 255, 0.1)'">
+            <div>
+              <div style="font-weight: 600; color: #fff; margin-bottom: 0.25rem;">${user.name}</div>
+              <div style="font-size: 0.875rem; color: rgba(255, 255, 255, 0.6);">${user.email}${user.grade ? ' • Grade ' + user.grade : ''}</div>
+            </div>
+            <button onclick="addMentee('${user.id}', '${user.name.replace(/'/g, "\\'")}')" 
+                    style="padding: 0.5rem 1rem; background: linear-gradient(135deg, #dc2626 0%, #ea580c 50%, #f97316 100%); color: white; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 0.5rem; font-weight: 600; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 4px 12px rgba(220, 38, 38, 0.4);" 
+                    onmouseover="this.style.transform='scale(1.05)'; this.style.boxShadow='0 6px 16px rgba(220, 38, 38, 0.6)'" 
+                    onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0 4px 12px rgba(220, 38, 38, 0.4)'">
+              Add
+            </button>
+          </div>
+        `).join('');
+        searchResults.style.display = 'block';
+      } catch (error) {
+        console.error('Error searching users:', error);
+        searchResults.innerHTML = '<div style="padding: 1rem; color: #ef4444; text-align: center;">Error searching users. Please try again.</div>';
+        searchResults.style.display = 'block';
+      }
+    }
+    
+    // Add mentee function
+    async function addMentee(menteeId, menteeName) {
+      try {
+        const user = auth.currentUser;
+        if (!user) {
+          alert('Please sign in to add mentees');
+          return;
+        }
+        
+        // Check if already added
+        const existingDoc = await db.collection('users').doc(user.uid).collection('mentees').doc(menteeId).get();
+        if (existingDoc.exists) {
+          alert('This user is already your mentee');
+          return;
+        }
+        
+        // Add to Firebase
+        await db.collection('users').doc(user.uid).collection('mentees').doc(menteeId).set({
+          addedAt: firebase.firestore.FieldValue.serverTimestamp(),
+          mentorId: user.uid
+        });
+        
+        // Refresh mentees list
+        await refreshMenteesList();
+        
+        // Clear search
+        const searchInput = document.getElementById('menteeSearchInput');
+        const searchResults = document.getElementById('searchResults');
+        if (searchInput) searchInput.value = '';
+        if (searchResults) {
+          searchResults.style.display = 'none';
+          searchResults.innerHTML = '';
+        }
+      } catch (error) {
+        console.error('Error adding mentee:', error);
+        alert('Failed to add mentee. Please try again.');
+      }
+    }
+    
+    // Remove mentee function
+    async function removeMentee(menteeId, menteeName) {
+      try {
+        const user = auth.currentUser;
+        if (!user) return;
+        
+        await db.collection('users').doc(user.uid).collection('mentees').doc(menteeId).delete();
+        
+        // Refresh mentees list
+        await refreshMenteesList();
+      } catch (error) {
+        console.error('Error removing mentee:', error);
+        alert('Failed to remove mentee. Please try again.');
+      }
+    }
+    
+    // Refresh mentees list
+    async function refreshMenteesList() {
+      const user = auth.currentUser;
+      if (!user) return;
+      
+      mentees = await loadMenteesFromFirebase(user.uid);
+      
+      // Reload chart data
+      allData = {};
+      window.menteeIdNameMap = {};
+      window.globalMenteeData = {};
+      
+      let totalAccuracy = 0;
+      let totalProgress = 0;
+      let accuracyCount = 0;
+      let progressCount = 0;
+      
+      for (let mentee of mentees) {
+        window.menteeIdNameMap[mentee.id] = mentee.name;
+        
+        const qs = await db.collection('assignments')
+          .where('to', '==', mentee.id)
+          .where('type', 'in', ['written', 'quiz'])
+          .where('status', '==', 'complete')
+          .get();
+        
+        let accuracyArr = [];
+        let rawAssignments = [];
+        
+        qs.forEach(doc => {
+          let d = doc.data();
+          rawAssignments.push({
+            ...d,
+            id: doc.id,
+            createdAt: d.createdAt
+          });
+          
+          if (typeof d.score === "number" && typeof d.maxScore === "number" && d.maxScore > 0) {
+            const accuracy = Math.round((d.score / d.maxScore) * 100);
+            accuracyArr.push(accuracy);
+            totalAccuracy += accuracy;
+            accuracyCount++;
+          }
+        });
+        
+        window.globalMenteeData[mentee.id] = {
+          name: mentee.name,
+          assignments: rawAssignments
+        };
+        
+        allData[mentee.name] = accuracyArr;
+        
+        if (accuracyArr.length > 0) {
+          const avgAcc = accuracyArr.reduce((a, b) => a + b, 0) / accuracyArr.length;
+          totalProgress += avgAcc;
+          progressCount++;
+        }
+      }
+      
+      // Update UI
+      renderMenteeCards();
+      document.getElementById('totalMentees').textContent = mentees.length;
+      document.getElementById('avgAccuracy').textContent = accuracyCount > 0 
+        ? Math.round(totalAccuracy / accuracyCount) + '%' 
+        : '0%';
+      document.getElementById('avgProgress').textContent = progressCount > 0 
+        ? Math.round(totalProgress / progressCount) + '%' 
+        : '0%';
+      
+      // Update chart if it exists
+      if (window.mcqChartObj && Object.keys(allData).length > 0) {
+        const menteeNames = Object.keys(allData);
+        const datasets = menteeNames.map((name, i) => ({
+          label: name,
+          data: allData[name].map(v => v !== null ? v/100 : null),
+          fill: 'origin',
+          backgroundColor: window.fillPalette[i % window.fillPalette.length],
+          borderColor: window.palette[i % window.palette.length],
+          borderWidth: 3.5,
+          tension: 0.48,
+          pointRadius: 7,
+          pointBorderWidth: 2.8,
+          pointBackgroundColor: '#fff',
+          pointBorderColor: window.palette[i % window.palette.length],
+          showLine: true
+        }));
+        
+        window.mcqChartObj.data.datasets = datasets;
+        window.mcqChartObj.update();
+      }
+      
+      // Setup recent activity listener
+      if (mentees.length > 0) {
+        setupRecentActivityListener(mentees.map(m => m.id));
+      }
+    }
+    
+    // Make functions global
+    window.searchUsers = searchUsers;
+    window.addMentee = addMentee;
+    window.removeMentee = removeMentee;
+    window.loadMenteesFromFirebase = loadMenteesFromFirebase;
+    window.refreshMenteesList = refreshMenteesList;
+
     // Load mentees and data
     window.addEventListener('load', async function() {
       createStarField();
@@ -847,22 +1146,8 @@ mentorComps = Array.isArray(userData.mentorCompetition)
     ? userData.mentorCompetition
     : [userData.mentorCompetition].filter(Boolean);
 
-      // Find mentees
-  const usersSnap = await db.collection('users').get();
-  mentees = [];
-  usersSnap.forEach(doc => {
-    if (doc.id === user.uid) return;
-    const d = doc.data();
-    let comps = Array.isArray(d.competitions) ? d.competitions : [d.competitions].filter(Boolean);
-    if (comps.some(c => mentorComps.includes(c))) {
-      mentees.push({
-        id: doc.id,
-        name: d.name || d.fullName || d.email || '(unnamed)',
-        grade: d.grade || '',
-        comps: comps.filter(Boolean)
-      });
-    }
-  });
+      // Load mentees from Firebase (new explicit list)
+      mentees = await loadMenteesFromFirebase(user.uid);
 
       // Populate competition filter
       const compFilter = document.getElementById('competitionFilter');
@@ -965,11 +1250,28 @@ window.menteeIdNameMap = {};
         
         const card = document.createElement('div');
         card.className = 'mentee-card';
-        card.onclick = () => showMenteeDetail(mentee);
+        card.onclick = (e) => {
+          // Don't trigger detail view if clicking remove button
+          if (!e.target.closest('.remove-mentee-btn')) {
+            showMenteeDetail(mentee);
+          }
+        };
         card.innerHTML = `
-          <div class="mentee-card-header">
-            <h4 class="mentee-card-name">${mentee.name}</h4>
-            <span class="mentee-card-id">ID: ${mentee.id.substring(0, 8)}</span>
+          <div class="mentee-card-header" style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <h4 class="mentee-card-name">${mentee.name}</h4>
+            </div>
+            <button class="remove-mentee-btn" onclick="event.stopPropagation(); removeMentee('${mentee.id}', '${mentee.name.replace(/'/g, "\\'")}')" 
+                    style="padding: 0.5rem; background: transparent; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: transform 0.2s;" 
+                    onmouseover="this.style.transform='scale(1.1)'" 
+                    onmouseout="this.style.transform='scale(1)'">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="3 6 5 6 21 6"></polyline>
+                <path d="m19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                <line x1="10" y1="11" x2="10" y2="17"></line>
+                <line x1="14" y1="11" x2="14" y2="17"></line>
+              </svg>
+            </button>
           </div>
           <div class="mentee-card-stats">
             <div class="mentee-stat">

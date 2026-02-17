@@ -240,22 +240,36 @@ mentorComps = Array.isArray(userData.mentorCompetition)
     ? userData.mentorCompetition
     : [userData.mentorCompetition].filter(Boolean);
 
-  // 2. Find all mentees matching any of the mentor's competitions
-  const usersSnap = await db.collection('users').get();
-  mentees = [];
-  usersSnap.forEach(doc => {
-    if (doc.id === user.uid) return;
-    const d = doc.data();
-    let comps = Array.isArray(d.competitions) ? d.competitions : [d.competitions].filter(Boolean);
-    if (comps.some(c => mentorComps.includes(c))) {
-      mentees.push({
-        id: doc.id,
-        name: d.name || d.fullName || d.email || '(unnamed)',
-        grade: d.grade || '',
-        comps: comps.filter(Boolean)
-      });
+  // 2. Load mentees from Firebase (new explicit list)
+  async function loadMenteesFromFirebase(mentorId) {
+    try {
+      const menteesSnapshot = await db.collection('users').doc(mentorId).collection('mentees').get();
+      const mentees = [];
+      
+      for (const menteeDoc of menteesSnapshot.docs) {
+        const menteeId = menteeDoc.id;
+        const userDoc = await db.collection('users').doc(menteeId).get();
+        if (userDoc.exists) {
+          const userData = userDoc.data();
+          let comps = Array.isArray(userData.competitions) ? userData.competitions : [userData.competitions].filter(Boolean);
+          mentees.push({
+            id: menteeId,
+            name: userData.name || userData.fullName || userData.email || '(unnamed)',
+            grade: userData.grade || '',
+            email: userData.email || '',
+            comps: comps.filter(Boolean),
+            addedAt: menteeDoc.data().addedAt
+          });
+        }
+      }
+      return mentees;
+    } catch (error) {
+      console.error('Error loading mentees from Firebase:', error);
+      return [];
     }
-  });
+  }
+  
+  mentees = await loadMenteesFromFirebase(user.uid);
 
   // Populate mentee cards
   const menteesCards = document.getElementById('menteesCards');

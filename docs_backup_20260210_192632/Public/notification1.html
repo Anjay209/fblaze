@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FBLAZE Notifications</title>
+  <link rel="stylesheet" href="notification1.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+</head>
+<body>
+  <!-- Galaxy Background -->
+  <div class="galaxy-background">
+    <div class="galaxy-gradient"></div>
+    <div class="stars-container" id="starsContainer"></div>
+    <div class="nebula nebula-1"></div>
+    <div class="nebula nebula-2"></div>
+    <div class="nebula nebula-3"></div>
+  </div>
+
+  <!-- Header -->
+  <div class="blaze-header">
+    <div class="blaze-header-content">
+      <div class="header-left">
+        <button class="hamburger-menu" id="hamburgerMenu" onclick="toggleMobileNav()" aria-label="Toggle menu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+        <h1 class="blaze-logo">BLAZE</h1>
+      </div>
+      <h1 class="blaze-logo desktop-logo">BLAZE</h1>
+      <nav class="blaze-nav" id="mainNav">
+        <button class="mobile-nav-close" onclick="toggleMobileNav()" aria-label="Close menu">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+        <a href="home3.html" class="nav-link">Home</a>
+        <a href="notification1.html" class="nav-link">Notifications</a>
+        <a href="practice.html" class="nav-link">Practice</a>
+        <a href="Forum/forum.html" class="nav-link">Forum</a>
+        <a href="Calendar/calendar1.html" class="nav-link">Calendar</a>
+      </nav>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <div style="max-width: 1200px; margin: 0 auto; padding: 2rem;">
+      <h1 style="font-size: 3rem; font-weight: 900; margin-bottom: 2rem; background: linear-gradient(to right, #ef4444, #f97316, #eab308); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Notifications</h1>
+      <div id="notificationList" class="notification-list"></div>
+    </div>
+  </div>
+
+  <script>
+    // Mobile Navigation Toggle
+    window.toggleMobileNav = function() {
+      const nav = document.getElementById('mainNav');
+      const hamburger = document.getElementById('hamburgerMenu');
+      
+      if (nav && hamburger) {
+        nav.classList.toggle('active');
+        hamburger.classList.toggle('active');
+        document.body.style.overflow = nav.classList.contains('active') ? 'hidden' : '';
+      }
+    };
+    
+    // Close mobile nav when clicking a nav link
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('.blaze-nav .nav-link').forEach(link => {
+        link.addEventListener('click', () => {
+          if (window.innerWidth <= 768) {
+            toggleMobileNav();
+          }
+        });
+      });
+    });
+
+    // Firebase configuration
+
+    // Initialize Firebase
+    const db = firebase.firestore();
+    const auth = firebase.auth();
+
+    // Load notifications
+    auth.onAuthStateChanged((user) => {
+      if (user) {
+        loadNotifications(user.uid);
+      }
+    });
+
+    function loadNotifications(userId) {
+      const notificationList = document.getElementById('notificationList');
+      
+      db.collection('notifications')
+        .where('userId', '==', userId)
+        .orderBy('timestamp', 'desc')
+        .limit(50)
+        .onSnapshot((snapshot) => {
+          if (snapshot.empty) {
+            notificationList.innerHTML = '<div class="notification-empty">No notifications yet</div>';
+            return;
+          }
+
+          notificationList.innerHTML = '';
+          snapshot.forEach((doc) => {
+            const notif = { id: doc.id, ...doc.data() };
+            const item = document.createElement('div');
+            item.className = 'notification-item' + (notif.read ? ' read' : ' unread');
+            
+            const timeText = notif.timestamp ? new Date(notif.timestamp.toDate()).toLocaleString() : 'Just now';
+            
+            item.innerHTML = `
+              <div class="notification-header">
+                <strong class="notification-title">${notif.message || notif.title || 'Notification'}</strong>
+                <span class="notification-time">${timeText}</span>
+              </div>
+              ${notif.body ? `<div class="notification-body">${notif.body}</div>` : ''}
+            `;
+
+            item.addEventListener('click', () => {
+              if (!notif.read) {
+                db.collection('notifications').doc(notif.id).update({ read: true });
+              }
+              item.classList.add('read');
+              item.classList.remove('unread');
+            });
+
+            notificationList.appendChild(item);
+          });
+        });
+    }
+
+    // Create stars background
+    function createStars() {
+      const container = document.getElementById('starsContainer');
+      if (!container) return;
+      
+      for (let i = 0; i < 200; i++) {
+        const star = document.createElement('div');
+        star.className = 'star';
+        star.style.left = Math.random() * 100 + '%';
+        star.style.top = Math.random() * 100 + '%';
+        star.style.width = Math.random() * 3 + 1 + 'px';
+        star.style.height = star.style.width;
+        star.style.animationDelay = Math.random() * 3 + 's';
+        container.appendChild(star);
+      }
+    }
+
+    createStars();
+  </script>
+</body>
+</html>

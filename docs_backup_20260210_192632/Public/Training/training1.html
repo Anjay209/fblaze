@@ -1,0 +1,4366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mentor Training | BLAZE</title>
+  <link rel="stylesheet" href="training1.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+  
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/meilisearch@latest/dist/bundles/meilisearch.umd.min.js"></script>
+  <style>
+    /* Speaking Assignment Modal Styles - Matching React Design */
+    .cq-speaking-modal {
+      position: fixed;
+      z-index: 3100;
+      left: 0; top: 0; right: 0; bottom: 0;
+      width: 100vw;
+      height: 100vh;
+      background: #020617; /* slate-950 */
+      color: white;
+      overflow: hidden;
+      display: none;
+    }
+    
+    .cq-speaking-modal[style*="display: flex"],
+    .cq-speaking-modal[style*="display:flex"] {
+      display: flex !important;
+    }
+    
+    /* Star Field Background */
+    .cq-speaking-stars {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 0;
+    }
+    .cq-speaking-star {
+      position: absolute;
+      background: white;
+      border-radius: 50%;
+      animation: twinkle linear infinite;
+    }
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 0.9; }
+    }
+    .cq-speaking-glow-1 {
+      position: absolute;
+      top: 5rem;
+      left: 2.5rem;
+      width: 18rem;
+      height: 18rem;
+      background: rgba(249, 115, 22, 0.1);
+      border-radius: 50%;
+      filter: blur(80px);
+      pointer-events: none;
+    }
+    .cq-speaking-glow-2 {
+      position: absolute;
+      bottom: 0;
+      right: 2.5rem;
+      width: 18rem;
+      height: 18rem;
+      background: rgba(239, 68, 68, 0.1);
+      border-radius: 50%;
+      filter: blur(80px);
+      pointer-events: none;
+    }
+    
+    .cq-speaking-modal-content {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+      height: 100%;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      overflow-y: auto;
+    }
+    
+    .cq-speaking-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(30, 41, 59, 0.3); /* slate-800/30 */
+      border: 1px solid rgba(51, 65, 85, 0.5); /* slate-700/50 */
+      border-radius: 0.5rem;
+      padding: 0.75rem 1.5rem;
+      backdrop-filter: blur(8px);
+      flex-shrink: 0;
+    }
+    .cq-speaking-title {
+      font-size: 1.875rem; /* text-3xl */
+      font-weight: 700;
+      color: #f97316; /* orange-500 */
+      margin: 0;
+    }
+    .cq-speaking-close {
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: 50%;
+      background: #f97316; /* orange-500 */
+      color: white;
+      border: none;
+      font-size: 1.5rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      line-height: 1;
+      padding: 0;
+    }
+    .cq-speaking-close:hover {
+      background: #ea580c; /* orange-600 */
+    }
+    
+    .cq-speaking-main-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      min-height: 0;
+    }
+    
+    .cq-speaking-questions {
+      display: flex;
+      gap: 1rem;
+      flex-shrink: 0;
+    }
+    .cq-speaking-question-card {
+      flex: 1;
+      background: rgba(30, 41, 59, 0.5); /* slate-800/50 */
+      border: 1px solid rgba(51, 65, 85, 0.5); /* slate-700 */
+      border-radius: 0.5rem;
+      padding: 1rem;
+    }
+    .cq-speaking-question-label {
+      font-size: 0.75rem; /* text-xs */
+      font-weight: 600;
+      color: #94a3b8; /* slate-400 */
+      margin-bottom: 0.25rem;
+    }
+    .cq-speaking-question-text {
+      font-size: 0.875rem; /* text-sm */
+      color: white;
+      line-height: 1.5;
+    }
+    
+    .cq-speaking-video-container {
+      flex: 1;
+      position: relative;
+      border-radius: 1rem; /* rounded-2xl */
+      overflow: hidden;
+      border: 2px solid rgba(249, 115, 22, 0.3); /* border-orange-500/30 */
+      background: #000;
+      min-height: 0;
+    }
+    .cq-speaking-video-container video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .cq-speaking-no-video {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #94a3b8;
+      font-size: 1rem;
+    }
+    
+    /* Recording Indicator */
+    .cq-speaking-recording-indicator {
+      position: absolute;
+      top: 1rem;
+      left: 1rem;
+      display: none;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(239, 68, 68, 0.2);
+      border: 1px solid #ef4444;
+      padding: 0.375rem 0.75rem;
+      border-radius: 9999px;
+      backdrop-filter: blur(8px);
+      font-size: 0.75rem;
+    }
+    .cq-speaking-recording-indicator.active {
+      display: flex;
+    }
+    .cq-speaking-recording-dot {
+      width: 0.5rem;
+      height: 0.5rem;
+      background: #ef4444;
+      border-radius: 50%;
+      animation: pulse-dot 1.5s ease-in-out infinite;
+    }
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    .cq-speaking-recording-text {
+      font-weight: 600;
+      color: #fca5a5; /* red-400 */
+    }
+    
+    .cq-speaking-controls-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+      flex-shrink: 0;
+    }
+    .cq-speaking-controls {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1.5rem;
+    }
+    .cq-speaking-control-btn {
+      width: 3rem;
+      height: 3rem;
+      border-radius: 50%;
+      background: rgba(30, 41, 59, 0.4); /* slate-800/40 */
+      border: 1px solid rgba(51, 65, 85, 0.5); /* slate-700/50 */
+      color: #94a3b8; /* slate-400 */
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      backdrop-filter: blur(8px);
+      font-size: 1.25rem;
+    }
+    .cq-speaking-control-btn:hover {
+      background: rgba(51, 65, 85, 0.5); /* slate-700/50 */
+      color: #cbd5e1; /* slate-300 */
+    }
+    .cq-speaking-record-btn {
+      width: 4rem;
+      height: 4rem;
+      border-radius: 50%;
+      background: linear-gradient(to right, #f97316, #ef4444); /* orange-500 to red-500 */
+      color: white;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      box-shadow: 0 0 20px rgba(249, 115, 22, 0.5);
+      font-size: 2rem;
+      font-weight: 600;
+    }
+    .cq-speaking-record-btn:hover {
+      box-shadow: 0 0 30px rgba(249, 115, 22, 0.7);
+    }
+    .cq-speaking-record-btn.recording {
+      background: #ef4444; /* red-500 */
+      box-shadow: 0 0 20px rgba(239, 68, 68, 0.5);
+    }
+    
+    .cq-speaking-submit-btn {
+      padding: 0.5rem 2.5rem;
+      background: rgba(30, 41, 59, 0.5); /* slate-800/50 */
+      border: 1px solid rgba(51, 65, 85, 0.5); /* slate-700 */
+      border-radius: 0.5rem;
+      font-weight: 600;
+      color: white;
+      cursor: pointer;
+      transition: all 0.2s;
+      backdrop-filter: blur(8px);
+      font-size: 1rem;
+    }
+    .cq-speaking-submit-btn:hover:not(:disabled) {
+      background: rgba(51, 65, 85, 0.5); /* slate-700/50 */
+    }
+    .cq-speaking-submit-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    /* Case Study Assignment Modal Styles - Matching React Design */
+    .cq-case-study-modal {
+      position: fixed;
+      z-index: 3100;
+      left: 0; top: 0; right: 0; bottom: 0;
+      width: 100vw;
+      height: 100vh;
+      background: #020617; /* slate-950 */
+      color: white;
+      overflow: hidden;
+      display: none;
+    }
+    
+    .cq-case-study-modal[style*="display: flex"],
+    .cq-case-study-modal[style*="display:flex"] {
+      display: flex !important;
+    }
+    
+    /* Star Field Background */
+    .cq-case-study-stars {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 0;
+    }
+    .cq-case-study-star {
+      position: absolute;
+      background: white;
+      border-radius: 50%;
+      animation: cq-case-study-twinkle linear infinite;
+    }
+    @keyframes cq-case-study-twinkle {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 0.9; }
+    }
+    .cq-case-study-glow-1 {
+      position: absolute;
+      top: 5rem;
+      left: 2.5rem;
+      width: 18rem;
+      height: 18rem;
+      background: rgba(249, 115, 22, 0.1);
+      border-radius: 50%;
+      filter: blur(80px);
+      pointer-events: none;
+    }
+    .cq-case-study-glow-2 {
+      position: absolute;
+      bottom: 0;
+      right: 2.5rem;
+      width: 18rem;
+      height: 18rem;
+      background: rgba(239, 68, 68, 0.1);
+      border-radius: 50%;
+      filter: blur(80px);
+      pointer-events: none;
+    }
+    
+    .cq-case-study-modal-content {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+      height: 100%;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      overflow-y: auto;
+    }
+    
+    .cq-case-study-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(30, 41, 59, 0.3); /* slate-800/30 */
+      border: 1px solid rgba(51, 65, 85, 0.5); /* slate-700/50 */
+      border-radius: 0.5rem;
+      padding: 0.75rem 1.5rem;
+      backdrop-filter: blur(8px);
+      flex-shrink: 0;
+    }
+    .cq-case-study-title {
+      font-size: 1.875rem; /* text-3xl */
+      font-weight: 700;
+      color: #f97316; /* orange-500 */
+      margin: 0;
+    }
+    .cq-case-study-header-right {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .cq-case-study-timer {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      background: rgba(30, 41, 59, 0.5); /* slate-800/50 */
+      border: 1px solid rgba(51, 65, 85, 0.5); /* slate-700/50 */
+      backdrop-filter: blur(8px);
+    }
+    .cq-case-study-timer:hover {
+      border-color: rgba(249, 115, 22, 0.3); /* orange-500/30 */
+    }
+    .cq-case-study-timer.active {
+      background: rgba(239, 68, 68, 0.2);
+      border-color: rgba(239, 68, 68, 0.5);
+    }
+    .cq-case-study-timer-dot {
+      width: 0.5rem;
+      height: 0.5rem;
+      border-radius: 50%;
+      background: #f97316; /* orange-500 */
+      transition: all 0.2s;
+    }
+    .cq-case-study-timer.active .cq-case-study-timer-dot {
+      background: #ef4444; /* red-500 */
+      animation: cq-case-study-pulse-dot 1.5s ease-in-out infinite;
+    }
+    @keyframes cq-case-study-pulse-dot {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    .cq-case-study-timer-text {
+      font-size: 0.875rem;
+      font-family: monospace;
+      font-weight: 600;
+      color: #cbd5e1; /* slate-300 */
+    }
+    .cq-case-study-timer.active .cq-case-study-timer-text {
+      color: #fca5a5; /* red-400 */
+    }
+    .cq-case-study-timer-start {
+      font-size: 0.75rem;
+      color: #94a3b8; /* slate-400 */
+      margin-left: 0.25rem;
+    }
+    .cq-case-study-timer.active .cq-case-study-timer-start {
+      display: none;
+    }
+    .cq-case-study-close {
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: 50%;
+      background: #f97316; /* orange-500 */
+      color: white;
+      border: none;
+      font-size: 1.5rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      line-height: 1;
+      padding: 0;
+    }
+    .cq-case-study-close:hover {
+      background: #ea580c; /* orange-600 */
+    }
+    
+    .cq-case-study-main-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      min-height: 0;
+    }
+    
+    .cq-case-study-top-info {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      flex-shrink: 0;
+    }
+    .cq-case-study-info-card {
+      background: rgba(30, 41, 59, 0.5); /* slate-800/50 */
+      border: 1px solid rgba(51, 65, 85, 0.5); /* slate-700/50 */
+      border-radius: 0.5rem;
+      padding: 1rem;
+      backdrop-filter: blur(8px);
+    }
+    .cq-case-study-info-card.cq-case-study-clickable {
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .cq-case-study-info-card.cq-case-study-clickable:hover {
+      border-color: rgba(249, 115, 22, 0.3); /* orange-500/30 */
+    }
+    .cq-case-study-info-label {
+      font-size: 0.75rem;
+      color: #94a3b8; /* slate-400 */
+      margin-bottom: 0.25rem;
+    }
+    .cq-case-study-info-value {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: white;
+    }
+    .cq-case-study-info-preview {
+      font-size: 0.75rem;
+      color: white;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      transition: color 0.2s;
+    }
+    .cq-case-study-clickable:hover .cq-case-study-info-preview {
+      color: #fb923c; /* orange-400 */
+    }
+    .cq-case-study-read-more {
+      font-size: 0.75rem;
+      color: #fb923c; /* orange-400 */
+      margin-top: 0.5rem;
+    }
+    
+    .cq-case-study-expanded-content {
+      background: rgba(30, 41, 59, 0.5); /* slate-800/50 */
+      border: 1px solid rgba(51, 65, 85, 0.5); /* slate-700/50 */
+      border-radius: 0.5rem;
+      padding: 1.5rem;
+      backdrop-filter: blur(8px);
+      flex: 1;
+      min-height: 0;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+    .cq-case-study-expanded-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      margin-bottom: 1rem;
+    }
+    .cq-case-study-expanded-label {
+      font-size: 0.875rem;
+      color: #94a3b8; /* slate-400 */
+      margin-bottom: 0.25rem;
+    }
+    .cq-case-study-expanded-title {
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: white;
+    }
+    .cq-case-study-expanded-close {
+      color: #94a3b8; /* slate-400 */
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 1.25rem;
+      transition: color 0.2s;
+      padding: 0;
+      width: 1.25rem;
+      height: 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .cq-case-study-expanded-close:hover {
+      color: #fb923c; /* orange-400 */
+    }
+    .cq-case-study-full-content {
+      font-size: 0.875rem;
+      color: white;
+      line-height: 1.75;
+      flex: 1;
+    }
+    
+    .cq-case-study-video-container {
+      flex: 1;
+      position: relative;
+      border-radius: 1rem; /* rounded-2xl */
+      overflow: hidden;
+      border: 2px solid rgba(249, 115, 22, 0.3); /* border-orange-500/30 */
+      background: #000;
+      min-height: 0;
+    }
+    .cq-case-study-video-container video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .cq-case-study-no-video {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #94a3b8;
+      font-size: 1rem;
+    }
+    
+    /* Recording Indicator */
+    .cq-case-study-recording-indicator {
+      position: absolute;
+      top: 1rem;
+      left: 1rem;
+      display: none;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(239, 68, 68, 0.2);
+      border: 1px solid #ef4444;
+      padding: 0.375rem 0.75rem;
+      border-radius: 9999px;
+      backdrop-filter: blur(8px);
+      font-size: 0.75rem;
+    }
+    .cq-case-study-recording-indicator.active {
+      display: flex;
+    }
+    .cq-case-study-recording-dot {
+      width: 0.5rem;
+      height: 0.5rem;
+      background: #ef4444;
+      border-radius: 50%;
+      animation: cq-case-study-pulse-dot 1.5s ease-in-out infinite;
+    }
+    .cq-case-study-recording-text {
+      font-weight: 600;
+      color: #fca5a5; /* red-400 */
+    }
+    
+    .cq-case-study-bottom-info {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      flex-shrink: 0;
+    }
+    .cq-case-study-question-card {
+      background: rgba(30, 41, 59, 0.5); /* slate-800/50 */
+      border: 1px solid rgba(51, 65, 85, 0.5); /* slate-700/50 */
+      border-radius: 0.5rem;
+      padding: 0.75rem;
+      backdrop-filter: blur(8px);
+    }
+    .cq-case-study-question-label {
+      font-size: 0.75rem;
+      color: #94a3b8; /* slate-400 */
+      margin-bottom: 0.5rem;
+    }
+    .cq-case-study-question-text {
+      font-size: 0.75rem;
+      color: white;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    
+    .cq-case-study-controls-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+      flex-shrink: 0;
+    }
+    .cq-case-study-controls {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1.5rem;
+    }
+    .cq-case-study-control-btn {
+      width: 3rem;
+      height: 3rem;
+      border-radius: 50%;
+      background: rgba(30, 41, 59, 0.4); /* slate-800/40 */
+      border: 1px solid rgba(51, 65, 85, 0.5); /* slate-700/50 */
+      color: #94a3b8; /* slate-400 */
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      backdrop-filter: blur(8px);
+      font-size: 1.25rem;
+    }
+    .cq-case-study-control-btn:hover {
+      background: rgba(51, 65, 85, 0.5); /* slate-700/50 */
+      color: #cbd5e1; /* slate-300 */
+    }
+    .cq-case-study-record-btn {
+      width: 4rem;
+      height: 4rem;
+      border-radius: 50%;
+      background: linear-gradient(to right, #f97316, #ef4444); /* orange-500 to red-500 */
+      color: white;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      box-shadow: 0 0 20px rgba(249, 115, 22, 0.5);
+      font-size: 2rem;
+      font-weight: 600;
+    }
+    .cq-case-study-record-btn:hover {
+      box-shadow: 0 0 30px rgba(249, 115, 22, 0.7);
+    }
+    .cq-case-study-record-btn.recording {
+      background: #ef4444; /* red-500 */
+      box-shadow: 0 0 20px rgba(239, 68, 68, 0.5);
+    }
+    
+    .cq-case-study-submit-btn {
+      padding: 0.5rem 2.5rem;
+      background: rgba(30, 41, 59, 0.5); /* slate-800/50 */
+      border: 1px solid rgba(51, 65, 85, 0.5); /* slate-700 */
+      border-radius: 0.5rem;
+      font-weight: 600;
+      color: white;
+      cursor: pointer;
+      transition: all 0.2s;
+      backdrop-filter: blur(8px);
+      font-size: 1rem;
+    }
+    .cq-case-study-submit-btn:hover:not(:disabled) {
+      background: rgba(51, 65, 85, 0.5); /* slate-700/50 */
+    }
+    .cq-case-study-submit-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    /* Assignment Modal Styles */
+    .cq-modal {
+      display: none;
+      position: fixed;
+      z-index: 9999;
+      left: 0; top: 0; width: 100vw; height: 100vh;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      justify-content: center;
+      align-items: center;
+      transition: background 0.3s;
+    }
+
+    .cq-modal[style*="block"] {
+      display: flex !important;
+    }
+
+    .cq-modal-content {
+      background: linear-gradient(to bottom right, rgba(15, 23, 42, 0.95), rgba(2, 6, 23, 0.95));
+      border: 2px solid rgba(239, 68, 68, 0.5);
+      border-radius: 1.5rem;
+      padding: 3rem;
+      max-width: 540px;
+      width: 90%;
+      max-height: 85vh;
+      overflow-y: auto;
+      position: relative;
+      backdrop-filter: blur(24px);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 40px rgba(239, 68, 68, 0.2);
+    }
+
+    .cq-close {
+      position: absolute;
+      top: 1.5rem;
+      right: 1.5rem;
+      font-size: 2rem;
+      font-weight: 700;
+      color: #94a3b8;
+      cursor: pointer;
+      transition: color 0.2s;
+      line-height: 1;
+      z-index: 1;
+    }
+
+    .cq-close:hover {
+      color: #ef4444;
+    }
+
+    .cq-modal-title {
+      font-size: 2.25rem;
+      font-weight: 900;
+      margin-bottom: 2rem;
+      background: linear-gradient(to right, #ef4444, #f97316, #eab308);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-align: center;
+      letter-spacing: 0.5px;
+      position: relative;
+    }
+
+    .cq-modal-fields {
+      margin-bottom: 1.25rem;
+      margin-top: 0.5rem;
+      color: #e2e8f0;
+    }
+
+    .cq-modal-fields b {
+      color: #fff;
+      font-weight: 600;
+      margin-right: 4px;
+    }
+
+    .cq-modal-fields > div {
+      margin-bottom: 16px;
+      font-size: 16px;
+      line-height: 1.5;
+      color: #e2e8f0;
+    }
+
+    .cq-modal-fields > div > b {
+      color: #fff;
+      font-weight: 600;
+      margin-right: 8px;
+    }
+
+    .cq-modal-fields ul {
+      margin: 8px 0 0 20px;
+      padding: 0;
+    }
+
+    .cq-modal-fields li {
+      margin-bottom: 4px;
+      color: #e2e8f0;
+    }
+
+    .cq-modal-footer {
+      margin-top: 32px;
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+    }
+
+    .cq-modal-btn {
+      background: linear-gradient(to right, #dc2626, #f97316);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      padding: 12px 24px;
+      font-size: 16px;
+      font-weight: 900;
+      cursor: pointer;
+      margin-right: 12px;
+      transition: all 0.2s;
+    }
+
+    .cq-modal-btn:hover {
+      background: linear-gradient(to right, #b91c1c, #ea580c);
+      transform: scale(1.05);
+    }
+
+    .cq-modal-btn:last-child {
+      margin-right: 0;
+    }
+
+    /* Practice Quiz Fullscreen Modal */
+    .practice-quiz-fullscreen {
+      position: fixed;
+      inset: 0;
+      z-index: 10000;
+      display: none;
+      flex-direction: column;
+      min-height: 100vh;
+      overflow-y: auto;
+      color: #fff;
+    }
+
+    .practice-quiz-fullscreen[style*="display: flex"] {
+      display: flex !important;
+    }
+
+    .practice-quiz-fullscreen[style*="display: block"] {
+      display: flex !important;
+    }
+
+    /* Galaxy Background */
+    .practice-quiz-galaxy-bg {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      background: #000;
+      overflow: hidden;
+    }
+
+    .practice-quiz-galaxy-gradient {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom right, #0f172a 0%, #000 50%, rgba(88, 28, 135, 0.1) 100%);
+    }
+
+    .practice-quiz-stars-container {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .practice-quiz-star {
+      position: absolute;
+      background: white;
+      border-radius: 50%;
+    }
+
+    @keyframes practice-quiz-twinkle {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 1; }
+    }
+
+    .practice-quiz-nebula {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      pointer-events: none;
+      opacity: 0.3;
+    }
+
+    .practice-quiz-nebula-1 {
+      width: 500px;
+      height: 500px;
+      background: rgba(139, 92, 246, 0.2);
+      top: -200px;
+      left: -200px;
+    }
+
+    .practice-quiz-nebula-2 {
+      width: 400px;
+      height: 400px;
+      background: rgba(59, 130, 246, 0.2);
+      bottom: -150px;
+      right: -150px;
+    }
+
+    .practice-quiz-nebula-3 {
+      width: 300px;
+      height: 300px;
+      background: rgba(236, 72, 153, 0.2);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .practice-quiz-main {
+      position: relative;
+      z-index: 10;
+      flex: 1;
+      padding: 2rem;
+    }
+
+    .practice-quiz-next-btn {
+      background: linear-gradient(to right, #ef4444, #f97316);
+      color: white;
+      border: none;
+      border-radius: 0.75rem;
+      padding: 1rem 2.5rem;
+      font-size: 1.125rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .practice-quiz-next-btn:hover {
+      background: linear-gradient(to right, #dc2626, #ea580c);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(239, 68, 68, 0.4);
+    }
+
+    /* Congratulations Modal Styles */
+    .congrats-content {
+      max-width: 80rem;
+      margin: 0 auto;
+      width: 100%;
+      text-align: center;
+    }
+
+    .congrats-header {
+      margin-bottom: 3rem;
+    }
+
+    .congrats-title {
+      font-size: 3.5rem;
+      font-weight: 900;
+      background: linear-gradient(to right, #ef4444, #f97316, #eab308);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin: 0 0 1rem 0;
+      line-height: 1.2;
+    }
+
+    .congrats-subtitle {
+      font-size: 1.5rem;
+      color: #fff;
+      margin: 0;
+      font-weight: 500;
+    }
+
+    .congrats-subtitle span {
+      background: linear-gradient(to right, #ef4444, #f97316, #eab308);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-weight: 900;
+    }
+
+    .congrats-assignment-info {
+      text-align: center;
+      margin-bottom: 4rem;
+    }
+
+    .congrats-assignment-label {
+      color: #94a3b8;
+      font-size: 0.875rem;
+      margin-bottom: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-weight: 700;
+    }
+
+    .congrats-assignment-name {
+      font-size: 2.5rem;
+      font-weight: 900;
+      background: linear-gradient(to right, #ef4444, #f97316, #eab308);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin: 0;
+    }
+
+    .congrats-competencies-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 4rem;
+      max-width: 1000px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .congrats-competency-item {
+      background: rgba(30, 41, 59, 0.3);
+      border: 2px solid rgba(71, 85, 105, 0.5);
+      border-radius: 1rem;
+      padding: 1.5rem;
+      transition: all 0.2s;
+      text-align: left;
+    }
+
+    .congrats-competency-item:hover {
+      border-color: rgba(251, 146, 60, 0.5);
+      background: rgba(251, 146, 60, 0.1);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 16px rgba(251, 146, 60, 0.2);
+    }
+
+    .congrats-competency-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    .congrats-competency-name {
+      font-size: 1rem;
+      font-weight: 900;
+      color: #fff;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .congrats-competency-score {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #94a3b8;
+    }
+
+    .congrats-competency-progress-bar {
+      width: 100%;
+      height: 0.75rem;
+      background: rgba(30, 41, 59, 0.5);
+      border-radius: 9999px;
+      overflow: hidden;
+      border: 1px solid rgba(71, 85, 105, 0.5);
+    }
+
+    .congrats-competency-progress-fill {
+      height: 100%;
+      background: linear-gradient(to right, #dc2626, #f97316);
+      border-radius: 9999px;
+      transition: width 0.5s;
+    }
+
+    .congrats-competency-progress-fill.full {
+      background: linear-gradient(to right, #16a34a, #22c55e);
+    }
+
+    .congrats-actions {
+      display: flex;
+      justify-content: center;
+      margin-top: 3rem;
+    }
+    /* Mentor Access Denied Modal */
+    #mentorAccessModal {
+      position: fixed !important;
+      top: 50% !important;
+      left: 50% !important;
+      transform: translate(-50%, -50%) !important;
+      z-index: 10001 !important;
+      pointer-events: auto;
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #mentorAccessModal.hidden {
+      display: none !important;
+    }
+
+    #mentorAccessModal.active {
+      display: flex !important;
+    }
+
+    #mentorAccessModal .modal-content {
+      background: linear-gradient(to bottom right, rgba(15, 23, 42, 0.98), rgba(2, 6, 23, 0.98));
+      border: 2px solid rgba(220, 38, 38, 0.5);
+      border-radius: 1.5rem;
+      padding: 3rem;
+      max-width: 500px;
+      width: 90%;
+      box-shadow: 0 20px 60px rgba(220, 38, 38, 0.3), 0 0 40px rgba(249, 115, 22, 0.2);
+      position: relative;
+      animation: modalFadeIn 0.3s ease;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+    }
+
+    @keyframes modalFadeIn {
+      from {
+        opacity: 0;
+        transform: scale(0.9);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Galaxy Background -->
+  <div class="galaxy-background">
+    <div class="galaxy-gradient"></div>
+    <div class="stars-container" id="starsContainer"></div>
+    <div class="nebula nebula-1"></div>
+    <div class="nebula nebula-2"></div>
+    <div class="nebula nebula-3"></div>
+  </div>
+
+  <!-- Header -->
+  <div class="blaze-header">
+    <div class="blaze-header-content">
+      <div class="header-left">
+        <button class="hamburger-menu" id="hamburgerMenu" onclick="toggleMobileNav()" aria-label="Toggle menu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+        <h1 class="blaze-logo">FBLAZE</h1>
+      </div>
+      <h1 class="blaze-logo desktop-logo">FBLAZE</h1>
+      <nav class="blaze-nav" id="mainNav">
+        <button class="mobile-nav-close" onclick="toggleMobileNav()" aria-label="Close menu">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+        <a href="../home3.html" class="nav-link">Home</a>
+        <a href="javascript:void(0)" onclick="toggleNotificationPanel()" class="nav-link">
+          Notifications
+          <span id="notificationBadge" class="notification-badge" style="display: none;">0</span>
+        </a>
+        <a href="../practice.html" class="nav-link">Practice</a>
+        <a href="../Forum/forum.html" class="nav-link">Forum</a>
+        <a href="../Calendar/calendar1.html" class="nav-link">Calendar</a>
+        <a href="../mentor1.html" class="nav-link" id="mentorNavLink" style="display: none;">Mentor</a>
+      </nav>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <!-- Hero Section -->
+    <div class="hero-section">
+      <h1 class="hero-title">
+        <span class="hero-gradient">Mentor Training</span>
+      </h1>
+      <p class="hero-description">Boost your tutoring skills with these tips, strategies, and guides. When you're done, refresh concepts by reviewing completed trainings!</p>
+    </div>
+
+    <!-- Tabs -->
+    <div class="training-tabs">
+      <button
+        id="incompleteTab"
+        class="training-tab active"
+        onclick="switchTab('incomplete')"
+      >
+        Incomplete
+      </button>
+      <button
+        id="completedTab"
+        class="training-tab"
+        onclick="switchTab('completed')"
+      >
+        Completed
+      </button>
+    </div>
+
+    <!-- Training Cards Grid -->
+    <div class="training-grid" id="trainingGrid">
+      <!-- Training cards will be populated by JavaScript -->
+    </div>
+
+    <!-- CTA Section -->
+    <div class="cta-section">
+      <p class="cta-label">Master Your Craft</p>
+      <h2 class="cta-title">Become an elite mentor today.</h2>
+      <p class="cta-description">Complete training modules to unlock advanced mentoring techniques and earn SP rewards.</p>
+      <button class="cta-button" onclick="startTraining()">Start Training</button>
+    </div>
+  </div>
+
+  <!-- Training Modal -->
+  <div class="modal-backdrop hidden" id="trainingBackdrop"></div>
+  <div id="trainingModal" class="modal hidden">
+    <div class="modal-content">
+      <button class="close-modal">&times;</button>
+      <h2 id="modalTitle"></h2>
+      <div class="modal-meta">
+        <span class="skill-badge">SKILL BUILDER</span>
+        <span id="modalTime">8 mins</span>
+        <span class="sp-badge">+10 SP</span>
+      </div>
+      <h3>Description</h3>
+      <p id="modalDesc"></p>
+      <ul id="modalBullets"></ul>
+      <button id="startTrainingBtn">Start Training ↗</button>
+    </div>
+  </div>
+
+  <!-- Mentor Access Denied Modal -->
+  <div class="modal-backdrop hidden" id="mentorAccessBackdrop"></div>
+  <div id="mentorAccessModal" class="modal hidden">
+    <div class="modal-content" style="
+      text-align: center; 
+      max-width: 500px;
+      position: relative;
+      background: linear-gradient(to bottom right, rgba(15, 23, 42, 0.98), rgba(2, 6, 23, 0.98));
+      border: 2px solid rgba(220, 38, 38, 0.5);
+      border-radius: 1.5rem;
+      padding: 3rem;
+      color: white;
+    ">
+      <button class="close-modal" onclick="closeMentorAccessModal()" style="
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        background: transparent;
+        border: none;
+        color: #94a3b8;
+        font-size: 2rem;
+        cursor: pointer;
+        line-height: 1;
+        padding: 0;
+        width: 2rem;
+        height: 2rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      ">&times;</button>
+      <div style="margin: 2rem 0;">
+        <div style="margin-bottom: 1rem; display: flex; justify-content: center;">
+          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- Shackle (U-shaped top) -->
+            <path d="M8 10V7C8 4.79086 9.79086 3 12 3C14.2091 3 16 4.79086 16 7V10" stroke="#dc2626" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+            <!-- Lock body -->
+            <rect x="5" y="10" width="14" height="11" rx="2" fill="#dc2626" stroke="#dc2626" stroke-width="2"/>
+            <!-- Keyhole -->
+            <circle cx="12" cy="15.5" r="1.5" fill="#fff"/>
+          </svg>
+        </div>
+        <h2 style="color: #dc2626; margin-bottom: 1rem; font-size: 1.75rem; font-weight: 700;">Mentor Access Required</h2>
+        <p style="color: #cbd5e1; font-size: 1.1rem; line-height: 1.6; margin-bottom: 1rem;">
+          You cannot view these training modules unless you are a mentor.
+        </p>
+        <p style="color: #94a3b8; margin-top: 1rem; font-size: 0.95rem;">
+          If you believe you should have mentor access, please contact your advisor.
+        </p>
+      </div>
+      <button onclick="closeMentorAccessModal()" style="
+        background: linear-gradient(135deg, #dc2626 0%, #ea580c 100%);
+        color: white;
+        border: none;
+        padding: 12px 32px;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        font-size: 1rem;
+        margin-top: 1rem;
+        transition: transform 0.2s, box-shadow 0.2s;
+      " onmouseover="this.style.transform='scale(1.05)'; this.style.boxShadow='0 4px 15px rgba(220, 38, 38, 0.4)';" 
+         onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='none';">Close</button>
+    </div>
+  </div>
+
+  <!-- Module View -->
+  <div id="moduleView" class="hidden">
+    <div class="module-content">
+      <button id="backToModulesBtn">← Back</button>
+      <div class="moduleText"></div>
+      <h2 id="moduleTitle"></h2>
+      <div id="moduleContent"></div>
+      <div class="module-nav-buttons">
+        <div class="center-proceed-btn">
+          <button id="proceedToNextBtn">Proceed →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quiz View -->
+  <div id="quizView" class="quiz-view hidden">
+    <div class="quiz-container">
+      <div class="quiz-question">
+        <span class="question-number" id="quizNumber">1 →</span>
+        <span class="question-text" id="quizText">As a tutor, why do you ask learners questions?*</span>
+      </div>
+      <textarea class="quiz-answer" id="quizAnswer" placeholder="Type your answer here..."></textarea>
+      <div class="quiz-submit-row">
+        <button class="submit-btn" id="quizOkBtn">OK</button>
+        <span class="enter-hint">press <strong>Enter ↵</strong></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Notification Panel -->
+  <div id="notificationPanel" class="notification-panel hidden">
+    <div class="notification-panel-header">
+      <h3 class="notification-panel-title">NOTIFICATIONS</h3>
+      <button onclick="toggleNotificationPanel()" class="close-notifications">✕</button>
+    </div>
+    <div id="notificationList" class="notification-list"></div>
+  </div>
+
+  <!-- Summary Modal (preserved from original) -->
+  <div id="summaryModal" class="modal">
+    <div class="modal-content" style="max-width:420px; padding: 2.1rem 2.2rem 2rem;">
+      <span class="close" onclick="closeSummaryModal()" style="top:20px; right: 24px;">&times;</span>
+      <h2 id="modalTitle" style="margin-bottom: 1.3rem; font-size: 1.5rem;">Summary for Student</h2>
+
+      <div style="margin-bottom: 2.2rem; display: flex; gap: 2.4rem; align-items: flex-end;">
+        <div>
+          <div class="num-answered" style="font-size: 2.2rem; font-weight: 700; color: #007cf0; letter-spacing:-1px;">0</div>
+          <div style="font-size: 1.03rem; color: #888; margin-top:0.2rem;">Questions answered<br>this week</div>
+        </div>
+        <div>
+          <div class="mcq-accuracy" style="font-size: 2.2rem; font-weight: 700; color: #0a50b8; letter-spacing:-1px;">0%</div>
+          <div style="font-size: 1.03rem; color: #888; margin-top:0.2rem;">MCQ<br>Accuracy</div>
+        </div>
+      </div>
+
+      <div style="margin-bottom: 1.25rem;">
+        <div class="competency-grid" style="display: grid; grid-template-columns: max-content 1fr; column-gap: 1.3rem; row-gap: 0.6rem; margin-bottom: 1.35rem;">
+          <!-- This will be filled by JS -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Mobile Navigation Toggle - Define early so it's available for onclick handlers
+    window.toggleMobileNav = function() {
+      console.log('toggleMobileNav called');
+      const nav = document.getElementById('mainNav');
+      const hamburger = document.getElementById('hamburgerMenu');
+      
+      console.log('Nav:', nav);
+      console.log('Hamburger:', hamburger);
+      
+      if (nav) {
+        const isActive = nav.classList.contains('active');
+        nav.classList.toggle('active');
+        console.log('Nav active state:', !isActive);
+        
+        if (hamburger) {
+          hamburger.classList.toggle('active');
+        }
+        
+        document.body.style.overflow = nav.classList.contains('active') ? 'hidden' : '';
+      } else {
+        console.error('Nav element not found!');
+      }
+    };
+    
+    // Also add as direct function for onclick
+    function toggleMobileNav() {
+      window.toggleMobileNav();
+    }
+
+    // Firebase Config
+
+    if (!firebase.apps.length) {
+    }
+
+    const db = firebase.firestore();
+    const auth = firebase.auth();
+
+    // Initialize recording variables for speaking assignments
+    let isRecording = false;
+    let isIntentionallyStopping = false;
+    let recordingStateMonitor = null;
+    let cqSpeakingMediaRecorder = null;
+    let cqSpeakingMediaStream = null;
+    let cqSpeakingRecordedChunks = [];
+
+    // Initialize recording variables for case study assignments
+    let cqCaseStudyIsRecording = false;
+    let cqCaseStudyIsIntentionallyStopping = false;
+    let cqCaseStudyRecordingStateMonitor = null;
+    let cqCaseStudyMediaRecorder = null;
+    let cqCaseStudyMediaStream = null;
+    let cqCaseStudyRecordedChunks = [];
+    let cqCaseStudyTimerInterval = null;
+    let cqCaseStudyTimeLeft = 1200; // 20 minutes in seconds
+    let cqCaseStudyTimerActive = false;
+
+    // Global assignment tracking
+    window.latestAssignmentId = null;
+    window.currentAssignment = null;
+    window.currentAssignmentQuestions = null;
+
+    // Galaxy Background - Create Stars
+    function createStars() {
+      const starsContainer = document.getElementById('starsContainer');
+      if (!starsContainer) return;
+      
+      for (let i = 0; i < 200; i++) {
+        const star = document.createElement('div');
+        star.className = 'star';
+        const size = Math.random() * 3 + 0.5;
+        const duration = Math.random() * 4 + 2;
+        const delay = Math.random() * 2;
+        const randomLeft = Math.random() * 100;
+        const randomTop = Math.random() * 100;
+        const randomOpacity = Math.random() * 0.9 + 0.3;
+        
+        star.style.width = size + 'px';
+        star.style.height = size + 'px';
+        star.style.left = randomLeft + '%';
+        star.style.top = randomTop + '%';
+        star.style.opacity = randomOpacity;
+        star.style.animation = `twinkle ${duration}s ease-in-out infinite`;
+        star.style.animationDelay = delay + 's';
+        star.style.boxShadow = `0 0 ${size * 2}px rgba(255, 255, 255, 0.8)`;
+        
+        starsContainer.appendChild(star);
+      }
+    }
+
+    // MODULE DATA
+    const MODULE_DATA = {
+      "handling-questions": {
+        title: "Handling Student Questions Effectively",
+        description: "Learn strategies to answer questions clearly, encourage critical thinking, and guide students without giving away solutions.",
+        bullets: ["The Socratic method", "When to provide direct answers", "Encouraging independent problem-solving"],
+        time: "12 mins",
+        sp: "+10 SP",
+        content: `
+          <h3>The Balance: Helping vs. Solving</h3>
+          <p>As a mentor, your goal is to guide students toward understanding, not to solve problems for them. This develops their problem-solving skills and builds confidence.</p>
+          <h3>The Socratic Method</h3>
+          <p>Use questions to guide thinking rather than providing answers directly:</p>
+          <ul>
+            <li><strong>"What have you tried so far?"</strong> - Assesses their current understanding</li>
+            <li><strong>"What do you think might work?"</strong> - Encourages hypothesis formation</li>
+            <li><strong>"Why do you think that didn't work?"</strong> - Promotes debugging skills</li>
+            <li><strong>"What would happen if...?"</strong> - Explores consequences and alternatives</li>
+            <li><strong>"Can you explain your approach to me?"</strong> - Reinforces understanding through teaching</li>
+          </ul>
+          <h3>When to Give Direct Answers</h3>
+          <p>Sometimes direct answers are appropriate:</p>
+          <ul>
+            <li>Syntax or tool-specific questions ("How do I declare a variable in Python?")</li>
+            <li>When a student is completely stuck and frustration is building</li>
+            <li>Time-sensitive competition situations</li>
+            <li>Safety or ethical concerns</li>
+            <li>After they've genuinely tried multiple approaches</li>
+          </ul>
+          <h3>Techniques for Different Situations</h3>
+          <p><strong>For vague questions:</strong> "Can you show me the specific part you're struggling with?"</p>
+          <p><strong>For "it doesn't work" questions:</strong> "What error message are you getting? What output did you expect vs. what you got?"</p>
+          <p><strong>For conceptual questions:</strong> Use analogies, draw diagrams, or work through a simpler example together.</p>
+          <p><strong>For advanced students:</strong> "That's a good solution. Can you think of a way to make it more efficient/elegant?"</p>
+          <h3>Building Independence</h3>
+          <p>Teach students how to help themselves:</p>
+          <ul>
+            <li>Show them how to read documentation</li>
+            <li>Demonstrate effective Google searching techniques</li>
+            <li>Encourage rubber duck debugging (explaining code to an object)</li>
+            <li>Teach them to break problems into smaller parts</li>
+            <li>Model your own problem-solving process out loud</li>
+          </ul>
+        `
+      },
+      "engaging-inactive-members": {
+        title: "Re-engaging Inactive Team Members",
+        description: "Strategies to identify why members become inactive and techniques to bring them back into the fold.",
+        bullets: ["Identifying root causes", "Personalized outreach strategies", "Creating inclusive environments"],
+        time: "14 mins",
+        sp: "+10 SP",
+        content: `
+          <h3>Common Reasons for Inactivity</h3>
+          <p>Understanding the "why" helps you address the real issue:</p>
+          <ul>
+            <li><strong>Intimidation:</strong> Feels they're not skilled enough or can't contribute</li>
+            <li><strong>Confusion:</strong> Doesn't know what to work on or how to get started</li>
+            <li><strong>Isolation:</strong> Doesn't feel connected to the team or project</li>
+            <li><strong>Overcommitment:</strong> Too busy with school, other activities, or personal issues</li>
+            <li><strong>Boredom:</strong> Tasks aren't engaging or challenging enough</li>
+            <li><strong>Conflict:</strong> Had a negative interaction or feels unwelcome</li>
+          </ul>
+          <h3>Initial Outreach</h3>
+          <p><strong>One-on-one conversations work best:</strong></p>
+          <ul>
+            <li>Reach out privately via text, Discord, or in person</li>
+            <li>Use a friendly, non-judgmental tone: "Hey, we've missed you at meetings! Is everything okay?"</li>
+            <li>Listen actively without making assumptions</li>
+            <li>Ask open-ended questions: "What would make you more excited to participate?"</li>
+          </ul>
+          <h3>Tailored Re-engagement Strategies</h3>
+          <p><strong>If intimidated:</strong> Assign a buddy or mentor for support, find tasks matched to their current skill level, share that everyone started somewhere and mistakes are normal, highlight their past contributions.</p>
+          <p><strong>If confused:</strong> Provide clear, specific tasks with step-by-step guidance, create onboarding documentation or videos, schedule a "catch-up" session to explain current projects.</p>
+          <p><strong>If isolated:</strong> Introduce them to other members personally, include social activities (game nights, team dinners), pair them with someone with similar interests, create smaller sub-teams for projects.</p>
+          <h3>Creating an Inclusive Culture</h3>
+          <p>Prevention is the best medicine:</p>
+          <ul>
+            <li>Celebrate all contributions, big and small</li>
+            <li>Create tasks for all skill levels</li>
+            <li>Make meetings welcoming (start with icebreakers, recognize people by name)</li>
+            <li>Have a "no stupid questions" policy and model it yourself</li>
+            <li>Check in regularly with quieter members</li>
+          </ul>
+        `
+      },
+      "teaching-technical-concepts": {
+        title: "Teaching Technical Concepts",
+        description: "Break down complex programming and engineering concepts into digestible lessons for students with varying skill levels.",
+        bullets: ["Scaffolding learning", "Using analogies effectively", "Hands-on practice design"],
+        time: "15 mins",
+        sp: "+10 SP",
+        content: `
+          <h3>Know Your Audience</h3>
+          <p>Before teaching, assess:</p>
+          <ul>
+            <li>Prior knowledge: What do they already understand?</li>
+            <li>Learning goals: What do they need to accomplish?</li>
+            <li>Learning styles: Visual, hands-on, verbal, reading/writing</li>
+            <li>Attention span: Keep sessions focused and time-limited</li>
+          </ul>
+          <h3>The Learning Progression</h3>
+          <p><strong>1. Concrete before Abstract</strong></p>
+          <p>Start with tangible examples, then generalize:</p>
+          <ul>
+            <li>Show a working example first</li>
+            <li>Let them interact with it</li>
+            <li>Then explain the underlying concept</li>
+            <li>Example: Let them play with a robot before explaining PID controllers</li>
+          </ul>
+          <p><strong>2. Build on What They Know</strong></p>
+          <p>Connect new concepts to familiar ones:</p>
+          <ul>
+            <li>"A variable is like a labeled box that holds information"</li>
+            <li>"A loop is like doing your homework problems 1 through 10"</li>
+            <li>"Git is like 'Save As' with superpowers"</li>
+          </ul>
+          <h3>Effective Analogies</h3>
+          <p>Good analogies bridge the gap between known and unknown:</p>
+          <ul>
+            <li><strong>Arrays:</strong> Like a row of mailboxes, each with a number</li>
+            <li><strong>Functions:</strong> Like a recipe - inputs (ingredients), process (steps), output (food)</li>
+            <li><strong>Recursion:</strong> Like Russian nesting dolls or "Inception"</li>
+            <li><strong>Pointers:</strong> Like a house address vs. the actual house</li>
+            <li><strong>Classes/Objects:</strong> Like a cookie cutter (class) and cookies (objects)</li>
+          </ul>
+          <h3>Hands-On Practice</h3>
+          <p><strong>The 20-80 Rule:</strong> 20% explaining, 80% doing</p>
+          <p><strong>Progression:</strong></p>
+          <ol>
+            <li><strong>I do, you watch:</strong> Demonstrate while explaining</li>
+            <li><strong>We do together:</strong> Walk through example side-by-side</li>
+            <li><strong>You do, I help:</strong> They try while you provide hints</li>
+            <li><strong>You do, I watch:</strong> They work independently</li>
+          </ol>
+        `
+      },
+      "finding-resources": {
+        title: "Finding & Creating Resources",
+        description: "Master the art of finding quality learning materials, documentation, and tools while creating effective resources for your team.",
+        bullets: ["Effective search strategies", "Evaluating resource quality", "Creating team documentation"],
+        time: "13 mins",
+        sp: "+10 SP",
+        content: `
+          <h3>Strategic Searching</h3>
+          <p><strong>Google Search Operators:</strong></p>
+          <ul>
+            <li><strong>Exact phrase:</strong> "how to use PID control"</li>
+            <li><strong>Site-specific:</strong> site:stackoverflow.com python lists</li>
+            <li><strong>File type:</strong> filetype:pdf robotics tutorial</li>
+            <li><strong>Exclude terms:</strong> java tutorial -android</li>
+            <li><strong>Recent results:</strong> Use Tools → Any time → Past year</li>
+          </ul>
+          <h3>Where to Look</h3>
+          <ul>
+            <li><strong>Official documentation:</strong> Always start here (Python docs, FRC docs, manufacturer manuals)</li>
+            <li><strong>GitHub:</strong> Example code, libraries, similar projects</li>
+            <li><strong>Stack Overflow:</strong> Specific programming problems</li>
+            <li><strong>YouTube:</strong> Visual tutorials and walkthroughs</li>
+            <li><strong>Reddit:</strong> r/programming, r/FRC, competition-specific subreddits</li>
+            <li><strong>Discord servers:</strong> Competition communities for real-time help</li>
+          </ul>
+          <h3>Evaluating Resource Quality</h3>
+          <p>Not all resources are created equal. Check:</p>
+          <ul>
+            <li><strong>Recency:</strong> Is it up-to-date? (Especially critical for rapidly changing tech)</li>
+            <li><strong>Authority:</strong> Who created it? Are they credible?</li>
+            <li><strong>Accuracy:</strong> Cross-reference with other sources</li>
+            <li><strong>Clarity:</strong> Is it well-explained or confusing?</li>
+            <li><strong>Completeness:</strong> Does it cover what you need?</li>
+            <li><strong>Examples:</strong> Does it include working code/demonstrations?</li>
+          </ul>
+          <h3>Creating Team Documentation</h3>
+          <p><strong>Why Document?</strong></p>
+          <ul>
+            <li>Onboard new members faster</li>
+            <li>Preserve knowledge when seniors graduate</li>
+            <li>Reduce repeated questions</li>
+            <li>Improve team consistency</li>
+          </ul>
+        `
+      },
+      "time-management": {
+        title: "Time Management & Project Planning",
+        description: "Learn to balance mentoring responsibilities with competition deadlines, personal commitments, and avoiding burnout.",
+        bullets: ["Prioritization frameworks", "Delegation strategies", "Setting healthy boundaries"],
+        time: "14 mins",
+        sp: "+10 SP",
+        content: `
+          <h3>The Mentor's Time Crunch</h3>
+          <p>You're juggling: homework, college apps, personal life, mentoring duties, AND often technical work for the competition. Something has to give - let's make sure it's not your sanity.</p>
+          <h3>Prioritization: The Eisenhower Matrix</h3>
+          <p>Categorize tasks by urgency and importance:</p>
+          <p><strong>Urgent + Important (DO NOW):</strong> Competition deadline tomorrow, Broken critical system, Team conflict escalating</p>
+          <p><strong>Important, Not Urgent (SCHEDULE):</strong> Teaching foundational skills, Creating documentation, Long-term project planning, Personal development</p>
+          <p><strong>Urgent, Not Important (DELEGATE):</strong> Routine questions others can answer, Data entry or repetitive tasks, Some meetings (send a representative)</p>
+          <p><strong>Neither (ELIMINATE):</strong> Perfectionism on non-critical work, Unnecessary meetings, Busy work that doesn't serve team goals</p>
+          <h3>Effective Delegation</h3>
+          <p><strong>Why mentors struggle to delegate:</strong></p>
+          <ul>
+            <li>"It's faster if I do it myself" (true now, false long-term)</li>
+            <li>"No one else can do it as well" (they can learn!)</li>
+            <li>"I don't want to burden others" (you're denying them growth)</li>
+          </ul>
+          <h3>Time Management Strategies</h3>
+          <p><strong>Time Blocking:</strong> Schedule specific hours for mentoring (e.g., Tuesdays 4-6pm), Protect personal time blocks (homework, rest, family), Include buffer time between tasks, Batch similar activities (answer all messages at once, not constantly)</p>
+          <p><strong>The 2-Minute Rule:</strong> If something takes less than 2 minutes, do it now. Otherwise, schedule it or delegate it.</p>
+          <h3>Setting Healthy Boundaries</h3>
+          <p><strong>You are not on call 24/7:</strong></p>
+          <ul>
+            <li>Set "office hours" for questions</li>
+            <li>Don't respond to messages immediately (response time ≠ value)</li>
+            <li>It's okay to say "I can't help with this right now, but I can tomorrow"</li>
+            <li>Teach team members to try solving problems themselves first</li>
+          </ul>
+          <h3>Avoiding Burnout</h3>
+          <p><strong>Warning Signs:</strong> Dreading team activities you used to enjoy, Irritability or short temper, Neglecting schoolwork, health, or relationships, Physical exhaustion or illness, Feeling like you can't step away</p>
+          <p><strong>Prevention:</strong> Schedule genuine breaks (no team stuff), Maintain hobbies and friendships outside the team, Share responsibilities with co-mentors, Celebrate wins, don't just focus on problems, Remember: Taking care of yourself IS taking care of the team</p>
+        `
+      },
+      "conflict-resolution": {
+        title: "Handling Team Conflict & Difficult Conversations",
+        description: "Navigate interpersonal conflicts, address underperformance, and facilitate difficult but necessary conversations.",
+        bullets: ["Conflict mediation techniques", "Addressing underperformance", "Maintaining team morale"],
+        time: "16 mins",
+        sp: "+10 SP",
+        content: `
+          <h3>Types of Team Conflict</h3>
+          <p><strong>Task Conflict:</strong> Disagreements about the work itself (which algorithm, design choice, strategy). Often productive if managed well.</p>
+          <p><strong>Process Conflict:</strong> Disagreements about how work should be done (workflow, roles, decision-making). Can be resolved with clear systems.</p>
+          <p><strong>Relationship Conflict:</strong> Personal friction between team members (personality clashes, communication styles). Most damaging if left unaddressed.</p>
+          <h3>Your Role as Mediator</h3>
+          <p><strong>You are not a judge:</strong> Your goal isn't to determine who's "right" but to help the team move forward productively.</p>
+          <p><strong>Stay neutral:</strong> Avoid taking sides, even if you privately agree with one person. Focus on understanding all perspectives.</p>
+          <p><strong>Focus on behavior, not character:</strong> "When you interrupted during the meeting..." not "You're disrespectful."</p>
+          <h3>Conflict Resolution Process</h3>
+          <p><strong>Step 1: Assess the Situation</strong> - How serious is it? Can they resolve it themselves or do you need to intervene? Is it isolated or a pattern? Is anyone feeling unsafe?</p>
+          <p><strong>Step 2: Create a Safe Space</strong> - Meet privately, not in front of the whole team, Choose a neutral location, Set ground rules: respectful language, no interrupting, focus on solutions, Assure confidentiality (within reason)</p>
+          <p><strong>Step 3: Understand All Perspectives</strong> - Let each person explain their view without interruption, Ask clarifying questions: "Can you help me understand why that upset you?", Reflect back what you hear: "So you felt dismissed when...", Look for underlying needs (respect, autonomy, recognition)</p>
+          <h3>When to Escalate</h3>
+          <p>Some situations require adult intervention (teachers, coaches, advisors):</p>
+          <ul>
+            <li>Safety concerns (threats, physical altercation)</li>
+            <li>Harassment or bullying</li>
+            <li>Discrimination based on protected characteristics</li>
+            <li>Situations beyond your authority or expertise</li>
+            <li>When direct intervention hasn't worked</li>
+          </ul>
+          <p><strong>Don't feel like you've failed if you need to escalate.</strong> Knowing when to get help is a sign of good judgment, not weakness.</p>
+        `
+      }
+    };
+
+    const MODULE_IDS = Object.keys(MODULE_DATA);
+    let lastProgress = {};
+    let currentModuleId = null;
+    let quizIndex = 0;
+    const quizQuestions = [
+      { question: "As a tutor, why do you ask learners questions?*", placeholder: "Type your answer here..." },
+      { question: "How would you handle a student who isn't responding?", placeholder: "Type your answer here..." },
+      { question: "Describe a strategy for keeping learners engaged.", placeholder: "Type your answer here..." }
+    ];
+
+    // Tab Switching
+    let activeTab = 'incomplete';
+    function switchTab(tab) {
+      activeTab = tab;
+      const incompleteTab = document.getElementById('incompleteTab');
+      const completedTab = document.getElementById('completedTab');
+      
+      if (tab === 'incomplete') {
+        incompleteTab.classList.add('active');
+        completedTab.classList.remove('active');
+      } else {
+        completedTab.classList.add('active');
+        incompleteTab.classList.remove('active');
+      }
+      
+      renderTrainingCards();
+    }
+
+    // Firebase Functions
+    async function getCurrentUserId() {
+      return new Promise((resolve) => {
+        auth.onAuthStateChanged(user => {
+          if (user) {
+            resolve(user.uid);
+          } else {
+            resolve(null);
+          }
+        });
+      });
+    }
+
+    async function setModuleStatus(moduleId, status) {
+      const userId = await getCurrentUserId();
+      if (!userId) return;
+      
+      await db.collection('users').doc(userId).collection('trainingProgress').doc(moduleId).set({ status }, { merge: true });
+      
+      if (status === "completed") {
+        await awardXP(userId, 10, 'completing training module');
+      }
+    }
+
+    async function awardXP(userId, amount, reason) {
+      try {
+        const userRef = db.collection('users').doc(userId);
+        const userDoc = await userRef.get();
+        
+        if (userDoc.exists) {
+          await userRef.update({
+            XP: firebase.firestore.FieldValue.increment(amount)
+          });
+        } else {
+          await userRef.set({
+            XP: amount
+          });
+        }
+        
+        showXPNotification(amount, reason);
+      } catch (error) {
+        console.error("Failed to award XP:", error);
+      }
+    }
+
+    function showXPNotification(amount, reason) {
+      let notification = document.getElementById('xpNotification');
+      if (!notification) {
+        notification = document.createElement('div');
+        notification.id = 'xpNotification';
+        notification.style.cssText = `
+          position: fixed;
+          top: 20px;
+          right: 20px;
+          background: linear-gradient(135deg, #dc2626 0%, #ea580c 100%);
+          color: white;
+          padding: 15px 25px;
+          border-radius: 10px;
+          font-weight: bold;
+          z-index: 10000;
+          transform: translateX(400px);
+          transition: transform 0.3s ease;
+          box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        `;
+        document.body.appendChild(notification);
+      }
+      
+      notification.textContent = `🎉 +${amount} XP for ${reason}!`;
+      notification.style.transform = 'translateX(0)';
+      
+      setTimeout(() => {
+        notification.style.transform = 'translateX(400px)';
+      }, 3000);
+    }
+
+    async function loadProgress() {
+      const userId = await getCurrentUserId();
+      if (!userId) return {};
+      
+      try {
+        const progressSnap = await db.collection('users').doc(userId).collection('trainingProgress').get();
+        const progress = {};
+        progressSnap.forEach(doc => {
+          progress[doc.id] = doc.data().status || "not-started";
+        });
+        return progress;
+      } catch (error) {
+        console.error("Error loading progress:", error);
+        return {};
+      }
+    }
+
+    // Render Training Cards
+    async function renderTrainingCards() {
+      const grid = document.getElementById('trainingGrid');
+      if (!grid) return;
+
+      lastProgress = await loadProgress();
+      const completed = activeTab === 'completed';
+
+      grid.innerHTML = "";
+      MODULE_IDS.forEach(moduleId => {
+        const module = MODULE_DATA[moduleId];
+        const status = lastProgress[moduleId] || "not-started";
+        if ((completed && status === "completed") || (!completed && status !== "completed")) {
+          const card = document.createElement("div");
+          card.className = "training-card" + (status === "completed" ? " completed" : "");
+          card.dataset.module = moduleId;
+          card.innerHTML = `
+            <p class="training-status">${status === "completed" ? "COMPLETED" : (status === "in-progress" ? "IN PROGRESS" : "NOT STARTED")}</p>
+            <h3 class="training-title">${module.title}</h3>
+            <p class="training-description">${module.description}</p>
+            <div class="training-meta">
+              <span class="training-skill-builder">SKILL BUILDER</span>
+              <span class="training-duration">${module.time}</span>
+              <span class="training-sp">${module.sp}</span>
+            </div>
+          `;
+          if (status !== "completed") {
+            card.addEventListener("click", async () => {
+              // Check if user is a mentor before showing modal
+              const user = auth.currentUser;
+              if (!user) {
+                alert("Please sign in to view training modules.");
+                return;
+              }
+              
+              try {
+                const userDoc = await db.collection('users').doc(user.uid).get();
+                const isMentor = userDoc.exists && userDoc.data().isMentor === true;
+                
+                if (!isMentor) {
+                  // Show access denied modal
+                  showMentorAccessDeniedModal();
+                } else {
+                  // User is mentor, show normal modal
+                  currentModuleId = moduleId;
+                  setModuleStatus(moduleId, "in-progress").then(() => {
+                    showModuleModal(moduleId);
+                  });
+                }
+              } catch (error) {
+                console.error("Error checking mentor status:", error);
+                alert("Error checking mentor status. Please try again.");
+              }
+            });
+          }
+          grid.appendChild(card);
+        }
+      });
+    }
+
+    // Modal Functions
+    function showModuleModal(moduleId) {
+      const module = MODULE_DATA[moduleId];
+      const modal = document.getElementById("trainingModal");
+      const backdrop = document.getElementById("trainingBackdrop");
+      const modalTitle = document.getElementById("modalTitle");
+      const modalDesc = document.getElementById("modalDesc");
+      const modalTime = document.getElementById("modalTime");
+      const modalBullets = document.getElementById("modalBullets");
+      
+      if (modalTitle) modalTitle.textContent = module.title;
+      if (modalDesc) modalDesc.textContent = module.description;
+      if (modalTime) modalTime.textContent = module.time;
+      if (modalBullets) modalBullets.innerHTML = module.bullets.map(b => `<li>${b}</li>`).join("");
+      
+      if (backdrop) {
+        backdrop.classList.remove('hidden');
+        backdrop.classList.add('active');
+      }
+      if (modal) {
+        modal.classList.remove('hidden');
+        modal.classList.add('active');
+      }
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeTrainingModal() {
+      const modal = document.getElementById("trainingModal");
+      const backdrop = document.getElementById("trainingBackdrop");
+      
+      if (backdrop) {
+        backdrop.classList.remove('active');
+        backdrop.classList.add('hidden');
+      }
+      if (modal) {
+        modal.classList.remove('active');
+        modal.classList.add('hidden');
+      }
+      document.body.style.overflow = '';
+    }
+
+    // Mentor Access Denied Modal Functions
+    function showMentorAccessDeniedModal() {
+      const modal = document.getElementById("mentorAccessModal");
+      const backdrop = document.getElementById("mentorAccessBackdrop");
+      
+      if (backdrop) {
+        backdrop.classList.remove('hidden');
+        backdrop.classList.add('active');
+      }
+      if (modal) {
+        modal.classList.remove('hidden');
+        modal.classList.add('active');
+      }
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeMentorAccessModal() {
+      const modal = document.getElementById("mentorAccessModal");
+      const backdrop = document.getElementById("mentorAccessBackdrop");
+      
+      if (backdrop) {
+        backdrop.classList.remove('active');
+        backdrop.classList.add('hidden');
+      }
+      if (modal) {
+        modal.classList.remove('active');
+        modal.classList.add('hidden');
+      }
+      document.body.style.overflow = '';
+    }
+
+    // Module View Functions
+    function showModuleView() {
+      if (!currentModuleId) return;
+      const module = MODULE_DATA[currentModuleId];
+      const moduleView = document.getElementById("moduleView");
+      const moduleTitle = document.getElementById("moduleTitle");
+      const moduleContent = document.getElementById("moduleContent");
+      const gridSection = document.querySelector(".main-content");
+      
+      if (moduleTitle) moduleTitle.textContent = module.title;
+      if (moduleContent) moduleContent.innerHTML = module.content;
+      
+      closeTrainingModal();
+      if (gridSection) gridSection.classList.add("hidden");
+      if (moduleView) {
+        moduleView.classList.remove("hidden");
+        moduleView.classList.add("active");
+      }
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function showGridView() {
+      const gridSection = document.querySelector(".main-content");
+      const moduleView = document.getElementById("moduleView");
+      const quizView = document.getElementById("quizView");
+      
+      if (gridSection) gridSection.classList.remove("hidden");
+      if (moduleView) {
+        moduleView.classList.add("hidden");
+        moduleView.classList.remove("active");
+      }
+      if (quizView) {
+        quizView.classList.add("hidden");
+        quizView.classList.remove("active");
+      }
+      renderTrainingCards();
+    }
+
+    // Quiz Functions
+    function loadQuizQuestion(index) {
+      const quizNumber = document.getElementById("quizNumber");
+      const quizText = document.getElementById("quizText");
+      const quizAnswer = document.getElementById("quizAnswer");
+      const quizOkBtn = document.getElementById("quizOkBtn");
+      
+      if (index < quizQuestions.length) {
+        if (quizNumber) quizNumber.textContent = `${index + 1} →`;
+        if (quizText) quizText.textContent = quizQuestions[index].question;
+        if (quizAnswer) {
+          quizAnswer.value = "";
+          quizAnswer.placeholder = quizQuestions[index].placeholder;
+          quizAnswer.focus();
+        }
+        if (quizOkBtn) {
+          quizOkBtn.onclick = function() {
+            quizIndex++;
+            loadQuizQuestion(quizIndex);
+          };
+        }
+        if (quizAnswer) {
+          quizAnswer.onkeydown = function(e) {
+            if (e.key === "Enter" && !e.shiftKey) {
+              e.preventDefault();
+              if (quizOkBtn) quizOkBtn.click();
+            }
+          };
+        }
+      } else {
+        // Quiz completed
+        const quizView = document.getElementById("quizView");
+        if (quizView) {
+          quizView.innerHTML = `
+            <div class="completion-container">
+              <div class="completion-content">
+                <div class="completion-title">
+                  All done! <span class="completion-emoji">🎉</span>
+                </div>
+                <div class="completion-subtitle">Module completed successfully!</div>
+                <button id="backToModulesFromQuiz" class="completion-button">Back to Modules</button>
+              </div>
+              <canvas id="confettiCanvas" class="confetti-canvas"></canvas>
+            </div>
+          `;
+          
+          setModuleStatus(currentModuleId, "completed");
+          
+          // Trigger confetti
+          createConfetti();
+          
+          const backBtn = document.getElementById("backToModulesFromQuiz");
+          if (backBtn) {
+            backBtn.onclick = () => {
+              showGridView();
+            };
+          }
+        }
+      }
+    }
+
+    function showQuiz() {
+      quizIndex = 0;
+      const quizView = document.getElementById("quizView");
+      const moduleView = document.getElementById("moduleView");
+      const gridSection = document.querySelector(".main-content");
+      
+      if (moduleView) {
+        moduleView.classList.add("hidden");
+        moduleView.classList.remove("active");
+      }
+      if (gridSection) gridSection.classList.add("hidden");
+      if (quizView) {
+        quizView.classList.remove("hidden");
+        quizView.classList.add("active");
+        quizView.innerHTML = `
+          <div class="quiz-container">
+            <div class="quiz-question">
+              <span class="question-number" id="quizNumber"></span>
+              <span class="question-text" id="quizText"></span>
+            </div>
+            <textarea class="quiz-answer" id="quizAnswer" placeholder="Type your answer here..."></textarea>
+            <div class="quiz-submit-row">
+              <button class="submit-btn" id="quizOkBtn">OK</button>
+              <span class="enter-hint">press <strong>Enter ↵</strong></span>
+            </div>
+          </div>
+        `;
+        loadQuizQuestion(quizIndex);
+      }
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function startTraining() {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      showModuleView();
+    }
+
+    // Confetti Function
+    function createConfetti() {
+      const canvas = document.getElementById("confettiCanvas");
+      if (!canvas) return;
+      
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      const ctx = canvas.getContext("2d");
+      
+      const colors = ['#ef4444', '#f97316', '#ea580c', '#dc2626', '#b91c1c', '#eab308', '#fbbf24'];
+      const confetti = [];
+      const confettiCount = 150;
+      
+      for (let i = 0; i < confettiCount; i++) {
+        confetti.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height - canvas.height,
+          r: Math.random() * 4 + 2,
+          d: Math.random() * confettiCount,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          tilt: Math.floor(Math.random() * 10) - 10,
+          tiltAngleIncrement: Math.random() * 0.07 + 0.05,
+          tiltAngle: 0
+        });
+      }
+      
+      let animationId;
+      function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        confetti.forEach((c, i) => {
+          ctx.beginPath();
+          ctx.lineWidth = c.r / 2;
+          ctx.strokeStyle = c.color;
+          ctx.moveTo(c.x + c.tilt + c.r, c.y);
+          ctx.lineTo(c.x + c.tilt, c.y + c.tilt + c.r);
+          ctx.stroke();
+          
+          c.tiltAngle += c.tiltAngleIncrement;
+          c.y += (Math.cos(c.d) + 3 + c.r / 2) / 2;
+          c.tilt = Math.sin(c.tiltAngle - i / 3) * 15;
+          
+          if (c.y > canvas.height) {
+            confetti[i] = {
+              x: Math.random() * canvas.width,
+              y: -20,
+              r: c.r,
+              d: c.d,
+              color: c.color,
+              tilt: Math.floor(Math.random() * 10) - 10,
+              tiltAngleIncrement: c.tiltAngleIncrement,
+              tiltAngle: 0
+            };
+          }
+        });
+        
+        animationId = requestAnimationFrame(draw);
+        
+        // Stop after 5 seconds
+        setTimeout(() => {
+          cancelAnimationFrame(animationId);
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }, 5000);
+      }
+      
+      draw();
+    }
+
+    // Notification Panel Toggle
+    function toggleNotificationPanel() {
+      const panel = document.getElementById("notificationPanel");
+      if (!panel) return;
+      
+      if (panel.classList.contains("active")) {
+        panel.classList.remove("active");
+        setTimeout(() => panel.classList.add("hidden"), 300);
+      } else {
+        panel.classList.remove("hidden");
+        setTimeout(() => panel.classList.add("active"), 10);
+      }
+    }
+    window.toggleNotificationPanel = toggleNotificationPanel;
+
+    // Update Notification Badge
+    function updateNotificationBadge(count) {
+      const notificationLink = document.querySelector('a[onclick*="toggleNotificationPanel"]');
+      if (notificationLink) {
+        let notificationBadge = notificationLink.querySelector('.notification-badge');
+        if (!notificationBadge && count > 0) {
+          notificationBadge = document.createElement('span');
+          notificationBadge.className = 'notification-badge';
+          notificationBadge.textContent = count;
+          notificationLink.style.position = 'relative';
+          notificationLink.appendChild(notificationBadge);
+        } else if (notificationBadge) {
+          if (count > 0) {
+            notificationBadge.style.display = 'inline-flex';
+            notificationBadge.textContent = count;
+          } else {
+            notificationBadge.style.display = 'none';
+          }
+        }
+      }
+    }
+    window.updateNotificationBadge = updateNotificationBadge;
+
+    // Setup Notifications
+    function setupNotifications() {
+      const user = auth.currentUser;
+      if (!user) return;
+      
+      const notificationList = document.getElementById("notificationList");
+      if (!notificationList) return;
+      
+      db.collection("notifications")
+        .where("menteeId", "==", user.uid)
+        .orderBy("timestamp", "desc")
+        .limit(50)
+        .onSnapshot((snapshot) => {
+          notificationList.innerHTML = '';
+          
+          let unreadCount = 0;
+          
+          if (snapshot.empty) {
+            notificationList.innerHTML = '<div class="notification-empty">No notifications</div>';
+            updateNotificationBadge(0);
+            return;
+          }
+          
+          snapshot.forEach((doc) => {
+            const notif = doc.data();
+            if (!notif.read) {
+              unreadCount++;
+            }
+            
+            const item = document.createElement("div");
+            item.className = `notification-item ${notif.read ? 'read' : ''}`;
+            
+            // Format timestamp
+            let timeText = "Just now";
+            if (notif.timestamp && notif.timestamp.toDate) {
+              const date = notif.timestamp.toDate();
+              const now = new Date();
+              const diffMs = now - date;
+              const diffMins = Math.floor(diffMs / 60000);
+              const diffHours = Math.floor(diffMs / 3600000);
+              const diffDays = Math.floor(diffMs / 86400000);
+              
+              if (diffMins < 1) timeText = "Just now";
+              else if (diffMins < 60) timeText = `${diffMins}m ago`;
+              else if (diffHours < 24) timeText = `${diffHours}h ago`;
+              else timeText = `${diffDays}d ago`;
+            }
+            
+            // Different content based on notification type
+            let bodyContent = '';
+            if (notif.type === 'assignment') {
+              bodyContent = `
+                <div class="notification-body">
+                  Type: ${notif.assignmentType || 'Quiz'}<br>
+                  Competencies: ${notif.competencies ? notif.competencies.join(', ') : 'n/a'}<br>
+                  ${notif.time ? `Time: ${notif.time}<br>` : ''}
+                  ${notif.difficulty ? `Difficulty: ${notif.difficulty}` : ''}
+                </div>
+              `;
+            } else {
+              bodyContent = `
+                <div class="notification-body">
+                  ${notif.message || notif.title || 'Notification'}
+                  ${notif.score !== undefined ? `<br>Score: ${notif.score}/${notif.totalQuestions || notif.maxScore || ''}` : ''}
+                </div>
+              `;
+            }
+            
+            item.innerHTML = `
+              <div class="notification-header">
+                <strong>${notif.message || notif.title || 'Notification'}</strong>
+                <span class="notification-time">${timeText}</span>
+              </div>
+              ${bodyContent}
+            `;
+            
+            // Add click handler based on notification type
+            if (notif.type === 'assignment' && notif.assignmentId) {
+              item.style.cursor = 'pointer';
+              item.addEventListener("click", async () => {
+                // Mark as read
+                if (!notif.read) {
+                  doc.ref.update({ read: true });
+                }
+                item.classList.add("read");
+                
+                // Fetch assignment and open assignment modal
+                try {
+                  const assignmentDoc = await db.collection('assignments').doc(notif.assignmentId).get();
+                  if (assignmentDoc.exists) {
+                    const assignment = { id: assignmentDoc.id, ...assignmentDoc.data() };
+                    window.currentAssignment = assignment;
+                    window.latestAssignmentId = assignmentDoc.id;
+                    
+                    // Close notification panel
+                    toggleNotificationPanel();
+                    
+                    // Open assignment modal (which will show "I'll do it now/later" buttons)
+                    openFullAssignmentModal(assignment);
+                  } else {
+                    alert('Assignment not found');
+                  }
+                } catch (error) {
+                  console.error('Error fetching assignment:', error);
+                  alert('Error opening assignment: ' + error.message);
+                }
+              });
+            } else {
+              item.addEventListener("click", () => {
+                if (!notif.read) {
+                  doc.ref.update({ read: true });
+                }
+                item.classList.add("read");
+              });
+            }
+            
+            notificationList.appendChild(item);
+          });
+          
+          updateNotificationBadge(unreadCount);
+        }, (error) => {
+          console.error("Error loading notifications:", error);
+        });
+    }
+
+    // Modal Functions (preserved from original)
+    function closeSummaryModal() {
+      document.getElementById("summaryModal").classList.remove("show");
+    }
+    window.closeSummaryModal = closeSummaryModal;
+
+    async function openSummaryModal(menteeId, menteeName) {
+      const modal = document.getElementById("summaryModal");
+      modal.classList.add("show");
+      const modalTitle = document.getElementById("modalTitle");
+      if (modalTitle) modalTitle.textContent = `Summary for ${menteeName}`;
+      
+      try {
+        const menteeData = window.globalMenteeData && window.globalMenteeData[menteeId];
+        if (!menteeData) {
+          modal.querySelector('.num-answered').textContent = "0";
+          modal.querySelector('.mcq-accuracy').textContent = "0%";
+          const grid = modal.querySelector('.competency-grid');
+          if (grid) grid.innerHTML = '';
+          return;
+        }
+        
+        const now = new Date();
+        const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+        let questionsThisWeek = 0, totalCorrect = 0, totalQuestions = 0;
+        let competencyStats = {};
+        
+        menteeData.assignments.forEach(assignment => {
+          const score = assignment.score, maxScore = assignment.maxScore;
+          const correctCompetencies = assignment.correctCompetencies || [];
+          const allCompetencies = assignment.competencies || [];
+          
+          if (typeof score === 'number' && typeof maxScore === 'number' && maxScore > 0) {
+            totalCorrect += score;
+            totalQuestions += maxScore;
+            let createdAt;
+            if (assignment.createdAt && assignment.createdAt.toDate) {
+              createdAt = assignment.createdAt.toDate();
+            } else if (assignment.createdAt) {
+              createdAt = new Date(assignment.createdAt);
+            }
+            if (createdAt && createdAt >= weekAgo) questionsThisWeek += maxScore;
+          }
+          
+          correctCompetencies.forEach(c => {
+            if (!competencyStats[c]) competencyStats[c] = { total: 0, correct: 0 };
+            competencyStats[c].correct += 1;
+          });
+          allCompetencies.forEach(c => {
+            if (!competencyStats[c]) competencyStats[c] = { total: 0, correct: 0 };
+            competencyStats[c].total += 1;
+          });
+        });
+        
+        let bestComp = null, worstComp = null, bestAcc = -1, worstAcc = 101;
+        Object.keys(competencyStats).forEach(c => {
+          const stat = competencyStats[c];
+          if (stat.total > 0) {
+            const acc = Math.round((stat.correct / stat.total) * 100);
+            if (acc > bestAcc) { bestAcc = acc; bestComp = c; }
+            if (acc < worstAcc) { worstAcc = acc; worstComp = c; }
+          }
+        });
+        
+        bestComp = bestComp || 'n/a';
+        worstComp = worstComp || 'n/a';
+        bestAcc = bestAcc === -1 ? 0 : bestAcc;
+        worstAcc = worstAcc === 101 ? 0 : worstAcc;
+        const overallAccuracy = totalQuestions > 0 ? Math.round((totalCorrect / totalQuestions) * 100) : 0;
+        
+        modal.querySelector('.num-answered').textContent = questionsThisWeek;
+        modal.querySelector('.mcq-accuracy').textContent = overallAccuracy + "%";
+        
+        const grid = modal.querySelector('.competency-grid');
+        if (grid) {
+          grid.innerHTML = `
+            <div style="font-weight: 600; text-align: left;">Best Competency:</div>
+            <div style="display: flex; align-items: center; gap: 0.6rem;">
+              <span style="color: #059669; font-weight: 500;">${bestComp}</span>
+              <span style="background: #e6f5ef; color: #059669; font-size: 0.98rem; border-radius: 8px; padding: 3px 13px; font-weight: 600;">${bestAcc}%</span>
+            </div>
+            <div style="font-weight: 600; text-align: left;">Weakest Competency:</div>
+            <div style="display: flex; align-items: center; gap: 0.6rem;">
+              <span style="color: #f59e42; font-weight: 500;">${worstComp}</span>
+              <span style="background: #fff5e6; color: #d97706; font-size: 0.98rem; border-radius: 8px; padding: 3px 13px; font-weight: 600;">${worstAcc}%</span>
+            </div>
+          `;
+        }
+      } catch (error) {
+        console.error('Error in openSummaryModal:', error);
+        modal.querySelector('.num-answered').textContent = "0";
+        modal.querySelector('.mcq-accuracy').textContent = "0%";
+        const grid = modal.querySelector('.competency-grid');
+        if (grid) grid.innerHTML = '';
+      }
+    }
+    window.openSummaryModal = openSummaryModal;
+
+    // MeiliSearch Integration
+    const client = new MeiliSearch({ host: 'http://127.0.0.1:7700' });
+    const index = client.index('content');
+    const searchBox = document.getElementById('navbarSearch');
+    const searchDropdown = document.getElementById('searchDropdown');
+
+    if (searchBox && searchDropdown) {
+      searchBox.addEventListener('input', async function(e) {
+        const query = e.target.value.trim();
+        if (!query) {
+          searchDropdown.style.display = 'none';
+          searchDropdown.innerHTML = '';
+          return;
+        }
+        try {
+          const result = await index.search(query, { limit: 5 });
+          if (!result.hits.length) {
+            searchDropdown.style.display = 'none';
+            searchDropdown.innerHTML = '';
+            return;
+          }
+          searchDropdown.style.display = 'block';
+          searchDropdown.innerHTML = result.hits.map(doc => `
+            <div class="dropdown-result" tabindex="0" data-url="${doc.url}">
+              <b>${doc.title}</b><br>
+              <span style="font-size:12px;color:#888;">${doc.category || ''}${doc.tags ? ' | ' + doc.tags.join(', ') : ''}</span>
+            </div>
+          `).join('');
+        } catch (err) {
+          searchDropdown.style.display = 'none';
+          searchDropdown.innerHTML = '';
+        }
+      });
+
+      searchDropdown.addEventListener('click', function(e) {
+        const target = e.target.closest('.dropdown-result');
+        if (target && target.dataset.url) {
+          window.location = target.dataset.url;
+        }
+      });
+
+      searchBox.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' && searchDropdown.innerHTML) {
+          const first = searchDropdown.querySelector('.dropdown-result');
+          if (first && first.dataset.url) {
+            window.location = first.dataset.url;
+          }
+        }
+      });
+
+      document.addEventListener('click', function(e) {
+        if (!searchBox.contains(e.target) && !searchDropdown.contains(e.target)) {
+          searchDropdown.style.display = 'none';
+        }
+      });
+    }
+
+    // Load mentee data for modal functionality
+    window.mentorComps = [];
+    window.mentees = [];
+    window.allData = {};
+    window.globalMenteeData = {};
+    window.menteeIdNameMap = {};
+
+    async function loadMenteeData() {
+      try {
+        const user = auth.currentUser || await new Promise(resolve => auth.onAuthStateChanged(resolve));
+        if (!user) return;
+
+        // Check mentor status and show/hide mentor link
+        db.collection('users').doc(user.uid).get().then((doc) => {
+          const mentorNavLink = document.getElementById('mentorNavLink');
+          if (mentorNavLink) {
+            const isMentor = doc.exists && doc.data().isMentor === true;
+            mentorNavLink.style.display = isMentor ? 'block' : 'none';
+          }
+        }).catch((error) => {
+          console.error('Error checking mentor status:', error);
+        });
+
+        // 1. Get mentor info and competitions
+        const userDoc = await db.collection('users').doc(user.uid).get();
+        const userData = userDoc.data();
+        window.mentorComps = Array.isArray(userData.mentorCompetition)
+          ? userData.mentorCompetition
+          : [userData.mentorCompetition].filter(Boolean);
+
+        // 2. Find all mentees matching any of the mentor's competitions
+        const usersSnap = await db.collection('users').get();
+        window.mentees = [];
+        usersSnap.forEach(doc => {
+          if (doc.id === user.uid) return;
+          const d = doc.data();
+          let comps = Array.isArray(d.competitions) ? d.competitions : [d.competitions].filter(Boolean);
+          if (comps.some(c => window.mentorComps.includes(c))) {
+            window.mentees.push({
+              id: doc.id,
+              name: d.name || d.fullName || d.email || '(unnamed)',
+              grade: d.grade || '',
+              comps: comps.filter(Boolean)
+            });
+          }
+        });
+
+        // Create mentee ID to name map
+        window.menteeIdNameMap = {};
+        window.mentees.forEach(m => window.menteeIdNameMap[m.id] = m.name);
+
+        // 3. Load assignment data for each mentee
+        for (let mentee of window.mentees) {
+          let qs = await db.collection('assignments')
+            .where('to', '==', mentee.id)
+            .where('type', 'in', ['written','quiz'])
+            .where('status', '==', 'complete')
+            .orderBy('createdAt')
+            .get();
+          
+          let rawAssignments = [];
+          
+          qs.forEach(doc => {
+            let d = doc.data();
+            rawAssignments.push({
+              ...d,
+              id: doc.id,
+              createdAt: d.createdAt
+            });
+          });
+          
+          // Store for modal use
+          window.globalMenteeData[mentee.id] = {
+            name: mentee.name,
+            assignments: rawAssignments
+          };
+        }
+
+        // Set up live listener for recent activity
+        const menteeIds = window.mentees.map(m => m.id);
+        if (menteeIds.length > 0) {
+          setupRecentActivityListener(menteeIds);
+        }
+
+        console.log('Mentee data loaded successfully', {
+          mentees: window.mentees.length,
+          globalData: Object.keys(window.globalMenteeData).length
+        });
+      } catch (error) {
+        console.error('Error loading mentee data:', error);
+      }
+    }
+
+    function renderRecentActivity(assignments, containerId = 'recentActivityContainer') {
+      const container = document.getElementById(containerId);
+      if (!container) return;
+      container.innerHTML = '';
+
+      // Sort by date, descending
+      assignments = assignments
+        .filter(a => a.completedAt || a.createdAt)
+        .sort((a, b) => {
+          const adate = a.completedAt?.toDate?.() || a.createdAt?.toDate?.() || new Date(0);
+          const bdate = b.completedAt?.toDate?.() || b.createdAt?.toDate?.() || new Date(0);
+          return bdate - adate;
+        })
+        .slice(0, 10);
+
+      assignments.forEach(a => {
+        const dateObj = a.completedAt?.toDate?.() || a.createdAt?.toDate?.() || new Date();
+        const dateStr = dateObj.toLocaleDateString(undefined, {
+          month: 'short', day: 'numeric', year: 'numeric'
+        });
+        let dotColor = 'gray';
+        if (a.status === 'complete' && a.score === a.maxScore) dotColor = 'green';
+        else if (a.status === 'complete') dotColor = 'yellow';
+
+        const name = window.menteeIdNameMap?.[a.to] || 'Student';
+        const title = a.title || (a.type ? a.type.charAt(0).toUpperCase() + a.type.slice(1) + " Assignment" : "Assignment");
+        const scoreStr = (typeof a.score === 'number' && typeof a.maxScore === 'number')
+          ? `<b>${a.score}/${a.maxScore}</b>`
+          : `<b>—</b>`;
+
+        container.innerHTML += `
+          <div class="result-row">
+            <span class="dot ${dotColor}"></span>
+            <span class="result-title">${name} • ${title}</span>
+            <span class="result-date">${dateStr}</span>
+            <span class="result-score">${scoreStr}</span>
+          </div>
+        `;
+      });
+
+      if (assignments.length === 0) {
+        container.innerHTML = '<div style="color:#999; padding:1rem;">No recent activity.</div>';
+      }
+    }
+
+    function setupRecentActivityListener(menteeIdsArray) {
+      if (window.recentActivityUnsub) window.recentActivityUnsub();
+
+      const batchSize = 10;
+      const allActivities = [];
+      let batchesDone = 0;
+      let batches = [];
+      for (let i = 0; i < menteeIdsArray.length; i += batchSize) {
+        batches.push(menteeIdsArray.slice(i, i + batchSize));
+      }
+
+      function renderAllActivities() {
+        const merged = allActivities
+          .sort((a, b) => {
+            const adate = a.completedAt?.toDate?.() || a.createdAt?.toDate?.() || new Date(0);
+            const bdate = b.completedAt?.toDate?.() || b.createdAt?.toDate?.() || new Date(0);
+            return bdate - adate;
+          })
+          .slice(0, 10);
+        renderRecentActivity(merged);
+      }
+
+      window.recentActivityUnsub = () => {};
+
+      batches.forEach((idBatch, idx) => {
+        const unsub = db.collection('assignments')
+          .where('to', 'in', idBatch)
+          .where('status', '==', 'complete')
+          .orderBy('completedAt', 'desc')
+          .limit(10)
+          .onSnapshot(snapshot => {
+            allActivities.splice(
+              idx * batchSize,
+              batchSize,
+              ...snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }))
+            );
+            batchesDone++;
+            if (batchesDone === batches.length) {
+              renderAllActivities();
+            }
+          });
+        window.recentActivityUnsub = (function(oldUnsub) {
+          return function() {
+            unsub();
+            if (oldUnsub) oldUnsub();
+          }
+        })(window.recentActivityUnsub);
+      });
+    }
+
+    // Event Listeners
+    document.addEventListener('DOMContentLoaded', () => {
+      createStars();
+      
+      // Modal close handlers
+      const closeModalBtn = document.querySelector('.close-modal');
+      const backdrop = document.getElementById("trainingBackdrop");
+      const startBtn = document.getElementById("startTrainingBtn");
+      const backBtn = document.getElementById("backToModulesBtn");
+      const proceedBtn = document.getElementById("proceedToNextBtn");
+      
+      if (closeModalBtn) {
+        closeModalBtn.addEventListener('click', closeTrainingModal);
+      }
+      
+      if (backdrop) {
+        backdrop.addEventListener('click', (e) => {
+          if (e.target === backdrop) {
+            closeTrainingModal();
+            closeMentorAccessModal();
+          }
+        });
+      }
+
+      // Mentor access modal backdrop
+      const mentorAccessBackdrop = document.getElementById("mentorAccessBackdrop");
+      if (mentorAccessBackdrop) {
+        mentorAccessBackdrop.addEventListener('click', (e) => {
+          if (e.target === mentorAccessBackdrop) closeMentorAccessModal();
+        });
+      }
+      
+      if (startBtn) {
+        startBtn.addEventListener('click', () => {
+          showModuleView();
+        });
+      }
+      
+      if (backBtn) {
+        backBtn.addEventListener('click', () => {
+          showGridView();
+        });
+      }
+      
+      if (proceedBtn) {
+        proceedBtn.addEventListener('click', () => {
+          showQuiz();
+        });
+      }
+      
+      // Escape key to close modals
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          const modal = document.getElementById("trainingModal");
+          const mentorModal = document.getElementById("mentorAccessModal");
+          if (modal && !modal.classList.contains('hidden')) {
+            closeTrainingModal();
+          }
+          if (mentorModal && !mentorModal.classList.contains('hidden')) {
+            closeMentorAccessModal();
+          }
+        }
+      });
+      
+      // Close mobile nav when clicking a nav link
+      document.querySelectorAll('.blaze-nav .nav-link').forEach(link => {
+        link.addEventListener('click', () => {
+          if (window.innerWidth <= 768) {
+            if (window.toggleMobileNav) {
+              window.toggleMobileNav();
+            }
+          }
+        });
+      });
+      
+      // Initialize
+      renderTrainingCards();
+      
+      auth.onAuthStateChanged(async (user) => {
+        if (user) {
+          setupNotifications();
+          await loadMenteeData();
+          renderTrainingCards(); // Re-render with progress
+        }
+      });
+    });
+
+    // ========== HELPER FUNCTIONS ==========
+    // Helper function to convert blob to base64
+    async function blobToBase64(blob) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          const base64 = reader.result.split(',')[1];
+          resolve(base64);
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(blob);
+      });
+    }
+
+    async function cqCaseStudyBlobToBase64(blob) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          const base64 = reader.result.split(',')[1];
+          resolve(base64);
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(blob);
+      });
+    }
+
+    // ========== SPEAKING ASSIGNMENT MODAL FUNCTIONS ==========
+    function openSpeakingAssignmentModal(assignment) {
+      if (assignment && assignment.id) {
+        window.latestAssignmentId = assignment.id;
+        window.currentAssignment = assignment;
+        console.log("Set assignment ID:", assignment.id);
+      }
+      
+      document.getElementById('cq-speaking-title').textContent = "Speaking Assessment";
+      
+      if (window.currentAssignmentQuestions) {
+        document.getElementById('cq-speaking-q1').textContent = window.currentAssignmentQuestions.q1;
+        document.getElementById('cq-speaking-q2').textContent = window.currentAssignmentQuestions.q2;
+      } else if (assignment.questions) {
+        document.getElementById('cq-speaking-q1').textContent = assignment.questions[0] || "No question provided";
+        document.getElementById('cq-speaking-q2').textContent = assignment.questions[1] || "No question provided";
+      }
+      
+      const starsContainer = document.getElementById('cq-speaking-stars');
+      if (starsContainer) {
+        starsContainer.innerHTML = '';
+        for (let i = 0; i < 150; i++) {
+          const star = document.createElement('div');
+          star.className = 'cq-speaking-star';
+          star.style.top = Math.random() * 100 + '%';
+          star.style.left = Math.random() * 100 + '%';
+          const size = Math.random() * 2 + 0.5;
+          star.style.width = size + 'px';
+          star.style.height = size + 'px';
+          star.style.opacity = Math.random() * 0.7 + 0.3;
+          star.style.animationDuration = (Math.random() * 3 + 2) + 's';
+          starsContainer.appendChild(star);
+        }
+      }
+      
+      const recordingIndicator = document.getElementById('cq-speaking-recordingIndicator');
+      if (recordingIndicator) {
+        recordingIndicator.classList.remove('active');
+      }
+      
+      const modal = document.getElementById('cq-speaking-modal');
+      if (modal) {
+        modal.style.display = 'flex';
+      }
+      
+      setTimeout(() => {
+        initializeVideoPreview();
+      }, 100);
+    }
+    window.openSpeakingAssignmentModal = openSpeakingAssignmentModal;
+
+    async function initializeVideoPreview() {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ 
+          video: {
+            width: { min: 640, ideal: 1280, max: 1920 },
+            height: { min: 480, ideal: 720, max: 1080 },
+            frameRate: { min: 15, ideal: 30, max: 60 }
+          }, 
+          audio: {
+            echoCancellation: true,
+            noiseSuppression: true,
+            sampleRate: 44100
+          }
+        });
+        
+        const videoElement = document.getElementById('cq-speaking-videoPreview');
+        const noVideoView = document.getElementById('cq-speaking-noVideoView');
+        
+        if (videoElement) {
+          videoElement.srcObject = stream;
+          videoElement.muted = true;
+          videoElement.autoplay = true;
+          videoElement.playsInline = true;
+          videoElement.style.display = 'block';
+          if (noVideoView) noVideoView.style.display = 'none';
+          
+          cqSpeakingMediaStream = stream;
+          setupRecordingFromStream(stream);
+          
+          videoElement.addEventListener('loadedmetadata', () => {
+            videoElement.play().catch(e => {
+              console.error("Error playing video preview:", e);
+            });
+          });
+        }
+      } catch (error) {
+        console.error('Error initializing video preview:', error);
+        const noVideoView = document.getElementById('cq-speaking-noVideoView');
+        if (noVideoView) {
+          noVideoView.style.display = 'flex';
+        }
+      }
+    }
+
+    function setupRecordingFromStream(stream) {
+      const videoElement = document.getElementById('cq-speaking-videoPreview');
+      if (!videoElement) return;
+      
+      let options = {};
+      if (MediaRecorder.isTypeSupported('video/webm;codecs=vp9')) {
+        options.mimeType = 'video/webm;codecs=vp9';
+      } else if (MediaRecorder.isTypeSupported('video/webm;codecs=vp8')) {
+        options.mimeType = 'video/webm;codecs=vp8';
+      } else if (MediaRecorder.isTypeSupported('video/webm')) {
+        options.mimeType = 'video/webm';
+      } else if (MediaRecorder.isTypeSupported('video/mp4')) {
+        options.mimeType = 'video/mp4';
+      }
+      
+      cqSpeakingMediaRecorder = new MediaRecorder(stream, options);
+      console.log("MediaRecorder created with mimeType:", cqSpeakingMediaRecorder.mimeType);
+      
+      cqSpeakingMediaRecorder.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          cqSpeakingRecordedChunks.push(event.data);
+        }
+      };
+      
+      cqSpeakingMediaRecorder.onstop = () => {
+        if (cqSpeakingRecordedChunks.length === 0) {
+          alert("No video data was recorded. Please try again.");
+          return;
+        }
+        
+        const mimeType = cqSpeakingMediaRecorder.mimeType || 'video/webm';
+        const blob = new Blob(cqSpeakingRecordedChunks, { type: mimeType });
+        const videoURL = URL.createObjectURL(blob);
+        const videoElement = document.getElementById('cq-speaking-videoPreview');
+        const noVideoView = document.getElementById('cq-speaking-noVideoView');
+        if (videoElement) {
+          videoElement.srcObject = null;
+          videoElement.src = videoURL;
+          videoElement.controls = true;
+          videoElement.muted = false;
+          videoElement.style.display = 'block';
+          if (noVideoView) noVideoView.style.display = 'none';
+        }
+        
+        const submitBtn = document.getElementById('cq-speaking-submitBtn');
+        if (submitBtn && cqSpeakingRecordedChunks.length > 0) {
+          submitBtn.style.display = 'block';
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Submit Assessment';
+        }
+      };
+      
+      cqSpeakingMediaRecorder.onerror = (event) => {
+        console.error("MediaRecorder error:", event.error);
+        alert("Recording error: " + (event.error?.message || "Unknown error"));
+        isRecording = false;
+        const recordBtn = document.getElementById('cq-speaking-recordBtn');
+        if (recordBtn) recordBtn.classList.remove('recording');
+        const recordingIndicator = document.getElementById('cq-speaking-recordingIndicator');
+        if (recordingIndicator) recordingIndicator.classList.remove('active');
+      };
+    }
+
+    function toggleSpeakingRecording() {
+      const recordBtn = document.getElementById('cq-speaking-recordBtn');
+      if (!recordBtn) return;
+      
+      if (isRecording) {
+        stopRecording();
+      } else {
+        if (cqSpeakingMediaRecorder && cqSpeakingMediaRecorder.state === 'inactive') {
+          cqSpeakingRecordedChunks = [];
+          try {
+            isRecording = true;
+            recordBtn.classList.add('recording');
+            const recordingIndicator = document.getElementById('cq-speaking-recordingIndicator');
+            if (recordingIndicator) recordingIndicator.classList.add('active');
+            cqSpeakingMediaRecorder.start();
+          } catch (e) {
+            console.error("Error starting recorder:", e);
+            alert("Error starting recording: " + e.message);
+            isRecording = false;
+          }
+        } else if (cqSpeakingMediaStream && !cqSpeakingMediaRecorder) {
+          setupRecordingFromStream(cqSpeakingMediaStream);
+          setTimeout(() => {
+            if (cqSpeakingMediaRecorder && cqSpeakingMediaRecorder.state === 'inactive') {
+              cqSpeakingRecordedChunks = [];
+              try {
+                isRecording = true;
+                recordBtn.classList.add('recording');
+                const recordingIndicator2 = document.getElementById('cq-speaking-recordingIndicator');
+                if (recordingIndicator2) recordingIndicator2.classList.add('active');
+                cqSpeakingMediaRecorder.start();
+              } catch (e) {
+                console.error("Error starting recorder after setup:", e);
+                alert("Error starting recording: " + e.message);
+                isRecording = false;
+              }
+            }
+          }, 200);
+        } else if (!cqSpeakingMediaStream) {
+          initializeVideoPreview();
+        } else {
+          alert("Recording is already in progress or not ready. Please wait.");
+        }
+      }
+    }
+    window.toggleSpeakingRecording = toggleSpeakingRecording;
+
+    function stopRecording() {
+      if (!cqSpeakingMediaRecorder || !isRecording) return;
+      
+      isIntentionallyStopping = true;
+      if (recordingStateMonitor) {
+        clearInterval(recordingStateMonitor);
+        recordingStateMonitor = null;
+      }
+      isRecording = false;
+      
+      if (cqSpeakingMediaRecorder.state === 'recording') {
+        try {
+          cqSpeakingMediaRecorder.requestData();
+          setTimeout(() => {
+            try {
+              cqSpeakingMediaRecorder.stop();
+            } catch (e) {
+              console.error("Error stopping recorder:", e);
+            }
+          }, 100);
+          
+          const recordBtn = document.getElementById('cq-speaking-recordBtn');
+          if (recordBtn) recordBtn.classList.remove('recording');
+          const recordingIndicator = document.getElementById('cq-speaking-recordingIndicator');
+          if (recordingIndicator) recordingIndicator.classList.remove('active');
+          return;
+        } catch (e) {
+          console.error("Error requesting final data:", e);
+        }
+      }
+      
+      try {
+        cqSpeakingMediaRecorder.stop();
+      } catch (e) {
+        console.error("Error stopping recorder:", e);
+      }
+      
+      const recordBtn = document.getElementById('cq-speaking-recordBtn');
+      if (recordBtn) recordBtn.classList.remove('recording');
+      const recordingIndicator = document.getElementById('cq-speaking-recordingIndicator');
+      if (recordingIndicator) recordingIndicator.classList.remove('active');
+      isIntentionallyStopping = false;
+    }
+
+    function cqSpeakingStopAllMedia() {
+      if (cqSpeakingMediaRecorder && cqSpeakingMediaRecorder.state !== 'inactive') {
+        try {
+          cqSpeakingMediaRecorder.stop();
+        } catch (e) {
+          console.error("Error stopping recorder:", e);
+        }
+      }
+      
+      if (cqSpeakingMediaStream) {
+        cqSpeakingMediaStream.getTracks().forEach(track => track.stop());
+        cqSpeakingMediaStream = null;
+      }
+      
+      cqSpeakingMediaRecorder = null;
+      cqSpeakingRecordedChunks = [];
+      isRecording = false;
+      
+      const recordBtn = document.getElementById('cq-speaking-recordBtn');
+      if (recordBtn) recordBtn.classList.remove('recording');
+      const recordingIndicator = document.getElementById('cq-speaking-recordingIndicator');
+      if (recordingIndicator) recordingIndicator.classList.remove('active');
+    }
+
+    function closeSpeakingAssignmentModal() {
+      cqSpeakingStopAllMedia();
+      const modal = document.getElementById('cq-speaking-modal');
+      if (modal) modal.style.display = 'none';
+      if (window.latestAssignmentId) {
+        db.collection('assignments').doc(window.latestAssignmentId)
+          .update({ status: "complete" })
+          .then(() => {
+            window.latestAssignmentId = null;
+            window.currentAssignment = null;
+          })
+          .catch(error => {
+            console.error("Error updating assignment status:", error);
+          });
+      }
+    }
+    window.closeSpeakingAssignmentModal = closeSpeakingAssignmentModal;
+
+    async function submitSpeakingResponse() {
+      if (!window.latestAssignmentId || cqSpeakingRecordedChunks.length === 0) {
+        alert("Recording not found or assignment ID missing.");
+        return;
+      }
+
+      const submitBtn = document.getElementById('cq-speaking-submitBtn');
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Submitting...';
+      }
+
+      const blob = new Blob(cqSpeakingRecordedChunks, { type: 'video/webm' });
+      const filename = `${firebase.auth().currentUser.uid}-${Date.now()}.webm`;
+      const GITHUB_USERNAME = "Anjay209";
+      const GITHUB_REPO = "video-storage";
+      const GITHUB_TOKEN = "REDACTED_TOKEN";
+      let githubApiUrl = `https://github-proxy.certquest.workers.dev/github/repos/${GITHUB_USERNAME}/${GITHUB_REPO}/contents/docs/videos/${filename}`;
+      let githubPagesUrl = `https://${GITHUB_USERNAME.toLowerCase()}.github.io/${GITHUB_REPO}/docs/videos/${filename}`;
+
+      try {
+        const base64 = await blobToBase64(blob);
+        const uploadRes = await fetch(githubApiUrl, {
+          method: 'PUT',
+          headers: {
+            Authorization: `Bearer ${GITHUB_TOKEN}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            message: `Upload ${filename}`,
+            content: base64,
+            branch: 'main'
+          })
+        });
+
+        if (!uploadRes.ok) {
+          const errData = await uploadRes.json().catch(() => ({}));
+          const errorMessage = errData?.message || "GitHub upload failed";
+          
+          if (uploadRes.status === 409) {
+            try {
+              const getRes = await fetch(githubApiUrl, {
+                headers: {
+                  Authorization: `Bearer ${GITHUB_TOKEN}`,
+                  'Accept': 'application/vnd.github.v3+json'
+                }
+              });
+              
+              if (getRes.ok) {
+                const existingFile = await getRes.json();
+                const updateRes = await fetch(githubApiUrl, {
+                  method: 'PUT',
+                  headers: {
+                    Authorization: `Bearer ${GITHUB_TOKEN}`,
+                    'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify({
+                    message: `Update ${filename}`,
+                    content: base64,
+                    branch: 'main',
+                    sha: existingFile.sha
+                  })
+                });
+                
+                if (!updateRes.ok) {
+                  throw new Error("Failed to update existing file");
+                }
+              } else {
+                throw new Error("Could not get existing file info");
+              }
+            } catch (updateError) {
+              const uniqueFilename = `${firebase.auth().currentUser.uid}-${Date.now()}-${Math.random().toString(36).substring(7)}.webm`;
+              const uniqueGithubApiUrl = `https://github-proxy.certquest.workers.dev/github/repos/${GITHUB_USERNAME}/${GITHUB_REPO}/contents/docs/videos/${uniqueFilename}`;
+              const uniqueGithubPagesUrl = `https://${GITHUB_USERNAME.toLowerCase()}.github.io/${GITHUB_REPO}/docs/videos/${uniqueFilename}`;
+              
+              const retryRes = await fetch(uniqueGithubApiUrl, {
+                method: 'PUT',
+                headers: {
+                  Authorization: `Bearer ${GITHUB_TOKEN}`,
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                  message: `Upload ${uniqueFilename}`,
+                  content: base64,
+                  branch: 'main'
+                })
+              });
+              
+              if (!retryRes.ok) {
+                throw new Error("Failed to upload with unique filename");
+              }
+              
+              githubPagesUrl = uniqueGithubPagesUrl;
+            }
+          } else {
+            throw new Error(errorMessage);
+          }
+        }
+
+        await firebase.firestore()
+          .collection('assignments')
+          .doc(window.latestAssignmentId)
+          .update({
+            status: "complete",
+            completedAt: firebase.firestore.FieldValue.serverTimestamp(),
+            recordingUrl: githubPagesUrl
+          });
+
+        const user = firebase.auth().currentUser;
+        const userId = user?.uid;
+        const assignmentId = window.latestAssignmentId || window.currentAssignment?.id;
+        
+        if (userId && assignmentId && typeof assignmentId === 'string' && assignmentId.trim() !== '') {
+          try {
+            await firebase.firestore()
+              .collection('users')
+              .doc(userId)
+              .collection('assignments')
+              .doc(assignmentId)
+              .set({
+                status: "complete",
+                completedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                recordingUrl: githubPagesUrl
+              }, { merge: true });
+          } catch (userUpdateError) {
+            console.error("Error updating user assignments:", userUpdateError);
+          }
+        }
+
+        // Fetch assignment data to get competencies
+        let competencies = [];
+        let assignmentName = 'Speaking Assessment';
+        try {
+          const assignmentDoc = await firebase.firestore()
+            .collection('assignments')
+            .doc(window.latestAssignmentId)
+            .get();
+          
+          if (assignmentDoc.exists) {
+            const assignmentData = assignmentDoc.data();
+            competencies = assignmentData.competencies || [];
+            assignmentName = assignmentData.title || 'Speaking Assessment';
+          }
+        } catch (error) {
+          console.error("Error fetching assignment data:", error);
+        }
+
+        // Show congrats modal
+        showCongratsModal({ 
+          score: undefined, 
+          totalQuestions: undefined,
+          assignmentName: assignmentName,
+          competencies: competencies,
+          assignmentType: 'speaking'
+        });
+        
+        closeSpeakingAssignmentModal();
+      } catch (error) {
+        console.error("Upload Error:", error);
+        alert("Upload Error: " + error.message);
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Submit Assessment';
+        }
+      }
+    }
+    window.submitSpeakingResponse = submitSpeakingResponse;
+
+    // ========== CASE STUDY MODAL FUNCTIONS ==========
+    function toggleCaseStudyTimer() {
+      cqCaseStudyTimerActive = !cqCaseStudyTimerActive;
+      const timerEl = document.getElementById('cq-case-study-timer');
+      const timerText = document.getElementById('cq-case-study-timer-text');
+      const timerStart = document.getElementById('cq-case-study-timer-start');
+      
+      if (cqCaseStudyTimerActive) {
+        timerEl.classList.add('active');
+        if (timerStart) timerStart.style.display = 'none';
+        
+        cqCaseStudyTimerInterval = setInterval(() => {
+          if (cqCaseStudyTimeLeft > 0) {
+            cqCaseStudyTimeLeft--;
+            if (timerText) {
+              const mins = Math.floor(cqCaseStudyTimeLeft / 60);
+              const secs = cqCaseStudyTimeLeft % 60;
+              timerText.textContent = `${mins}:${secs.toString().padStart(2, '0')}`;
+            }
+          } else {
+            cqCaseStudyTimerActive = false;
+            if (timerEl) timerEl.classList.remove('active');
+            if (timerStart) timerStart.style.display = 'inline';
+            if (cqCaseStudyTimerInterval) {
+              clearInterval(cqCaseStudyTimerInterval);
+              cqCaseStudyTimerInterval = null;
+            }
+            alert('Time is up!');
+          }
+        }, 1000);
+      } else {
+        timerEl.classList.remove('active');
+        if (timerStart) timerStart.style.display = 'inline';
+        if (cqCaseStudyTimerInterval) {
+          clearInterval(cqCaseStudyTimerInterval);
+          cqCaseStudyTimerInterval = null;
+        }
+      }
+    }
+    window.toggleCaseStudyTimer = toggleCaseStudyTimer;
+
+    function expandCaseStudyContent() {
+      document.getElementById('cq-case-study-top-info').style.display = 'none';
+      document.getElementById('cq-case-study-video-container').style.display = 'none';
+      document.getElementById('cq-case-study-bottom-info').style.display = 'none';
+      document.getElementById('cq-case-study-controls-wrapper').style.display = 'none';
+      document.getElementById('cq-case-study-expanded-content').style.display = 'flex';
+    }
+    window.expandCaseStudyContent = expandCaseStudyContent;
+
+    function collapseCaseStudyContent() {
+      document.getElementById('cq-case-study-top-info').style.display = 'grid';
+      document.getElementById('cq-case-study-video-container').style.display = 'flex';
+      document.getElementById('cq-case-study-bottom-info').style.display = 'grid';
+      document.getElementById('cq-case-study-controls-wrapper').style.display = 'flex';
+      document.getElementById('cq-case-study-expanded-content').style.display = 'none';
+    }
+    window.collapseCaseStudyContent = collapseCaseStudyContent;
+
+    function openCaseStudyModal(assignment) {
+      if (assignment && assignment.id) {
+        window.latestAssignmentId = assignment.id;
+        window.currentAssignment = assignment;
+        console.log("Set assignment ID:", assignment.id);
+      }
+      
+      document.getElementById('cq-case-study-title').textContent = "Case Study";
+      const caseName = assignment.title || "Case Study";
+      document.getElementById('cq-case-study-name').textContent = caseName;
+      document.getElementById('cq-case-study-expanded-title').textContent = caseName;
+      
+      const caseContent = assignment.description || assignment.caseStudyContent || "No case study content provided.";
+      const previewText = caseContent.substring(0, 100) + (caseContent.length > 100 ? '...' : '');
+      document.getElementById('cq-case-study-content-preview-text').textContent = previewText;
+      document.getElementById('cq-case-study-full-content').textContent = caseContent;
+      
+      if (assignment.questions && assignment.questions.length > 0) {
+        document.getElementById('cq-case-study-q1').textContent = assignment.questions[0] || "No question provided";
+        if (assignment.questions.length > 1) {
+          document.getElementById('cq-case-study-q2').textContent = assignment.questions[1] || "No question provided";
+        }
+      }
+      
+      cqCaseStudyTimeLeft = 1200;
+      const timerText = document.getElementById('cq-case-study-timer-text');
+      if (timerText) {
+        const mins = Math.floor(cqCaseStudyTimeLeft / 60);
+        const secs = cqCaseStudyTimeLeft % 60;
+        timerText.textContent = `${mins}:${secs.toString().padStart(2, '0')}`;
+      }
+      cqCaseStudyTimerActive = false;
+      const timerEl = document.getElementById('cq-case-study-timer');
+      if (timerEl) timerEl.classList.remove('active');
+      
+      const starsContainer = document.getElementById('cq-case-study-stars');
+      if (starsContainer) {
+        starsContainer.innerHTML = '';
+        for (let i = 0; i < 150; i++) {
+          const star = document.createElement('div');
+          star.className = 'cq-case-study-star';
+          star.style.top = Math.random() * 100 + '%';
+          star.style.left = Math.random() * 100 + '%';
+          const size = Math.random() * 2 + 0.5;
+          star.style.width = size + 'px';
+          star.style.height = size + 'px';
+          star.style.opacity = Math.random() * 0.7 + 0.3;
+          star.style.animationDuration = (Math.random() * 3 + 2) + 's';
+          starsContainer.appendChild(star);
+        }
+      }
+      
+      const recordingIndicator = document.getElementById('cq-case-study-recordingIndicator');
+      if (recordingIndicator) {
+        recordingIndicator.classList.remove('active');
+      }
+      
+      collapseCaseStudyContent();
+      document.getElementById('cq-case-study-submitBtn').style.display = 'none';
+      document.getElementById('cq-case-study-downloadBtn').style.display = 'none';
+      
+      const modal = document.getElementById('cq-case-study-modal');
+      if (modal) {
+        modal.style.display = 'flex';
+      }
+      
+      setTimeout(() => {
+        cqCaseStudyInitializeVideoPreview();
+      }, 100);
+    }
+    window.openCaseStudyModal = openCaseStudyModal;
+
+    function closeCaseStudyModal() {
+      if (cqCaseStudyTimerInterval) {
+        clearInterval(cqCaseStudyTimerInterval);
+        cqCaseStudyTimerInterval = null;
+      }
+      cqCaseStudyTimerActive = false;
+      cqCaseStudyStopAllMedia();
+      const modal = document.getElementById('cq-case-study-modal');
+      if (modal) {
+        modal.style.display = 'none';
+      }
+    }
+    window.closeCaseStudyModal = closeCaseStudyModal;
+
+    async function cqCaseStudyInitializeVideoPreview() {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ 
+          video: {
+            width: { min: 640, ideal: 1280, max: 1920 },
+            height: { min: 480, ideal: 720, max: 1080 },
+            frameRate: { min: 15, ideal: 30, max: 60 }
+          }, 
+          audio: {
+            echoCancellation: true,
+            noiseSuppression: true,
+            sampleRate: 44100
+          }
+        });
+        
+        const videoElement = document.getElementById('cq-case-study-videoPreview');
+        const noVideoView = document.getElementById('cq-case-study-noVideoView');
+        
+        if (videoElement) {
+          videoElement.srcObject = stream;
+          videoElement.muted = true;
+          videoElement.autoplay = true;
+          videoElement.playsInline = true;
+          videoElement.style.display = 'block';
+          if (noVideoView) noVideoView.style.display = 'none';
+          
+          cqCaseStudyMediaStream = stream;
+          cqCaseStudySetupRecordingFromStream(stream);
+          
+          videoElement.addEventListener('loadedmetadata', () => {
+            videoElement.play().catch(e => {
+              console.error("Error playing video preview:", e);
+            });
+          });
+        }
+      } catch (error) {
+        console.error('Error initializing video preview:', error);
+        const noVideoView = document.getElementById('cq-case-study-noVideoView');
+        if (noVideoView) {
+          noVideoView.style.display = 'flex';
+        }
+      }
+    }
+
+    function cqCaseStudySetupRecordingFromStream(stream) {
+      const videoElement = document.getElementById('cq-case-study-videoPreview');
+      if (!videoElement) return;
+      
+      let options = {};
+      if (MediaRecorder.isTypeSupported('video/webm;codecs=vp9')) {
+        options.mimeType = 'video/webm;codecs=vp9';
+      } else if (MediaRecorder.isTypeSupported('video/webm;codecs=vp8')) {
+        options.mimeType = 'video/webm;codecs=vp8';
+      } else if (MediaRecorder.isTypeSupported('video/webm')) {
+        options.mimeType = 'video/webm';
+      } else if (MediaRecorder.isTypeSupported('video/mp4')) {
+        options.mimeType = 'video/mp4';
+      }
+      
+      cqCaseStudyMediaRecorder = new MediaRecorder(stream, options);
+      console.log("Case Study MediaRecorder created with mimeType:", cqCaseStudyMediaRecorder.mimeType);
+      
+      cqCaseStudyMediaRecorder.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          cqCaseStudyRecordedChunks.push(event.data);
+        }
+      };
+      
+      cqCaseStudyMediaRecorder.onstop = () => {
+        if (cqCaseStudyRecordedChunks.length === 0) {
+          alert("No video data was recorded. Please try again.");
+          return;
+        }
+        
+        const mimeType = cqCaseStudyMediaRecorder.mimeType || 'video/webm';
+        const blob = new Blob(cqCaseStudyRecordedChunks, { type: mimeType });
+        const videoURL = URL.createObjectURL(blob);
+        const videoElement = document.getElementById('cq-case-study-videoPreview');
+        const noVideoView = document.getElementById('cq-case-study-noVideoView');
+        if (videoElement) {
+          videoElement.srcObject = null;
+          videoElement.src = videoURL;
+          videoElement.controls = true;
+          videoElement.muted = false;
+          videoElement.style.display = 'block';
+          if (noVideoView) noVideoView.style.display = 'none';
+        }
+        
+        const submitBtn = document.getElementById('cq-case-study-submitBtn');
+        if (submitBtn) {
+          submitBtn.style.display = 'block';
+        }
+      };
+      
+      cqCaseStudyMediaRecorder.onerror = (event) => {
+        console.error("Case Study MediaRecorder error:", event.error);
+        alert("Recording error: " + event.error.message);
+        cqCaseStudyIsRecording = false;
+      };
+    }
+
+    function cqCaseStudyStopAllMedia() {
+      if (cqCaseStudyMediaRecorder && cqCaseStudyMediaRecorder.state !== 'inactive') {
+        try {
+          cqCaseStudyMediaRecorder.stop();
+        } catch (e) {
+          console.error("Error stopping recorder:", e);
+        }
+      }
+      
+      if (cqCaseStudyMediaStream) {
+        cqCaseStudyMediaStream.getTracks().forEach(track => track.stop());
+        cqCaseStudyMediaStream = null;
+      }
+      
+      cqCaseStudyMediaRecorder = null;
+      cqCaseStudyRecordedChunks = [];
+      cqCaseStudyIsRecording = false;
+      
+      const recordBtn = document.getElementById('cq-case-study-recordBtn');
+      if (recordBtn) {
+        recordBtn.classList.remove('recording');
+      }
+      
+      const recordingIndicator = document.getElementById('cq-case-study-recordingIndicator');
+      if (recordingIndicator) {
+        recordingIndicator.classList.remove('active');
+      }
+    }
+
+    function toggleCaseStudyRecording() {
+      const recordBtn = document.getElementById('cq-case-study-recordBtn');
+      if (!recordBtn) return;
+      
+      if (cqCaseStudyIsRecording) {
+        cqCaseStudyStopRecording();
+      } else {
+        if (cqCaseStudyMediaRecorder && cqCaseStudyMediaRecorder.state === 'inactive') {
+          cqCaseStudyRecordedChunks = [];
+          try {
+            cqCaseStudyIsRecording = true;
+            recordBtn.classList.add('recording');
+            const recordingIndicator = document.getElementById('cq-case-study-recordingIndicator');
+            if (recordingIndicator) {
+              recordingIndicator.classList.add('active');
+            }
+            cqCaseStudyMediaRecorder.start();
+          } catch (e) {
+            console.error("Error starting recorder:", e);
+            alert("Error starting recording: " + e.message);
+            cqCaseStudyIsRecording = false;
+          }
+        } else if (cqCaseStudyMediaStream && !cqCaseStudyMediaRecorder) {
+          cqCaseStudySetupRecordingFromStream(cqCaseStudyMediaStream);
+          setTimeout(() => {
+            if (cqCaseStudyMediaRecorder && cqCaseStudyMediaRecorder.state === 'inactive') {
+              cqCaseStudyRecordedChunks = [];
+              try {
+                cqCaseStudyIsRecording = true;
+                recordBtn.classList.add('recording');
+                const recordingIndicator = document.getElementById('cq-case-study-recordingIndicator');
+                if (recordingIndicator) {
+                  recordingIndicator.classList.add('active');
+                }
+                cqCaseStudyMediaRecorder.start();
+              } catch (e) {
+                console.error("Error starting recorder after setup:", e);
+                alert("Error starting recording: " + e.message);
+                cqCaseStudyIsRecording = false;
+              }
+            }
+          }, 200);
+        } else if (!cqCaseStudyMediaStream) {
+          cqCaseStudyInitializeVideoPreview();
+        } else {
+          alert("Recording is already in progress or not ready. Please wait.");
+        }
+      }
+    }
+    window.toggleCaseStudyRecording = toggleCaseStudyRecording;
+
+    function cqCaseStudyStopRecording() {
+      if (!cqCaseStudyMediaRecorder || !cqCaseStudyIsRecording) return;
+      
+      cqCaseStudyIsIntentionallyStopping = true;
+      cqCaseStudyIsRecording = false;
+      
+      if (cqCaseStudyMediaRecorder.state === 'recording') {
+        try {
+          cqCaseStudyMediaRecorder.requestData();
+          cqCaseStudyMediaRecorder.stop();
+        } catch (e) {
+          console.error("Error stopping recorder:", e);
+        }
+      }
+      
+      const recordBtn = document.getElementById('cq-case-study-recordBtn');
+      if (recordBtn) {
+        recordBtn.classList.remove('recording');
+      }
+      
+      const recordingIndicator = document.getElementById('cq-case-study-recordingIndicator');
+      if (recordingIndicator) {
+        recordingIndicator.classList.remove('active');
+      }
+      
+      cqCaseStudyIsIntentionallyStopping = false;
+    }
+
+    async function submitCaseStudyResponse() {
+      if (!window.latestAssignmentId || cqCaseStudyRecordedChunks.length === 0) {
+        alert("Recording not found or assignment ID missing.");
+        return;
+      }
+
+      const submitBtn = document.getElementById('cq-case-study-submitBtn');
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Submitting...';
+      }
+
+      const blob = new Blob(cqCaseStudyRecordedChunks, { type: 'video/webm' });
+      const filename = `${firebase.auth().currentUser.uid}-${Date.now()}.webm`;
+      const GITHUB_USERNAME = "Anjay209";
+      const GITHUB_REPO = "video-storage";
+      const GITHUB_TOKEN = "REDACTED_TOKEN";
+      let githubApiUrl = `https://github-proxy.certquest.workers.dev/github/repos/${GITHUB_USERNAME}/${GITHUB_REPO}/contents/docs/videos/${filename}`;
+      let githubPagesUrl = `https://${GITHUB_USERNAME.toLowerCase()}.github.io/${GITHUB_REPO}/docs/videos/${filename}`;
+
+      try {
+        const base64 = await cqCaseStudyBlobToBase64(blob);
+        const uploadRes = await fetch(githubApiUrl, {
+          method: 'PUT',
+          headers: {
+            Authorization: `Bearer ${GITHUB_TOKEN}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            message: `Upload ${filename}`,
+            content: base64,
+            branch: 'main'
+          })
+        });
+
+        if (!uploadRes.ok) {
+          const errData = await uploadRes.json().catch(() => ({}));
+          const errorMessage = errData?.message || "GitHub upload failed";
+          
+          if (uploadRes.status === 409) {
+            try {
+              const getRes = await fetch(githubApiUrl, {
+                headers: {
+                  Authorization: `Bearer ${GITHUB_TOKEN}`,
+                  'Accept': 'application/vnd.github.v3+json'
+                }
+              });
+              
+              if (getRes.ok) {
+                const existingFile = await getRes.json();
+                const updateRes = await fetch(githubApiUrl, {
+                  method: 'PUT',
+                  headers: {
+                    Authorization: `Bearer ${GITHUB_TOKEN}`,
+                    'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify({
+                    message: `Update ${filename}`,
+                    content: base64,
+                    branch: 'main',
+                    sha: existingFile.sha
+                  })
+                });
+                
+                if (!updateRes.ok) {
+                  throw new Error("Failed to update existing file");
+                }
+              } else {
+                throw new Error("Could not get existing file info");
+              }
+            } catch (updateError) {
+              const uniqueFilename = `${firebase.auth().currentUser.uid}-${Date.now()}-${Math.random().toString(36).substring(7)}.webm`;
+              const uniqueGithubApiUrl = `https://github-proxy.certquest.workers.dev/github/repos/${GITHUB_USERNAME}/${GITHUB_REPO}/contents/docs/videos/${uniqueFilename}`;
+              const uniqueGithubPagesUrl = `https://${GITHUB_USERNAME.toLowerCase()}.github.io/${GITHUB_REPO}/docs/videos/${uniqueFilename}`;
+              
+              const retryRes = await fetch(uniqueGithubApiUrl, {
+                method: 'PUT',
+                headers: {
+                  Authorization: `Bearer ${GITHUB_TOKEN}`,
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                  message: `Upload ${uniqueFilename}`,
+                  content: base64,
+                  branch: 'main'
+                })
+              });
+              
+              if (!retryRes.ok) {
+                throw new Error("Failed to upload with unique filename");
+              }
+              
+              githubPagesUrl = uniqueGithubPagesUrl;
+            }
+          } else {
+            throw new Error(errorMessage);
+          }
+        }
+
+        await firebase.firestore()
+          .collection('assignments')
+          .doc(window.latestAssignmentId)
+          .update({
+            status: "complete",
+            completedAt: firebase.firestore.FieldValue.serverTimestamp(),
+            recordingUrl: githubPagesUrl
+          });
+
+        const user = firebase.auth().currentUser;
+        const userId = user?.uid;
+        const assignmentId = window.latestAssignmentId || window.currentAssignment?.id;
+        
+        if (userId && assignmentId && typeof assignmentId === 'string' && assignmentId.trim() !== '') {
+          try {
+            await firebase.firestore()
+              .collection('users')
+              .doc(userId)
+              .collection('assignments')
+              .doc(assignmentId)
+              .set({
+                status: "complete",
+                completedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                recordingUrl: githubPagesUrl
+              }, { merge: true });
+          } catch (userUpdateError) {
+            console.error("Error updating user assignments:", userUpdateError);
+          }
+        }
+
+        // Fetch assignment data to get competencies
+        let competencies = [];
+        let assignmentName = 'Case Study';
+        try {
+          const assignmentDoc = await firebase.firestore()
+            .collection('assignments')
+            .doc(window.latestAssignmentId)
+            .get();
+          
+          if (assignmentDoc.exists) {
+            const assignmentData = assignmentDoc.data();
+            competencies = assignmentData.competencies || [];
+            assignmentName = assignmentData.title || 'Case Study';
+          }
+        } catch (error) {
+          console.error("Error fetching assignment data:", error);
+        }
+
+        // Show congrats modal
+        showCongratsModal({ 
+          score: undefined, 
+          totalQuestions: undefined,
+          assignmentName: assignmentName,
+          competencies: competencies,
+          assignmentType: 'case'
+        });
+        
+        closeCaseStudyModal();
+      } catch (error) {
+        console.error("Upload Error:", error);
+        alert("Upload Error: " + error.message);
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Submit Case Study';
+        }
+      }
+    }
+    window.submitCaseStudyResponse = submitCaseStudyResponse;
+
+    // ========== CONGRATULATIONS MODAL FUNCTIONS ==========
+    function showCongratsModal(results) {
+      const modal = document.getElementById('congratsModal');
+      
+      // Check if modal exists
+      if (!modal) {
+        // Fallback to alert if modal doesn't exist
+        alert(results.message || `Congratulations! ${results.assignmentName || 'Assignment'} completed successfully!`);
+        return;
+      }
+      
+      // Handle case study assignments
+      if (results.assignmentType === 'case') {
+        const titleEl = document.getElementById('congratsTitle');
+        const scoreEl = document.getElementById('congratsScore');
+        const subtitleEl = document.getElementById('congratsSubtitle');
+        const assignmentNameEl = document.getElementById('congratsAssignmentName');
+        const competenciesContainer = document.getElementById('congratsCompetencies');
+        
+        if (titleEl) titleEl.textContent = 'Congratulations!';
+        if (scoreEl) scoreEl.textContent = '';
+        if (subtitleEl) subtitleEl.style.display = 'none'; // Hide the score line
+        if (assignmentNameEl) assignmentNameEl.textContent = results.assignmentName || 'Case Study';
+        
+        // Display competencies from Firebase
+        if (competenciesContainer) {
+          if (results.competencies && results.competencies.length > 0) {
+            competenciesContainer.innerHTML = results.competencies.map(comp => {
+              return `
+                <div class="congrats-competency-item" style="background: rgba(30, 41, 59, 0.3); border: 1px solid rgba(249, 115, 22, 0.3); border-radius: 0.5rem; padding: 1rem; backdrop-filter: blur(8px);">
+                  <div class="congrats-competency-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                    <span class="congrats-competency-name" style="font-weight: 600; color: #f97316; font-size: 0.875rem;">${comp}</span>
+                    <span class="congrats-competency-score" style="color: #94a3b8; font-size: 0.75rem;">Completed</span>
+                  </div>
+                  <div class="congrats-competency-progress-bar" style="width: 100%; height: 4px; background: rgba(51, 65, 85, 0.5); border-radius: 2px; overflow: hidden;">
+                    <div class="congrats-competency-progress-fill" style="width: 100%; height: 100%; background: linear-gradient(to right, #f97316, #ef4444); border-radius: 2px;"></div>
+                  </div>
+                </div>
+              `;
+            }).join('');
+          } else {
+            competenciesContainer.innerHTML = '<p style="color: #94a3b8; text-align: center;">No competency breakdown available</p>';
+          }
+        }
+        
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+        createCongratsStars();
+        return;
+      }
+      
+      // Handle speaking assignments (simple message)
+      if (results.assignmentType === 'speaking') {
+        const titleEl = document.getElementById('congratsTitle');
+        const scoreEl = document.getElementById('congratsScore');
+        const subtitleEl = document.getElementById('congratsSubtitle');
+        const assignmentNameEl = document.getElementById('congratsAssignmentName');
+        const competenciesContainer = document.getElementById('congratsCompetencies');
+        
+        if (titleEl) titleEl.textContent = 'Congratulations!';
+        if (scoreEl) scoreEl.textContent = '';
+        if (subtitleEl) {
+          subtitleEl.style.display = 'block';
+          subtitleEl.innerHTML = 'Excellent work! You completed the assignment successfully.';
+        }
+        if (assignmentNameEl) assignmentNameEl.textContent = results.assignmentName || 'Speaking Assessment';
+        
+        // Display competencies from Firebase
+        if (competenciesContainer) {
+          if (results.competencies && results.competencies.length > 0) {
+            competenciesContainer.innerHTML = results.competencies.map(comp => {
+              return `
+                <div class="congrats-competency-item" style="background: rgba(30, 41, 59, 0.3); border: 1px solid rgba(249, 115, 22, 0.3); border-radius: 0.5rem; padding: 1rem; backdrop-filter: blur(8px);">
+                  <div class="congrats-competency-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                    <span class="congrats-competency-name" style="font-weight: 600; color: #f97316; font-size: 0.875rem;">${comp}</span>
+                    <span class="congrats-competency-score" style="color: #94a3b8; font-size: 0.75rem;">Completed</span>
+                  </div>
+                  <div class="congrats-competency-progress-bar" style="width: 100%; height: 4px; background: rgba(51, 65, 85, 0.5); border-radius: 2px; overflow: hidden;">
+                    <div class="congrats-competency-progress-fill" style="width: 100%; height: 100%; background: linear-gradient(to right, #f97316, #ef4444); border-radius: 2px;"></div>
+                  </div>
+                </div>
+              `;
+            }).join('');
+          } else {
+            competenciesContainer.innerHTML = '<p style="color: #94a3b8; text-align: center;">No competency breakdown available</p>';
+          }
+        }
+        
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+        createCongratsStars();
+        return;
+      }
+      
+      // Handle written assignments (with scores)
+      const percentage = results.percentage || (results.score && results.totalQuestions ? Math.round((results.score / results.totalQuestions) * 100) : 0);
+      
+      const titleEl = document.getElementById('congratsTitle');
+      const scoreEl = document.getElementById('congratsScore');
+      const subtitleEl = document.getElementById('congratsSubtitle');
+      const assignmentNameEl = document.getElementById('congratsAssignmentName');
+      const competenciesContainer = document.getElementById('congratsCompetencies');
+      
+      if (titleEl) titleEl.textContent = 'Congratulations!';
+      if (scoreEl && results.score !== undefined && results.totalQuestions !== undefined) {
+        scoreEl.textContent = `${results.score}/${results.totalQuestions}`;
+      }
+      if (subtitleEl) {
+        subtitleEl.style.display = 'block'; // Reset display for other assignment types
+        if (results.score !== undefined && results.totalQuestions !== undefined) {
+          subtitleEl.innerHTML = 
+            `Excellent work! You scored <span id="congratsScoreSpan" style="background: linear-gradient(to right, #ef4444, #f97316, #eab308); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; font-weight: 900; font-size: 1.75rem;">${results.score}/${results.totalQuestions}</span>`;
+        } else if (results.message) {
+          subtitleEl.innerHTML = results.message;
+        }
+      }
+      
+      if (assignmentNameEl) assignmentNameEl.textContent = results.assignmentName || 'Written Practice';
+      
+      if (competenciesContainer) {
+        if (results.competencyStats && Object.keys(results.competencyStats).length > 0) {
+          competenciesContainer.innerHTML = Object.entries(results.competencyStats).map(([comp, stats]) => {
+            const percentage = Math.round((stats.correct / stats.total) * 100);
+            const isFull = stats.correct === stats.total;
+            return `
+              <div class="congrats-competency-item">
+                <div class="congrats-competency-header">
+                  <span class="congrats-competency-name">${comp}</span>
+                  <span class="congrats-competency-score">${stats.correct}/${stats.total} correct</span>
+                </div>
+                <div class="congrats-competency-progress-bar">
+                  <div class="congrats-competency-progress-fill ${isFull ? 'full' : ''}" style="width: ${percentage}%"></div>
+                </div>
+              </div>
+            `;
+          }).join('');
+        } else {
+          competenciesContainer.innerHTML = '<p style="color: #94a3b8; text-align: center;">No competency breakdown available</p>';
+        }
+      }
+      
+      modal.style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+      createCongratsStars();
+    }
+    window.showCongratsModal = showCongratsModal;
+
+    function createCongratsStars() {
+      const starsContainer = document.getElementById('congratsStarsContainer');
+      if (!starsContainer) return;
+      
+      starsContainer.innerHTML = '';
+      
+      for (let i = 0; i < 200; i++) {
+        const star = document.createElement('div');
+        star.className = 'practice-quiz-star';
+        
+        const size = Math.random() * 3 + 0.5;
+        const duration = Math.random() * 4 + 2;
+        const delay = Math.random() * 2;
+        const randomLeft = Math.random() * 100;
+        const randomTop = Math.random() * 100;
+        const randomOpacity = Math.random() * 0.9 + 0.3;
+        
+        star.style.width = size + 'px';
+        star.style.height = size + 'px';
+        star.style.left = randomLeft + '%';
+        star.style.top = randomTop + '%';
+        star.style.opacity = randomOpacity;
+        star.style.animation = `practice-quiz-twinkle ${duration}s ease-in-out infinite`;
+        star.style.animationDelay = delay + 's';
+        star.style.boxShadow = `0 0 ${size * 2}px rgba(255, 255, 255, 0.8)`;
+        
+        starsContainer.appendChild(star);
+      }
+    }
+
+    function closeCongratsModal() {
+      const modal = document.getElementById('congratsModal');
+      if (modal) {
+        modal.style.display = 'none';
+      }
+      document.body.style.overflow = 'auto';
+    }
+    window.closeCongratsModal = closeCongratsModal;
+
+    // ========== ASSIGNMENT MODAL FUNCTIONS ==========
+    function openFullAssignmentModal(assignment) {
+      console.log('🔔 openFullAssignmentModal called with:', assignment);
+      
+      if (!assignment) {
+        console.error('❌ No assignment provided to openFullAssignmentModal');
+        return;
+      }
+      
+      const modal = document.getElementById('cq-assignment-modal');
+      const titleEl = document.getElementById('cq-assignment-title');
+      const infoEl = document.getElementById('cq-assignment-info');
+      const quizEl = document.getElementById('cq-assignment-quiz');
+      const fieldsElement = document.getElementById('cq-assignment-fields');
+      
+      if (!modal) {
+        console.error('❌ Modal element not found: cq-assignment-modal');
+        alert('Assignment modal not found. Please refresh the page.');
+        return;
+      }
+      
+      if (!titleEl) {
+        console.error('❌ Title element not found: cq-assignment-title');
+        return;
+      }
+      
+      if (!fieldsElement) {
+        console.error('❌ Fields element not found: cq-assignment-fields');
+        return;
+      }
+      
+      // Set the modal title
+      titleEl.innerText = assignment.title || "New Assignment";
+      
+      // Show info section, hide quiz section
+      if (infoEl) infoEl.style.display = 'block';
+      if (quizEl) quizEl.style.display = 'none';
+      
+      // Fill in all assignment details
+      if (assignment.type === "speaking" || assignment.type === "case") {
+        // Speaking/Case assignment format
+        const q1 = assignment.questions && assignment.questions[0] ? assignment.questions[0] : "No question provided";
+        const q2 = assignment.questions && assignment.questions[1] ? assignment.questions[1] : "No question provided";
+        const q3 = assignment.questions && assignment.questions[2] ? assignment.questions[2] : null;
+        
+        fieldsElement.innerHTML = `
+          <div><b>Type:</b> ${assignment.type === "speaking" ? "Speaking" : "Case"} Assignment</div>
+          <div><b>Competencies:</b> ${assignment.competencies ? assignment.competencies.join(', ') : 'n/a'}</div>
+          <div><b>Description:</b> ${assignment.description || 'n/a'}</div>
+          ${assignment.time ? `<div><b>Time Limit:</b> ${assignment.time}</div>` : ''}
+          <div><b>Questions:</b></div>
+          <ul>
+            <li>${q1}</li>
+            <li>${q2}</li>
+            ${q3 ? `<li>${q3}</li>` : ''}
+          </ul>
+        `;
+      } else {
+        // Regular assignment format
+        fieldsElement.innerHTML = `
+          <div><b>Type:</b> ${assignment.type || 'Quiz'} Assignment</div>
+          <div><b>Time:</b> ${assignment.time || 'n/a'}</div>
+          <div><b>Competencies:</b> ${assignment.competencies ? assignment.competencies.join(', ') : 'n/a'}</div>
+          <div><b>Questions:</b><br> <span style="font-weight:400; color:#e2e8f0">${assignment.questions || 'n/a'}</span></div>
+          <div><b>Difficulty:</b> ${assignment.difficulty || 'n/a'}</div>
+          <div><b>Simulate:</b> ${assignment.simulate ? "Yes" : "No"}</div>
+        `;
+      }
+      
+      // Show the modal
+      console.log('✅ Showing modal');
+      modal.style.display = 'block';
+    }
+    window.openFullAssignmentModal = openFullAssignmentModal;
+
+    function closeAssignmentModal() {
+      document.getElementById('cq-assignment-modal').style.display = 'none';
+    }
+    window.closeAssignmentModal = closeAssignmentModal;
+
+    function snoozeAssignment() {
+      closeAssignmentModal();
+    }
+    window.snoozeAssignment = snoozeAssignment;
+
+    async function acceptAssignmentNow() {
+      console.log("🚀 acceptAssignmentNow() called");
+
+      const assignment = window.currentAssignment;
+      console.log("📋 Current assignment:", assignment);
+
+      if (!assignment) {
+        console.error("❌ No current assignment found");
+        return;
+      }
+
+      if (window.latestAssignmentId) {
+        console.log("✅ Marking assignment as seen");
+
+        const updateData = {
+          status: "seen",
+          completedAt: firebase.firestore.FieldValue.serverTimestamp(),
+          acceptedAt: firebase.firestore.FieldValue.serverTimestamp()
+        };
+
+        if (assignment.type === 'written') {
+          updateData.score = 0;
+          updateData.maxScore = assignment.writtenQuestions?.length || 10;
+        }
+
+        try {
+          await db.collection('assignments').doc(window.latestAssignmentId).update(updateData);
+          console.log("✅ Assignment marked as seen successfully");
+        } catch (error) {
+          console.error("❌ Error marking assignment as seen:", error);
+        }
+      }
+
+      // Handle assignment types
+      if (assignment.type === 'case') {
+        console.log("📋 Opening case study modal for case assignment");
+        document.getElementById('cq-assignment-modal').style.display = 'none';
+        
+        // Store assignment questions globally for the case study modal
+        window.currentAssignmentQuestions = {
+          q1: assignment.questions && assignment.questions[0] ? assignment.questions[0] : "No question provided",
+          q2: assignment.questions && assignment.questions[1] ? assignment.questions[1] : "No question provided",
+          title: assignment.title || "Case Study",
+          description: assignment.description || assignment.caseStudyContent || ""
+        };
+        
+        openCaseStudyModal(assignment);
+        return;
+      }
+      
+      if (assignment.type === 'speaking') {
+        console.log("🎤 Opening speaking modal for speaking assignment");
+        document.getElementById('cq-assignment-modal').style.display = 'none';
+        
+        // Store assignment questions globally for the speaking modal
+        window.currentAssignmentQuestions = {
+          q1: assignment.questions && assignment.questions[0] ? assignment.questions[0] : "No question provided",
+          q2: assignment.questions && assignment.questions[1] ? assignment.questions[1] : "No question provided",
+          title: assignment.title || "Speaking Assignment",
+          description: assignment.description || ""
+        };
+        
+        openSpeakingAssignmentModal(assignment);
+        return;
+      }
+
+      if (assignment.type === 'written') {
+        console.log("✍️ Written assignment - functionality coming soon");
+        document.getElementById('cq-assignment-modal').style.display = 'none';
+        alert('Written assignment functionality coming soon');
+        return;
+      }
+    }
+    window.acceptAssignmentNow = acceptAssignmentNow;
+  </script>
+
+  <!-- Assignment Modal -->
+  <div id="cq-assignment-modal" class="cq-modal" style="display: none;">
+    <div class="cq-modal-content">
+      <span class="cq-close" onclick="closeAssignmentModal()">&times;</span>
+      <div id="cq-assignment-title" class="cq-modal-title">New Assignment</div>
+      
+      <!-- Assignment Info (shown first) -->
+      <div id="cq-assignment-info">
+        <div id="cq-assignment-fields" class="cq-modal-fields"></div>
+        <div class="cq-modal-footer" style="margin-top:1.5rem; text-align:right;">
+          <button class="cq-modal-btn" onclick="acceptAssignmentNow()">I'll do it now</button>
+          <button class="cq-modal-btn" onclick="snoozeAssignment()">I'll do it later</button>
+        </div>
+      </div>
+      
+      <!-- Quiz Section (hidden initially) -->
+      <div id="cq-assignment-quiz" style="display:none;">
+        <div id="quizQuestions" class="cq-modal-fields"></div>
+        <div class="cq-modal-footer">
+          <button class="cq-modal-btn" id="submitQuizBtn" disabled>Submit Answers</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Speaking Assignment Modal -->
+  <div id="cq-speaking-modal" class="cq-speaking-modal" style="display:none;">
+    <!-- Star Field Background -->
+    <div class="cq-speaking-stars" id="cq-speaking-stars"></div>
+    <div class="cq-speaking-glow-1"></div>
+    <div class="cq-speaking-glow-2"></div>
+    
+    <div class="cq-speaking-modal-content">
+      <!-- Header -->
+      <div class="cq-speaking-header">
+        <h1 class="cq-speaking-title" id="cq-speaking-title">Speaking Assessment</h1>
+        <button class="cq-speaking-close" onclick="closeSpeakingAssignmentModal()">×</button>
+      </div>
+      
+      <!-- Main Container -->
+      <div class="cq-speaking-main-container">
+        <!-- Questions Row -->
+        <div class="cq-speaking-questions">
+          <div class="cq-speaking-question-card">
+            <h2 class="cq-speaking-question-label">Question 1:</h2>
+            <p id="cq-speaking-q1" class="cq-speaking-question-text">What is your strategy for this scenario?</p>
+          </div>
+          <div class="cq-speaking-question-card">
+            <h2 class="cq-speaking-question-label">Question 2:</h2>
+            <p id="cq-speaking-q2" class="cq-speaking-question-text">How would you handle unexpected challenges?</p>
+          </div>
+        </div>
+        
+        <!-- Video Feed -->
+        <div class="cq-speaking-video-container">
+          <video id="cq-speaking-videoPreview" autoplay playsInline muted style="width:100%; height:100%; object-fit:cover; background:#000; display:none;"></video>
+          <div id="cq-speaking-noVideoView" class="cq-speaking-no-video" style="width:100%; height:100%; background:#000; display:flex; align-items:center; justify-content:center; color:#94a3b8; position:absolute; top:0; left:0;">
+            <span>No video preview</span>
+          </div>
+          
+          <!-- Recording Indicator -->
+          <div id="cq-speaking-recordingIndicator" class="cq-speaking-recording-indicator">
+            <div class="cq-speaking-recording-dot"></div>
+            <span class="cq-speaking-recording-text">Recording</span>
+          </div>
+        </div>
+        
+        <!-- Controls -->
+        <div class="cq-speaking-controls-wrapper">
+          <div class="cq-speaking-controls">
+            <button id="cq-speaking-documentBtn" class="cq-speaking-control-btn" title="Document">
+              📄
+            </button>
+            <button id="cq-speaking-recordBtn" class="cq-speaking-record-btn" onclick="toggleSpeakingRecording()">
+              🎤
+            </button>
+            <button id="cq-speaking-micBtn" class="cq-speaking-control-btn" title="Settings">
+              ⚙️
+            </button>
+          </div>
+          
+          <!-- Submit button - shown after recording -->
+          <button id="cq-speaking-submitBtn" class="cq-speaking-submit-btn" style="display:none;" onclick="submitSpeakingResponse()">Submit Assessment</button>
+        </div>
+      </div>
+      
+      <!-- Audio playback (hidden by default) -->
+      <audio id="cq-speaking-audioPlayback" style="display:none;"></audio>
+      
+      <!-- Hidden buttons for functionality (kept for JavaScript) -->
+      <button id="cq-speaking-audioBtn" style="display:none;"></button>
+      <button id="cq-speaking-videoBtn" style="display:none;"></button>
+      <button id="cq-speaking-stopBtn" style="display:none;"></button>
+      <button id="cq-speaking-downloadBtn" style="display:none;"></button>
+    </div>
+  </div>
+
+  <!-- Case Study Assignment Modal -->
+  <div id="cq-case-study-modal" class="cq-case-study-modal" style="display:none;">
+    <!-- Star Field Background -->
+    <div class="cq-case-study-stars" id="cq-case-study-stars"></div>
+    <div class="cq-case-study-glow-1"></div>
+    <div class="cq-case-study-glow-2"></div>
+    
+    <div class="cq-case-study-modal-content">
+      <!-- Header -->
+      <div class="cq-case-study-header">
+        <h1 class="cq-case-study-title" id="cq-case-study-title">Case Study</h1>
+        <div class="cq-case-study-header-right">
+          <!-- Timer -->
+          <div id="cq-case-study-timer" class="cq-case-study-timer" onclick="toggleCaseStudyTimer()">
+            <div id="cq-case-study-timer-dot" class="cq-case-study-timer-dot"></div>
+            <span id="cq-case-study-timer-text" class="cq-case-study-timer-text">20:00</span>
+            <span id="cq-case-study-timer-start" class="cq-case-study-timer-start">Start</span>
+          </div>
+          <button class="cq-case-study-close" onclick="closeCaseStudyModal()">×</button>
+        </div>
+      </div>
+      
+      <!-- Main Container -->
+      <div class="cq-case-study-main-container">
+        <!-- Top Info Section (when content collapsed) -->
+        <div id="cq-case-study-top-info" class="cq-case-study-top-info">
+          <div class="cq-case-study-info-card">
+            <p class="cq-case-study-info-label">Case Name</p>
+            <p id="cq-case-study-name" class="cq-case-study-info-value">Market Expansion Strategy</p>
+          </div>
+          <div id="cq-case-study-content-preview" class="cq-case-study-info-card cq-case-study-clickable" onclick="expandCaseStudyContent()">
+            <p class="cq-case-study-info-label">Case Study Content</p>
+            <p id="cq-case-study-content-preview-text" class="cq-case-study-info-preview">Loading...</p>
+            <p class="cq-case-study-read-more">Read More →</p>
+          </div>
+        </div>
+        
+        <!-- Expanded Content (when content expanded) -->
+        <div id="cq-case-study-expanded-content" class="cq-case-study-expanded-content" style="display:none;">
+          <div class="cq-case-study-expanded-header">
+            <div>
+              <p class="cq-case-study-expanded-label">Case Study Content</p>
+              <h3 id="cq-case-study-expanded-title" class="cq-case-study-expanded-title">Market Expansion Strategy</h3>
+            </div>
+            <button class="cq-case-study-expanded-close" onclick="collapseCaseStudyContent()">×</button>
+          </div>
+          <p id="cq-case-study-full-content" class="cq-case-study-full-content">Loading...</p>
+        </div>
+        
+        <!-- Video Feed (hidden when content expanded) -->
+        <div id="cq-case-study-video-container" class="cq-case-study-video-container">
+          <video id="cq-case-study-videoPreview" autoplay playsInline muted style="width:100%; height:100%; object-fit:cover; background:#000; display:none;"></video>
+          <div id="cq-case-study-noVideoView" class="cq-case-study-no-video" style="width:100%; height:100%; background:#000; display:flex; align-items:center; justify-content:center; color:#94a3b8; position:absolute; top:0; left:0;">
+            <span>No video preview</span>
+          </div>
+          
+          <!-- Recording Indicator -->
+          <div id="cq-case-study-recordingIndicator" class="cq-case-study-recording-indicator">
+            <div class="cq-case-study-recording-dot"></div>
+            <span class="cq-case-study-recording-text">Recording</span>
+          </div>
+        </div>
+        
+        <!-- Bottom Info Section (hidden when content expanded) -->
+        <div id="cq-case-study-bottom-info" class="cq-case-study-bottom-info">
+          <div class="cq-case-study-question-card">
+            <p class="cq-case-study-question-label">Question 1</p>
+            <p id="cq-case-study-q1" class="cq-case-study-question-text">What are the key market opportunities and challenges?</p>
+          </div>
+          <div class="cq-case-study-question-card">
+            <p class="cq-case-study-question-label">Question 2</p>
+            <p id="cq-case-study-q2" class="cq-case-study-question-text">How would you develop a comprehensive expansion strategy?</p>
+          </div>
+        </div>
+        
+        <!-- Controls (hidden when content expanded) -->
+        <div id="cq-case-study-controls-wrapper" class="cq-case-study-controls-wrapper">
+          <div class="cq-case-study-controls">
+            <button id="cq-case-study-recordBtn" class="cq-case-study-record-btn" onclick="toggleCaseStudyRecording()">
+              🎤
+            </button>
+            <button id="cq-case-study-downloadBtn" class="cq-case-study-control-btn" title="Download" style="display:none;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="7" y="7" width="10" height="10" rx="2.5" fill="#60a5fa"/>
+                <path d="M12 9.5v4.5m0 0l-2.5-2.5m2.5 2.5l2.5-2.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+          </div>
+          
+          <!-- Submit button - shown after recording -->
+          <button id="cq-case-study-submitBtn" class="cq-case-study-submit-btn" style="display:none;" onclick="submitCaseStudyResponse()">Submit Case Study</button>
+        </div>
+      </div>
+      
+      <!-- Audio playback (hidden by default) -->
+      <audio id="cq-case-study-audioPlayback" style="display:none;"></audio>
+      
+      <!-- Hidden buttons for functionality (kept for JavaScript) -->
+      <button id="cq-case-study-audioBtn" style="display:none;"></button>
+      <button id="cq-case-study-videoBtn" style="display:none;"></button>
+      <button id="cq-case-study-stopBtn" style="display:none;"></button>
+      <button id="cq-case-study-downloadBtn" style="display:none;"></button>
+    </div>
+  </div>
+
+  <!-- Congratulations Modal - Fullscreen -->
+  <div id="congratsModal" class="practice-quiz-fullscreen" style="display:none;">
+    <!-- Galaxy Background -->
+    <div class="practice-quiz-galaxy-bg">
+      <div class="practice-quiz-galaxy-gradient"></div>
+      <div class="practice-quiz-stars-container" id="congratsStarsContainer"></div>
+      <div class="practice-quiz-nebula practice-quiz-nebula-1"></div>
+      <div class="practice-quiz-nebula practice-quiz-nebula-2"></div>
+      <div class="practice-quiz-nebula practice-quiz-nebula-3"></div>
+    </div>
+
+    <!-- Main Content - Centered -->
+    <div class="practice-quiz-main" style="display: flex; align-items: center; justify-content: center; min-height: calc(100vh - 80px);">
+      <div class="congrats-content">
+        <!-- Congratulations Header - Centered -->
+        <div class="congrats-header">
+          <h1 id="congratsTitle" class="congrats-title">Congratulations!</h1>
+          <p class="congrats-subtitle" id="congratsSubtitle">
+            Excellent work! You scored <span id="congratsScore">0/0</span>
+          </p>
+        </div>
+
+        <!-- Assignment Info - Centered -->
+        <div class="congrats-assignment-info">
+          <p class="congrats-assignment-label">For completing:</p>
+          <h2 id="congratsAssignmentName" class="congrats-assignment-name">Written Practice</h2>
+        </div>
+
+        <!-- Competency Breakdown - Grid Layout -->
+        <div class="congrats-competencies-grid" id="congratsCompetencies">
+          <!-- Competencies will be populated here -->
+        </div>
+
+        <!-- Action Button -->
+        <div class="congrats-actions">
+          <button class="practice-quiz-next-btn" onclick="closeCongratsModal()">Got it!</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

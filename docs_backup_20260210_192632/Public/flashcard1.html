@@ -1,0 +1,4718 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FBLAZE Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/feather-icons"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f8fafc;
+      color: #1a202c;
+    }
+
+    /* Top Header */
+    .top-header {
+      background: white;
+      padding: 1rem 2rem;
+      border-bottom: 1px solid #e2e8f0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .nav-left {
+      font-size: 1.5rem;
+    }
+
+    .nav-title {
+      font-weight: 600;
+      font-size: 1.25rem;
+    }
+
+    .new-badge {
+      background: #10b981;
+      color: white;
+      padding: 0.25rem 0.5rem;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      margin-left: 0.5rem;
+    }
+
+    .nav-right {
+      position: relative;
+    }
+
+    #navbarSearch {
+      padding: 0.5rem 1rem;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      width: 250px;
+    }
+
+    /* Main Layout */
+    .main-layout {
+      display: flex;
+      min-height: calc(100vh - 80px);
+    }
+
+    .sidebar {
+      width: 80px;
+      background: white;
+      border-right: 1px solid #e2e8f0;
+      padding: 2rem 0;
+    }
+
+    .logo {
+      text-align: center;
+      font-weight: 700;
+      font-size: 1.5rem;
+      color: #667eea;
+      margin-bottom: 2rem;
+    }
+
+    .nav-icons {
+      list-style: none;
+    }
+
+    .nav-icons li {
+      padding: 1rem;
+      text-align: center;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    
+
+    .content {
+      flex: 1;
+      padding: 3rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .unit-title {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      color: #1a202c;
+    }
+
+    .content > p {
+      color: #6b7280;
+      font-size: 1.125rem;
+      margin-bottom: 3rem;
+    }
+
+    /* Flashcard Deck Grid */
+    .deck-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+
+    /* Deck Cover Cards */
+    .deck-cover {
+      background: white;
+      border-radius: 16px;
+      padding: 2rem;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      border: 1px solid #e5e7eb;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .deck-cover:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.1);
+    }
+
+    .deck-cover::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 10px;
+      background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .deck-icon {
+      width: 60px;
+      height: 60px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .deck-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: #1f2937;
+      margin-bottom: 0.5rem;
+    }
+
+    .deck-description {
+      color: #6b7280;
+      margin-bottom: 1.5rem;
+      line-height: 1.5;
+    }
+
+    .deck-stats {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .deck-meta {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .meta-item {
+      background: #f3f4f6;
+      color: #374151;
+      padding: 0.25rem 0.75rem;
+      border-radius: 12px;
+      font-size: 0.6rem;
+      font-weight: 500;
+      gap: 0.75rem;
+    }
+
+    .deck-action {
+      background: #667eea;
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 0.6rem;
+    margin-left: 0.75rem;
+      transition: background 0.2s;
+    }
+
+    .deck-action:hover {
+      background: #5a67d8;
+      text-decoration: none;
+      color: white;
+    }
+
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      padding: 4rem 2rem;
+      color: #6b7280;
+    }
+
+    .empty-state h3 {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      color: #374151;
+    }
+
+    /* Loading State */
+    .loading {
+      text-align: center;
+      padding: 4rem;
+      color: #6b7280;
+      font-size: 1.125rem;
+    }
+
+    /* Modal Styles */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(4px);
+    }
+
+    .modal-content {
+      background-color: white;
+      margin: 2% auto;
+      padding: 0;
+      border-radius: 16px;
+      width: 90%;
+      max-width: 800px;
+      max-height: 90vh;
+      overflow: hidden;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    }
+
+    .modal-header {
+      padding: 2rem 2rem 1rem;
+      border-bottom: 1px solid #e5e7eb;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-header h2 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: #1f2937;
+    }
+
+    .close-modal {
+      color: #6b7280;
+      font-size: 2rem;
+      font-weight: bold;
+      cursor: pointer;
+      padding: 0.5rem;
+      line-height: 1;
+      transition: color 0.2s;
+    }
+
+    .close-modal:hover {
+      color: #374151;
+    }
+
+    /* Flashcard Styles */
+    .flashcard-container {
+      padding: 2rem;
+      min-height: 400px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .flashcard {
+      background: #f8fafc;
+      border: 2px solid #e5e7eb;
+      border-radius: 12px;
+      min-height: 300px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-bottom: 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .flashcard:hover {
+      border-color: #667eea;
+      box-shadow: 0 4px 20px rgba(102, 126, 234, 0.15);
+    }
+
+    .flashcard-content {
+      padding: 2rem;
+      text-align: center;
+      width: 100%;
+    }
+
+    .flashcard-front h3 {
+      font-size: 1.25rem;
+      color: #1f2937;
+      margin-bottom: 1rem;
+      line-height: 1.6;
+    }
+
+    .flashcard-back {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+
+    .flashcard-back p {
+      font-size: 1.125rem;
+      margin-bottom: 1rem;
+      line-height: 1.6;
+    }
+
+    .flashcard-back small {
+      opacity: 0.8;
+      font-size: 0.875rem;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    /* Navigation */
+    .flashcard-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .nav-btn {
+      background: #667eea;
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+
+    .nav-btn:hover {
+      background: #5a67d8;
+      transform: translateY(-1px);
+    }
+
+    .nav-btn:disabled {
+      background: #d1d5db;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .card-counter {
+      color: #6b7280;
+      font-weight: 500;
+    }
+
+    /* Difficulty Actions */
+    .flashcard-actions {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+    }
+
+    .difficulty-btn {
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+
+    .difficulty-btn.easy {
+      background: #d1fae5;
+      color: #065f46;
+    }
+
+    .difficulty-btn.easy:hover {
+      background: #a7f3d0;
+    }
+
+    .difficulty-btn.medium {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .difficulty-btn.medium:hover {
+      background: #fde68a;
+    }
+
+    .difficulty-btn.hard {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .difficulty-btn.hard:hover {
+      background: #fecaca;
+    }
+
+    /* Flip Animation */
+    .flashcard.flipping {
+      transform: rotateY(180deg);
+    }
+
+    .flashcard-front,
+    .flashcard-back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .flashcard-back {
+      transform: rotateY(180deg);
+    }
+
+     .nav-icons {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  
+  .nav-icons li {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    background-color: #f1f5ff;
+    width: 60%;
+    margin-left: 17px;
+    padding: 0.75rem;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+  }
+  
+  .nav-icons li:hover {
+    background-color: #d8e5ff;
+  }
+
+  .nav-label {
+    position: absolute;
+    left: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: #111827;
+    color: white;
+    font-size: 0.7rem;
+    padding: 0.3rem 0.5rem;
+    border-radius: 6px;
+    margin-left: 0.75rem;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s ease, transform 0.2s ease;
+    z-index: 10;
+  }
+
+  .nav-icons li:hover .nav-label {
+    opacity: 1;
+    transform: translateY(-50%) translateX(0px);
+  }
+
+    /* Speaking Assignment Modal Styles - Matching React Design */
+    .cq-speaking-modal {
+      position: fixed;
+      z-index: 3100;
+      left: 0; top: 0; right: 0; bottom: 0;
+      width: 100vw;
+      height: 100vh;
+      background: #020617; /* slate-950 */
+      color: white;
+      overflow: hidden;
+      display: none;
+      flex-direction: column;
+    }
+    
+    .cq-speaking-modal[style*="display: flex"],
+    .cq-speaking-modal[style*="display:flex"] {
+      display: flex !important;
+    }
+    
+    /* Star Field Background */
+    .cq-speaking-stars {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 0;
+    }
+    .cq-speaking-star {
+      position: absolute;
+      background: white;
+      border-radius: 50%;
+      animation: twinkle linear infinite;
+    }
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 0.9; }
+    }
+    .cq-speaking-glow-1 {
+      position: absolute;
+      top: 5rem;
+      left: 2.5rem;
+      width: 18rem;
+      height: 18rem;
+      background: rgba(249, 115, 22, 0.1);
+      border-radius: 50%;
+      filter: blur(80px);
+      pointer-events: none;
+    }
+    .cq-speaking-glow-2 {
+      position: absolute;
+      bottom: 0;
+      right: 2.5rem;
+      width: 18rem;
+      height: 18rem;
+      background: rgba(239, 68, 68, 0.1);
+      border-radius: 50%;
+      filter: blur(80px);
+      pointer-events: none;
+    }
+    
+    .cq-speaking-modal-content {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+      height: 100%;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      overflow-y: auto;
+    }
+    
+    .cq-speaking-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(30, 41, 59, 0.3); /* slate-800/30 */
+      border: 1px solid rgba(51, 65, 85, 0.5); /* slate-700/50 */
+      border-radius: 0.5rem;
+      padding: 0.75rem 1.5rem;
+      backdrop-filter: blur(8px);
+      flex-shrink: 0;
+    }
+    .cq-speaking-title {
+      font-size: 1.875rem; /* text-3xl */
+      font-weight: 700;
+      color: #f97316; /* orange-500 */
+      margin: 0;
+    }
+    .cq-speaking-close {
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: 50%;
+      background: #f97316; /* orange-500 */
+      color: white;
+      border: none;
+      font-size: 1.5rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      line-height: 1;
+      padding: 0;
+    }
+    .cq-speaking-close:hover {
+      background: #ea580c; /* orange-600 */
+    }
+    
+    .cq-speaking-main-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      min-height: 0;
+    }
+    
+    .cq-speaking-questions {
+      display: flex;
+      gap: 1rem;
+      flex-shrink: 0;
+    }
+    .cq-speaking-question-card {
+      flex: 1;
+      background: rgba(30, 41, 59, 0.5); /* slate-800/50 */
+      border: 1px solid rgba(51, 65, 85, 0.5); /* slate-700 */
+      border-radius: 0.5rem;
+      padding: 1rem;
+    }
+    .cq-speaking-question-label {
+      font-size: 0.75rem; /* text-xs */
+      font-weight: 600;
+      color: #94a3b8; /* slate-400 */
+      margin-bottom: 0.25rem;
+    }
+    .cq-speaking-question-text {
+      font-size: 0.875rem; /* text-sm */
+      color: white;
+      line-height: 1.5;
+    }
+    
+    .cq-speaking-video-container {
+      flex: 1;
+      position: relative;
+      border-radius: 1rem; /* rounded-2xl */
+      overflow: hidden;
+      border: 2px solid rgba(249, 115, 22, 0.3); /* border-orange-500/30 */
+      background: #000;
+      min-height: 0;
+    }
+    .cq-speaking-video-container video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .cq-speaking-no-video {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #94a3b8;
+      font-size: 1rem;
+    }
+    
+    /* Recording Indicator */
+    .cq-speaking-recording-indicator {
+      position: absolute;
+      top: 1rem;
+      left: 1rem;
+      display: none;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(239, 68, 68, 0.2);
+      border: 1px solid #ef4444;
+      padding: 0.375rem 0.75rem;
+      border-radius: 9999px;
+      backdrop-filter: blur(8px);
+      font-size: 0.75rem;
+    }
+    .cq-speaking-recording-indicator.active {
+      display: flex;
+    }
+    .cq-speaking-recording-dot {
+      width: 0.5rem;
+      height: 0.5rem;
+      background: #ef4444;
+      border-radius: 50%;
+      animation: pulse-dot 1.5s ease-in-out infinite;
+    }
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    .cq-speaking-recording-text {
+      font-weight: 600;
+      color: #fca5a5; /* red-400 */
+    }
+    
+    .cq-speaking-controls-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+      flex-shrink: 0;
+    }
+    .cq-speaking-controls {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1.5rem;
+    }
+    .cq-speaking-control-btn {
+      width: 3rem;
+      height: 3rem;
+      border-radius: 50%;
+      background: rgba(30, 41, 59, 0.4); /* slate-800/40 */
+      border: 1px solid rgba(51, 65, 85, 0.5); /* slate-700/50 */
+      color: #94a3b8; /* slate-400 */
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      backdrop-filter: blur(8px);
+      font-size: 1.25rem;
+    }
+    .cq-speaking-control-btn:hover {
+      background: rgba(51, 65, 85, 0.5); /* slate-700/50 */
+      color: #cbd5e1; /* slate-300 */
+    }
+    .cq-speaking-record-btn {
+      width: 4rem;
+      height: 4rem;
+      border-radius: 50%;
+      background: linear-gradient(to right, #f97316, #ef4444); /* orange-500 to red-500 */
+      color: white;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      box-shadow: 0 0 20px rgba(249, 115, 22, 0.5);
+      font-size: 2rem;
+      font-weight: 600;
+    }
+    .cq-speaking-record-btn:hover {
+      box-shadow: 0 0 30px rgba(249, 115, 22, 0.7);
+    }
+    .cq-speaking-record-btn.recording {
+      background: #ef4444; /* red-500 */
+      box-shadow: 0 0 20px rgba(239, 68, 68, 0.5);
+    }
+    
+    .cq-speaking-submit-btn {
+      padding: 0.5rem 2.5rem;
+      background: rgba(30, 41, 59, 0.5); /* slate-800/50 */
+      border: 1px solid rgba(51, 65, 85, 0.5); /* slate-700 */
+      border-radius: 0.5rem;
+      font-weight: 600;
+      color: white;
+      cursor: pointer;
+      transition: all 0.2s;
+      backdrop-filter: blur(8px);
+      font-size: 1rem;
+    }
+    .cq-speaking-submit-btn:hover:not(:disabled) {
+      background: rgba(51, 65, 85, 0.5); /* slate-700/50 */
+    }
+    .cq-speaking-submit-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    /* Case Study Assignment Modal Styles - Matching React Design */
+    .cq-case-study-modal {
+      position: fixed;
+      z-index: 3100;
+      left: 0; top: 0; right: 0; bottom: 0;
+      width: 100vw;
+      height: 100vh;
+      background: #020617; /* slate-950 */
+      color: white;
+      overflow: hidden;
+      display: none;
+      flex-direction: column;
+    }
+    
+    .cq-case-study-modal[style*="display: flex"],
+    .cq-case-study-modal[style*="display:flex"] {
+      display: flex !important;
+    }
+    
+    /* Star Field Background */
+    .cq-case-study-stars {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 0;
+    }
+    .cq-case-study-star {
+      position: absolute;
+      background: white;
+      border-radius: 50%;
+      animation: cq-case-study-twinkle linear infinite;
+    }
+    @keyframes cq-case-study-twinkle {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 0.9; }
+    }
+    .cq-case-study-glow-1 {
+      position: absolute;
+      top: 5rem;
+      left: 2.5rem;
+      width: 18rem;
+      height: 18rem;
+      background: rgba(249, 115, 22, 0.1);
+      border-radius: 50%;
+      filter: blur(80px);
+      pointer-events: none;
+    }
+    .cq-case-study-glow-2 {
+      position: absolute;
+      bottom: 0;
+      right: 2.5rem;
+      width: 18rem;
+      height: 18rem;
+      background: rgba(239, 68, 68, 0.1);
+      border-radius: 50%;
+      filter: blur(80px);
+      pointer-events: none;
+    }
+    
+    .cq-case-study-modal-content {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+      height: 100%;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      overflow-y: auto;
+    }
+    
+    .cq-case-study-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(30, 41, 59, 0.3); /* slate-800/30 */
+      border: 1px solid rgba(51, 65, 85, 0.5); /* slate-700/50 */
+      border-radius: 0.5rem;
+      padding: 0.75rem 1.5rem;
+      backdrop-filter: blur(8px);
+      flex-shrink: 0;
+    }
+    .cq-case-study-title {
+      font-size: 1.875rem; /* text-3xl */
+      font-weight: 700;
+      color: #f97316; /* orange-500 */
+      margin: 0;
+    }
+    .cq-case-study-header-right {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .cq-case-study-timer {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      background: rgba(30, 41, 59, 0.5); /* slate-800/50 */
+      border: 1px solid rgba(51, 65, 85, 0.5); /* slate-700/50 */
+      backdrop-filter: blur(8px);
+    }
+    .cq-case-study-timer:hover {
+      border-color: rgba(249, 115, 22, 0.3); /* orange-500/30 */
+    }
+    .cq-case-study-timer.active {
+      background: rgba(239, 68, 68, 0.2);
+      border-color: rgba(239, 68, 68, 0.5);
+    }
+    .cq-case-study-timer-dot {
+      width: 0.5rem;
+      height: 0.5rem;
+      border-radius: 50%;
+      background: #f97316; /* orange-500 */
+      transition: all 0.2s;
+    }
+    .cq-case-study-timer.active .cq-case-study-timer-dot {
+      background: #ef4444; /* red-500 */
+      animation: cq-case-study-pulse-dot 1.5s ease-in-out infinite;
+    }
+    @keyframes cq-case-study-pulse-dot {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    .cq-case-study-timer-text {
+      font-size: 0.875rem;
+      font-family: monospace;
+      font-weight: 600;
+      color: #cbd5e1; /* slate-300 */
+    }
+    .cq-case-study-timer.active .cq-case-study-timer-text {
+      color: #fca5a5; /* red-400 */
+    }
+    .cq-case-study-timer-start {
+      font-size: 0.75rem;
+      color: #94a3b8; /* slate-400 */
+      margin-left: 0.25rem;
+    }
+    .cq-case-study-timer.active .cq-case-study-timer-start {
+      display: none;
+    }
+    .cq-case-study-close {
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: 50%;
+      background: #f97316; /* orange-500 */
+      color: white;
+      border: none;
+      font-size: 1.5rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      line-height: 1;
+      padding: 0;
+    }
+    .cq-case-study-close:hover {
+      background: #ea580c; /* orange-600 */
+    }
+    
+    .cq-case-study-main-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      min-height: 0;
+    }
+    
+    .cq-case-study-top-info {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      flex-shrink: 0;
+    }
+    .cq-case-study-info-card {
+      background: rgba(30, 41, 59, 0.5); /* slate-800/50 */
+      border: 1px solid rgba(51, 65, 85, 0.5); /* slate-700/50 */
+      border-radius: 0.5rem;
+      padding: 1rem;
+      backdrop-filter: blur(8px);
+    }
+    .cq-case-study-info-card.cq-case-study-clickable {
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .cq-case-study-info-card.cq-case-study-clickable:hover {
+      border-color: rgba(249, 115, 22, 0.3); /* orange-500/30 */
+    }
+    .cq-case-study-info-label {
+      font-size: 0.75rem;
+      color: #94a3b8; /* slate-400 */
+      margin-bottom: 0.25rem;
+    }
+    .cq-case-study-info-value {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: white;
+    }
+    .cq-case-study-info-preview {
+      font-size: 0.75rem;
+      color: white;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      transition: color 0.2s;
+    }
+    .cq-case-study-clickable:hover .cq-case-study-info-preview {
+      color: #fb923c; /* orange-400 */
+    }
+    .cq-case-study-read-more {
+      font-size: 0.75rem;
+      color: #fb923c; /* orange-400 */
+      margin-top: 0.5rem;
+    }
+    
+    .cq-case-study-expanded-content {
+      background: rgba(30, 41, 59, 0.5); /* slate-800/50 */
+      border: 1px solid rgba(51, 65, 85, 0.5); /* slate-700/50 */
+      border-radius: 0.5rem;
+      padding: 1.5rem;
+      backdrop-filter: blur(8px);
+      flex: 1;
+      min-height: 0;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+    .cq-case-study-expanded-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      margin-bottom: 1rem;
+    }
+    .cq-case-study-expanded-label {
+      font-size: 0.875rem;
+      color: #94a3b8; /* slate-400 */
+      margin-bottom: 0.25rem;
+    }
+    .cq-case-study-expanded-title {
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: white;
+    }
+    .cq-case-study-expanded-close {
+      color: #94a3b8; /* slate-400 */
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 1.25rem;
+      transition: color 0.2s;
+      padding: 0;
+      width: 1.25rem;
+      height: 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .cq-case-study-expanded-close:hover {
+      color: #fb923c; /* orange-400 */
+    }
+    .cq-case-study-full-content {
+      font-size: 0.875rem;
+      color: white;
+      line-height: 1.75;
+      flex: 1;
+    }
+    
+    .cq-case-study-video-container {
+      flex: 1;
+      position: relative;
+      border-radius: 1rem; /* rounded-2xl */
+      overflow: hidden;
+      border: 2px solid rgba(249, 115, 22, 0.3); /* border-orange-500/30 */
+      background: #000;
+      min-height: 0;
+    }
+    .cq-case-study-video-container video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .cq-case-study-no-video {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #94a3b8;
+      font-size: 1rem;
+    }
+    
+    /* Recording Indicator */
+    .cq-case-study-recording-indicator {
+      position: absolute;
+      top: 1rem;
+      left: 1rem;
+      display: none;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(239, 68, 68, 0.2);
+      border: 1px solid #ef4444;
+      padding: 0.375rem 0.75rem;
+      border-radius: 9999px;
+      backdrop-filter: blur(8px);
+      font-size: 0.75rem;
+    }
+    .cq-case-study-recording-indicator.active {
+      display: flex;
+    }
+    .cq-case-study-recording-dot {
+      width: 0.5rem;
+      height: 0.5rem;
+      background: #ef4444;
+      border-radius: 50%;
+      animation: cq-case-study-pulse-dot 1.5s ease-in-out infinite;
+    }
+    .cq-case-study-recording-text {
+      font-weight: 600;
+      color: #fca5a5; /* red-400 */
+    }
+    
+    .cq-case-study-bottom-info {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      flex-shrink: 0;
+    }
+    .cq-case-study-question-card {
+      background: rgba(30, 41, 59, 0.5); /* slate-800/50 */
+      border: 1px solid rgba(51, 65, 85, 0.5); /* slate-700/50 */
+      border-radius: 0.5rem;
+      padding: 0.75rem;
+      backdrop-filter: blur(8px);
+    }
+    .cq-case-study-question-label {
+      font-size: 0.75rem;
+      color: #94a3b8; /* slate-400 */
+      margin-bottom: 0.5rem;
+    }
+    .cq-case-study-question-text {
+      font-size: 0.75rem;
+      color: white;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    
+    .cq-case-study-controls-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+      flex-shrink: 0;
+    }
+    .cq-case-study-controls {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1.5rem;
+    }
+    .cq-case-study-control-btn {
+      width: 3rem;
+      height: 3rem;
+      border-radius: 50%;
+      background: rgba(30, 41, 59, 0.4); /* slate-800/40 */
+      border: 1px solid rgba(51, 65, 85, 0.5); /* slate-700/50 */
+      color: #94a3b8; /* slate-400 */
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      backdrop-filter: blur(8px);
+      font-size: 1.25rem;
+    }
+    .cq-case-study-control-btn:hover {
+      background: rgba(51, 65, 85, 0.5); /* slate-700/50 */
+      color: #cbd5e1; /* slate-300 */
+    }
+    .cq-case-study-record-btn {
+      width: 4rem;
+      height: 4rem;
+      border-radius: 50%;
+      background: linear-gradient(to right, #f97316, #ef4444); /* orange-500 to red-500 */
+      color: white;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      box-shadow: 0 0 20px rgba(249, 115, 22, 0.5);
+      font-size: 2rem;
+      font-weight: 600;
+    }
+    .cq-case-study-record-btn:hover {
+      box-shadow: 0 0 30px rgba(249, 115, 22, 0.7);
+    }
+    .cq-case-study-record-btn.recording {
+      background: #ef4444; /* red-500 */
+      box-shadow: 0 0 20px rgba(239, 68, 68, 0.5);
+    }
+    
+    .cq-case-study-submit-btn {
+      padding: 0.5rem 2.5rem;
+      background: rgba(30, 41, 59, 0.5); /* slate-800/50 */
+      border: 1px solid rgba(51, 65, 85, 0.5); /* slate-700 */
+      border-radius: 0.5rem;
+      font-weight: 600;
+      color: white;
+      cursor: pointer;
+      transition: all 0.2s;
+      backdrop-filter: blur(8px);
+      font-size: 1rem;
+    }
+    .cq-case-study-submit-btn:hover:not(:disabled) {
+      background: rgba(51, 65, 85, 0.5); /* slate-700/50 */
+    }
+    .cq-case-study-submit-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .congrats-competency-item {
+      background: rgba(30, 41, 59, 0.5);
+      border: 1px solid rgba(51, 65, 85, 0.5);
+      border-radius: 0.5rem;
+      padding: 1rem;
+    }
+    .congrats-competency-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.5rem;
+    }
+    .congrats-competency-name {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: #fca5a5;
+    }
+    .congrats-competency-score {
+      font-size: 0.75rem;
+      color: #94a3b8;
+    }
+    .congrats-competency-progress-bar {
+      width: 100%;
+      background: rgba(30, 41, 59, 0.5);
+      border-radius: 9999px;
+      height: 0.5rem;
+      overflow: hidden;
+    }
+    .congrats-competency-progress-fill {
+      background: linear-gradient(to right, #dc2626, #f97316);
+      height: 100%;
+      transition: width 0.5s;
+      border-radius: 9999px;
+    }
+  </style>
+  <link rel="stylesheet" href="flashcard1.css" />
+</head>
+<body>
+  <!-- Galaxy Background -->
+  <div class="galaxy-background">
+    <div class="galaxy-gradient"></div>
+    <div class="stars-container" id="starsContainer"></div>
+    <div class="nebula nebula-1"></div>
+    <div class="nebula nebula-2"></div>
+    <div class="nebula nebula-3"></div>
+  </div>
+
+  <!-- Header -->
+  <div class="blaze-header">
+    <div class="blaze-header-content">
+      <div class="header-left">
+        <button class="hamburger-menu" id="hamburgerMenu" onclick="toggleMobileNav()" aria-label="Toggle menu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+        <h1 class="blaze-logo">FBLAZE</h1>
+      </div>
+      <h1 class="blaze-logo desktop-logo">FBLAZE</h1>
+      <!-- Nav Links -->
+      <nav class="blaze-nav" id="mainNav">
+        <button class="mobile-nav-close" onclick="toggleMobileNav()" aria-label="Close menu">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+        <a href="home3.html" class="nav-link">Home</a>
+        <a href="javascript:void(0)" onclick="toggleNotificationPanel()" class="nav-link">
+          Notifications
+          <span id="notificationBadge" class="notification-badge" style="display: none;">0</span>
+        </a>
+        <a href="practice.html" class="nav-link">Practice</a>
+        <a href="Forum/forum.html" class="nav-link">Forum</a>
+        <a href="Calendar/calendar1.html" class="nav-link">Calendar</a>
+        <a href="mentor1.html" class="nav-link" id="mentorNavLink" style="display: none;">Mentor</a>
+      </nav>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="flashcard-main-content">
+    <!-- Hero Section -->
+    <div class="flashcard-hero">
+      <h1 class="flashcard-hero-title">Flashcards</h1>
+      <p class="flashcard-hero-description">Organized by competency based on your missed questions</p>
+    </div>
+
+    <!-- Flashcard Decks Grid -->
+    <div class="flashcard-decks-grid" id="deckGrid">
+      <div class="loading">Loading your flashcard decks...</div>
+    </div>
+
+    <!-- CTA -->
+    <div class="flashcard-cta">
+      <p class="flashcard-cta-label">Master Your Weak Points</p>
+      <h2 class="flashcard-cta-title">Review missed questions and strengthen your understanding.</h2>
+      <p class="flashcard-cta-description">Use these targeted flashcards to focus on the areas where you need the most improvement.</p>
+      <button class="flashcard-cta-button" onclick="document.getElementById('deckGrid').scrollIntoView({ behavior: 'smooth' })">Start Studying Now</button>
+    </div>
+  </div>
+
+  <!-- Flashcard Modal -->
+  <div id="deckModal" class="modal">
+    <div class="flashcard-viewer-wrapper">
+      <!-- Top Bar -->
+      <div class="flashcard-viewer-topbar">
+        <div class="flashcard-viewer-title-section">
+          <h1 class="flashcard-viewer-title" id="modalDeckTitle">Flashcards</h1>
+          <p class="flashcard-viewer-subtitle" id="cardCounterSubtitle">Card 1 of 1</p>
+        </div>
+        
+        <div class="flashcard-viewer-topbar-right">
+          <div class="flashcard-viewer-progress">
+            <p class="flashcard-viewer-progress-label">Progress</p>
+            <p class="flashcard-viewer-progress-value" id="cardCounter">1/1</p>
+          </div>
+          
+          <button class="flashcard-viewer-close" onclick="closeDeckModal()">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Main Content -->
+      <div class="flashcard-viewer-content">
+        <!-- Flashcard -->
+        <div class="flashcard-viewer-card" id="currentFlashcard" onclick="flipCard()">
+          <p class="flashcard-viewer-card-text" id="flashcardText">Loading flashcard...</p>
+        </div>
+
+        <!-- Difficulty Selector -->
+        <div class="flashcard-viewer-difficulty">
+          <button class="flashcard-difficulty-btn flashcard-difficulty-easy" onclick="rateDifficulty('easy')">✓ Easy</button>
+          <button class="flashcard-difficulty-btn flashcard-difficulty-medium" onclick="rateDifficulty('medium')">~ Medium</button>
+          <button class="flashcard-difficulty-btn flashcard-difficulty-hard" onclick="rateDifficulty('hard')">✗ Hard</button>
+        </div>
+
+        <!-- Navigation -->
+        <div class="flashcard-viewer-navigation">
+          <button class="flashcard-nav-btn flashcard-nav-prev" onclick="prevCard()" id="prevBtn">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="15 18 9 12 15 6"></polyline>
+            </svg>
+            Previous Card
+          </button>
+
+          <button class="flashcard-nav-btn flashcard-nav-next" onclick="nextCard()" id="nextBtn">
+            Next Card →
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Mobile Navigation Toggle - Define early so it's available for onclick handlers
+    window.toggleMobileNav = function() {
+      console.log('toggleMobileNav called');
+      const nav = document.getElementById('mainNav');
+      const hamburger = document.getElementById('hamburgerMenu');
+      
+      console.log('Nav element:', nav);
+      console.log('Hamburger element:', hamburger);
+      
+      if (nav && hamburger) {
+        nav.classList.toggle('active');
+        hamburger.classList.toggle('active');
+        document.body.style.overflow = nav.classList.contains('active') ? 'hidden' : '';
+        console.log('Nav active:', nav.classList.contains('active'));
+      } else {
+        console.error('Nav or hamburger not found!');
+      }
+    };
+
+    // Initialize Firebase
+    
+    const db = firebase.firestore();
+    const auth = firebase.auth();
+    
+    let currentDeck = null;
+    let currentCardIndex = 0;
+    let isFlipped = false;
+
+    const competencyIcons = {
+  'ACCOUNTING': '💰',
+  'FINANCE': '💳', 
+  'BUSINESS LAW': '⚖️',
+  'MARKETING': '📈',
+  'ECONOMICS': '📊',
+  'MANAGEMENT': '👥',
+  'ENTREPRENEURSHIP': '🚀',
+  'BUSINESS ETHICS': '🤝',
+  'OPERATIONS': '⚙️',
+  'HUMAN RESOURCES': '👤',
+  'Public Speaking': '🎤',
+  'Communication': '💬',
+  'Presentation': '📊',
+  'Leadership': '👑',
+  'Parliamentary Procedure': '📋',
+  'General': '📚'
+};
+
+function createStars() {
+  const starsContainer = document.getElementById('starsContainer');
+  if (!starsContainer) return;
+  
+  starsContainer.innerHTML = '';
+  
+  for (let i = 0; i < 200; i++) {
+    const star = document.createElement('div');
+    star.className = 'star';
+    
+    const size = Math.random() * 3 + 0.5;
+    const duration = Math.random() * 4 + 2;
+    const delay = Math.random() * 2;
+    const randomLeft = Math.random() * 100;
+    const randomTop = Math.random() * 100;
+    const randomOpacity = Math.random() * 0.9 + 0.3;
+    
+    star.style.width = size + 'px';
+    star.style.height = size + 'px';
+    star.style.left = randomLeft + '%';
+    star.style.top = randomTop + '%';
+    star.style.opacity = randomOpacity;
+    star.style.animation = `twinkle ${duration}s ease-in-out infinite`;
+    star.style.animationDelay = delay + 's';
+    star.style.boxShadow = `0 0 ${size * 2}px rgba(255, 255, 255, 0.8)`;
+    
+    starsContainer.appendChild(star);
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  createStars();
+  
+  // Initialize Firebase Auth first
+  const auth = firebase.auth();
+  
+  // Check URL parameters immediately
+  const urlParams = new URLSearchParams(window.location.search);
+  const competency = urlParams.get('competency');
+  
+  // Handle both auth state and deck loading in one flow
+  auth.onAuthStateChanged(user => {
+    if (!user) {
+      showEmptyState('Please sign in to view flashcards');
+      return;
+    }
+    
+    // Check mentor status and show/hide mentor link
+    db.collection('users').doc(user.uid).get().then((doc) => {
+      const mentorNavLink = document.getElementById('mentorNavLink');
+      if (mentorNavLink) {
+        const isMentor = doc.exists && doc.data().isMentor === true;
+        mentorNavLink.style.display = isMentor ? 'block' : 'none';
+      }
+    }).catch((error) => {
+      console.error('Error checking mentor status:', error);
+    });
+    
+    // Setup notifications when user is authenticated
+    // Use setTimeout to ensure setupNotifications is defined
+    setTimeout(() => {
+      if (typeof setupNotifications === 'function') {
+        setupNotifications();
+      } else if (typeof window.setupNotifications === 'function') {
+        window.setupNotifications();
+      }
+    }, 100);
+    
+    // If specific deck requested, try to open it
+    if (competency) {
+      const deckData = localStorage.getItem(`flashcardDeck_${competency}`);
+      if (deckData) {
+        try {
+          const deck = JSON.parse(deckData);
+          openDeckModal(deck.name, deck.cards);
+          return; // Exit after opening specific deck
+        } catch (e) {
+          console.error('Error parsing deck data:', e);
+          // Fall through to normal load if error occurs
+        }
+      }
+    }
+    
+    // Normal load flow
+    loadFlashcards();
+  });
+});
+
+
+async function loadFlashcards() {
+  try {
+    const user = firebase.auth().currentUser;
+    if (!user) {
+      showEmptyState('Please sign in to view flashcards');
+      return;
+    }
+    console.log('Loading flashcards for user:', user.uid);
+    
+    // First, load decks from localStorage
+    const localDecks = {};
+    const deckKeys = Object.keys(localStorage).filter(key => key.startsWith('flashcardDeck_'));
+    
+    deckKeys.forEach(key => {
+      try {
+        const deck = JSON.parse(localStorage.getItem(key));
+        if (deck && deck.name && Array.isArray(deck.cards)) {
+          localDecks[deck.name] = deck.cards;
+        }
+      } catch(e) {
+        console.warn(`Error parsing deck from localStorage:`, e);
+      }
+    });
+    
+    console.log('Loaded from localStorage:', Object.keys(localDecks).length, 'decks');
+    
+    // Get completed written assignments from Firebase
+    const assignmentsSnapshot = await db.collection('assignments')
+      .where('to', '==', user.uid)
+      .where('status', '==', 'complete')
+      .where('type', '==', 'written')
+      .get();
+    
+    // Process missed questions by competency with deduplication
+    const competencyDecks = { ...localDecks }; // Start with localStorage decks
+    const seenQuestions = new Map(); // Track seen questions across all competencies
+    
+    // Pre-populate seenQuestions with cards already in localStorage
+    Object.values(localDecks).forEach(cards => {
+      if (Array.isArray(cards)) {
+        cards.forEach(card => {
+          const questionKey = (card.question || '').trim().toLowerCase();
+          if (questionKey) {
+            seenQuestions.set(questionKey, true);
+          }
+        });
+      }
+    });
+    
+    // Process Firebase assignments
+    if (!assignmentsSnapshot.empty) {
+      assignmentsSnapshot.forEach(doc => {
+        const assignment = doc.data();
+        
+        if (!Array.isArray(assignment.detailedAnswers)) return;
+        
+        assignment.detailedAnswers.forEach(answer => {
+          if (answer.isCorrect === false && answer.question) {
+            const competency = answer.competency || 'General';
+            const questionKey = answer.question.trim().toLowerCase();
+            
+            // Only add if we haven't seen this exact question before
+            if (!seenQuestions.has(questionKey)) {
+              if (!competencyDecks[competency]) {
+                competencyDecks[competency] = [];
+              }
+              
+              competencyDecks[competency].push({
+                id: `${doc.id}_${answer.questionIndex || competencyDecks[competency].length}`,
+                question: answer.question,
+                answer: answer.correctAnswer,
+                userAnswer: answer.userAnswer,
+                competency: competency
+              });
+              
+              seenQuestions.set(questionKey, true); // Mark as seen
+            }
+          }
+        });
+      });
+    }
+    
+    // Check if we have ANY decks (from localStorage or Firebase)
+    if (Object.keys(competencyDecks).length === 0) {
+      showEmptyState('No flashcards yet!', 'Complete some quizzes to generate flashcards from missed questions.');
+      return;
+    }
+    
+    console.log('Unique decks after deduplication:', 
+      Object.keys(competencyDecks).map(k => `${k}: ${competencyDecks[k].length} cards`));
+    
+    renderDeckCovers(competencyDecks);
+  } catch (error) {
+    console.error("Error loading flashcards:", error);
+    showEmptyState('Error loading flashcards', 'Please try again later.');
+  }
+}
+
+function getCompetencyIcon(competency) {
+  const iconMap = {
+    'Parliamentary Procedure': `<svg class="competency-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+      <path d="M12 2L3 7v10a9 9 0 0 0 9 9 9 9 0 0 0 9-9V7l-9-5z" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M12 8v4m0 4v.01" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M8 12h8" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>`,
+    'Marketing': `<svg class="competency-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+      <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z" stroke-linecap="round" stroke-linejoin="round"/>
+      <polyline points="13 2 13 9 20 9" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="11" cy="14" r="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M8 19h8" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>`,
+    'Business Communication': `<svg class="competency-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="9" cy="10" r="1" fill="currentColor"/>
+      <circle cx="12" cy="10" r="1" fill="currentColor"/>
+      <circle cx="15" cy="10" r="1" fill="currentColor"/>
+    </svg>`
+  };
+  return iconMap[competency] || `<svg class="competency-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>`;
+}
+
+function renderDeckCovers(decks) {
+  const container = document.getElementById('deckGrid');
+  container.innerHTML = '';
+  
+  Object.entries(decks).forEach(([competency, cards]) => {
+    const icon = getCompetencyIcon(competency);
+    const difficultyLevel = getDifficultyLevel(cards);
+    
+    const deckElement = document.createElement('div');
+    deckElement.className = 'flashcard-deck-card';
+    deckElement.innerHTML = `
+      <div class="flashcard-card-top-accent"></div>
+      <div class="flashcard-card-icon">${icon}</div>
+      <h3 class="flashcard-card-title">${competency}</h3>
+      <p class="flashcard-card-description">Review missed questions and strengthen your understanding of ${competency.toLowerCase()} concepts.</p>
+      <div class="flashcard-card-footer">
+        <span class="flashcard-card-difficulty">${difficultyLevel}</span>
+        <div class="flashcard-card-actions">
+          <button class="flashcard-action-btn flashcard-action-start" onclick="openDeckModal('${competency}', ${JSON.stringify(cards).replace(/"/g, '&quot;')})">Start</button>
+          <button class="flashcard-action-btn flashcard-action-export" onclick="exportToQuizlet('${competency}', ${JSON.stringify(cards).replace(/"/g, '&quot;')})">Export</button>
+        </div>
+      </div>
+    `;
+    
+    container.appendChild(deckElement);
+  });
+}
+
+function getDifficultyLevel(cards) {
+      if (cards.length <= 3) return 'Easy';
+      if (cards.length <= 7) return 'Medium';
+      return 'Challenging';
+    }
+
+function openDeckModal(competency, cards) {
+  console.log('Opening deck modal for:', competency);
+  
+  // Ensure cards is always an array
+  if (!Array.isArray(cards)) {
+    console.error('Invalid cards data:', cards);
+    return;
+  }
+  
+  currentDeck = {
+    name: competency,
+    cards: cards
+  };
+  currentCardIndex = 0;
+  isFlipped = false;
+  
+  const titleElement = document.getElementById('modalDeckTitle');
+  if (titleElement) {
+    titleElement.textContent = `${competency} Flashcards`;
+  }
+  
+  // Make sure modal is visible
+  const modal = document.getElementById('deckModal');
+  if (modal) {
+    modal.style.display = 'block';
+    document.body.style.overflow = 'hidden'; // Prevent scrolling behind modal
+  }
+  
+  showCurrentCard();
+}
+
+function showCurrentCard() {
+  if (!currentDeck || !currentDeck.cards || currentDeck.cards.length === 0) {
+    console.error('No cards to show');
+    return;
+  }
+  
+  const card = currentDeck.cards[currentCardIndex];
+  const flashcard = document.getElementById('currentFlashcard');
+  
+  console.log('Showing card:', currentCardIndex, 'Question:', card.question.substring(0, 50));
+  
+  // Reset flip state
+  isFlipped = false;
+  if (flashcard) {
+    flashcard.classList.remove('flipped');
+  }
+  
+  // Show question initially
+  const flashcardText = document.getElementById('flashcardText');
+  if (flashcardText) {
+    flashcardText.textContent = card.question;
+  }
+  
+  // Store answer for flip
+  flashcard.dataset.answer = card.answer;
+  flashcard.dataset.userAnswer = card.userAnswer || '';
+  
+  // Update card counter
+  const counter = document.getElementById('cardCounter');
+  const subtitle = document.getElementById('cardCounterSubtitle');
+  if (counter) {
+    counter.textContent = `${currentCardIndex + 1}/${currentDeck.cards.length}`;
+  }
+  if (subtitle) {
+    subtitle.textContent = `Card ${currentCardIndex + 1} of ${currentDeck.cards.length}`;
+  }
+  
+  // Update navigation buttons
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  if (prevBtn) {
+    prevBtn.disabled = currentCardIndex === 0;
+  }
+  if (nextBtn) {
+    nextBtn.disabled = currentCardIndex === currentDeck.cards.length - 1;
+  }
+}
+
+function updateNavigationButtons() {
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  
+  if (prevBtn) {
+    prevBtn.disabled = currentCardIndex === 0;
+    prevBtn.onclick = prevCard; // Re-attach event
+    
+    // Update button text/appearance based on state
+    if (currentCardIndex === 0) {
+      prevBtn.style.opacity = '0.5';
+      prevBtn.style.cursor = 'not-allowed';
+    } else {
+      prevBtn.style.opacity = '1';
+      prevBtn.style.cursor = 'pointer';
+    }
+  }
+  
+  if (nextBtn) {
+    nextBtn.disabled = currentCardIndex === currentDeck.cards.length - 1;
+    nextBtn.onclick = nextCard; // Re-attach event
+    
+    // Update button text/appearance based on state
+    if (currentCardIndex === currentDeck.cards.length - 1) {
+      nextBtn.style.opacity = '0.5';
+      nextBtn.style.cursor = 'not-allowed';
+    } else {
+      nextBtn.style.opacity = '1';
+      nextBtn.style.cursor = 'pointer';
+    }
+  }
+  
+  console.log('Navigation buttons updated:', {
+    currentIndex: currentCardIndex,
+    totalCards: currentDeck.cards.length,
+    prevDisabled: currentCardIndex === 0,
+    nextDisabled: currentCardIndex === currentDeck.cards.length - 1
+  });
+}
+
+
+function flipCard() {
+  const flashcard = document.getElementById('currentFlashcard');
+  const flashcardText = document.getElementById('flashcardText');
+  
+  if (!flashcard || !flashcardText) {
+    console.error('Flashcard elements not found');
+    return;
+  }
+  
+  if (!isFlipped) {
+    // Show answer
+    const answer = flashcard.dataset.answer || '';
+    flashcardText.textContent = answer;
+    isFlipped = true;
+    flashcard.classList.add('flipped');
+  } else {
+    // Show question
+    const card = currentDeck.cards[currentCardIndex];
+    flashcardText.textContent = card.question;
+    isFlipped = false;
+    flashcard.classList.remove('flipped');
+  }
+}
+   function prevCard() {
+  if (!currentDeck || currentCardIndex <= 0) return;
+  currentCardIndex--;
+  showCurrentCard();
+}
+
+function nextCard() {
+  if (!currentDeck || currentCardIndex >= currentDeck.cards.length - 1) return;
+  currentCardIndex++;
+  showCurrentCard();
+}
+
+// Fixed closeDeckModal function
+function closeDeckModal() {
+  document.getElementById('deckModal').style.display = 'none';
+  currentDeck = null;
+  currentCardIndex = 0;
+  isFlipped = false;
+}
+
+function exportToQuizlet(competency, cards) {
+  // Create CSV format that Quizlet can import
+  let csvContent = "Question,Answer\n";
+  
+  cards.forEach(card => {
+    // Escape quotes and commas for CSV
+    const question = `"${card.question.replace(/"/g, '""')}"`;
+    const answer = `"${card.answer.replace(/"/g, '""')}"`;
+    csvContent += `${question},${answer}\n`;
+  });
+  
+  // Create downloadable file
+  const blob = new Blob([csvContent], { type: 'text/csv' });
+  const url = window.URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `CertQuest-${competency}-Flashcards.csv`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  window.URL.revokeObjectURL(url);
+  
+  // Show instructions
+  alert(`📥 CSV downloaded! 
+
+To import to Quizlet:
+1. Go to quizlet.com and create a new study set
+2. Click "Import from Word, Excel, Google Docs, etc."
+3. Upload the downloaded CSV file
+4. Make sure delimiter is set to "Comma"
+5. Click "Import"`);
+}
+
+// Add this function to create a shareable text format
+function exportToText(competency, cards) {
+  let textContent = `CertQuest ${competency} Flashcards\n`;
+  textContent += `Generated on ${new Date().toLocaleDateString()}\n`;
+  textContent += `Total Cards: ${cards.length}\n\n`;
+  
+  cards.forEach((card, index) => {
+    textContent += `Card ${index + 1}:\n`;
+    textContent += `Q: ${card.question}\n`;
+    textContent += `A: ${card.answer}\n\n`;
+  });
+  
+  // Copy to clipboard
+  navigator.clipboard.writeText(textContent).then(() => {
+    alert(`📋 Copied to clipboard! 
+
+You can now:
+1. Paste into a Quizlet study set
+2. Share with classmates
+3. Save as a text file for studying offline`);
+  });
+}
+   
+// Add this function to handle XP awards
+async function awardXP(userId, amount, reason) {
+  try {
+    const userRef = db.collection('users').doc(userId);
+    const userDoc = await userRef.get();
+    
+    if (userDoc.exists) {
+      await userRef.update({
+        XP: firebase.firestore.FieldValue.increment(amount)
+      });
+    } else {
+      await userRef.set({
+        XP: amount
+      });
+    }
+    
+    console.log(`Awarded ${amount} XP to user ${userId} for ${reason}`);
+    showXPNotification(amount, reason);
+    
+  } catch (error) {
+    console.error("Failed to award XP:", error);
+  }
+}
+
+// Add this function to show XP notification
+function showXPNotification(amount, reason) {
+  // Create notification element if it doesn't exist
+  let notification = document.getElementById('xpNotification');
+  if (!notification) {
+    notification = document.createElement('div');
+    notification.id = 'xpNotification';
+    notification.style.cssText = `
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 15px 25px;
+      border-radius: 10px;
+      font-weight: bold;
+      z-index: 10000;
+      transform: translateX(400px);
+      transition: transform 0.3s ease;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    `;
+    document.body.appendChild(notification);
+  }
+  
+  notification.textContent = `🎉 +${amount} XP for completing flashcards!`;
+  notification.style.transform = 'translateX(0)';
+  
+  setTimeout(() => {
+    notification.style.transform = 'translateX(400px)';
+  }, 3000);
+}
+
+function rateDifficulty(difficulty) {
+  if (!currentDeck || !currentDeck.cards[currentCardIndex]) return;
+  
+  // Update local difficulty
+  currentDeck.cards[currentCardIndex].difficulty = difficulty;
+  
+  // Visual feedback
+  const buttons = document.querySelectorAll('.difficulty-btn');
+  buttons.forEach(btn => btn.style.transform = 'scale(1)');
+  
+  const activeBtn = document.querySelector(`.difficulty-btn.${difficulty}`);
+  if (activeBtn) {
+    activeBtn.style.transform = 'scale(0.95)';
+    setTimeout(() => {
+      activeBtn.style.transform = 'scale(1)';
+    }, 150);
+  }
+  
+  // Auto advance to next card after a brief delay
+  setTimeout(async () => {
+    if (currentCardIndex < currentDeck.cards.length - 1) {
+      nextCard();
+    } else {
+      // Completed all cards - award XP
+      const user = firebase.auth().currentUser;
+      if (user) {
+        await awardXP(user.uid, 5, 'completing flashcards');
+      }
+      
+      alert(`🎉 Great job! You've completed all ${currentDeck.cards.length} flashcards for ${currentDeck.name}.`);
+    }
+  }, 500);
+}
+
+// Add this function to get difficulty level
+function getDifficultyLevel(cards) {
+  if (cards.length <= 3) return 'Easy';
+  if (cards.length <= 7) return 'Medium';
+  return 'Challenging';
+}
+
+// Add this function to show empty state
+function showEmptyState(title, description = '') {
+  document.getElementById('deckGrid').innerHTML = `
+    <div class="empty-state">
+      <h3>${title}</h3>
+      ${description ? `<p>${description}</p>` : ''}
+    </div>
+  `;
+}
+    // Close modal when clicking outside
+   window.onclick = function(event) {
+  const modal = document.getElementById('deckModal');
+  if (event.target === modal) {
+    closeDeckModal();
+  }
+}
+
+function checkForSpecificDeck() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const deckName = urlParams.get('deck');
+  const source = urlParams.get('source');
+  
+  if (deckName && source === 'missed') {
+    // Try to get deck data from localStorage
+    const storedDeck = localStorage.getItem('currentFlashcardDeck');
+    
+    if (storedDeck) {
+      try {
+        const deckData = JSON.parse(storedDeck);
+        
+        // Verify this is the correct deck and data is recent (within 1 hour)
+        if (deckData.name === decodeURIComponent(deckName) && 
+            deckData.source === 'missed_questions' &&
+            (Date.now() - deckData.timestamp) < 3600000) {
+          
+          console.log('Opening specific deck from URL:', deckData.name);
+          
+          // Open the deck modal directly
+          setTimeout(() => {
+            openDeckModal(deckData.name, deckData.cards);
+          }, 500); // Small delay to ensure page is ready
+          
+          // Clean up localStorage after use
+          localStorage.removeItem('currentFlashcardDeck');
+          
+          return true; // Indicates we handled a specific deck
+        }
+      } catch (error) {
+        console.error('Error parsing stored deck data:', error);
+      }
+    }
+  }
+  
+  return false; // No specific deck to open
+}
+
+    // Keyboard navigation
+    document.addEventListener('keydown', function(event) {
+      if (document.getElementById('deckModal').style.display === 'block') {
+        switch(event.key) {
+          case 'ArrowLeft':
+            prevCard();
+            break;
+          case 'ArrowRight':
+            nextCard();
+            break;
+          case ' ':
+          case 'Enter':
+            event.preventDefault();
+            flipCard();
+            break;
+          case 'Escape':
+            closeDeckModal();
+            break;
+          case '1':
+            rateDifficulty('easy');
+            break;
+          case '2':
+            rateDifficulty('medium');
+            break;
+          case '3':
+            rateDifficulty('hard');
+            break;
+        }
+      }
+    });
+
+    function openNotificationsOnHome() {
+    // Set a flag in sessionStorage (gets cleared when browser is closed)
+    sessionStorage.setItem('openNotifications', 'true');
+    // Navigate to home page - CHANGE THIS PATH to match your structure
+    window.location.href = 'public/home.html';
+}
+
+
+  </script>
+
+  <!-- Notification Panel -->
+  <div id="notificationPanel" class="notification-panel hidden">
+    <div class="notification-panel-header">
+      <h3 class="notification-panel-title">NOTIFICATIONS</h3>
+      <button onclick="toggleNotificationPanel()" class="close-notifications">✕</button>
+    </div>
+    <div id="notificationList" class="notification-list"></div>
+  </div>
+
+  <!-- Assignment Modal -->
+  <div id="cq-assignment-modal" class="cq-modal" style="display: none;">
+    <div class="cq-modal-content">
+      <span class="cq-close" onclick="closeAssignmentModal()">&times;</span>
+      <div id="cq-assignment-title" class="cq-modal-title">New Assignment</div>
+      
+      <!-- Assignment Info (shown first) -->
+      <div id="cq-assignment-info">
+        <div id="cq-assignment-fields" class="cq-modal-fields"></div>
+        <div class="cq-modal-footer" style="margin-top:1.5rem; text-align:right;">
+          <button class="cq-modal-btn" onclick="acceptAssignmentNow()">I'll do it now</button>
+          <button class="cq-modal-btn" onclick="snoozeAssignment()">I'll do it later</button>
+        </div>
+      </div>
+      
+      <!-- Quiz Section (hidden initially) -->
+      <div id="cq-assignment-quiz" style="display:none;">
+        <div class="quiz-meta">
+          <span id="quizDifficulty">Difficulty: Medium</span>
+          <span id="quizTime">Time: 10 mins</span>
+          <span id="quizScore" style="margin-left: auto; font-weight: 600;">Score: 0/5</span>
+        </div>
+        <div id="quizQuestions" class="cq-modal-fields"></div>
+        <div class="cq-modal-footer">
+          <button class="cq-modal-btn" id="submitQuizBtn" disabled>Submit Answers</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quiz Modal - Fullscreen -->
+  <div id="quizModal" style="display: none;" class="practice-quiz-fullscreen">
+    <!-- Galaxy Background -->
+    <div class="practice-quiz-galaxy-bg">
+      <div class="practice-quiz-galaxy-gradient"></div>
+      <div class="practice-quiz-stars-container" id="quizStarsContainer"></div>
+      <div class="practice-quiz-nebula practice-quiz-nebula-1"></div>
+      <div class="practice-quiz-nebula practice-quiz-nebula-2"></div>
+      <div class="practice-quiz-nebula practice-quiz-nebula-3"></div>
+    </div>
+
+    <!-- Top Bar -->
+    <div class="practice-quiz-topbar">
+      <div class="practice-quiz-topbar-content">
+        <div>
+          <h1 id="quizTitle" class="practice-quiz-topbar-title">Easy Written Practice</h1>
+          <p class="practice-quiz-topbar-subtitle">
+            <span id="quizProgress">Question 1 of 14</span>
+          </p>
+        </div>
+        
+        <div class="practice-quiz-topbar-right">
+          <div class="practice-quiz-timer-section">
+            <p class="practice-quiz-timer-label">Time Remaining</p>
+            <p id="quizTimer" class="practice-quiz-timer-value">14:53</p>
+          </div>
+          
+          <button class="practice-quiz-close-btn" onclick="closeQuizModal()">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="practice-quiz-main">
+      <!-- Competency Badge -->
+      <div class="practice-quiz-competency-badge">
+        <span id="questionCompetency" class="practice-quiz-competency-text">Business Communication</span>
+      </div>
+
+      <!-- Question -->
+      <div class="practice-quiz-question-section">
+        <h2 id="questionText" class="practice-quiz-question">Loading question...</h2>
+        <p class="practice-quiz-question-hint">Select the best answer from the options below</p>
+      </div>
+
+      <!-- Answer Options -->
+      <div id="optionsContainer" class="practice-quiz-options">
+        <!-- Options will be populated dynamically -->
+      </div>
+
+      <!-- Progress Section -->
+      <div class="practice-quiz-progress-section">
+        <div class="practice-quiz-progress-header">
+          <p class="practice-quiz-progress-label">Overall Progress</p>
+          <p class="practice-quiz-progress-value"><span id="progressPercent">0</span>%</p>
+        </div>
+        <div class="practice-quiz-progress-bar">
+          <div class="practice-quiz-progress-fill" id="progressFill" style="width: 0%"></div>
+        </div>
+      </div>
+
+      <!-- Navigation Buttons -->
+      <div class="practice-quiz-actions">
+        <button id="quizPrevBtn" class="practice-quiz-prev-btn" onclick="previousQuestion()" disabled>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="15 18 9 12 15 6"></polyline>
+          </svg>
+          Previous Question
+        </button>
+        <button id="quizNextBtn" class="practice-quiz-next-btn" onclick="nextQuestion()">Next Question</button>
+        <button id="quizSubmitBtn" class="practice-quiz-submit-btn" onclick="submitQuiz()" style="display: none;">Submit Quiz</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Congratulations Modal - Fullscreen -->
+  <div id="congratsModal" class="practice-quiz-fullscreen" style="display:none;">
+    <!-- Galaxy Background -->
+    <div class="practice-quiz-galaxy-bg">
+      <div class="practice-quiz-galaxy-gradient"></div>
+      <div class="practice-quiz-stars-container" id="congratsStarsContainer"></div>
+      <div class="practice-quiz-nebula practice-quiz-nebula-1"></div>
+      <div class="practice-quiz-nebula practice-quiz-nebula-2"></div>
+      <div class="practice-quiz-nebula practice-quiz-nebula-3"></div>
+    </div>
+
+    <!-- Main Content - Centered -->
+    <div class="practice-quiz-main" style="display: flex; align-items: center; justify-content: center; min-height: calc(100vh - 80px);">
+      <div class="congrats-content">
+        <!-- Congratulations Header - Centered -->
+        <div class="congrats-header">
+          <h1 id="congratsTitle" class="congrats-title">Congratulations!</h1>
+          <p class="congrats-subtitle" id="congratsSubtitle">
+            Excellent work! You scored <span id="congratsScore">0/0</span>
+          </p>
+        </div>
+
+        <!-- Assignment Info - Centered -->
+        <div class="congrats-assignment-info">
+          <p class="congrats-assignment-label">For completing:</p>
+          <h2 id="congratsAssignmentName" class="congrats-assignment-name">Written Practice</h2>
+        </div>
+
+        <!-- Competency Breakdown - Grid Layout -->
+        <div class="congrats-competencies-grid" id="congratsCompetencies">
+          <!-- Competencies will be populated here -->
+        </div>
+
+        <!-- Action Button -->
+        <div class="congrats-actions">
+          <button class="practice-quiz-next-btn" onclick="closeCongratsModal()">Got it!</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Assignment Loader - Fullscreen Blurred -->
+  <div id="assignmentLoader" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); z-index: 10000; justify-content: center; align-items: center; flex-direction: column;">
+    <div class="circular-progress-loader">
+      <svg class="circular-progress-svg" viewBox="0 0 100 100">
+        <defs>
+          <linearGradient id="progressGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" style="stop-color:#ef4444;stop-opacity:1" />
+            <stop offset="50%" style="stop-color:#f97316;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#eab308;stop-opacity:1" />
+          </linearGradient>
+        </defs>
+        <circle class="circular-progress-bg" cx="50" cy="50" r="45"></circle>
+        <circle class="circular-progress-fill" cx="50" cy="50" r="45" id="circularProgressFill"></circle>
+      </svg>
+      <div class="circular-progress-text" id="circularProgressText">0%</div>
+    </div>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-functions-compat.js"></script>
+  <script>
+    // Notification Pipeline Functions
+    let quizQuestions = [];
+    let currentQuestionIndex = 0;
+    let quizAnswers = {};
+    let quizTimer = null;
+    let quizTimeRemaining = 0;
+
+    function toggleNotificationPanel() {
+      const panel = document.getElementById("notificationPanel");
+      if (!panel) return;
+      
+      if (panel.classList.contains("active")) {
+        panel.classList.remove("active");
+        setTimeout(() => panel.classList.add("hidden"), 300);
+      } else {
+        panel.classList.remove("hidden");
+        setTimeout(() => panel.classList.add("active"), 10);
+      }
+    }
+    
+    // Expose immediately to window for inline onclick handlers
+    window.toggleNotificationPanel = toggleNotificationPanel;
+
+    function updateNotificationBadge(count) {
+      const notificationLink = document.querySelector('a[onclick*="toggleNotificationPanel"]');
+      if (notificationLink) {
+        let notificationBadge = notificationLink.querySelector('.notification-badge');
+        if (!notificationBadge && count > 0) {
+          notificationBadge = document.createElement('span');
+          notificationBadge.className = 'notification-badge';
+          notificationBadge.id = 'notificationBadge';
+          notificationBadge.textContent = count;
+          notificationLink.style.position = 'relative';
+          notificationLink.appendChild(notificationBadge);
+        } else if (notificationBadge) {
+          if (count > 0) {
+            notificationBadge.style.display = 'inline-flex';
+            notificationBadge.textContent = count;
+          } else {
+            notificationBadge.style.display = 'none';
+          }
+        }
+      }
+    }
+    window.updateNotificationBadge = updateNotificationBadge;
+
+    function setupNotifications() {
+      const user = firebase.auth().currentUser;
+      if (!user) return;
+      
+      const notificationList = document.getElementById('notificationList');
+      if (!notificationList) return;
+      
+      // Listen for notifications
+      // Fetch without orderBy to avoid index requirement, then sort in memory
+      db.collection('notifications')
+        .where('menteeId', '==', user.uid)
+        .limit(50)
+        .onSnapshot((snapshot) => {
+          notificationList.innerHTML = '';
+          
+          let unreadCount = 0;
+          const notifications = [];
+          
+          if (snapshot.empty) {
+            notificationList.innerHTML = '<div class="notification-empty">No notifications</div>';
+            updateNotificationBadge(0);
+            return;
+          }
+          
+          snapshot.forEach((doc) => {
+            notifications.push({ id: doc.id, data: doc.data(), ref: doc.ref });
+          });
+          
+          // Sort by timestamp if orderBy wasn't available
+          notifications.sort((a, b) => {
+            const aTime = a.data.timestamp?.toDate?.() || new Date(0);
+            const bTime = b.data.timestamp?.toDate?.() || new Date(0);
+            return bTime - aTime;
+          });
+          
+          notifications.forEach(({ id, data: notif, ref }) => {
+            if (!notif.read) {
+              unreadCount++;
+            }
+            
+            const item = document.createElement('div');
+            item.className = `notification-item ${notif.read ? 'read' : ''}`;
+            
+            // Format time
+            let timeText = 'Just now';
+            if (notif.timestamp && notif.timestamp.toDate) {
+              const date = notif.timestamp.toDate();
+              const now = new Date();
+              const diffMs = now - date;
+              const diffMins = Math.floor(diffMs / 60000);
+              const diffHours = Math.floor(diffMs / 3600000);
+              const diffDays = Math.floor(diffMs / 86400000);
+              
+              if (diffMins < 1) timeText = 'Just now';
+              else if (diffMins < 60) timeText = `${diffMins}m ago`;
+              else if (diffHours < 24) timeText = `${diffHours}h ago`;
+              else timeText = `${diffDays}d ago`;
+            }
+            
+            if (notif.type === 'assignment' && notif.assignmentId) {
+              // Fetch assignment data
+              db.collection('assignments').doc(notif.assignmentId).get().then((assignmentDoc) => {
+                if (assignmentDoc.exists) {
+                  const assignment = assignmentDoc.data();
+                  item.innerHTML = `
+                    <div class="notification-header">
+                      <strong>${notif.message || notif.title || 'New Assignment'}</strong>
+                      <span class="notification-time">${timeText}</span>
+                    </div>
+                    <div class="notification-body">
+                      Type: ${assignment.type || 'Quiz'}<br>
+                      Competencies: ${assignment.competencies ? assignment.competencies.join(', ') : 'n/a'}<br>
+                      ${assignment.time ? `Time: ${assignment.time}<br>` : ''}
+                      ${assignment.difficulty ? `Difficulty: ${assignment.difficulty}` : ''}
+                    </div>
+                  `;
+                  
+                  item.addEventListener('click', () => {
+                    if (!notif.read) {
+                      ref.update({ read: true });
+                    }
+                    item.classList.add('read');
+                    openFullAssignmentModal(notif.assignmentId);
+                  });
+                }
+              });
+            } else {
+              item.innerHTML = `
+                <div class="notification-header">
+                  <strong>${notif.message || notif.title || 'Notification'}</strong>
+                  <span class="notification-time">${timeText}</span>
+                </div>
+                <div class="notification-body">
+                  ${notif.message || notif.title || 'Notification'}
+                </div>
+              `;
+              
+              item.addEventListener('click', () => {
+                if (!notif.read) {
+                  ref.update({ read: true });
+                }
+                item.classList.add('read');
+              });
+            }
+            
+            notificationList.appendChild(item);
+          });
+          
+          updateNotificationBadge(unreadCount);
+        }, (error) => {
+          console.error('Error loading notifications:', error);
+        });
+    }
+
+    function openFullAssignmentModal(assignmentId) {
+      db.collection('assignments').doc(assignmentId).get().then((doc) => {
+        if (!doc.exists) return;
+        
+        const assignment = doc.data();
+        window.currentAssignment = assignment;
+        window.latestAssignmentId = assignmentId;
+        
+        const modal = document.getElementById('cq-assignment-modal');
+        const titleEl = document.getElementById('cq-assignment-title');
+        const fieldsEl = document.getElementById('cq-assignment-fields');
+        
+        titleEl.textContent = assignment.title || 'New Assignment';
+        fieldsEl.innerHTML = `
+          <p><strong>Type:</strong> ${assignment.type || 'Quiz'}</p>
+          <p><strong>Competencies:</strong> ${assignment.competencies ? assignment.competencies.join(', ') : 'N/A'}</p>
+          <p><strong>Description:</strong> ${assignment.description || 'No description'}</p>
+          ${assignment.time ? `<p><strong>Time:</strong> ${assignment.time}</p>` : ''}
+          ${assignment.difficulty ? `<p><strong>Difficulty:</strong> ${assignment.difficulty}</p>` : ''}
+        `;
+        
+        document.getElementById('cq-assignment-info').style.display = 'block';
+        document.getElementById('cq-assignment-quiz').style.display = 'none';
+        modal.style.display = 'block';
+      });
+    }
+
+    function closeAssignmentModal() {
+      document.getElementById('cq-assignment-modal').style.display = 'none';
+    }
+
+    // Speaking and Case Study Recording Variables
+    let cqSpeakingMediaRecorder = null;
+    let cqSpeakingMediaStream = null;
+    let cqSpeakingRecordedChunks = [];
+    let isRecording = false;
+    let isIntentionallyStopping = false;
+    let recordingStateMonitor = null;
+    
+    // Case Study variables
+    let cqCaseStudyIsRecording = false;
+    let cqCaseStudyIsIntentionallyStopping = false;
+    let cqCaseStudyRecordingStateMonitor = null;
+    let cqCaseStudyMediaRecorder = null;
+    let cqCaseStudyMediaStream = null;
+    let cqCaseStudyRecordedChunks = [];
+    let cqCaseStudyTimerInterval = null;
+    let cqCaseStudyTimeLeft = 1200; // 20 minutes in seconds
+    let cqCaseStudyTimerActive = false;
+
+    async function acceptAssignmentNow() {
+      console.log("🚀 acceptAssignmentNow() called");
+      showLoader();
+
+      const assignment = window.currentAssignment;
+      console.log("📋 Current assignment:", assignment);
+
+      if (!assignment) {
+        console.error("❌ No current assignment found");
+        hideLoader();
+        return;
+      }
+
+      if (window.latestAssignmentId) {
+        console.log("✅ Marking assignment as seen");
+
+        const updateData = {
+          status: "seen",
+          completedAt: firebase.firestore.FieldValue.serverTimestamp(),
+          acceptedAt: firebase.firestore.FieldValue.serverTimestamp()
+        };
+
+        if (assignment.type === 'written') {
+          updateData.score = 0;
+          updateData.maxScore = assignment.writtenQuestions?.length || 10;
+        }
+
+        try {
+          await db.collection('assignments').doc(window.latestAssignmentId).update(updateData);
+          console.log("✅ Assignment marked as seen successfully");
+        } catch (error) {
+          console.error("❌ Error marking assignment as seen:", error);
+        }
+      }
+
+      // Close assignment info modal first
+      closeAssignmentModal();
+
+      // Handle assignment types
+      if (assignment.type === 'case') {
+        console.log("📋 Opening case study modal for case assignment");
+        hideLoader();
+        
+        // Store assignment questions globally for the case study modal
+        window.currentAssignmentQuestions = {
+          q1: assignment.questions && assignment.questions[0] ? assignment.questions[0] : "No question provided",
+          q2: assignment.questions && assignment.questions[1] ? assignment.questions[1] : "No question provided",
+          title: assignment.title || "Case Study",
+          description: assignment.description || assignment.caseStudyContent || ""
+        };
+        
+        if (typeof openCaseStudyModal === 'function') {
+          openCaseStudyModal(assignment);
+        } else {
+          console.error("openCaseStudyModal function not found");
+          alert("Error: Case study assignment handler not available");
+        }
+        return;
+      }
+      
+      if (assignment.type === 'speaking') {
+        console.log("🎤 Opening speaking modal for speaking assignment");
+        hideLoader();
+        
+        // Store assignment questions globally for the speaking modal
+        window.currentAssignmentQuestions = {
+          q1: assignment.questions && assignment.questions[0] ? assignment.questions[0] : "No question provided",
+          q2: assignment.questions && assignment.questions[1] ? assignment.questions[1] : "No question provided",
+          title: assignment.title || "Speaking Assignment",
+          description: assignment.description || ""
+        };
+        
+        if (typeof openSpeakingAssignmentModal === 'function') {
+          openSpeakingAssignmentModal(assignment);
+        } else {
+          console.error("openSpeakingAssignmentModal function not found");
+          alert("Error: Speaking assignment handler not available");
+        }
+        return;
+      }
+
+      if (assignment.type === 'written') {
+        console.log("✍️ Opening written assignment (with GPT if needed)");
+        await openWrittenPracticeModal(assignment); 
+        return;
+      }
+
+      // Handle quiz assignments
+      if (assignment.type === 'quiz') {
+        console.log("📝 Quiz assignment - opening quiz modal");
+        hideLoader();
+        document.getElementById('cq-assignment-info').style.display = 'none';
+        document.getElementById('cq-assignment-quiz').style.display = 'block';
+        renderQuiz(quizQuestions);
+        return;
+      }
+
+      // Unknown assignment type
+      console.error("❌ Unknown assignment type:", assignment.type);
+      hideLoader();
+      alert(`Assignment type "${assignment.type || 'unknown'}" is not yet implemented. Please contact support.`);
+    }
+
+    function snoozeAssignment() {
+      closeAssignmentModal();
+    }
+
+    async function openWrittenPracticeModal(assignment) {
+      console.log("Opening written practice modal with assignment:", assignment);
+
+      try {
+        showLoader();
+        startCircularProgress();
+        
+        currentQuestionIndex = 0;
+        quizAnswers = {};
+
+        const timeInMinutes = parseInt(assignment.time) || 15;
+        quizTimeRemaining = timeInMinutes * 60;
+
+        // Check if assignment has preloaded questions
+        if (assignment.writtenQuestions && assignment.writtenQuestions.length > 0) {
+          console.log("✅ Using assignment's preloaded questions");
+          quizQuestions = assignment.writtenQuestions;
+        } else if (assignment.questions && Array.isArray(assignment.questions) && assignment.questions.length > 0) {
+          console.log("✅ Using assignment.questions");
+          quizQuestions = assignment.questions;
+        } else {
+          // Generate new questions via GPT
+          console.log("⚡ No preloaded questions, generating via GPT...");
+          const generatedQuestions = await generatePersonalizedQuestionsWithGPT({
+            time: assignment.time || "15 mins",
+            difficulty: assignment.difficulty || "Medium",
+            competencies: assignment.competencies || ["General"],
+            type: "written"
+          });
+          quizQuestions = generatedQuestions;
+          assignment.writtenQuestions = generatedQuestions;
+        }
+
+        console.log("✅ Questions ready:", quizQuestions);
+
+        hideLoader();
+        completeCircularProgress();
+        
+        // Show modal and create stars
+        openQuizModal();
+
+      } catch (err) {
+        console.error("❌ Error in openWrittenPracticeModal:", err);
+        hideLoader();
+        alert("Could not load written practice. Please try again.");
+      }
+    }
+
+    function getQuestionCount(timeStr) {
+      if (!timeStr) return 5;
+      const normalized = timeStr.toString().toLowerCase();
+      if (normalized.includes("15")) return 10;
+      if (normalized.includes("10")) return 7;
+      if (normalized.includes("5")) return 5;
+      return 5;
+    }
+
+    async function generatePersonalizedQuestionsWithGPT(formData) {
+      const questionCount = getQuestionCount(formData.time);
+      const competenciesText = formData.competencies.join(', ');
+
+      let prompt = `Generate ${questionCount} FBLA-style multiple choice questions.
+- Difficulty: ${formData.difficulty}
+- Competencies to cover: ${competenciesText}
+- Each question must have exactly 4 options and 1 correct answer
+- Questions must be standalone, realistic for FBLA, and never reference "the document", "the text", "as stated", etc.
+- Use business, finance, marketing, management, economics, law, and related topics depending on the competencies.`
+
+      prompt += `\n\nReturn ONLY valid JSON array in format:
+[
+  {
+    "text": "Question text?",
+    "competency": "Marketing",
+    "correctAnswer": "Correct option text",
+    "options": ["A", "B", "C", "D"],
+    "difficulty": "${formData.difficulty}",
+    "source": "gpt_generated"
+  }
+]`;
+
+      try {
+        const response = await firebase.functions().httpsCallable("generateQuestionsWithAI")({
+          messages: [
+            { role: "system", content: `You are an expert FBLA written-competition exam designer.
+
+Your role is to generate ORIGINAL, competition-accurate FBLA-style multiple-choice questions that match the structure, rigor, tone, and professional standards of official FBLA written tests.
+
+You must follow ALL rules below.
+
+────────────────────────────────
+CORE FBLA PHILOSOPHY
+────────────────────────────────
+FBLA written tests assess professional correctness, precision, and applied business literacy.
+
+They do NOT assess creativity, opinion, or open-ended reasoning.
+
+Each question must test exactly ONE concept.
+
+Questions must be concise, objective, and professionally worded.
+
+Avoid unnecessary narrative unless the question type explicitly requires a scenario.
+
+────────────────────────────────
+APPROVED FBLA QUESTION ARCHETYPES
+────────────────────────────────
+Every question MUST clearly belong to ONE of the following archetypes:
+
+1. Definition / Term Identification  
+   - Identifying the correct term based on a definition  
+   - Selecting the correct meaning of a professional word or concept  
+
+2. Classification / Category Recognition  
+   - Determining where an item belongs within a professional category system  
+   - Examples include document types, account categories, system types, business forms, or classifications  
+
+3. Procedural / Workflow Knowledge  
+   - Understanding the stages of a professional workflow specific to the competition area  
+   - Identifying where information originates within that workflow  
+   - Determining which document, tool, or action is appropriate at a given stage  
+   - Recognizing correct sequencing of professional tasks within the domain  
+
+4. Tool-to-Function Matching  
+   - Matching software features, commands, utilities, or tools to their correct purpose  
+   - Selecting the correct function used to accomplish a professional task  
+
+5. Quantitative / Calculation Application  
+   - Performing single-step or limited multi-step calculations  
+   - Selecting the correct numeric result based on provided data  
+   - Avoid unnecessary complexity or advanced math  
+
+6. Language Precision & Usage  
+   - Correct use of professional vocabulary  
+   - Distinguishing homophones, word meanings, spelling, grammar, and standard usage  
+
+7. Error Detection / Exception Identification  
+   - Identifying what is incorrect, misspelled, or does NOT belong  
+   - Using negation ("NOT") carefully and intentionally  
+
+────────────────────────────────
+QUESTION STRUCTURE RULES
+────────────────────────────────
+• Each question must assess ONE idea only.  
+• Do not combine multiple concepts in one question.  
+• Avoid ambiguous wording.  
+• Use professional, neutral language.
+
+Acceptable stem styles include:
+- "Which of the following…"
+- "What term best describes…"
+- "The document used to…"
+- "Which action should be taken…"
+- "Which of the following is NOT…"
+
+────────────────────────────────
+ANSWER CHOICE DESIGN (CRITICAL)
+────────────────────────────────
+Each question MUST include exactly FOUR answer choices.
+
+Answer choices must:
+• Be the same grammatical form  
+• Be similar in length  
+• Belong to the same conceptual family  
+
+Wrong answer choices (distractors) must be plausible and realistic.
+
+Allowed distractor strategies include:
+• Closely related terms within the same category  
+• Common student misconceptions  
+• Incorrect step within a workflow  
+• Reversed or misapplied professional rules  
+• Visually or linguistically similar words  
+• Typical calculation or classification errors  
+
+Never include joke answers or obviously incorrect options.
+
+────────────────────────────────
+DIFFICULTY CALIBRATION
+────────────────────────────────
+Easy:
+• Direct recall or recognition  
+• Minimal traps  
+
+Medium:
+• Requires discrimination between similar concepts  
+• Includes common misconceptions  
+
+Hard:
+• Includes negation ("NOT")  
+• Requires precise rule awareness  
+• Uses subtle wording differences  
+• Penalizes shallow memorization  
+
+────────────────────────────────
+CONTENT INTEGRITY RULES
+────────────────────────────────
+• All questions must be ORIGINAL.  
+• Do NOT copy real FBLA questions.  
+• Do NOT closely paraphrase known questions.  
+• Use authentic structure only, not replicated wording.
+
+Questions must feel realistic for competitive FBLA written events at the regional, state, or national level.
+
+When study materials are provided, extract concepts, facts, names, dates, laws, and details from them. Present this information as established business knowledge. NEVER mention "the study guide", "the document", "the material", or use phrases like "according to", "as stated in", or "mentioned in".
+
+────────────────────────────────
+OUTPUT REQUIREMENTS
+────────────────────────────────
+• Generate ONLY the requested number of questions.  
+• Each question must have exactly four answer options.  
+• Only ONE option may be correct.  
+• Output valid JSON only.  
+• Do not include explanations, commentary, or headings.  
+
+You are writing as a professional exam author — not as a tutor or teacher.` },
+            { role: "user", content: (window.__CERTQUEST_CONTEXT__ || "") + "\n\n" + prompt }
+          ]
+        });
+
+        const data = response.data;
+        let content = data.content || data.choices?.[0]?.message?.content || data;
+        
+        if (typeof content !== 'string') {
+          content = JSON.stringify(content);
+        }
+        
+        content = content.trim();
+        content = content.replace(/```json|```/g, "");
+        const jsonStart = content.indexOf('[');
+        const jsonEnd = content.lastIndexOf(']') + 1;
+        
+        if (jsonStart !== -1 && jsonEnd > jsonStart) {
+          content = content.slice(jsonStart, jsonEnd);
+        }
+        
+        const generated = JSON.parse(content);
+        console.log(`✅ Generated ${generated.length} GPT questions`);
+        return generated;
+
+      } catch (err) {
+        console.error("❌ GPT error:", err);
+        return getFallbackQuestions(questionCount, formData.competencies);
+      }
+    }
+
+    function getFallbackQuestions(count, competencies) {
+      const fallbackQuestions = [
+        {
+          text: "What is the primary purpose of parliamentary procedure?",
+          competency: "Parliamentary Procedure",
+          correctAnswer: "To make meetings more efficient",
+          options: [
+            "To make meetings more efficient",
+            "To give the president more power",
+            "To eliminate debate",
+            "To make meetings longer"
+          ]
+        },
+        {
+          text: "Which motion is used to end a meeting?",
+          competency: "Parliamentary Procedure",
+          correctAnswer: "Adjourn",
+          options: ["Adjourn", "Recess", "Postpone", "Table"]
+        },
+        {
+          text: "What is the most effective way to communicate in business?",
+          competency: "Business Communication",
+          correctAnswer: "Clear and concise messaging",
+          options: [
+            "Clear and concise messaging",
+            "Using complex terminology",
+            "Lengthy detailed explanations",
+            "Informal casual language"
+          ]
+        }
+      ];
+      
+      const result = [];
+      for (let i = 0; i < count; i++) {
+        result.push(fallbackQuestions[i % fallbackQuestions.length]);
+      }
+      return result;
+    }
+
+    function openQuizModal() {
+      const modal = document.getElementById('quizModal');
+      modal.style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+      
+      currentQuestionIndex = 0;
+      quizAnswers = {};
+      
+      createQuizStars();
+      loadQuestion();
+      startQuizTimer();
+    }
+
+    function createQuizStars() {
+      const starsContainer = document.getElementById('quizStarsContainer');
+      if (!starsContainer) return;
+      
+      starsContainer.innerHTML = '';
+      
+      for (let i = 0; i < 200; i++) {
+        const star = document.createElement('div');
+        star.className = 'practice-quiz-star';
+        
+        const size = Math.random() * 3 + 0.5;
+        const duration = Math.random() * 4 + 2;
+        const delay = Math.random() * 2;
+        const randomLeft = Math.random() * 100;
+        const randomTop = Math.random() * 100;
+        const randomOpacity = Math.random() * 0.9 + 0.3;
+        
+        star.style.width = size + 'px';
+        star.style.height = size + 'px';
+        star.style.left = randomLeft + '%';
+        star.style.top = randomTop + '%';
+        star.style.opacity = randomOpacity;
+        star.style.animation = `practice-quiz-twinkle ${duration}s ease-in-out infinite`;
+        star.style.animationDelay = delay + 's';
+        star.style.boxShadow = `0 0 ${size * 2}px rgba(255, 255, 255, 0.8)`;
+        
+        starsContainer.appendChild(star);
+      }
+    }
+
+    function loadQuestion() {
+      if (!quizQuestions || quizQuestions.length === 0) return;
+      
+      const question = quizQuestions[currentQuestionIndex];
+      if (!question) {
+        console.error("No question found at index", currentQuestionIndex);
+        return;
+      }
+      
+      console.log("Loading question", currentQuestionIndex + 1, ":", question.question || question.text);
+      
+      const assignment = window.currentAssignment || {};
+      const assignmentTitle = assignment.title || 'Written Practice';
+      const difficulty = assignment.difficulty || 'Easy';
+      document.getElementById('quizTitle').textContent = `${difficulty} ${assignmentTitle}`;
+      document.getElementById('quizProgress').textContent = 
+        `Question ${currentQuestionIndex + 1} of ${quizQuestions.length}`;
+      
+      document.getElementById('questionCompetency').textContent = question.competency || 'General';
+      const questionTextEl = document.getElementById('questionText');
+      questionTextEl.textContent = question.question || question.text;
+      questionTextEl.style.color = '#fff';
+      
+      const optionsContainer = document.getElementById('optionsContainer');
+      const previousAnswer = quizAnswers[currentQuestionIndex];
+      
+      optionsContainer.innerHTML = question.options.map((option, index) => {
+        const isSelected = previousAnswer === option;
+        return `
+          <div class="practice-quiz-option ${isSelected ? 'selected' : ''}" data-option="${option}">
+            ${option}
+          </div>
+        `;
+      }).join('');
+      
+      const options = optionsContainer.querySelectorAll('.practice-quiz-option');
+      options.forEach(optionEl => {
+        optionEl.addEventListener('click', function() {
+          options.forEach(opt => opt.classList.remove('selected'));
+          this.classList.add('selected');
+          quizAnswers[currentQuestionIndex] = this.dataset.option;
+          console.log("Answer saved:", currentQuestionIndex, "->", this.dataset.option);
+        });
+      });
+      
+      // Update progress
+      const progress = ((currentQuestionIndex + 1) / quizQuestions.length) * 100;
+      document.getElementById('progressPercent').textContent = Math.round(progress);
+      document.getElementById('progressFill').style.width = progress + '%';
+      
+      // Update navigation buttons
+      document.getElementById('quizPrevBtn').disabled = currentQuestionIndex === 0;
+      document.getElementById('quizNextBtn').style.display = currentQuestionIndex === quizQuestions.length - 1 ? 'none' : 'block';
+      document.getElementById('quizSubmitBtn').style.display = currentQuestionIndex === quizQuestions.length - 1 ? 'block' : 'none';
+    }
+
+
+    function previousQuestion() {
+      if (currentQuestionIndex > 0) {
+        currentQuestionIndex--;
+        loadQuestion();
+      }
+    }
+
+    function nextQuestion() {
+      if (currentQuestionIndex < quizQuestions.length - 1) {
+        currentQuestionIndex++;
+        loadQuestion();
+      }
+    }
+
+    function startQuizTimer() {
+      const assignment = window.currentAssignment;
+      if (!assignment || !assignment.time) return;
+      
+      const timeMatch = assignment.time.match(/(\d+)/);
+      if (!timeMatch) return;
+      
+      quizTimeRemaining = parseInt(timeMatch[1]) * 60; // Convert to seconds
+      
+      quizTimer = setInterval(() => {
+        quizTimeRemaining--;
+        
+        const mins = Math.floor(quizTimeRemaining / 60);
+        const secs = quizTimeRemaining % 60;
+        document.getElementById('quizTimer').textContent = `${mins}:${secs.toString().padStart(2, '0')}`;
+        
+        if (quizTimeRemaining <= 0) {
+          clearInterval(quizTimer);
+          submitQuiz();
+        }
+      }, 1000);
+    }
+
+    async function submitQuiz() {
+      if (quizTimer) {
+        clearInterval(quizTimer);
+      }
+      
+      let score = 0;
+      const competencyStats = {};
+      
+      quizQuestions.forEach((q, index) => {
+        const userAnswer = quizAnswers[index];
+        const correctAnswer = q.correctAnswer;
+        const isCorrect = userAnswer === correctAnswer;
+        
+        if (isCorrect) score++;
+        
+        const comp = q.competency || 'General';
+        if (!competencyStats[comp]) {
+          competencyStats[comp] = { correct: 0, total: 0 };
+        }
+        competencyStats[comp].total++;
+        if (isCorrect) competencyStats[comp].correct++;
+      });
+      
+      // Save to Firebase
+      const user = firebase.auth().currentUser;
+      if (user && window.latestAssignmentId) {
+        await db.collection('assignments').doc(window.latestAssignmentId).update({
+          status: 'complete',
+          score: score,
+          totalQuestions: quizQuestions.length,
+          competencyStats: competencyStats
+        });
+      }
+      
+      // Close both quiz modal and assignment modal
+      closeQuizModal();
+      closeAssignmentModal();
+      
+      showCongratsModal({
+        score: score,
+        totalQuestions: quizQuestions.length,
+        competencyStats: competencyStats,
+        assignmentName: window.currentAssignment?.title || 'Written Practice'
+      });
+    }
+
+    function closeQuizModal() {
+      if (quizTimer) {
+        clearInterval(quizTimer);
+      }
+      document.getElementById('quizModal').style.display = 'none';
+      document.body.style.overflow = 'auto';
+    }
+
+    function showCongratsModal(results) {
+      const modal = document.getElementById('congratsModal');
+      
+      // Check if modal exists
+      if (!modal) {
+        // Fallback to alert if modal doesn't exist
+        alert(results.message || `Congratulations! ${results.assignmentName || 'Assignment'} completed successfully!`);
+        return;
+      }
+      
+      // Handle case study assignments
+      if (results.assignmentType === 'case') {
+        const titleEl = document.getElementById('congratsTitle');
+        const scoreEl = document.getElementById('congratsScore');
+        const subtitleEl = document.getElementById('congratsSubtitle');
+        const assignmentNameEl = document.getElementById('congratsAssignmentName');
+        const competenciesContainer = document.getElementById('congratsCompetencies');
+        
+        if (titleEl) titleEl.textContent = 'Congratulations!';
+        if (scoreEl) scoreEl.textContent = '';
+        if (subtitleEl) subtitleEl.style.display = 'none'; // Hide the score line
+        if (assignmentNameEl) assignmentNameEl.textContent = results.assignmentName || 'Case Study';
+        
+        // Display competencies from Firebase
+        if (competenciesContainer) {
+          if (results.competencies && results.competencies.length > 0) {
+            competenciesContainer.innerHTML = results.competencies.map(comp => {
+              return `
+                <div class="congrats-competency-item">
+                  <div class="congrats-competency-header">
+                    <span class="congrats-competency-name">${comp}</span>
+                  </div>
+                </div>
+              `;
+            }).join('');
+          } else {
+            competenciesContainer.innerHTML = '<p style="color: #94a3b8; text-align: center;">No competency breakdown available</p>';
+          }
+        }
+        
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+        createCongratsStars();
+        return;
+      }
+      
+      // Handle speaking assignments (simple message)
+      if (results.assignmentType === 'speaking' || (results.message && !results.score && !results.totalQuestions)) {
+        const titleEl = document.getElementById('congratsTitle');
+        const scoreEl = document.getElementById('congratsScore');
+        const subtitleEl = document.getElementById('congratsSubtitle');
+        const assignmentNameEl = document.getElementById('congratsAssignmentName');
+        const competenciesContainer = document.getElementById('congratsCompetencies');
+        
+        if (titleEl) titleEl.textContent = 'Congratulations!';
+        if (scoreEl) scoreEl.textContent = '';
+        if (subtitleEl) {
+          subtitleEl.style.display = 'block';
+          subtitleEl.innerHTML = results.message || 'Assignment submitted successfully!';
+        }
+        if (assignmentNameEl) assignmentNameEl.textContent = results.assignmentName || 'Assignment';
+        
+        // Display competencies if available
+        if (competenciesContainer) {
+          if (results.competencies && results.competencies.length > 0) {
+            competenciesContainer.innerHTML = results.competencies.map(comp => {
+              return `
+                <div class="congrats-competency-item">
+                  <div class="congrats-competency-header">
+                    <span class="congrats-competency-name">${comp}</span>
+                  </div>
+                </div>
+              `;
+            }).join('');
+          } else {
+            competenciesContainer.innerHTML = '';
+          }
+        }
+        
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+        createCongratsStars();
+        return;
+      }
+      
+      // Handle written assignments (with scores)
+      const percentage = results.percentage || (results.score && results.totalQuestions ? Math.round((results.score / results.totalQuestions) * 100) : 0);
+      
+      const titleEl = document.getElementById('congratsTitle');
+      const scoreEl = document.getElementById('congratsScore');
+      const subtitleEl = document.getElementById('congratsSubtitle');
+      const assignmentNameEl = document.getElementById('congratsAssignmentName');
+      const competenciesContainer = document.getElementById('congratsCompetencies');
+      
+      if (titleEl) titleEl.textContent = 'Congratulations!';
+      if (scoreEl && results.score !== undefined && results.totalQuestions !== undefined) {
+        scoreEl.textContent = `${results.score}/${results.totalQuestions}`;
+      }
+      if (subtitleEl) {
+        subtitleEl.style.display = 'block'; // Reset display for other assignment types
+        if (results.score !== undefined && results.totalQuestions !== undefined) {
+          subtitleEl.innerHTML = 
+            `Excellent work! You scored <span id="congratsScoreSpan" style="background: linear-gradient(to right, #ef4444, #f97316, #eab308); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; font-weight: 900; font-size: 1.75rem;">${results.score}/${results.totalQuestions}</span>`;
+        } else if (results.message) {
+          subtitleEl.innerHTML = results.message;
+        }
+      }
+      
+      if (assignmentNameEl) assignmentNameEl.textContent = results.assignmentName || 'Written Practice';
+      
+      if (competenciesContainer) {
+        if (results.competencyStats && Object.keys(results.competencyStats).length > 0) {
+          competenciesContainer.innerHTML = Object.entries(results.competencyStats).map(([comp, stats]) => {
+            const percentage = Math.round((stats.correct / stats.total) * 100);
+            const isFull = stats.correct === stats.total;
+            return `
+              <div class="congrats-competency-item">
+                <div class="congrats-competency-header">
+                  <span class="congrats-competency-name">${comp}</span>
+                  <span class="congrats-competency-score">${stats.correct}/${stats.total} correct</span>
+                </div>
+                <div class="congrats-competency-progress-bar">
+                  <div class="congrats-competency-progress-fill ${isFull ? 'full' : ''}" style="width: ${percentage}%"></div>
+                </div>
+              </div>
+            `;
+          }).join('');
+        } else {
+          competenciesContainer.innerHTML = '<p style="color: #94a3b8; text-align: center;">No competency breakdown available</p>';
+        }
+      }
+      
+      modal.style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+      createCongratsStars();
+    }
+
+    function createCongratsStars() {
+      const starsContainer = document.getElementById('congratsStarsContainer');
+      if (!starsContainer) return;
+      
+      starsContainer.innerHTML = '';
+      
+      for (let i = 0; i < 200; i++) {
+        const star = document.createElement('div');
+        star.className = 'practice-quiz-star';
+        
+        const size = Math.random() * 3 + 0.5;
+        const duration = Math.random() * 4 + 2;
+        const delay = Math.random() * 2;
+        const randomLeft = Math.random() * 100;
+        const randomTop = Math.random() * 100;
+        const randomOpacity = Math.random() * 0.9 + 0.3;
+        
+        star.style.width = size + 'px';
+        star.style.height = size + 'px';
+        star.style.left = randomLeft + '%';
+        star.style.top = randomTop + '%';
+        star.style.opacity = randomOpacity;
+        star.style.animation = `practice-quiz-twinkle ${duration}s ease-in-out infinite`;
+        star.style.animationDelay = delay + 's';
+        star.style.boxShadow = `0 0 ${size * 2}px rgba(255, 255, 255, 0.8)`;
+        
+        starsContainer.appendChild(star);
+      }
+    }
+
+    function closeCongratsModal() {
+      const modal = document.getElementById('congratsModal');
+      if (modal) {
+        modal.style.display = 'none';
+      }
+      document.body.style.overflow = 'auto';
+      
+      // Ensure assignment modal is also closed
+      closeAssignmentModal();
+    }
+
+    function showLoader() {
+      document.getElementById('assignmentLoader').style.display = 'flex';
+    }
+
+    function hideLoader() {
+      document.getElementById('assignmentLoader').style.display = 'none';
+    }
+
+    function updateCircularProgress(percent) {
+      const fill = document.getElementById('circularProgressFill');
+      const text = document.getElementById('circularProgressText');
+      if (fill) {
+        const circumference = 2 * Math.PI * 45;
+        const offset = circumference - (percent / 100) * circumference;
+        fill.style.strokeDashoffset = offset;
+      }
+      if (text) {
+        text.textContent = Math.round(percent) + '%';
+      }
+    }
+
+    function startCircularProgress() {
+      let progress = 0;
+      const interval = setInterval(() => {
+        progress += 2;
+        if (progress > 90) {
+          clearInterval(interval);
+        }
+        updateCircularProgress(progress);
+      }, 100);
+    }
+
+    function completeCircularProgress() {
+      updateCircularProgress(100);
+      setTimeout(() => {
+        hideLoader();
+      }, 500);
+    }
+
+    function stopCircularProgress() {
+      hideLoader();
+    }
+
+    function renderQuiz(questionsArr) {
+      quizQuestions = questionsArr;
+      currentQuestionIndex = 0;
+      quizAnswers = {};
+      loadQuestion();
+    }
+
+    // Helper function to convert blob to base64
+    function blobToBase64(blob) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result.split(',')[1]);
+        reader.onerror = reject;
+        reader.readAsDataURL(blob);
+      });
+    }
+
+    // Complete Speaking Assignment Submission Function
+    async function submitSpeakingResponse() {
+      if (!window.latestAssignmentId || cqSpeakingRecordedChunks.length === 0) {
+        alert("Recording not found or assignment ID missing.");
+        return;
+      }
+
+      const submitBtn = document.getElementById('cq-speaking-submitBtn');
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Submitting...';
+      }
+
+      const blob = new Blob(cqSpeakingRecordedChunks, { type: 'video/webm' });
+      const filename = `${firebase.auth().currentUser.uid}-${Date.now()}.webm`;
+
+      const GITHUB_USERNAME = "Anjay209";
+      const GITHUB_REPO = "video-storage";
+      const GITHUB_TOKEN = "REDACTED_TOKEN";
+
+      let githubApiUrl = `https://github-proxy.certquest.workers.dev/github/repos/${GITHUB_USERNAME}/${GITHUB_REPO}/contents/docs/videos/${filename}`;
+      let githubPagesUrl = `https://${GITHUB_USERNAME.toLowerCase()}.github.io/${GITHUB_REPO}/docs/videos/${filename}`;
+
+      try {
+        const base64 = await blobToBase64(blob);
+
+        const uploadRes = await fetch(githubApiUrl, {
+          method: 'PUT',
+          headers: {
+            Authorization: `Bearer ${GITHUB_TOKEN}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            message: `Upload ${filename}`,
+            content: base64,
+            branch: 'main'
+          })
+        });
+
+        if (!uploadRes.ok) {
+          const errData = await uploadRes.json().catch(() => ({}));
+          const errorMessage = errData?.message || "GitHub upload failed";
+          
+          if (uploadRes.status === 409) {
+            console.log("File exists, attempting to update with SHA...");
+            try {
+              const getRes = await fetch(githubApiUrl, {
+                headers: {
+                  Authorization: `Bearer ${GITHUB_TOKEN}`,
+                  'Accept': 'application/vnd.github.v3+json'
+                }
+              });
+              
+              if (getRes.ok) {
+                const existingFile = await getRes.json();
+                const updateRes = await fetch(githubApiUrl, {
+                  method: 'PUT',
+                  headers: {
+                    Authorization: `Bearer ${GITHUB_TOKEN}`,
+                    'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify({
+                    message: `Update ${filename}`,
+                    content: base64,
+                    branch: 'main',
+                    sha: existingFile.sha
+                  })
+                });
+                
+                if (!updateRes.ok) {
+                  throw new Error("Failed to update existing file: " + (await updateRes.json().catch(() => ({}))).message);
+                }
+                console.log("Successfully updated existing file");
+              } else {
+                throw new Error("Could not get existing file info: " + errorMessage);
+              }
+            } catch (updateError) {
+              console.log("Update failed, using unique filename...");
+              const uniqueFilename = `${firebase.auth().currentUser.uid}-${Date.now()}-${Math.random().toString(36).substring(7)}.webm`;
+              const uniqueGithubApiUrl = `https://github-proxy.certquest.workers.dev/github/repos/${GITHUB_USERNAME}/${GITHUB_REPO}/contents/docs/videos/${uniqueFilename}`;
+              const uniqueGithubPagesUrl = `https://${GITHUB_USERNAME.toLowerCase()}.github.io/${GITHUB_REPO}/docs/videos/${uniqueFilename}`;
+              
+              const retryRes = await fetch(uniqueGithubApiUrl, {
+                method: 'PUT',
+                headers: {
+                  Authorization: `Bearer ${GITHUB_TOKEN}`,
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                  message: `Upload ${uniqueFilename}`,
+                  content: base64,
+                  branch: 'main'
+                })
+              });
+              
+              if (!retryRes.ok) {
+                throw new Error("Failed to upload with unique filename: " + (await retryRes.json().catch(() => ({}))).message);
+              }
+              
+              githubPagesUrl = uniqueGithubPagesUrl;
+              console.log("Successfully uploaded with unique filename");
+            }
+          } else {
+            throw new Error(errorMessage);
+          }
+        }
+
+        await firebase.firestore()
+          .collection('assignments')
+          .doc(window.latestAssignmentId)
+          .update({
+            status: "complete",
+            completedAt: firebase.firestore.FieldValue.serverTimestamp(),
+            recordingUrl: githubPagesUrl
+          });
+
+        const user = firebase.auth().currentUser;
+        const userId = user?.uid;
+        const assignmentId = window.latestAssignmentId || window.currentAssignment?.id;
+        
+        if (userId && assignmentId && typeof assignmentId === 'string' && assignmentId.trim() !== '') {
+          try {
+            await firebase.firestore()
+              .collection('users')
+              .doc(userId)
+              .collection('assignments')
+              .doc(assignmentId)
+              .set({
+                status: 'completed',
+                submittedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                fileUrl: githubPagesUrl,
+                fileType: 'video',
+              }, { merge: true });
+          } catch (userAssignError) {
+            console.warn("Could not update user assignments collection (non-critical):", userAssignError);
+          }
+        }
+
+        let competencies = [];
+        let assignmentName = 'Speaking Assessment';
+        try {
+          const assignmentDoc = await firebase.firestore()
+            .collection('assignments')
+            .doc(window.latestAssignmentId)
+            .get();
+          
+          if (assignmentDoc.exists) {
+            const assignmentData = assignmentDoc.data();
+            competencies = assignmentData.competencies || [];
+            assignmentName = assignmentData.title || 'Speaking Assessment';
+          }
+        } catch (error) {
+          console.error("Error fetching assignment data:", error);
+        }
+
+        showCongratsModal({ 
+          score: undefined, 
+          totalQuestions: undefined,
+          assignmentName: assignmentName,
+          competencies: competencies,
+          assignmentType: 'speaking'
+        });
+        
+        closeSpeakingAssignmentModal();
+
+      } catch (err) {
+        console.error("Upload Error:", err);
+        const errorMessage = err.message || "Something went wrong while uploading your recording.";
+        alert("❌ Upload Error: " + errorMessage);
+        
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Submit Assessment';
+        }
+      }
+    }
+
+    // Complete Case Study Assignment Submission Function
+    async function submitCaseStudyResponse() {
+      if (!window.latestAssignmentId || cqCaseStudyRecordedChunks.length === 0) {
+        alert("Recording not found or assignment ID missing.");
+        return;
+      }
+
+      const submitBtn = document.getElementById('cq-case-study-submitBtn');
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Submitting...';
+      }
+
+      const blob = new Blob(cqCaseStudyRecordedChunks, { type: 'video/webm' });
+      const filename = `${firebase.auth().currentUser.uid}-${Date.now()}.webm`;
+
+      const GITHUB_USERNAME = "Anjay209";
+      const GITHUB_REPO = "video-storage";
+      const GITHUB_TOKEN = "REDACTED_TOKEN";
+
+      let githubApiUrl = `https://github-proxy.certquest.workers.dev/github/repos/${GITHUB_USERNAME}/${GITHUB_REPO}/contents/docs/videos/${filename}`;
+      let githubPagesUrl = `https://${GITHUB_USERNAME.toLowerCase()}.github.io/${GITHUB_REPO}/docs/videos/${filename}`;
+
+      try {
+        const base64 = await blobToBase64(blob);
+
+        const uploadRes = await fetch(githubApiUrl, {
+          method: 'PUT',
+          headers: {
+            Authorization: `Bearer ${GITHUB_TOKEN}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            message: `Upload ${filename}`,
+            content: base64,
+            branch: 'main'
+          })
+        });
+
+        if (!uploadRes.ok) {
+          const errData = await uploadRes.json().catch(() => ({}));
+          const errorMessage = errData?.message || "GitHub upload failed";
+          
+          if (uploadRes.status === 409) {
+            console.log("File exists, attempting to update with SHA...");
+            try {
+              const getRes = await fetch(githubApiUrl, {
+                headers: {
+                  Authorization: `Bearer ${GITHUB_TOKEN}`,
+                  'Accept': 'application/vnd.github.v3+json'
+                }
+              });
+              
+              if (getRes.ok) {
+                const existingFile = await getRes.json();
+                const updateRes = await fetch(githubApiUrl, {
+                  method: 'PUT',
+                  headers: {
+                    Authorization: `Bearer ${GITHUB_TOKEN}`,
+                    'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify({
+                    message: `Update ${filename}`,
+                    content: base64,
+                    branch: 'main',
+                    sha: existingFile.sha
+                  })
+                });
+                
+                if (!updateRes.ok) {
+                  throw new Error("Failed to update existing file: " + (await updateRes.json().catch(() => ({}))).message);
+                }
+                console.log("Successfully updated existing file");
+              } else {
+                throw new Error("Could not get existing file info: " + errorMessage);
+              }
+            } catch (updateError) {
+              console.log("Update failed, using unique filename...");
+              const uniqueFilename = `${firebase.auth().currentUser.uid}-${Date.now()}-${Math.random().toString(36).substring(7)}.webm`;
+              const uniqueGithubApiUrl = `https://github-proxy.certquest.workers.dev/github/repos/${GITHUB_USERNAME}/${GITHUB_REPO}/contents/docs/videos/${uniqueFilename}`;
+              const uniqueGithubPagesUrl = `https://${GITHUB_USERNAME.toLowerCase()}.github.io/${GITHUB_REPO}/docs/videos/${uniqueFilename}`;
+              
+              const retryRes = await fetch(uniqueGithubApiUrl, {
+                method: 'PUT',
+                headers: {
+                  Authorization: `Bearer ${GITHUB_TOKEN}`,
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                  message: `Upload ${uniqueFilename}`,
+                  content: base64,
+                  branch: 'main'
+                })
+              });
+              
+              if (!retryRes.ok) {
+                throw new Error("Failed to upload with unique filename: " + (await retryRes.json().catch(() => ({}))).message);
+              }
+              
+              githubPagesUrl = uniqueGithubPagesUrl;
+              console.log("Successfully uploaded with unique filename");
+            }
+          } else {
+            throw new Error(errorMessage);
+          }
+        }
+
+        await firebase.firestore()
+          .collection('assignments')
+          .doc(window.latestAssignmentId)
+          .update({
+            status: "complete",
+            completedAt: firebase.firestore.FieldValue.serverTimestamp(),
+            recordingUrl: githubPagesUrl
+          });
+
+        const user = firebase.auth().currentUser;
+        const userId = user?.uid;
+        const assignmentId = window.latestAssignmentId || window.currentAssignment?.id;
+        
+        if (userId && assignmentId && typeof assignmentId === 'string' && assignmentId.trim() !== '') {
+          try {
+            await firebase.firestore()
+              .collection('users')
+              .doc(userId)
+              .collection('assignments')
+              .doc(assignmentId)
+              .set({
+                status: "complete",
+                completedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                recordingUrl: githubPagesUrl
+              }, { merge: true });
+          } catch (userUpdateError) {
+            console.error("Error updating user assignments:", userUpdateError);
+          }
+        }
+
+        let competencies = [];
+        let assignmentName = 'Case Study';
+        try {
+          const assignmentDoc = await firebase.firestore()
+            .collection('assignments')
+            .doc(window.latestAssignmentId)
+            .get();
+          
+          if (assignmentDoc.exists) {
+            const assignmentData = assignmentDoc.data();
+            competencies = assignmentData.competencies || [];
+            assignmentName = assignmentData.title || 'Case Study';
+          }
+        } catch (error) {
+          console.error("Error fetching assignment data:", error);
+        }
+
+        showCongratsModal({ 
+          score: undefined, 
+          totalQuestions: undefined,
+          assignmentName: assignmentName,
+          competencies: competencies,
+          assignmentType: 'case'
+        });
+        
+        closeCaseStudyModal();
+      } catch (error) {
+        console.error("Upload Error:", error);
+        alert("Upload Error: " + error.message);
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Submit Case Study';
+        }
+      }
+    }
+
+    // ========== SPEAKING MODAL FUNCTIONS ==========
+    function openSpeakingAssignmentModal(assignment) {
+      if (assignment) {
+        if (assignment.id) {
+          window.latestAssignmentId = assignment.id;
+        }
+        window.currentAssignment = assignment;
+        console.log("Set assignment ID:", window.latestAssignmentId);
+      }
+      
+      document.getElementById('cq-speaking-title').textContent = "Speaking Assessment";
+      
+      if (window.currentAssignmentQuestions) {
+        document.getElementById('cq-speaking-q1').textContent = window.currentAssignmentQuestions.q1;
+        document.getElementById('cq-speaking-q2').textContent = window.currentAssignmentQuestions.q2;
+      } else if (assignment && assignment.questions) {
+        document.getElementById('cq-speaking-q1').textContent = assignment.questions[0] || "No question provided";
+        document.getElementById('cq-speaking-q2').textContent = assignment.questions[1] || "No question provided";
+      }
+      
+      const starsContainer = document.getElementById('cq-speaking-stars');
+      if (starsContainer) {
+        starsContainer.innerHTML = '';
+        for (let i = 0; i < 150; i++) {
+          const star = document.createElement('div');
+          star.className = 'cq-speaking-star';
+          star.style.top = Math.random() * 100 + '%';
+          star.style.left = Math.random() * 100 + '%';
+          const size = Math.random() * 2 + 0.5;
+          star.style.width = size + 'px';
+          star.style.height = size + 'px';
+          star.style.opacity = Math.random() * 0.7 + 0.3;
+          star.style.animationDuration = (Math.random() * 3 + 2) + 's';
+          starsContainer.appendChild(star);
+        }
+      }
+      
+      const recordingIndicator = document.getElementById('cq-speaking-recordingIndicator');
+      if (recordingIndicator) {
+        recordingIndicator.classList.remove('active');
+      }
+      
+      const modal = document.getElementById('cq-speaking-modal');
+      if (modal) {
+        modal.style.display = 'flex';
+      }
+      
+      setTimeout(() => {
+        initializeVideoPreview();
+      }, 100);
+    }
+
+    async function initializeVideoPreview() {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ 
+          video: {
+            width: { min: 640, ideal: 1280, max: 1920 },
+            height: { min: 480, ideal: 720, max: 1080 },
+            frameRate: { min: 15, ideal: 30, max: 60 }
+          }, 
+          audio: {
+            echoCancellation: true,
+            noiseSuppression: true,
+            sampleRate: 44100
+          }
+        });
+        
+        const videoElement = document.getElementById('cq-speaking-videoPreview');
+        const noVideoView = document.getElementById('cq-speaking-noVideoView');
+        
+        if (videoElement) {
+          videoElement.srcObject = stream;
+          videoElement.muted = true;
+          videoElement.autoplay = true;
+          videoElement.playsInline = true;
+          videoElement.style.display = 'block';
+          if (noVideoView) noVideoView.style.display = 'none';
+          
+          cqSpeakingMediaStream = stream;
+          setupRecordingFromStream(stream);
+          
+          videoElement.addEventListener('loadedmetadata', () => {
+            videoElement.play().catch(e => {
+              console.error("Error playing video preview:", e);
+            });
+          });
+        }
+      } catch (error) {
+        console.error('Error initializing video preview:', error);
+        const noVideoView = document.getElementById('cq-speaking-noVideoView');
+        if (noVideoView) {
+          noVideoView.style.display = 'flex';
+        }
+      }
+    }
+
+    function setupRecordingFromStream(stream) {
+      const videoElement = document.getElementById('cq-speaking-videoPreview');
+      const noVideoView = document.getElementById('cq-speaking-noVideoView');
+      if (!videoElement) {
+        console.error("Video preview element not found in DOM");
+        alert("Video preview element not found");
+        return;
+      }
+      
+      videoElement.srcObject = stream;
+      videoElement.muted = true;
+      videoElement.autoplay = true;
+      videoElement.playsInline = true;
+      videoElement.style.display = 'block';
+      if (noVideoView) noVideoView.style.display = 'none';
+      
+      videoElement.addEventListener('loadedmetadata', () => {
+        videoElement.play().catch(e => {
+          console.error("Error playing video preview:", e);
+        });
+      });
+      
+      const audioPlayback = document.getElementById('cq-speaking-audioPlayback');
+      if (audioPlayback) {
+        audioPlayback.style.display = 'none';
+      }
+      
+      let options = {};
+      if (MediaRecorder.isTypeSupported('video/webm;codecs=vp9')) {
+        options.mimeType = 'video/webm;codecs=vp9';
+      } else if (MediaRecorder.isTypeSupported('video/webm;codecs=vp8')) {
+        options.mimeType = 'video/webm;codecs=vp8';
+      } else if (MediaRecorder.isTypeSupported('video/webm')) {
+        options.mimeType = 'video/webm';
+      } else if (MediaRecorder.isTypeSupported('video/mp4')) {
+        options.mimeType = 'video/mp4';
+      }
+      
+      cqSpeakingMediaRecorder = new MediaRecorder(stream, options);
+      console.log("MediaRecorder created with mimeType:", cqSpeakingMediaRecorder.mimeType);
+      
+      cqSpeakingMediaRecorder.ondataavailable = (event) => {
+        if (event.data && event.data.size > 0) {
+          cqSpeakingRecordedChunks.push(event.data);
+          console.log("Added chunk, total chunks:", cqSpeakingRecordedChunks.length);
+        }
+      };
+      
+      cqSpeakingMediaRecorder.onstop = () => {
+        console.log("Video recording stopped, processing...");
+        
+        if (recordingStateMonitor) {
+          clearInterval(recordingStateMonitor);
+          recordingStateMonitor = null;
+        }
+        
+        setTimeout(() => {
+          if (cqSpeakingRecordedChunks.length === 0) {
+            console.error("No video data recorded after stop");
+            alert("No video data was recorded. Please try recording for at least 1 second.");
+            return;
+          }
+          const mimeType = cqSpeakingMediaRecorder.mimeType || 'video/webm';
+          const blob = new Blob(cqSpeakingRecordedChunks, { type: mimeType });
+          console.log("Created video blob:", blob.size, "bytes");
+
+          const videoURL = URL.createObjectURL(blob);
+          const videoElement = document.getElementById('cq-speaking-videoPreview');
+          const noVideoView = document.getElementById('cq-speaking-noVideoView');
+          if (videoElement) {
+            videoElement.srcObject = null;
+            videoElement.src = videoURL;
+            videoElement.controls = true;
+            videoElement.muted = false;
+            videoElement.style.display = 'block';
+            if (noVideoView) noVideoView.style.display = 'none';
+          }
+
+          const recordBtn = document.getElementById('cq-speaking-recordBtn');
+          if (recordBtn) {
+            recordBtn.classList.remove('recording');
+          }
+          
+          const recordingIndicator = document.getElementById('cq-speaking-recordingIndicator');
+          if (recordingIndicator) {
+            recordingIndicator.classList.remove('active');
+          }
+
+          isRecording = false;
+          
+          const submitBtn = document.getElementById('cq-speaking-submitBtn');
+          if (submitBtn && cqSpeakingRecordedChunks.length > 0) {
+            submitBtn.style.display = 'block';
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Submit Assessment';
+          }
+        }, 1000);
+      };
+      
+      cqSpeakingMediaRecorder.onerror = (event) => {
+        console.error("MediaRecorder error:", event.error);
+        alert("Recording error: " + (event.error?.message || "Unknown error."));
+        isRecording = false;
+        
+        const recordBtn = document.getElementById('cq-speaking-recordBtn');
+        if (recordBtn) {
+          recordBtn.classList.remove('recording');
+        }
+        
+        const recordingIndicator = document.getElementById('cq-speaking-recordingIndicator');
+        if (recordingIndicator) {
+          recordingIndicator.classList.remove('active');
+        }
+      };
+      
+      cqSpeakingMediaRecorder.addEventListener('start', () => {
+        console.log("🎬 MediaRecorder start event fired");
+        isIntentionallyStopping = false;
+        
+        if (recordingStateMonitor) {
+          clearInterval(recordingStateMonitor);
+          recordingStateMonitor = null;
+        }
+        
+        recordingStateMonitor = setInterval(() => {
+          if (isIntentionallyStopping) {
+            return;
+          }
+          
+          if (cqSpeakingMediaRecorder && isRecording) {
+            const state = cqSpeakingMediaRecorder.state;
+            if (state === 'recording') {
+              console.log("✅ Recording still active");
+            } else if (state === 'inactive' || state === 'paused') {
+              if (!isIntentionallyStopping) {
+                console.error("❌ Recording stopped unexpectedly!");
+                clearInterval(recordingStateMonitor);
+                recordingStateMonitor = null;
+                isRecording = false;
+                const recordBtn = document.getElementById('cq-speaking-recordBtn');
+                if (recordBtn) {
+                  recordBtn.classList.remove('recording');
+                }
+                const recordingIndicator = document.getElementById('cq-speaking-recordingIndicator');
+                if (recordingIndicator) {
+                  recordingIndicator.classList.remove('active');
+                }
+                alert("⚠️ Recording stopped unexpectedly. Please try again.");
+              }
+            }
+          }
+        }, 1000);
+      });
+    }
+
+    function stopRecording() {
+      console.log("🛑 stopRecording() called");
+      
+      if (!cqSpeakingMediaRecorder || !isRecording) {
+        console.log("Cannot stop: no recorder or not recording");
+        return;
+      }
+      
+      isIntentionallyStopping = true;
+      
+      if (recordingStateMonitor) {
+        clearInterval(recordingStateMonitor);
+        recordingStateMonitor = null;
+      }
+      
+      isRecording = false;
+      
+      if (cqSpeakingMediaRecorder.state === 'recording') {
+        try {
+          cqSpeakingMediaRecorder.requestData();
+          setTimeout(() => {
+            try {
+              cqSpeakingMediaRecorder.stop();
+            } catch (e) {
+              console.error("Error stopping recorder:", e);
+            }
+          }, 100);
+          
+          const recordBtn = document.getElementById('cq-speaking-recordBtn');
+          if (recordBtn) {
+            recordBtn.classList.remove('recording');
+          }
+          
+          const recordingIndicator = document.getElementById('cq-speaking-recordingIndicator');
+          if (recordingIndicator) {
+            recordingIndicator.classList.remove('active');
+          }
+          
+          return;
+        } catch (e) {
+          console.error("Error requesting final data:", e);
+        }
+      }
+      
+      try {
+        cqSpeakingMediaRecorder.stop();
+      } catch (e) {
+        console.error("Error stopping recorder:", e);
+      }
+      
+      const recordBtn = document.getElementById('cq-speaking-recordBtn');
+      if (recordBtn) {
+        recordBtn.classList.remove('recording');
+      }
+      
+      const recordingIndicator = document.getElementById('cq-speaking-recordingIndicator');
+      if (recordingIndicator) {
+        recordingIndicator.classList.remove('active');
+      }
+    }
+
+    function toggleSpeakingRecording() {
+      const recordBtn = document.getElementById('cq-speaking-recordBtn');
+      if (!recordBtn) return;
+      
+      if (isRecording) {
+        console.log("Stopping recording via toggle button");
+        stopRecording();
+      } else {
+        console.log("Starting recording via toggle button");
+        
+        if (cqSpeakingMediaRecorder && cqSpeakingMediaRecorder.state === 'inactive') {
+          cqSpeakingRecordedChunks = [];
+          try {
+            isRecording = true;
+            recordBtn.classList.add('recording');
+            
+            const recordingIndicator = document.getElementById('cq-speaking-recordingIndicator');
+            if (recordingIndicator) {
+              recordingIndicator.classList.add('active');
+            }
+            
+            cqSpeakingMediaRecorder.start();
+            console.log("✅ Recording started successfully");
+          } catch (e) {
+            console.error("Error starting recorder:", e);
+            alert("Error starting recording: " + e.message);
+            isRecording = false;
+          }
+        } else if (cqSpeakingMediaStream && !cqSpeakingMediaRecorder) {
+          setupRecordingFromStream(cqSpeakingMediaStream);
+          setTimeout(() => {
+            if (cqSpeakingMediaRecorder && cqSpeakingMediaRecorder.state === 'inactive') {
+              cqSpeakingRecordedChunks = [];
+              try {
+                isRecording = true;
+                recordBtn.classList.add('recording');
+                
+                const recordingIndicator2 = document.getElementById('cq-speaking-recordingIndicator');
+                if (recordingIndicator2) {
+                  recordingIndicator2.classList.add('active');
+                }
+                
+                cqSpeakingMediaRecorder.start();
+                console.log("✅ Recording started after setup");
+              } catch (e) {
+                console.error("Error starting recorder after setup:", e);
+                alert("Error starting recording: " + e.message);
+                isRecording = false;
+              }
+            }
+          }, 200);
+        } else if (!cqSpeakingMediaStream) {
+          initializeVideoPreview();
+        } else {
+          alert("Recording is already in progress or not ready. Please wait.");
+        }
+      }
+    }
+
+    function cqSpeakingStopAllMedia() {
+      if (cqSpeakingMediaRecorder && cqSpeakingMediaRecorder.state !== 'inactive') {
+        try {
+          cqSpeakingMediaRecorder.stop();
+        } catch (e) {
+          console.error("Error stopping recorder:", e);
+        }
+      }
+      
+      if (cqSpeakingMediaStream) {
+        cqSpeakingMediaStream.getTracks().forEach(track => track.stop());
+        cqSpeakingMediaStream = null;
+      }
+      
+      cqSpeakingMediaRecorder = null;
+      cqSpeakingRecordedChunks = [];
+      isRecording = false;
+      
+      const recordBtn = document.getElementById('cq-speaking-recordBtn');
+      if (recordBtn) {
+        recordBtn.classList.remove('recording');
+      }
+      
+      const recordingIndicator = document.getElementById('cq-speaking-recordingIndicator');
+      if (recordingIndicator) {
+        recordingIndicator.classList.remove('active');
+      }
+    }
+
+    function closeSpeakingAssignmentModal() {
+      document.getElementById('cq-speaking-downloadBtn').style.display = 'none';
+      cqSpeakingStopAllMedia();
+      document.getElementById('cq-speaking-modal').style.display = 'none';
+      
+      if (window.latestAssignmentId) {
+        db.collection('assignments').doc(window.latestAssignmentId)
+          .update({ status: "complete" })
+          .then(() => {
+            window.latestAssignmentId = null;
+            window.currentAssignment = null;
+          })
+          .catch(error => {
+            console.error("Error updating assignment status:", error);
+          });
+      }
+    }
+
+    // ========== CASE STUDY MODAL FUNCTIONS ==========
+    function toggleCaseStudyTimer() {
+      cqCaseStudyTimerActive = !cqCaseStudyTimerActive;
+      const timerEl = document.getElementById('cq-case-study-timer');
+      const timerDot = document.getElementById('cq-case-study-timer-dot');
+      const timerText = document.getElementById('cq-case-study-timer-text');
+      const timerStart = document.getElementById('cq-case-study-timer-start');
+      
+      if (cqCaseStudyTimerActive) {
+        timerEl.classList.add('active');
+        if (timerStart) timerStart.style.display = 'none';
+        
+        cqCaseStudyTimerInterval = setInterval(() => {
+          if (cqCaseStudyTimeLeft > 0) {
+            cqCaseStudyTimeLeft--;
+            if (timerText) {
+              const mins = Math.floor(cqCaseStudyTimeLeft / 60);
+              const secs = cqCaseStudyTimeLeft % 60;
+              timerText.textContent = `${mins}:${secs.toString().padStart(2, '0')}`;
+            }
+          } else {
+            cqCaseStudyTimerActive = false;
+            if (timerEl) timerEl.classList.remove('active');
+            if (timerStart) timerStart.style.display = 'inline';
+            if (cqCaseStudyTimerInterval) {
+              clearInterval(cqCaseStudyTimerInterval);
+              cqCaseStudyTimerInterval = null;
+            }
+            alert('Time is up!');
+          }
+        }, 1000);
+      } else {
+        timerEl.classList.remove('active');
+        if (timerStart) timerStart.style.display = 'inline';
+        if (cqCaseStudyTimerInterval) {
+          clearInterval(cqCaseStudyTimerInterval);
+          cqCaseStudyTimerInterval = null;
+        }
+      }
+    }
+
+    function expandCaseStudyContent() {
+      document.getElementById('cq-case-study-top-info').style.display = 'none';
+      document.getElementById('cq-case-study-video-container').style.display = 'none';
+      document.getElementById('cq-case-study-bottom-info').style.display = 'none';
+      document.getElementById('cq-case-study-controls-wrapper').style.display = 'none';
+      document.getElementById('cq-case-study-expanded-content').style.display = 'flex';
+    }
+
+    function collapseCaseStudyContent() {
+      document.getElementById('cq-case-study-top-info').style.display = 'grid';
+      document.getElementById('cq-case-study-video-container').style.display = 'block';
+      document.getElementById('cq-case-study-bottom-info').style.display = 'grid';
+      document.getElementById('cq-case-study-controls-wrapper').style.display = 'flex';
+      document.getElementById('cq-case-study-expanded-content').style.display = 'none';
+    }
+
+    function openCaseStudyModal(assignment) {
+      if (assignment) {
+        if (assignment.id) {
+          window.latestAssignmentId = assignment.id;
+        }
+        window.currentAssignment = assignment;
+        console.log("Set assignment ID:", window.latestAssignmentId);
+      }
+      
+      document.getElementById('cq-case-study-title').textContent = "Case Study";
+      
+      const caseName = assignment.title || "Case Study";
+      document.getElementById('cq-case-study-name').textContent = caseName;
+      document.getElementById('cq-case-study-expanded-title').textContent = caseName;
+      
+      const caseContent = assignment.description || assignment.caseStudyContent || "No case study content provided.";
+      const previewText = caseContent.substring(0, 100) + (caseContent.length > 100 ? '...' : '');
+      document.getElementById('cq-case-study-content-preview-text').textContent = previewText;
+      document.getElementById('cq-case-study-full-content').textContent = caseContent;
+      
+      if (assignment.questions && assignment.questions.length > 0) {
+        document.getElementById('cq-case-study-q1').textContent = assignment.questions[0] || "No question provided";
+        if (assignment.questions.length > 1) {
+          document.getElementById('cq-case-study-q2').textContent = assignment.questions[1] || "No question provided";
+        }
+      }
+      
+      cqCaseStudyTimeLeft = 1200;
+      const timerText = document.getElementById('cq-case-study-timer-text');
+      if (timerText) {
+        const mins = Math.floor(cqCaseStudyTimeLeft / 60);
+        const secs = cqCaseStudyTimeLeft % 60;
+        timerText.textContent = `${mins}:${secs.toString().padStart(2, '0')}`;
+      }
+      cqCaseStudyTimerActive = false;
+      const timerEl = document.getElementById('cq-case-study-timer');
+      if (timerEl) timerEl.classList.remove('active');
+      
+      const starsContainer = document.getElementById('cq-case-study-stars');
+      if (starsContainer) {
+        starsContainer.innerHTML = '';
+        for (let i = 0; i < 150; i++) {
+          const star = document.createElement('div');
+          star.className = 'cq-case-study-star';
+          star.style.top = Math.random() * 100 + '%';
+          star.style.left = Math.random() * 100 + '%';
+          const size = Math.random() * 2 + 0.5;
+          star.style.width = size + 'px';
+          star.style.height = size + 'px';
+          star.style.opacity = Math.random() * 0.7 + 0.3;
+          star.style.animationDuration = (Math.random() * 3 + 2) + 's';
+          starsContainer.appendChild(star);
+        }
+      }
+      
+      const recordingIndicator = document.getElementById('cq-case-study-recordingIndicator');
+      if (recordingIndicator) {
+        recordingIndicator.classList.remove('active');
+      }
+      
+      collapseCaseStudyContent();
+      document.getElementById('cq-case-study-submitBtn').style.display = 'none';
+      document.getElementById('cq-case-study-downloadBtn').style.display = 'none';
+      
+      const modal = document.getElementById('cq-case-study-modal');
+      if (modal) {
+        modal.style.display = 'flex';
+      }
+      
+      setTimeout(() => {
+        cqCaseStudyInitializeVideoPreview();
+      }, 100);
+    }
+
+    async function cqCaseStudyInitializeVideoPreview() {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ 
+          video: {
+            width: { min: 640, ideal: 1280, max: 1920 },
+            height: { min: 480, ideal: 720, max: 1080 },
+            frameRate: { min: 15, ideal: 30, max: 60 }
+          }, 
+          audio: {
+            echoCancellation: true,
+            noiseSuppression: true,
+            sampleRate: 44100
+          }
+        });
+        
+        const videoElement = document.getElementById('cq-case-study-videoPreview');
+        const noVideoView = document.getElementById('cq-case-study-noVideoView');
+        
+        if (videoElement) {
+          videoElement.srcObject = stream;
+          videoElement.muted = true;
+          videoElement.autoplay = true;
+          videoElement.playsInline = true;
+          videoElement.style.display = 'block';
+          if (noVideoView) noVideoView.style.display = 'none';
+          
+          cqCaseStudyMediaStream = stream;
+          cqCaseStudySetupRecordingFromStream(stream);
+          
+          videoElement.addEventListener('loadedmetadata', () => {
+            videoElement.play().catch(e => {
+              console.error("Error playing video preview:", e);
+            });
+          });
+        }
+      } catch (error) {
+        console.error('Error initializing video preview:', error);
+        const noVideoView = document.getElementById('cq-case-study-noVideoView');
+        if (noVideoView) {
+          noVideoView.style.display = 'flex';
+        }
+      }
+    }
+
+    function cqCaseStudySetupRecordingFromStream(stream) {
+      const videoElement = document.getElementById('cq-case-study-videoPreview');
+      if (!videoElement) {
+        console.error("Video preview element not found in DOM");
+        return;
+      }
+      
+      let options = {};
+      if (MediaRecorder.isTypeSupported('video/webm;codecs=vp9')) {
+        options.mimeType = 'video/webm;codecs=vp9';
+      } else if (MediaRecorder.isTypeSupported('video/webm;codecs=vp8')) {
+        options.mimeType = 'video/webm;codecs=vp8';
+      } else if (MediaRecorder.isTypeSupported('video/webm')) {
+        options.mimeType = 'video/webm';
+      } else if (MediaRecorder.isTypeSupported('video/mp4')) {
+        options.mimeType = 'video/mp4';
+      }
+      
+      cqCaseStudyMediaRecorder = new MediaRecorder(stream, options);
+      console.log("Case Study MediaRecorder created with mimeType:", cqCaseStudyMediaRecorder.mimeType);
+      
+      cqCaseStudyMediaRecorder.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          cqCaseStudyRecordedChunks.push(event.data);
+        }
+      };
+      
+      cqCaseStudyMediaRecorder.onstop = () => {
+        console.log("Case Study video recording stopped");
+        
+        if (cqCaseStudyRecordedChunks.length === 0) {
+          alert("No video data was recorded. Please try again.");
+          return;
+        }
+        
+        const mimeType = cqCaseStudyMediaRecorder.mimeType || 'video/webm';
+        const blob = new Blob(cqCaseStudyRecordedChunks, { type: mimeType });
+
+        const videoURL = URL.createObjectURL(blob);
+        const videoElement = document.getElementById('cq-case-study-videoPreview');
+        const noVideoView = document.getElementById('cq-case-study-noVideoView');
+        if (videoElement) {
+          videoElement.srcObject = null;
+          videoElement.src = videoURL;
+          videoElement.controls = true;
+          videoElement.muted = false;
+          videoElement.style.display = 'block';
+          if (noVideoView) noVideoView.style.display = 'none';
+        }
+        
+        const downloadBtn = document.getElementById('cq-case-study-downloadBtn');
+        if (downloadBtn && blob) {
+          downloadBtn.style.display = 'flex';
+          downloadBtn.onclick = function() {
+            const url = URL.createObjectURL(blob);
+            const filename = `CertQuest_CaseStudy_${Date.now()}.webm`;
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            setTimeout(() => {
+              document.body.removeChild(a);
+              URL.revokeObjectURL(url);
+            }, 100);
+          };
+        }
+        
+        const submitBtn = document.getElementById('cq-case-study-submitBtn');
+        if (submitBtn) {
+          submitBtn.style.display = 'block';
+        }
+      };
+      
+      cqCaseStudyMediaRecorder.onerror = (event) => {
+        console.error("Case Study MediaRecorder error:", event.error);
+        alert("Recording error: " + event.error.message);
+        cqCaseStudyIsRecording = false;
+      };
+    }
+
+    function cqCaseStudyStopAllMedia() {
+      if (cqCaseStudyMediaRecorder && cqCaseStudyMediaRecorder.state !== 'inactive') {
+        try {
+          cqCaseStudyMediaRecorder.stop();
+        } catch (e) {
+          console.error("Error stopping recorder:", e);
+        }
+      }
+      
+      if (cqCaseStudyMediaStream) {
+        cqCaseStudyMediaStream.getTracks().forEach(track => track.stop());
+        cqCaseStudyMediaStream = null;
+      }
+      
+      cqCaseStudyMediaRecorder = null;
+      cqCaseStudyRecordedChunks = [];
+      cqCaseStudyIsRecording = false;
+      
+      const recordBtn = document.getElementById('cq-case-study-recordBtn');
+      if (recordBtn) {
+        recordBtn.classList.remove('recording');
+      }
+      
+      const recordingIndicator = document.getElementById('cq-case-study-recordingIndicator');
+      if (recordingIndicator) {
+        recordingIndicator.classList.remove('active');
+      }
+      
+      const downloadBtn = document.getElementById('cq-case-study-downloadBtn');
+      if (downloadBtn) {
+        downloadBtn.style.display = 'none';
+      }
+    }
+
+    function toggleCaseStudyRecording() {
+      const recordBtn = document.getElementById('cq-case-study-recordBtn');
+      if (!recordBtn) return;
+      
+      if (cqCaseStudyIsRecording) {
+        console.log("Stopping case study recording");
+        cqCaseStudyStopRecording();
+      } else {
+        console.log("Starting case study recording");
+        if (cqCaseStudyMediaRecorder && cqCaseStudyMediaRecorder.state === 'inactive') {
+          cqCaseStudyRecordedChunks = [];
+          try {
+            cqCaseStudyIsRecording = true;
+            recordBtn.classList.add('recording');
+            
+            const recordingIndicator = document.getElementById('cq-case-study-recordingIndicator');
+            if (recordingIndicator) {
+              recordingIndicator.classList.add('active');
+            }
+            
+            cqCaseStudyMediaRecorder.start();
+            console.log("✅ Case Study recording started");
+          } catch (e) {
+            console.error("Error starting recorder:", e);
+            alert("Error starting recording: " + e.message);
+            cqCaseStudyIsRecording = false;
+          }
+        } else if (cqCaseStudyMediaStream && !cqCaseStudyMediaRecorder) {
+          cqCaseStudySetupRecordingFromStream(cqCaseStudyMediaStream);
+          setTimeout(() => {
+            if (cqCaseStudyMediaRecorder && cqCaseStudyMediaRecorder.state === 'inactive') {
+              cqCaseStudyRecordedChunks = [];
+              try {
+                cqCaseStudyIsRecording = true;
+                recordBtn.classList.add('recording');
+                
+                const recordingIndicator = document.getElementById('cq-case-study-recordingIndicator');
+                if (recordingIndicator) {
+                  recordingIndicator.classList.add('active');
+                }
+                
+                cqCaseStudyMediaRecorder.start();
+                console.log("✅ Case Study recording started after setup");
+              } catch (e) {
+                console.error("Error starting recorder after setup:", e);
+                alert("Error starting recording: " + e.message);
+                cqCaseStudyIsRecording = false;
+              }
+            }
+          }, 200);
+        } else if (!cqCaseStudyMediaStream) {
+          cqCaseStudyInitializeVideoPreview();
+        } else {
+          alert("Recording is already in progress or not ready. Please wait.");
+        }
+      }
+    }
+
+    function cqCaseStudyStopRecording() {
+      if (!cqCaseStudyMediaRecorder || !cqCaseStudyIsRecording) {
+        return;
+      }
+      
+      cqCaseStudyIsIntentionallyStopping = true;
+      cqCaseStudyIsRecording = false;
+      
+      if (cqCaseStudyMediaRecorder.state === 'recording') {
+        try {
+          cqCaseStudyMediaRecorder.requestData();
+          cqCaseStudyMediaRecorder.stop();
+        } catch (e) {
+          console.error("Error stopping recorder:", e);
+        }
+      }
+      
+      const recordBtn = document.getElementById('cq-case-study-recordBtn');
+      if (recordBtn) {
+        recordBtn.classList.remove('recording');
+      }
+      
+      const recordingIndicator = document.getElementById('cq-case-study-recordingIndicator');
+      if (recordingIndicator) {
+        recordingIndicator.classList.remove('active');
+      }
+      
+      cqCaseStudyIsIntentionallyStopping = false;
+    }
+
+    function closeCaseStudyModal() {
+      if (cqCaseStudyTimerInterval) {
+        clearInterval(cqCaseStudyTimerInterval);
+        cqCaseStudyTimerInterval = null;
+      }
+      cqCaseStudyTimerActive = false;
+      cqCaseStudyStopAllMedia();
+      
+      const modal = document.getElementById('cq-case-study-modal');
+      if (modal) {
+        modal.style.display = 'none';
+      }
+    }
+
+    // Expose functions globally
+    window.toggleNotificationPanel = toggleNotificationPanel;
+    window.setupNotifications = setupNotifications;
+    window.openFullAssignmentModal = openFullAssignmentModal;
+    window.closeAssignmentModal = closeAssignmentModal;
+    window.acceptAssignmentNow = acceptAssignmentNow;
+    window.snoozeAssignment = snoozeAssignment;
+    window.openWrittenPracticeModal = openWrittenPracticeModal;
+    window.loadQuestion = loadQuestion;
+    window.selectOption = selectOption;
+    window.previousQuestion = previousQuestion;
+    window.nextQuestion = nextQuestion;
+    window.submitQuiz = submitQuiz;
+    window.closeQuizModal = closeQuizModal;
+    window.showCongratsModal = showCongratsModal;
+    window.closeCongratsModal = closeCongratsModal;
+    window.showLoader = showLoader;
+    window.hideLoader = hideLoader;
+    window.updateCircularProgress = updateCircularProgress;
+    window.startCircularProgress = startCircularProgress;
+    window.completeCircularProgress = completeCircularProgress;
+    window.stopCircularProgress = stopCircularProgress;
+    window.createQuizStars = createQuizStars;
+    window.createCongratsStars = createCongratsStars;
+    window.renderQuiz = renderQuiz;
+    window.submitSpeakingResponse = submitSpeakingResponse;
+    window.submitCaseStudyResponse = submitCaseStudyResponse;
+    window.openSpeakingAssignmentModal = openSpeakingAssignmentModal;
+    window.openCaseStudyModal = openCaseStudyModal;
+    window.toggleSpeakingRecording = toggleSpeakingRecording;
+    window.toggleCaseStudyRecording = toggleCaseStudyRecording;
+    window.closeSpeakingAssignmentModal = closeSpeakingAssignmentModal;
+    window.closeCaseStudyModal = closeCaseStudyModal;
+    window.toggleCaseStudyTimer = toggleCaseStudyTimer;
+    window.expandCaseStudyContent = expandCaseStudyContent;
+    window.collapseCaseStudyContent = collapseCaseStudyContent;
+    
+    // Close mobile nav when clicking a nav link
+    document.addEventListener('DOMContentLoaded', () => {
+      // Add event listener to hamburger menu as backup
+      const hamburgerBtn = document.getElementById('hamburgerMenu');
+      if (hamburgerBtn) {
+        hamburgerBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          if (window.toggleMobileNav) {
+            window.toggleMobileNav();
+          }
+        });
+      }
+      
+      document.querySelectorAll('.blaze-nav .nav-link').forEach(link => {
+        link.addEventListener('click', () => {
+          if (window.innerWidth <= 768) {
+            toggleMobileNav();
+          }
+        });
+      });
+    });
+
+    // Setup notifications when user is authenticated
+    // This is a backup - main setup is in the earlier auth.onAuthStateChanged handler
+    const user = firebase.auth().currentUser;
+    if (user) {
+      setTimeout(() => {
+        if (typeof setupNotifications === 'function') {
+          setupNotifications();
+        }
+      }, 200);
+    }
+  </script>
+
+  <!-- Speaking Assignment Modal -->
+  <div id="cq-speaking-modal" class="cq-speaking-modal" style="display:none;">
+    <!-- Star Field Background -->
+    <div class="cq-speaking-stars" id="cq-speaking-stars"></div>
+    <div class="cq-speaking-glow-1"></div>
+    <div class="cq-speaking-glow-2"></div>
+    
+    <div class="cq-speaking-modal-content">
+      <!-- Header -->
+      <div class="cq-speaking-header">
+        <h1 class="cq-speaking-title" id="cq-speaking-title">Speaking Assessment</h1>
+        <button class="cq-speaking-close" onclick="closeSpeakingAssignmentModal()">×</button>
+      </div>
+      
+      <!-- Main Container -->
+      <div class="cq-speaking-main-container">
+        <!-- Questions Row -->
+        <div class="cq-speaking-questions">
+          <div class="cq-speaking-question-card">
+            <h2 class="cq-speaking-question-label">Question 1:</h2>
+            <p id="cq-speaking-q1" class="cq-speaking-question-text">What is your strategy for this scenario?</p>
+          </div>
+          <div class="cq-speaking-question-card">
+            <h2 class="cq-speaking-question-label">Question 2:</h2>
+            <p id="cq-speaking-q2" class="cq-speaking-question-text">How would you handle unexpected challenges?</p>
+          </div>
+        </div>
+        
+        <!-- Video Feed -->
+        <div class="cq-speaking-video-container">
+          <video id="cq-speaking-videoPreview" autoplay playsInline muted style="width:100%; height:100%; object-fit:cover; background:#000; display:none;"></video>
+          <div id="cq-speaking-noVideoView" class="cq-speaking-no-video" style="width:100%; height:100%; background:#000; display:flex; align-items:center; justify-content:center; color:#94a3b8; position:absolute; top:0; left:0;">
+            <span>No video preview</span>
+          </div>
+          
+          <!-- Recording Indicator -->
+          <div id="cq-speaking-recordingIndicator" class="cq-speaking-recording-indicator">
+            <div class="cq-speaking-recording-dot"></div>
+            <span class="cq-speaking-recording-text">Recording</span>
+          </div>
+        </div>
+        
+        <!-- Controls -->
+        <div class="cq-speaking-controls-wrapper">
+          <div class="cq-speaking-controls">
+            <button id="cq-speaking-documentBtn" class="cq-speaking-control-btn" title="Document">
+              📄
+            </button>
+            <button id="cq-speaking-recordBtn" class="cq-speaking-record-btn" onclick="toggleSpeakingRecording()">
+              🎤
+            </button>
+            <button id="cq-speaking-micBtn" class="cq-speaking-control-btn" title="Settings">
+              ⚙️
+            </button>
+          </div>
+          
+          <!-- Submit button - shown after recording -->
+          <button id="cq-speaking-submitBtn" class="cq-speaking-submit-btn" style="display:none;" onclick="submitSpeakingResponse()">Submit Assessment</button>
+        </div>
+      </div>
+      
+      <!-- Audio playback (hidden by default) -->
+      <audio id="cq-speaking-audioPlayback" style="display:none;"></audio>
+      
+      <!-- Hidden buttons for functionality (kept for JavaScript) -->
+      <button id="cq-speaking-audioBtn" style="display:none;"></button>
+      <button id="cq-speaking-videoBtn" style="display:none;"></button>
+      <button id="cq-speaking-stopBtn" style="display:none;"></button>
+      <button id="cq-speaking-downloadBtn" style="display:none;"></button>
+    </div>
+  </div>
+
+  <!-- Case Study Assignment Modal -->
+  <div id="cq-case-study-modal" class="cq-case-study-modal" style="display:none;">
+    <!-- Star Field Background -->
+    <div class="cq-case-study-stars" id="cq-case-study-stars"></div>
+    <div class="cq-case-study-glow-1"></div>
+    <div class="cq-case-study-glow-2"></div>
+    
+    <div class="cq-case-study-modal-content">
+      <!-- Header -->
+      <div class="cq-case-study-header">
+        <h1 class="cq-case-study-title" id="cq-case-study-title">Case Study</h1>
+        <div class="cq-case-study-header-right">
+          <!-- Timer -->
+          <div id="cq-case-study-timer" class="cq-case-study-timer" onclick="toggleCaseStudyTimer()">
+            <div id="cq-case-study-timer-dot" class="cq-case-study-timer-dot"></div>
+            <span id="cq-case-study-timer-text" class="cq-case-study-timer-text">20:00</span>
+            <span id="cq-case-study-timer-start" class="cq-case-study-timer-start">Start</span>
+          </div>
+          <button class="cq-case-study-close" onclick="closeCaseStudyModal()">×</button>
+        </div>
+      </div>
+      
+      <!-- Main Container -->
+      <div class="cq-case-study-main-container">
+        <!-- Top Info Section (when content collapsed) -->
+        <div id="cq-case-study-top-info" class="cq-case-study-top-info">
+          <div class="cq-case-study-info-card">
+            <p class="cq-case-study-info-label">Case Name</p>
+            <p id="cq-case-study-name" class="cq-case-study-info-value">Market Expansion Strategy</p>
+          </div>
+          <div id="cq-case-study-content-preview" class="cq-case-study-info-card cq-case-study-clickable" onclick="expandCaseStudyContent()">
+            <p class="cq-case-study-info-label">Case Study Content</p>
+            <p id="cq-case-study-content-preview-text" class="cq-case-study-info-preview">Loading...</p>
+            <p class="cq-case-study-read-more">Read More →</p>
+          </div>
+        </div>
+        
+        <!-- Expanded Content (when content expanded) -->
+        <div id="cq-case-study-expanded-content" class="cq-case-study-expanded-content" style="display:none;">
+          <div class="cq-case-study-expanded-header">
+            <div>
+              <p class="cq-case-study-expanded-label">Case Study Content</p>
+              <h3 id="cq-case-study-expanded-title" class="cq-case-study-expanded-title">Market Expansion Strategy</h3>
+            </div>
+            <button class="cq-case-study-expanded-close" onclick="collapseCaseStudyContent()">×</button>
+          </div>
+          <p id="cq-case-study-full-content" class="cq-case-study-full-content">Loading...</p>
+        </div>
+        
+        <!-- Video Feed (hidden when content expanded) -->
+        <div id="cq-case-study-video-container" class="cq-case-study-video-container">
+          <video id="cq-case-study-videoPreview" autoplay playsInline muted style="width:100%; height:100%; object-fit:cover; background:#000; display:none;"></video>
+          <div id="cq-case-study-noVideoView" class="cq-case-study-no-video" style="width:100%; height:100%; background:#000; display:flex; align-items:center; justify-content:center; color:#94a3b8; position:absolute; top:0; left:0;">
+            <span>No video preview</span>
+          </div>
+          
+          <!-- Recording Indicator -->
+          <div id="cq-case-study-recordingIndicator" class="cq-case-study-recording-indicator">
+            <div class="cq-case-study-recording-dot"></div>
+            <span class="cq-case-study-recording-text">Recording</span>
+          </div>
+        </div>
+        
+        <!-- Bottom Info Section (hidden when content expanded) -->
+        <div id="cq-case-study-bottom-info" class="cq-case-study-bottom-info">
+          <div class="cq-case-study-question-card">
+            <p class="cq-case-study-question-label">Question 1</p>
+            <p id="cq-case-study-q1" class="cq-case-study-question-text">What are the key market opportunities and challenges?</p>
+          </div>
+          <div class="cq-case-study-question-card">
+            <p class="cq-case-study-question-label">Question 2</p>
+            <p id="cq-case-study-q2" class="cq-case-study-question-text">How would you develop a comprehensive expansion strategy?</p>
+          </div>
+        </div>
+        
+        <!-- Controls (hidden when content expanded) -->
+        <div id="cq-case-study-controls-wrapper" class="cq-case-study-controls-wrapper">
+          <div class="cq-case-study-controls">
+            <button id="cq-case-study-recordBtn" class="cq-case-study-record-btn" onclick="toggleCaseStudyRecording()">
+              🎤
+            </button>
+            <button id="cq-case-study-downloadBtn" class="cq-case-study-control-btn" title="Download" style="display:none;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="7" y="7" width="10" height="10" rx="2.5" fill="#60a5fa"/>
+                <path d="M12 9.5v4.5m0 0l-2.5-2.5m2.5 2.5l2.5-2.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+          </div>
+          
+          <!-- Submit button - shown after recording -->
+          <button id="cq-case-study-submitBtn" class="cq-case-study-submit-btn" style="display:none;" onclick="submitCaseStudyResponse()">Submit Case Study</button>
+        </div>
+      </div>
+      
+      <!-- Audio playback (hidden by default) -->
+      <audio id="cq-case-study-audioPlayback" style="display:none;"></audio>
+      
+      <!-- Hidden buttons for functionality (kept for JavaScript) -->
+      <button id="cq-case-study-audioBtn" style="display:none;"></button>
+      <button id="cq-case-study-videoBtn" style="display:none;"></button>
+      <button id="cq-case-study-stopBtn" style="display:none;"></button>
+    </div>
+  </div>
+
+  <!-- Assignment Loader - Fullscreen Blurred -->
+  <div id="assignmentLoader" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); z-index: 10000; justify-content: center; align-items: center; flex-direction: column;">
+    <div class="circular-progress-loader">
+      <svg class="circular-progress-svg" viewBox="0 0 100 100">
+        <defs>
+          <linearGradient id="progressGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" style="stop-color:#ef4444;stop-opacity:1" />
+            <stop offset="50%" style="stop-color:#f97316;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#eab308;stop-opacity:1" />
+          </linearGradient>
+        </defs>
+        <circle class="circular-progress-bg" cx="50" cy="50" r="45"></circle>
+        <circle class="circular-progress-fill" cx="50" cy="50" r="45" id="circularProgressFill"></circle>
+      </svg>
+      <div class="circular-progress-text" id="circularProgressText">0%</div>
+    </div>
+  </div>
+</body>
+</html>

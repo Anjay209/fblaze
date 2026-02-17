@@ -631,31 +631,40 @@ const auth = firebase.auth();
         return;
       }
 
-      const usersSnapshot = await db.collection('users').get();
-      menteesCache = [];
-      allMentees = [];
-      
-    usersSnapshot.forEach(doc => {
-      if (doc.id === user.uid) return;
-        const other = doc.data();
-      let otherComps = [];
-      if (Array.isArray(other.competitions)) otherComps = other.competitions;
-      else if (typeof other.competitions === 'string' && other.competitions.trim() !== '')
-        otherComps = [other.competitions.trim()];
-        
-      const overlap = otherComps.some(comp => mentorComps.includes(comp));
-      if (overlap) {
-          const menteeName = other.name || other.fullName || other.email || '(unnamed)';
-          const mentee = {
-            id: doc.id,
-            name: menteeName,
-            grade: other.grade || '',
-            comps: otherComps.filter(Boolean)
-          };
-          menteesCache.push(mentee);
-          allMentees.push(mentee);
-          menteeNameMap[doc.id] = menteeName;
+      // Load mentees from Firebase (new explicit list)
+      async function loadMenteesFromFirebase(mentorId) {
+        try {
+          const menteesSnapshot = await db.collection('users').doc(mentorId).collection('mentees').get();
+          const mentees = [];
+          
+          for (const menteeDoc of menteesSnapshot.docs) {
+            const menteeId = menteeDoc.id;
+            const userDoc = await db.collection('users').doc(menteeId).get();
+            if (userDoc.exists) {
+              const userData = userDoc.data();
+              let comps = Array.isArray(userData.competitions) ? userData.competitions : [userData.competitions].filter(Boolean);
+              mentees.push({
+                id: menteeId,
+                name: userData.name || userData.fullName || userData.email || '(unnamed)',
+                grade: userData.grade || '',
+                email: userData.email || '',
+                comps: comps.filter(Boolean),
+                addedAt: menteeDoc.data().addedAt
+              });
+            }
+          }
+          return mentees;
+        } catch (error) {
+          console.error('Error loading mentees from Firebase:', error);
+          return [];
         }
+      }
+      
+      const loadedMentees = await loadMenteesFromFirebase(user.uid);
+      menteesCache = loadedMentees;
+      allMentees = loadedMentees;
+      loadedMentees.forEach(mentee => {
+        menteeNameMap[mentee.id] = mentee.name;
       });
 
       // Populate mentee filters

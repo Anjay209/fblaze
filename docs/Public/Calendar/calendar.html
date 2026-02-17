@@ -1703,23 +1703,22 @@ if (!firebase.apps.length) {
         try {
           const batch = db.batch();
           
-          // Get all mentees in the competition
-          const menteesQuery = db.collection("users")
-            .where("competitions", "array-contains", meetingData.competition);
+          // Get all mentees of the current mentor (from explicit list)
+          async function loadMenteesFromFirebase(mentorId) {
+            try {
+              const menteesSnapshot = await db.collection('users').doc(mentorId).collection('mentees').get();
+              const menteeIds = [];
+              menteesSnapshot.forEach(doc => menteeIds.push(doc.id));
+              return menteeIds;
+            } catch (error) {
+              console.error('Error loading mentees from Firebase:', error);
+              return [];
+            }
+          }
           
-          // Get all mentors for the competition
-          const mentorsQuery = db.collection("users")
-            .where("mentorCompetition", "==", meetingData.competition);
-          
-          const [menteesSnapshot, mentorsSnapshot] = await Promise.all([
-            menteesQuery.get(),
-            mentorsQuery.get()
-          ]);
-          
-          // Combine all unique user IDs
-          const uids = new Set();
-          menteesSnapshot.forEach(doc => uids.add(doc.id));
-          mentorsSnapshot.forEach(doc => uids.add(doc.id));
+          const menteeIds = await loadMenteesFromFirebase(user.uid);
+          const uids = new Set(menteeIds);
+          uids.add(user.uid); // Include the mentor
           
           // Set the total users count (including creator)
           meetingData.rsvpStatus = meetingData.rsvpStatus || {};
