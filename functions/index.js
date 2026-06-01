@@ -229,135 +229,200 @@ You are writing as a professional exam author — not as a tutor or teacher.`;
 });
 
 const functions = require("firebase-functions");
+const axios = require("axios");
+
+const DEFAULT_WEAK_COMPETENCY =
+  "General Business Administration & Procedure";
+const TARGET_EXAM_DATE = new Date("2027-05-10T08:00:00");
+
+/**
+ * Resolves the user's weakest competency from stats or assignments.
+ * @param {string} userId Firebase user id.
+ * @return {Promise<string>} Weakest competency label.
+ */
+async function resolveWeakestCompetency(userId) {
+  const statsSnapshot = await db.collection("stats").doc(userId).get();
+  if (statsSnapshot.exists) {
+    const statsData = statsSnapshot.data();
+    if (statsData && statsData.competencies) {
+      const sorted = Object.entries(statsData.competencies)
+          .sort((a, b) => a[1] - b[1]);
+      if (sorted.length > 0) {
+        return sorted[0][0];
+      }
+    }
+  }
+
+  const assessmentsSnapshot = await db.collection("assignments")
+      .where("to", "==", userId)
+      .where("status", "==", "complete")
+      .orderBy("completedAt", "desc")
+      .limit(15)
+      .get();
+
+  const metricsMap = {};
+  assessmentsSnapshot.forEach((doc) => {
+    const record = doc.data();
+    if (!record || !record.competencyStats) return;
+    Object.keys(record.competencyStats).forEach((key) => {
+      if (!metricsMap[key]) metricsMap[key] = {correct: 0, total: 0};
+      const stat = record.competencyStats[key];
+      metricsMap[key].correct += stat.correct || 0;
+      metricsMap[key].total += stat.total || 0;
+    });
+  });
+
+  let weakest = null;
+  let lowestRatio = 1.1;
+  Object.keys(metricsMap).forEach((key) => {
+    const node = metricsMap[key];
+    if (node.total > 0) {
+      const ratio = node.correct / node.total;
+      if (ratio < lowestRatio) {
+        lowestRatio = ratio;
+        weakest = key;
+      }
+    }
+  });
+
+  return weakest || DEFAULT_WEAK_COMPETENCY;
+}
+
+/**
+ * Generates one extension question via OpenAI using training context.
+ * @param {string} trainingContextText User training roadmap text.
+ * @param {string} targetWeakCompetency Target competency to focus on.
+ * @return {Promise<Object>} Parsed question JSON payload.
+ */
+async function generateExtensionQuestion(
+    trainingContextText,
+    targetWeakCompetency,
+) {
+  const contextBlock = (trainingContextText || "")
+      .substring(0, 12000);
+
+  const systemDirective = [
+    "You are an advanced AP/Business exam mentor pipeline engine.",
+    "Generate one high-fidelity multiple-choice question for the user's",
+    "weakest competency area.",
+    `Target competency weakness: "${targetWeakCompetency}"`,
+    "Base theme and scenario on this user training roadmap context:",
+    "---",
+    contextBlock || "No custom training context provided.",
+    "---",
+    "Respond with strict valid JSON only. No code fences or notes.",
+    "JSON format:",
+    "{",
+    "  \"competency\": \"string\",",
+    "  \"text\": \"question stem\",",
+    "  \"options\": [\"A\", \"B\", \"C\", \"D\"],",
+    "  \"correctAnswer\": \"exact correct option text\",",
+    "  \"explanation\": \"why correct and others are wrong\"",
+    "}",
+  ].join("\n");
+
+  const response = await axios.post(
+      "https://api.openai.com/v1/chat/completions",
+      {
+        model: "gpt-4o",
+        messages: [{role: "system", content: systemDirective}],
+        response_format: {type: "json_object"},
+        temperature: 0.7,
+        max_tokens: 1200,
+      },
+      {
+        headers: {
+          "Authorization": `Bearer ${OPENAI_KEY}`,
+          "Content-Type": "application/json",
+        },
+      },
+  );
+
+  return JSON.parse(response.data.choices[0].message.content);
+}
 
 exports.getNextExtensionQuestion = functions.https.onRequest(
     async (req, res) => {
       res.set("Access-Control-Allow-Origin", "*");
-      res.set("Access-Control-Allow-Headers", "Authorization, Content-Type");
+      res.set("Access-Control-Allow-Methods", "GET, OPTIONS");
+      res.set("Access-Control-Allow-Headers", "Content-Type, Authorization");
       if (req.method === "OPTIONS") return res.status(204).send("");
 
       try {
-        let uid = "test_fallback_user";
-        const authHeader = req.headers.authorization;
-
-        if (authHeader && authHeader.startsWith("Bearer ")) {
-          const token = authHeader.split("Bearer ")[1];
-          try {
-            const decoded = await admin.auth().verifyIdToken(token);
-            uid = decoded.uid;
-          } catch (tokenErr) {
-            console.warn("Invalid token signature validation.");
-          }
+        const userId = req.query.userId;
+        if (!userId) {
+          return res.status(400).json({
+            error: "Missing required parameter: userId",
+          });
         }
 
-        const targetExamDate = new Date("2027-05-10T08:00:00");
-        const diffMs = targetExamDate - new Date();
-        const daysToExam = Math.max(
-            0,
-            Math.ceil(diffMs / (1000 * 60 * 60 * 24)),
+        console.log(
+            "Analyzing telemetry and prompt tracks for user:",
+            userId,
         );
 
-        const userSnapshot = await db.collection("users").doc(uid).get();
-        const userData = userSnapshot.exists ? userSnapshot.data() : {};
+        const trainingSnapshot =
+          await db.collection("userTraining").doc(userId).get();
+        let trainingContextText = "";
+        if (trainingSnapshot.exists) {
+          const trainingData = trainingSnapshot.data() || {};
+          const trainingContext = trainingData.gptTrainingContext || {};
+          trainingContextText = trainingContext.content || "";
+          console.log("Extracted custom roadmap content payload.");
+        } else {
+          console.warn("No training context document for user:", userId);
+        }
 
-        const streak = userData.streak || 0;
-        const userSettings = userData.extensionSettings || {
+        const targetWeakCompetency = await resolveWeakestCompetency(userId);
+        console.log("Target weak competency:", targetWeakCompetency);
+
+        let streakCount = 0;
+        let daysToExam = Math.max(
+            0,
+            Math.ceil((TARGET_EXAM_DATE - new Date()) / (1000 * 60 * 60 * 24)),
+        );
+
+        const userSnapshot = await db.collection("users").doc(userId).get();
+        let userSettings = {
           showStreak: true,
           showCountdown: true,
           showQuestion: true,
         };
-
-        const assessmentsSnapshot = await db
-            .collection("assignments")
-            .where("to", "==", uid)
-            .where("status", "==", "complete")
-            .orderBy("completedAt", "desc")
-            .limit(15)
-            .get();
-
-        const metricsMap = {};
-
-        assessmentsSnapshot.forEach((doc) => {
-          const record = doc.data();
-          if (record.competencyStats) {
-            Object.keys(record.competencyStats).forEach((key) => {
-              if (!metricsMap[key]) {
-                metricsMap[key] = {correct: 0, total: 0};
-              }
-              const stat = record.competencyStats[key];
-              metricsMap[key].correct += stat.correct || 0;
-              metricsMap[key].total += stat.total || 0;
-            });
+        if (userSnapshot.exists) {
+          const userData = userSnapshot.data() || {};
+          streakCount = userData.streak || 0;
+          userSettings = userData.extensionSettings || userSettings;
+          if (userData.examDate) {
+            const diffTime = Math.abs(
+                new Date(userData.examDate) - new Date(),
+            );
+            daysToExam = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
           }
-        });
-
-        let targetWeakestCompetency = null;
-        let lowestAccuracyBound = 1.1;
-
-        Object.keys(metricsMap).forEach((key) => {
-          const node = metricsMap[key];
-          if (node.total > 0) {
-            const ratio = node.correct / node.total;
-            if (ratio < lowestAccuracyBound) {
-              lowestAccuracyBound = ratio;
-              targetWeakestCompetency = key;
-            }
-          }
-        });
-
-        if (!targetWeakestCompetency) {
-          targetWeakestCompetency = "Parliamentary Procedure";
         }
 
-        const quizBankSnapshot = await db
-            .collection("quizzes")
-            .where("competency", "==", targetWeakestCompetency)
-            .limit(5)
-            .get();
-
-        let questionPayload = null;
-
-        if (!quizBankSnapshot.empty) {
-          const docs = quizBankSnapshot.docs;
-          const randomDoc = docs[Math.floor(Math.random() * docs.length)]
-              .data();
-          questionPayload = {
-            text: randomDoc.text,
-            options: randomDoc.options,
-            correctAnswer: randomDoc.correctAnswer,
-            explanation:
-              randomDoc.explanation ||
-              "Review your comprehensive logic rules in your dashboard.",
-            competency: targetWeakestCompetency,
-          };
-        } else {
-          questionPayload = {
-            text: "What is the primary purpose of parliamentary procedure?",
-            options: [
-              "To make meetings more efficient",
-              "To give the president more power",
-              "To eliminate debate",
-              "To make meetings longer",
-            ],
-            correctAnswer: "To make meetings more efficient",
-            explanation:
-              "Parliamentary procedure provides a framework to maintain " +
-              "structured order, protecting individual rights " +
-              "while optimizing " +
-              "meeting efficiency.",
-            competency: "Parliamentary Procedure",
-          };
-        }
+        const generatedPayload = await generateExtensionQuestion(
+            trainingContextText,
+            targetWeakCompetency,
+        );
 
         return res.status(200).json({
-          streak: streak,
+          streak: streakCount,
           daysToExam: daysToExam,
           settings: userSettings,
-          question: questionPayload,
+          question: {
+            competency:
+              generatedPayload.competency || targetWeakCompetency,
+            text: generatedPayload.text,
+            options: generatedPayload.options,
+            correctAnswer: generatedPayload.correctAnswer,
+            explanation: generatedPayload.explanation,
+          },
         });
-      } catch (globalError) {
-        console.error("Extension query failure:", globalError);
-        return res.status(500).send("Internal Server Exception.");
+      } catch (error) {
+        console.error("Critical routing function execution error:", error);
+        return res.status(500).json({
+          error: "Internal processing logic thread broken.",
+        });
       }
     },
 );

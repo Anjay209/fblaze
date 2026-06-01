@@ -5153,7 +5153,7 @@ async function extractAndStorePDFText(file) {
     updateUploadedFilesList();
   }
 
-  return limited;
+  return limited.length;
 }
 
 async function usePDFForTraining() {
@@ -5213,12 +5213,12 @@ async function usePDFForTraining() {
 
     localStorage.removeItem('currentTrainingText');
 
-    const fileName = document.getElementById('fileName');
-    if (fileName) {
+    const dropZoneSubtext = document.querySelector('.drop-zone-subtext');
+    if (dropZoneSubtext) {
       const competitionText = selectedCompetition === 'general' ? '' : ` for ${selectedCompetition}`;
-      const sourceType = useMenteeTrainingData ? 'Mentee Training Data' : 'Uploaded Documents';
-      fileName.textContent = `✅ ${sourceType} saved${competitionText}! (${userQuestions.length} questions, ${trainingContent.length} chars)`;
-      fileName.style.color = '#10b981';
+      dropZoneSubtext.textContent =
+        `Training data saved${competitionText}! (${userQuestions.length} questions, ${trainingContent.length} chars)`;
+      dropZoneSubtext.style.color = '#10b981';
     }
 
     // Reset uploaded files if any
@@ -5380,7 +5380,19 @@ async function openTrainingModal() {
     const fileInput = document.getElementById('fileInput');
     const fileNameDisplay = document.getElementById('fileName');
     if (fileInput) fileInput.value = '';
-    if (fileNameDisplay) fileNameDisplay.textContent = '';
+    if (fileNameDisplay) {
+      fileNameDisplay.style.display = 'none';
+      fileNameDisplay.textContent = '';
+    }
+    const dropZoneSubtext = document.querySelector('.drop-zone-subtext');
+    if (dropZoneSubtext) {
+      dropZoneSubtext.textContent = 'Supports PDF files up to 10MB';
+      dropZoneSubtext.style.color = '';
+    }
+    const dropZoneText = document.querySelector('.drop-zone-text');
+    if (dropZoneText) {
+      dropZoneText.textContent = 'Drag & Drop PDF Here or Click to Upload';
+    }
 
     // Clear manual questions
     const container = document.getElementById('manualQuestionsContainer');
@@ -5528,16 +5540,19 @@ async function handleFile(file) {
   }
 
   const dropZoneText = document.querySelector('.drop-zone-text');
+  const dropZoneSubtext = document.querySelector('.drop-zone-subtext');
   const fileNameEl = document.getElementById('fileName');
 
   try {
     if (dropZoneText) {
       dropZoneText.textContent = `Processing ${file.name}...`;
     }
+    if (dropZoneSubtext) {
+      dropZoneSubtext.textContent = 'Extracting text from PDF...';
+    }
     if (fileNameEl) {
-      fileNameEl.style.display = 'block';
-      fileNameEl.textContent = `Processing ${file.name}...`;
-      fileNameEl.style.color = '#94a3b8';
+      fileNameEl.style.display = 'none';
+      fileNameEl.textContent = '';
     }
 
     const extractedLength = await extractAndStorePDFText(file);
@@ -5553,10 +5568,10 @@ async function handleFile(file) {
     if (dropZoneText) {
       dropZoneText.textContent = file.name;
     }
-    if (fileNameEl) {
-      fileNameEl.textContent =
-        `✅ Processed: ${file.name} (${extractedLength} chars extracted)`;
-      fileNameEl.style.color = '#10b981';
+    if (dropZoneSubtext) {
+      dropZoneSubtext.textContent =
+        `Ready for training (${extractedLength.toLocaleString()} characters extracted)`;
+      dropZoneSubtext.style.color = '#10b981';
     }
 
     console.log('✅ PDF processed and metadata saved', extractedLength, 'chars');
@@ -5566,9 +5581,13 @@ async function handleFile(file) {
     if (dropZoneText) {
       dropZoneText.textContent = 'Drag & Drop PDF Here or Click to Upload';
     }
+    if (dropZoneSubtext) {
+      dropZoneSubtext.textContent = 'Supports PDF files up to 10MB';
+      dropZoneSubtext.style.color = '';
+    }
     if (fileNameEl) {
-      fileNameEl.textContent = '❌ Error processing PDF';
-      fileNameEl.style.color = '#ef4444';
+      fileNameEl.style.display = 'none';
+      fileNameEl.textContent = '';
     }
   } finally {
     pdfProcessingInFlight = false;
@@ -6196,7 +6215,7 @@ firebase.firestore().collection('userTraining').doc(userId).set({
         lastUpdated: Date.now()
     }
 }, { merge: true });
-      fileNameDisplay.textContent = `✅ Processed: ${file.name}`;
+      fileNameDisplay.textContent = `Processed: ${file.name}`;
       
       // Use the text for training
       prepareTrainingData(fullText);
