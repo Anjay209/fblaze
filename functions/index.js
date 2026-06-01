@@ -2,8 +2,7 @@ const {
   onDocumentCreated,
   onDocumentUpdated,
 } = require("firebase-functions/firestore");
-const {onCall} = require("firebase-functions/https");
-const functions = require("firebase-functions");
+const {onCall, onRequest} = require("firebase-functions/https");
 const admin = require("firebase-admin");
 
 if (admin.apps.length === 0) {
@@ -48,51 +47,55 @@ exports.incrementSolvedCount = onDocumentUpdated(
     },
 );
 
-exports.generateQuestionsWithAI = onCall(async (request) => {
-  try {
-    const axios = require("axios");
+exports.generateQuestionsWithAI = onCall(
+    {secrets: ["OPENAI_API_KEY"]},
+    async (request) => {
+      try {
+        const axios = require("axios");
 
-    const systemPrompt = `You are an expert FBLA written-competition ` +
-      `exam designer. Your role is to generate ORIGINAL, competition-` +
-      `accurate FBLA-style multiple-choice questions that match the ` +
-      `structure, rigor, tone, and professional standards of official ` +
-      `FBLA written tests. Follow all guidelines carefully.`;
+        const systemPrompt = `You are an expert FBLA written-competition ` +
+        `exam designer. Your role is to generate ORIGINAL, competition-` +
+        `accurate FBLA-style multiple-choice questions that match the ` +
+        `structure, rigor, tone, and professional standards of official ` +
+        `FBLA written tests. Follow all guidelines carefully.`;
 
-    const apiKey = process.env.OPENAI_API_KEY || process.env.OPENAI_KEY;
+        const apiKey = process.env.OPENAI_API_KEY || process.env.OPENAI_KEY;
 
-    const response = await axios.post(
-        "https://api.openai.com/v1/chat/completions",
-        {
-          model: "gpt-4o-mini",
-          messages: [
-            {role: "system", content: systemPrompt},
-            ...request.data.messages,
-          ],
-          temperature: request.data.temperature || 0.8,
-          max_tokens: request.data.max_tokens || 2500,
-        },
-        {
-          headers: {
-            "Authorization": `Bearer ${apiKey}`,
-            "Content-Type": "application/json",
-          },
-        },
-    );
+        const response = await axios.post(
+            "https://api.openai.com/v1/chat/completions",
+            {
+              model: "gpt-4o-mini",
+              messages: [
+                {role: "system", content: systemPrompt},
+                ...request.data.messages,
+              ],
+              temperature: request.data.temperature || 0.8,
+              max_tokens: request.data.max_tokens || 2500,
+            },
+            {
+              headers: {
+                "Authorization": `Bearer ${apiKey}`,
+                "Content-Type": "application/json",
+              },
+            },
+        );
 
-    return {
-      success: true,
-      content: response.data.choices[0].message.content,
-    };
-  } catch (error) {
-    console.error("OpenAI API Error:", error.message);
-    return {
-      success: false,
-      error: error.message,
-    };
-  }
-});
+        return {
+          success: true,
+          content: response.data.choices[0].message.content,
+        };
+      } catch (error) {
+        console.error("OpenAI API Error:", error.message);
+        return {
+          success: false,
+          error: error.message,
+        };
+      }
+    },
+);
 
-exports.getNextExtensionQuestion = functions.https.onRequest(
+exports.getNextExtensionQuestion = onRequest(
+    {secrets: ["OPENAI_API_KEY"]},
     async (req, res) => {
       res.set("Access-Control-Allow-Origin", "*");
       res.set("Access-Control-Allow-Methods", "GET, OPTIONS");
@@ -181,7 +184,6 @@ exports.getNextExtensionQuestion = functions.https.onRequest(
         "explanation": "Detailed breakdown context rationale text."
       }`;
 
-        // Initialize inside the runtime call where env vars are loaded
         const activeKey = process.env.OPENAI_API_KEY || process.env.OPENAI_KEY;
         const openai = new OpenAI({apiKey: activeKey});
 
