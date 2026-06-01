@@ -49,16 +49,20 @@ exports.generateQuestionsWithAI = onCall(async (request) => {
   try {
     const axios = require("axios");
 
-    const systemPrompt = `You are an expert FBLA written-competition exam designer.
+    const systemPrompt = `You are an expert FBLA written-competition exam
+designer.
 
-Your role is to generate ORIGINAL, competition-accurate FBLA-style multiple-choice questions that match the structure, rigor, tone, and professional standards of official FBLA written tests.
+Your role is to generate ORIGINAL, competition-accurate FBLA-style
+multiple-choice questions that match the structure, rigor, tone, and
+professional standards of official FBLA written tests.
 
 You must follow ALL rules below.
 
 ────────────────────────────────
 CORE FBLA PHILOSOPHY
 ────────────────────────────────
-FBLA written tests assess professional correctness, precision, and applied business literacy.
+FBLA written tests assess professional correctness, precision, and applied
+business literacy.
 
 They do NOT assess creativity, opinion, or open-ended reasoning.
 
@@ -66,7 +70,8 @@ Each question must test exactly ONE concept.
 
 Questions must be concise, objective, and professionally worded.
 
-Avoid unnecessary narrative unless the question type explicitly requires a scenario.
+Avoid unnecessary narrative unless the question type explicitly requires a
+scenario.
 
 ────────────────────────────────
 APPROVED FBLA QUESTION ARCHETYPES
@@ -79,16 +84,20 @@ Every question MUST clearly belong to ONE of the following archetypes:
 
 2. Classification / Category Recognition  
    - Determining where an item belongs within a professional category system  
-   - Examples include document types, account categories, system types, business forms, or classifications  
+   - Examples include document types, account categories, system types,
+     business forms, or classifications  
 
 3. Procedural / Workflow Knowledge  
-   - Understanding the stages of a professional workflow specific to the competition area  
+   - Understanding the stages of a professional workflow specific to the
+     competition area  
    - Identifying where information originates within that workflow  
-   - Determining which document, tool, or action is appropriate at a given stage  
+   - Determining which document, tool, or action is appropriate at a given
+     stage  
    - Recognizing correct sequencing of professional tasks within the domain  
 
 4. Tool-to-Function Matching  
-   - Matching software features, commands, utilities, or tools to their correct purpose  
+   - Matching software features, commands, utilities, or tools to their
+     correct purpose  
    - Selecting the correct function used to accomplish a professional task  
 
 5. Quantitative / Calculation Application  
@@ -98,7 +107,8 @@ Every question MUST clearly belong to ONE of the following archetypes:
 
 6. Language Precision & Usage  
    - Correct use of professional vocabulary  
-   - Distinguishing homophones, word meanings, spelling, grammar, and standard usage  
+   - Distinguishing homophones, word meanings, spelling, grammar, and standard
+     usage  
 
 7. Error Detection / Exception Identification  
    - Identifying what is incorrect, misspelled, or does NOT belong  
@@ -166,9 +176,14 @@ CONTENT INTEGRITY RULES
 • Do NOT closely paraphrase known questions.  
 • Use authentic structure only, not replicated wording.
 
-Questions must feel realistic for competitive FBLA written events at the regional, state, or national level.
+Questions must feel realistic for competitive FBLA written events at the
+regional, state, or national level.
 
-When study materials are provided, extract concepts, facts, names, dates, laws, and details from them. Present this information as established business knowledge. NEVER mention "the study guide", "the document", "the material", or use phrases like "according to", "as stated in", or "mentioned in".
+When study materials are provided, extract concepts, facts, names, dates,
+laws, and details from them. Present this information as established
+business knowledge. NEVER mention "the study guide", "the document",
+"the material", or use phrases like "according to", "as stated in", or
+"mentioned in".
 
 ────────────────────────────────
 OUTPUT REQUIREMENTS
@@ -212,3 +227,137 @@ You are writing as a professional exam author — not as a tutor or teacher.`;
     };
   }
 });
+
+const functions = require("firebase-functions");
+
+exports.getNextExtensionQuestion = functions.https.onRequest(
+    async (req, res) => {
+      res.set("Access-Control-Allow-Origin", "*");
+      res.set("Access-Control-Allow-Headers", "Authorization, Content-Type");
+      if (req.method === "OPTIONS") return res.status(204).send("");
+
+      try {
+        let uid = "test_fallback_user";
+        const authHeader = req.headers.authorization;
+
+        if (authHeader && authHeader.startsWith("Bearer ")) {
+          const token = authHeader.split("Bearer ")[1];
+          try {
+            const decoded = await admin.auth().verifyIdToken(token);
+            uid = decoded.uid;
+          } catch (tokenErr) {
+            console.warn("Invalid token signature validation.");
+          }
+        }
+
+        const targetExamDate = new Date("2027-05-10T08:00:00");
+        const diffMs = targetExamDate - new Date();
+        const daysToExam = Math.max(
+            0,
+            Math.ceil(diffMs / (1000 * 60 * 60 * 24)),
+        );
+
+        const userSnapshot = await db.collection("users").doc(uid).get();
+        const userData = userSnapshot.exists ? userSnapshot.data() : {};
+
+        const streak = userData.streak || 0;
+        const userSettings = userData.extensionSettings || {
+          showStreak: true,
+          showCountdown: true,
+          showQuestion: true,
+        };
+
+        const assessmentsSnapshot = await db
+            .collection("assignments")
+            .where("to", "==", uid)
+            .where("status", "==", "complete")
+            .orderBy("completedAt", "desc")
+            .limit(15)
+            .get();
+
+        const metricsMap = {};
+
+        assessmentsSnapshot.forEach((doc) => {
+          const record = doc.data();
+          if (record.competencyStats) {
+            Object.keys(record.competencyStats).forEach((key) => {
+              if (!metricsMap[key]) {
+                metricsMap[key] = {correct: 0, total: 0};
+              }
+              const stat = record.competencyStats[key];
+              metricsMap[key].correct += stat.correct || 0;
+              metricsMap[key].total += stat.total || 0;
+            });
+          }
+        });
+
+        let targetWeakestCompetency = null;
+        let lowestAccuracyBound = 1.1;
+
+        Object.keys(metricsMap).forEach((key) => {
+          const node = metricsMap[key];
+          if (node.total > 0) {
+            const ratio = node.correct / node.total;
+            if (ratio < lowestAccuracyBound) {
+              lowestAccuracyBound = ratio;
+              targetWeakestCompetency = key;
+            }
+          }
+        });
+
+        if (!targetWeakestCompetency) {
+          targetWeakestCompetency = "Parliamentary Procedure";
+        }
+
+        const quizBankSnapshot = await db
+            .collection("quizzes")
+            .where("competency", "==", targetWeakestCompetency)
+            .limit(5)
+            .get();
+
+        let questionPayload = null;
+
+        if (!quizBankSnapshot.empty) {
+          const docs = quizBankSnapshot.docs;
+          const randomDoc = docs[Math.floor(Math.random() * docs.length)]
+              .data();
+          questionPayload = {
+            text: randomDoc.text,
+            options: randomDoc.options,
+            correctAnswer: randomDoc.correctAnswer,
+            explanation:
+              randomDoc.explanation ||
+              "Review your comprehensive logic rules in your dashboard.",
+            competency: targetWeakestCompetency,
+          };
+        } else {
+          questionPayload = {
+            text: "What is the primary purpose of parliamentary procedure?",
+            options: [
+              "To make meetings more efficient",
+              "To give the president more power",
+              "To eliminate debate",
+              "To make meetings longer",
+            ],
+            correctAnswer: "To make meetings more efficient",
+            explanation:
+              "Parliamentary procedure provides a framework to maintain " +
+              "structured order, protecting individual rights " +
+              "while optimizing " +
+              "meeting efficiency.",
+            competency: "Parliamentary Procedure",
+          };
+        }
+
+        return res.status(200).json({
+          streak: streak,
+          daysToExam: daysToExam,
+          settings: userSettings,
+          question: questionPayload,
+        });
+      } catch (globalError) {
+        console.error("Extension query failure:", globalError);
+        return res.status(500).send("Internal Server Exception.");
+      }
+    },
+);

@@ -4808,7 +4808,7 @@ firebase.auth().onAuthStateChanged((user) => {
 // Get modal elements
 const modal = document.getElementById('pdfModal');
 const openBtn = document.getElementById('openModalBtn');
-const closeBtn = modal.querySelector('.close');
+const closeBtn = modal ? modal.querySelector('.close') : null;
 const dropZone = document.getElementById('dropZone');
 const fileInput = document.getElementById('fileInput');
 const fileNameDisplay = document.getElementById('fileName');
@@ -4882,69 +4882,72 @@ function selectTrainingSource(source) {
 
 
 
-function setupMultiFileDragAndDrop() {
-    const dropZone = document.getElementById('dropZone');
-    const fileInput = document.getElementById('multiFileInput');
-    
-    if (!dropZone || !fileInput) {
-        console.error('❌ Drop zone or file input not found');
-        return;
+let trainingPdfUploadReady = false;
+let pdfProcessingInFlight = false;
+
+function initTrainingPdfUpload() {
+  if (trainingPdfUploadReady) return;
+
+  const dropZone = document.getElementById('dropZone');
+  const fileInput = document.getElementById('multiFileInput') ||
+    document.getElementById('fileInput');
+
+  if (!dropZone || !fileInput) {
+    console.warn('Training PDF upload: waiting for modal elements...');
+    return;
+  }
+
+  trainingPdfUploadReady = true;
+  console.log('✅ Training PDF upload ready (v2 — extracts text for training)');
+
+  dropZone.addEventListener('click', (e) => {
+    e.stopPropagation();
+    fileInput.click();
+  });
+
+  ['dragenter', 'dragover', 'dragleave', 'drop'].forEach((eventName) => {
+    dropZone.addEventListener(eventName, (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+    }, false);
+  });
+
+  dropZone.addEventListener('dragenter', () => {
+    dropZone.style.backgroundColor = '#f0f9ff';
+    dropZone.style.borderColor = '#3b82f6';
+  });
+
+  dropZone.addEventListener('dragover', () => {
+    dropZone.style.backgroundColor = '#f0f9ff';
+    dropZone.style.borderColor = '#3b82f6';
+  });
+
+  dropZone.addEventListener('dragleave', () => {
+    dropZone.style.backgroundColor = '';
+    dropZone.style.borderColor = '';
+  });
+
+  dropZone.addEventListener('drop', (e) => {
+    dropZone.style.backgroundColor = '';
+    dropZone.style.borderColor = '';
+    const files = e.dataTransfer.files;
+    if (files.length > 0) {
+      console.log('📄 File dropped:', files[0].name);
+      handleFile(files[0]);
     }
-    
-    console.log('✅ Drag & Drop setup complete');
-    
-    // Click to upload
-    dropZone.addEventListener('click', (e) => {
-        e.stopPropagation();
-        fileInput.click();
-    });
-    
-    // Listen on DOCUMENT level
-    document.addEventListener('dragenter', (e) => {
-        if (dropZone.offsetParent !== null) { // Only if modal is visible
-            e.preventDefault();
-            e.stopPropagation();
-            dropZone.style.backgroundColor = '#f0f9ff';
-            dropZone.style.borderColor = '#3b82f6';
-        }
-    });
-    
-    document.addEventListener('dragover', (e) => {
-        if (dropZone.offsetParent !== null) {
-            e.preventDefault();
-            e.stopPropagation();
-            dropZone.style.backgroundColor = '#f0f9ff';
-            dropZone.style.borderColor = '#3b82f6';
-        }
-    });
-    
-    document.addEventListener('dragleave', (e) => {
-        dropZone.style.backgroundColor = '';
-        dropZone.style.borderColor = '';
-    });
-    
-    document.addEventListener('drop', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        dropZone.style.backgroundColor = '';
-        dropZone.style.borderColor = '';
-        
-        if (dropZone.offsetParent !== null) { // Only if modal is visible
-            const files = e.dataTransfer.files;
-            if (files.length > 0) {
-                console.log('📄 File dropped:', files[0].name);
-                handleFile(files[0]);
-            }
-        }
-    });
-    
-    // Handle file input change
-    fileInput.addEventListener('change', (e) => {
-        if (e.target.files.length > 0) {
-            console.log('📄 File selected:', e.target.files[0].name);
-            handleFile(e.target.files[0]);
-        }
-    });
+  });
+
+  fileInput.addEventListener('change', (e) => {
+    if (e.target.files.length > 0) {
+      console.log('📄 File selected:', e.target.files[0].name);
+      handleFile(e.target.files[0]);
+    }
+    e.target.value = '';
+  });
+}
+
+function setupMultiFileDragAndDrop() {
+  initTrainingPdfUpload();
 }
 
 function handleMultipleFiles(files) {
@@ -5096,43 +5099,95 @@ function removeUploadedFile(index) {
   updateUploadedFilesList();
 }
 
-// Modify your usePDFForTraining function to handle both scenarios
+async function extractAndStorePDFText(file) {
+  const typedArray = await new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = (e) => resolve(new Uint8Array(e.target.result));
+    reader.onerror = reject;
+    reader.readAsArrayBuffer(file);
+  });
+
+  const pdf = await pdfjsLib.getDocument(typedArray).promise;
+  let fullText = '';
+  const pageLimit = Math.min(pdf.numPages, 10);
+  for (let i = 1; i <= pageLimit; i++) {
+    const page = await pdf.getPage(i);
+    const textContent = await page.getTextContent();
+    fullText += textContent.items.map((item) => item.str).join(' ');
+  }
+
+  const trimmedText = fullText.trim();
+  if (!trimmedText) {
+    throw new Error(
+        'No readable text found in this PDF. Try a text-based PDF or add custom questions.',
+    );
+  }
+
+  const limited = trimmedText.substring(0, 10000);
+  const existingIndex = uploadedPDFs.findIndex((pdf) => pdf.name === file.name);
+  if (existingIndex !== -1) {
+    uploadedPDFs[existingIndex].content = limited;
+    uploadedPDFs[existingIndex].processed = true;
+  } else {
+    uploadedPDFs.push({
+      file: file,
+      name: file.name,
+      processed: true,
+      content: limited,
+    });
+  }
+
+  localStorage.setItem('currentTrainingText', trimmedText.substring(0, 90000));
+
+  const userId = getCurrentUserId();
+  if (userId && userId !== 'anonymous') {
+    await db.collection('userTraining').doc(userId).set({
+      gptTrainingContext: {
+        content: trimmedText.substring(0, 500000),
+        lastUpdated: Date.now(),
+      },
+    }, {merge: true});
+  }
+
+  if (typeof updateUploadedFilesList === 'function') {
+    updateUploadedFilesList();
+  }
+
+  return limited;
+}
+
 async function usePDFForTraining() {
   try {
     const userId = getCurrentUserId();
     const userQuestions = collectManualQuestions();
     const competitionSelect = document.getElementById('competitionSelect');
-    const selectedCompetition = competitionSelect && competitionSelect.value ? competitionSelect.value : 'general';
-    
-    let trainingContent = '';
-    
-    if (useMenteeTrainingData) {
-      // Use mentee training data (existing logic)
-      let pdfContent = localStorage.getItem('currentTrainingText');
-      
-      if (!pdfContent) {
-        try {
-          const doc = await db.collection('userTraining').doc(userId).get();
-          if (doc.exists) {
-            pdfContent = doc.data().gptTrainingContext?.content || null;
-          }
-        } catch (error) {
-          console.log('Could not retrieve existing PDF content:', error);
+    const selectedCompetition = competitionSelect && competitionSelect.value ?
+      competitionSelect.value : 'general';
+
+    const uploadedContent = uploadedPDFs
+        .filter((pdf) => pdf.processed && pdf.content)
+        .map((pdf) => pdf.content)
+        .join('\n\n');
+
+    let pdfContent = localStorage.getItem('currentTrainingText') || '';
+
+    if (!pdfContent) {
+      try {
+        const doc = await db.collection('userTraining').doc(userId).get();
+        if (doc.exists) {
+          pdfContent = doc.data().gptTrainingContext?.content || '';
         }
+      } catch (error) {
+        console.log('Could not retrieve existing PDF content:', error);
       }
-      
-      trainingContent = (pdfContent || '').substring(0, 90000);
-    } else {
-      // Use uploaded PDFs content
-      trainingContent = uploadedPDFs
-        .filter(pdf => pdf.processed && pdf.content)
-        .map(pdf => pdf.content)
-        .join('\n\n')
-        .substring(0, 90000); // Limit total content length
     }
-    
-    // Check if there's any content to save
-    const hasContent = (trainingContent && trainingContent.trim().length > 0) || userQuestions.length > 0;
+
+    const trainingContent = [uploadedContent, pdfContent]
+        .filter((content) => content && content.trim().length > 0)
+        .join('\n\n')
+        .substring(0, 90000);
+
+    const hasContent = trainingContent.trim().length > 0 || userQuestions.length > 0;
 
     if (!hasContent) {
       alert('Please upload a PDF or add at least one custom question before submitting');
@@ -5356,11 +5411,7 @@ async function openTrainingModal() {
     
     addQuestionInput();
     
-    // Setup drag & drop with correct IDs
-    setTimeout(() => {
-        setupMultiFileDragAndDrop();
-        console.log('✅ Drag & drop initialized');
-    }, 300);
+    setTimeout(initTrainingPdfUpload, 100);
 }
 
 // Fixed getUserCompetitions function
@@ -5438,133 +5489,91 @@ function closeTrainingModal() {
   modal.style.display = 'none';
 }
 
-// Event listeners for modal
-openBtn.addEventListener('click', openTrainingModal);
-closeBtn.addEventListener('click', closeTrainingModal);
+if (openBtn) openBtn.addEventListener('click', openTrainingModal);
+if (closeBtn) closeBtn.addEventListener('click', closeTrainingModal);
 
 document.addEventListener('DOMContentLoaded', () => {
-  setupDragAndDrop();
+  initTrainingPdfUpload();
 });
 
-
-// Simple drag and drop setup
 function setupDragAndDrop() {
-  const dropZone = document.getElementById('dropZone');
-  const fileInput = document.getElementById('multiFileInput');
-  
-  if (!dropZone) {
-    console.error('❌ Drop zone not found');
-    return;
-  }
-  
-  if (!fileInput) {
-    console.error('❌ File input not found');
-    return;
-  }
-  
-  console.log('✅ Drag & Drop setup initialized');
-  
-  // Click to upload
-  dropZone.addEventListener('click', (e) => {
-    e.stopPropagation();
-    fileInput.click();
-  });
-  
-  // Prevent default drag behaviors
-  ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-    dropZone.addEventListener(eventName, (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-    }, false);
-  });
-  
-  // Highlight on drag
-  dropZone.addEventListener('dragenter', (e) => {
-    dropZone.style.backgroundColor = '#f0f9ff';
-    dropZone.style.borderColor = '#3b82f6';
-  });
-  
-  dropZone.addEventListener('dragover', (e) => {
-    dropZone.style.backgroundColor = '#f0f9ff';
-    dropZone.style.borderColor = '#3b82f6';
-  });
-  
-  // Unhighlight on leave
-  dropZone.addEventListener('dragleave', (e) => {
-    dropZone.style.backgroundColor = '';
-    dropZone.style.borderColor = '';
-  });
-  
-  // Handle drop
-  dropZone.addEventListener('drop', (e) => {
-    dropZone.style.backgroundColor = '';
-    dropZone.style.borderColor = '';
-    
-    const files = e.dataTransfer.files;
-    if (files.length > 0) {
-      handleFile(files[0]);
-    }
-  });
-  
-  // Handle file input change (when user clicks to select)
-  fileInput.addEventListener('change', (e) => {
-    if (e.target.files.length > 0) {
-      handleFile(e.target.files[0]);
-    }
-  });
+  initTrainingPdfUpload();
 }
 
 async function handleFile(file) {
-  console.log('📄 File:', file.name);
-  
-  if (file.type !== 'application/pdf') {
+  if (pdfProcessingInFlight) {
+    console.warn('PDF already processing, skipping duplicate drop');
+    return;
+  }
+  pdfProcessingInFlight = true;
+
+  console.log('📄 Processing file:', file.name);
+
+  const isPDF = file.type === 'application/pdf' ||
+    file.name.toLowerCase().endsWith('.pdf');
+  if (!isPDF) {
     alert('❌ PDF only');
     return;
   }
-  
+
   if (file.size > 10 * 1024 * 1024) {
     alert('❌ Max 10MB');
     return;
   }
-  
+
   const user = firebase.auth().currentUser;
   if (!user) {
     alert('❌ Log in first');
     return;
   }
-  
+
+  const dropZoneText = document.querySelector('.drop-zone-text');
+  const fileNameEl = document.getElementById('fileName');
+
   try {
-    // Change the drop zone text to filename FIRST
-    const dropZoneText = document.querySelector('.drop-zone-text');
     if (dropZoneText) {
-      dropZoneText.textContent = file.name;
-      console.log('✅ Text changed to:', file.name);
+      dropZoneText.textContent = `Processing ${file.name}...`;
     }
-    
-    // Then upload
+    if (fileNameEl) {
+      fileNameEl.style.display = 'block';
+      fileNameEl.textContent = `Processing ${file.name}...`;
+      fileNameEl.style.color = '#94a3b8';
+    }
+
+    const extractedLength = await extractAndStorePDFText(file);
+
     const filePath = `training/${user.uid}/${file.name}`;
-    const result = await db.collection('training').doc(user.uid).collection('files').add({
+    await db.collection('training').doc(user.uid).collection('files').add({
       name: file.name,
       path: filePath,
       uploadedAt: new Date(),
-      size: file.size
+      size: file.size,
     });
-    
-    console.log('✅ File uploaded successfully!', result.id);
-    
+
+    if (dropZoneText) {
+      dropZoneText.textContent = file.name;
+    }
+    if (fileNameEl) {
+      fileNameEl.textContent =
+        `✅ Processed: ${file.name} (${extractedLength} chars extracted)`;
+      fileNameEl.style.color = '#10b981';
+    }
+
+    console.log('✅ PDF processed and metadata saved', extractedLength, 'chars');
   } catch (error) {
-    console.error('❌ Upload Error:', error.code, error.message);
-    alert('Upload failed: ' + error.message);
-    // Revert text on error
-    const dropZoneText = document.querySelector('.drop-zone-text');
+    console.error('❌ PDF processing error:', error);
+    alert('Failed to process PDF: ' + error.message);
     if (dropZoneText) {
       dropZoneText.textContent = 'Drag & Drop PDF Here or Click to Upload';
     }
+    if (fileNameEl) {
+      fileNameEl.textContent = '❌ Error processing PDF';
+      fileNameEl.style.color = '#ef4444';
+    }
+  } finally {
+    pdfProcessingInFlight = false;
   }
 }
-
-// Call setup function after modal elements are ready
-setTimeout(setupDragAndDrop, 100);
 
 
   
@@ -6215,75 +6224,6 @@ function prepareTrainingData(text) {
     }, { merge: true });
     
     console.log('Training data prepared');
-}
-
-// Replace your current usePDFForTraining function with this fixed version
-
-async function usePDFForTraining() {
-    try {
-        const userId = getCurrentUserId();
-        const userQuestions = collectManualQuestions();
-        const competitionSelect = document.getElementById('competitionSelect');
-        const selectedCompetition = competitionSelect && competitionSelect.value ? competitionSelect.value : 'general';
-        
-        // Get PDF content from localStorage or Firebase
-        let pdfContent = localStorage.getItem('currentTrainingText');
-        
-        // If no localStorage content, check if there's existing PDF content in Firebase
-        if (!pdfContent) {
-            try {
-                const doc = await db.collection('userTraining').doc(userId).get();
-                if (doc.exists) {
-                    pdfContent = doc.data().gptTrainingContext?.content || null;
-                }
-            } catch (error) {
-                console.log('Could not retrieve existing PDF content:', error);
-            }
-        }
-
-        // Check if there's any content to save
-        const hasContent = (pdfContent && pdfContent.trim().length > 0) || userQuestions.length > 0;
-
-        if (!hasContent) {
-            alert('Please upload a PDF or add at least one custom question before submitting');
-            return;
-        }
-
-        const limitedContent = (pdfContent || '').substring(0, 90000);
-
-        const trainingEntry = {
-            content: limitedContent,
-            userQuestions: userQuestions,
-            timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-            competition: selectedCompetition,
-            type: 'training_data',
-            entryId: Date.now() + '_' + Math.random().toString(36).substr(2, 9), // Unique ID
-            createdAt: new Date().toISOString()
-        };
-
-        // Use .add() to ALWAYS create a new document (never overwrites)
-        // This creates a new document with auto-generated ID in the subcollection under the user
-        const docRef = await db.collection('userTraining').doc(userId).collection('entries').add(trainingEntry);
-        
-        console.log('New training entry added with ID:', docRef.id);
-        console.log('Training entry data:', trainingEntry);
-
-        localStorage.removeItem('currentTrainingText');
-
-        const fileName = document.getElementById('fileName');
-        if (fileName) {
-            const competitionText = selectedCompetition === 'general' ? '' : ` for ${selectedCompetition}`;
-            fileName.textContent = `✅ Training data saved${competitionText}! (${userQuestions.length} questions, ${limitedContent.length} chars)`;
-            fileName.style.color = '#10b981';
-        }
-
-        setTimeout(() => {
-            closeTrainingModal();
-        }, 1500);
-    } catch (error) {
-        console.error('Error saving training data:', error);
-        alert('Error saving training data. Please try again.');
-    }
 }
 
 function uploadPDFToFirebase(file) {

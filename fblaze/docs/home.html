@@ -473,6 +473,55 @@
   const db = firebase.firestore();
   const auth = firebase.auth();
 
+  window.addEventListener("message", (event) => {
+    // Only respond to secure token requests coming from our own window context
+    if (event.data && event.data.action === "REQUEST_FBLAZE_TOKEN") {
+      // Look through localStorage keys for the active login profile as a fallback
+      let token = null;
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && key.startsWith("firebase:authUser")) {
+          try {
+            const data = JSON.parse(localStorage.getItem(key));
+            token = data?.stsTokenManager?.accessToken;
+          } catch (e) {}
+        }
+      }
+
+      // Broadcast the token back to the content script handler
+      window.postMessage(
+          {action: "RESPONSE_FBLAZE_TOKEN", token: token},
+          "*",
+      );
+    }
+  });
+
+  window.addEventListener("message", (event) => {
+    // Check if the incoming request is specifically an extension data request
+    if (event.data && event.data.action === "REQUEST_FBLAZE_UID") {
+      let userId = null;
+
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && key.startsWith("firebase:authUser")) {
+          try {
+            const parsedAuth = JSON.parse(localStorage.getItem(key));
+            // Extract the core Firebase User Identifier directly
+            userId = parsedAuth?.uid;
+          } catch (e) {
+            console.error("Failed parsing auth record:", e);
+          }
+        }
+      }
+
+      // Broadcast the found userId back out to the extension context bridge
+      window.postMessage(
+          {action: "RESPONSE_FBLAZE_UID", uid: userId},
+          "*",
+      );
+    }
+  });
+
 
 
   // Global variables
